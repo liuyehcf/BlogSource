@@ -16,21 +16,21 @@ categories:
 
 ## 1.1 Mode
 
-vim常用的三种模式：**一般模式、编辑模式与命令模式**。`:help mode`查看详情
+Three commonly used modes in Vim: **Normal mode, Insert mode, and Command-line mode**. Use `:help mode` for more details.
 
-一般模式与编辑模式以及命令行模式可以相互切换，但是编辑模式与命令行模式之间不可相互切换
+Normal mode, Insert mode, and Command-line mode can switch between each other, but Insert mode and Command-line mode cannot switch directly between each other.
 
 ### 1.1.1 Normal Mode
 
-以vim打开一个文件就进入一般模式了（这是默认模式）
+When you open a file with Vim, it starts in Normal mode (this is the default mode).
 
-在这个模式中，你可以使用上下左右按键来移动光标，可以删除字符或删除整行，也可以复制粘贴你的文件数据
+In this mode, you can use the arrow keys to move the cursor, delete characters or entire lines, and copy and paste content in your file.
 
 ### 1.1.2 Insert Mode
 
-在一般模式中，可以进行删除，复制，粘贴等操作，但是却无法编辑文件内容。要等到你按下`i(I),o(O),a(A),r(R)`等任何一个字母后才会进入编辑模式
+In Normal mode, you can perform operations like delete, copy, and paste, but you cannot edit the file content. You must press one of the keys like `i(I)`, `o(O)`, `a(A)`, or `r(R)` to enter Insert mode.
 
-如果要回到一般模式，必须按下`Esc`这个按键即可退出编辑器
+To return to Normal mode, simply press the `Esc` key to exit the editor mode.
 
 ### 1.1.3 Visual Mode
 
@@ -38,7 +38,9 @@ This mode is used for selecting and manipulating text visually.
 
 ### 1.1.4 Command-line Mode
 
-在一般模式中，输入`:`、`/`、`?`这三个钟的任何一个按钮，就可以将光标移动到最下面一行，在这个模式中，可以提供你查找数据的操作，而读取、保存、大量替换字符、离开vim、显示行号等操作则是在此模式中完成的
+In Normal mode, pressing any of the keys `:`, `/`, or `?` will move the cursor to the bottom line. This enters Command-line mode, where you can perform search operations.
+
+Actions like reading and saving files, bulk character replacement, exiting Vim, displaying line numbers, and more are also carried out in this mode.
 
 ### 1.1.5 Ex Mode
 
@@ -48,46 +50,46 @@ Ex mode, on the other hand, is a more powerful command-line mode that is entered
 
 ## 1.2 Buffer
 
-**每个打开的文件都对应一个buffer。buffer可以显示或者不显示**
+**Each opened file corresponds to a buffer. A buffer can be visible or hidden.**
 
 ## 1.3 Window
 
-**window就是我们看到的并且可以操作的那个界面。一个window可以包含一个或多个buffer，总是会显示其中一个buffer（文件或者空）。允许同时开启多个窗口**
+**A window is the interface we see and interact with. A window can contain one or more buffers, but it always displays one buffer (a file or an empty one). Multiple windows can be opened simultaneously.**
 
 ## 1.4 Tab
 
-**tab可以包含一个或多个window。如果存在多个tab，那么会在最上方显示这些tab，就像一个现代的编辑器一样（vscode）**
+**A tab can contain one or more windows. If multiple tabs exist, they will be displayed at the top, similar to a modern editor like VSCode.**
 
 # 2 Operation Manual
 
 ![vi-vim-cheat-sheet](/images/vim/vi-vim-cheat-sheet.gif)
 
-* [图片出处](http://www.viemu.com/a_vi_vim_graphical_cheat_sheet_tutorial.html)
+* [Where this image comes from](http://www.viemu.com/a_vi_vim_graphical_cheat_sheet_tutorial.html)
 
 ## 2.1 Insert Mode
 
-* **`i,I`：进入插入模式，i为从光标所在处插入，I为在目前所在行的第一个非空格处开始插入**
-* **`a,A`：进入插入模式，a为从目前光标所在的下一个字符处开始插入，A为从光标所在行的最后一个字符处开始插入**
-* **`o,O`：进入插入模式，o为在目前光标所在的下一行处插入新的一行，O为在目前光标所在处的上一行插入新的一行**
-* **`s,S`：进入插入模式，s为删除目前光标所在的字符，S为删除目前光标所在的行**
-* **`r,R`：进入替换模式，r只会替换光标所在的那一个字符一次，R会一直替换光标所在行的文字，直到按下Esc**
-* **`Esc`：退回一般模式**
-* **`[Ctrl] + [`(`:help i_CTRL-[`)：退回一般模式**
-* **`[Ctrl] + w`(`:help i_CTRL-W`)：向前删除单词**
-* **`[Ctrl] + r + [reg]`：插入寄存器中的内容，例如**
-    * `[Ctrl] + r + 0`：插入`0`号寄存器的内容
-    * `[Ctrl] + r + "`：插入默认寄存器的内容
-* **`[Ctrl] + r + =`：插入表达式计算结果，等号后面跟表达式**
-* **`[Ctrl] + r + /`：插入上一次搜索的关键字**
-* **`[Ctrl] + o + [cmd]`：临时退出插入模式，执行单条命令又返回插入模式**
-    * `[Ctrl] + o + 0`：光标移动到行首，等效于一般模式下的`0`
-* **`[Ctrl] + d/t/f`：光标所在的整行减少/增加缩进/自动调整缩进**
-* **`[Shift] + [Left]`：向左移动一个单词**
-* **`[Shift] + [Right]`：向右移动一个单词**
-* **`[Shift] + [Up]`：向上翻页**
-* **`[Shift] + [Down]`：向下翻页**
-* `[Ctrl] + e`(`:help i_CTRL-E`)：Insert the character which is below the cursor
-* `[Ctrl] + y`(`:help i_CTRL-Y`)：Insert the character which is above the cursor
+* **`i,I`**: Enter Insert mode; `i` inserts at the cursor position, `I` inserts at the first non-blank character of the current line.
+* **`a,A`**: Enter Insert mode; `a` inserts after the cursor position, `A` inserts at the end of the current line.
+* **`o,O`**: Enter Insert mode; `o` opens a new line below the current line, `O` opens a new line above the current line.
+* **`s,S`**: Enter Insert mode; `s` deletes the character under the cursor, `S` deletes the entire current line.
+* **`r,R`**: Enter Replace mode; `r` replaces the single character under the cursor once, `R` continuously replaces characters on the current line until `Esc` is pressed.
+* **`Esc`**: Return to Normal mode.
+* **`[Ctrl] + [`** (`:help i_CTRL-[`): Return to Normal mode.
+* **`[Ctrl] + w`** (`:help i_CTRL-W`): Delete the previous word.
+* **`[Ctrl] + r + [reg]`**: Insert content from a register, for example:
+    * `[Ctrl] + r + 0`: Insert content from register `0`.
+    * `[Ctrl] + r + "`: Insert content from the default register.
+* **`[Ctrl] + r + =`**: Insert the result of an expression; expression follows the equal sign.
+* **`[Ctrl] + r + /`**: Insert the last searched keyword.
+* **`[Ctrl] + o + [cmd]`**: Temporarily exit Insert mode to execute a single command, then return to Insert mode.
+    * `[Ctrl] + o + 0`: Move cursor to the beginning of the line, equivalent to `0` in Normal mode.
+* **`[Ctrl] + d/t/f`**: Decrease/Increase/Adjust indentation of the current line.
+* **`[Shift] + [Left]`**: Move cursor left by one word.
+* **`[Shift] + [Right]`**: Move cursor right by one word.
+* **`[Shift] + [Up]`**: Page up.
+* **`[Shift] + [Down]`**: Page down.
+* `[Ctrl] + e`(`:help i_CTRL-E`)：Insert the character which is below the cursor.
+* `[Ctrl] + y`(`:help i_CTRL-Y`)：Insert the character which is above the cursor.
 
 ## 2.2 Moving Cursor
 
@@ -168,30 +170,30 @@ Ex mode, on the other hand, is a more powerful command-line mode that is entered
 
 ### 2.2.1 Jump List
 
-**帮助文档：`:help jump-motions`**
+**Help documentation: `:help jump-motions`**
 
-**将光标移动多行的指令称为跳转指令，例如：**
+**Commands that move the cursor across multiple lines are called jump commands, for example:**
 
-* **`H`、`M`、`L`**
-* **`123G`、`:123`：跳转到指定行**
-* **`/[word]`、`?[word]`、`:s`、`n`、`N`：查找替换**
-* **`%`、`()`、`[]`、`{}`**
-* **`''`：回到`jump list`中最后一个位置，光标丢失列信息，处于行首，且该命令本身也是作为一个`jump`，会被记录到`jump list`中**
-* **`~~`：回到`jump list`中最后一个位置，光标会精确到列，且该命令本身也是作为一个`jump`，会被记录到`jump list`中**
-* **`[Ctrl] + o`：回到`jump list`的上一个位置，且该命令本身不是`jump`，不会被记录到`jump list`中**
-* **`[Ctrl] + i`：回到`jump list`中下一个位置，且该命令本身不是`jump`，不会被记录到`jump list`中**
-* **`:jumps`：输出`jump list`**
-* **`:clearjumps`：清除`jump list`**
+* **`H`, `M`, `L`**
+* **`123G`, `:123`**: Jump to the specified line
+* **`/[word]`, `?[word]`, `:s`, `n`, `N`**: Search and replace
+* **`%`, `()`, `[]`, `{}`**
+* **`''`**: Return to the last position in the jump list; the cursor loses column info and is placed at the start of the line. This command itself is also a jump and will be recorded in the jump list.
+* **`~~`**: Return to the last position in the jump list; the cursor will be positioned exactly at the previous column. This command is also a jump and will be recorded in the jump list.
+* **`[Ctrl] + o`**: Return to the previous position in the jump list; this command itself is not a jump and will not be recorded in the jump list.
+* **`[Ctrl] + i`**: Return to the next position in the jump list; this command itself is not a jump and will not be recorded in the jump list.
+* **`:jumps`**: Display the jump list
+* **`:clearjumps`**: Clear the jump list
 
 ### 2.2.2 Change List
 
-**帮助文档：`:help changelist`**
+**Help documentation: `:help changelist`**
 
-**当内容发生修改时，会记录修改的位置信息，并通过如下命令在`change list`中记录的位置之间进行跳转：**
+**When content is modified, the location of the change is recorded. You can navigate between these recorded positions in the `change list` using the following commands:**
 
-* **`g;`：回到`change list`的上一个位置**
-* **`g,`：回到`change list`的下一个位置**
-* **`:changes`：输出`change list`**
+* **`g;`**: Jump to the previous position in the change list
+* **`g,`**: Jump to the next position in the change list
+* **`:changes`**: Display the change list
 
 ### 2.2.3 Mark
 
@@ -200,162 +202,162 @@ Ex mode, on the other hand, is a more powerful command-line mode that is entered
 
 ## 2.3 Text Editing
 
-**`c`、`d`等命令可以配合「Moving Cursor」中的操作一起使用**
+**Commands like `c`, `d`, etc., can be combined with cursor movement commands:**
 
-* **`dd`：删除光标所在一整行**
-* **`dw`：删除光标所在的字符到光标所在单词的最后一个字符**
-* **`[n]dd`：删除光标所在的向下n行（包括当前这一行）**
-* **`d1G`：删除光标所在到第一行的所有数据（包括当前这一行）**
-* **`dG`：删除光标所在到最后一行的所有数据（包括当前这一行）**
-* **`d0（这是零）`：删除从光标所在的字符到该行最前面一个字符（不包括光标所指向的字符）**
-* **`d^`：删除从光标所在的字符到该行最前面一个非零字符（不包括光标所指向的字符）**
-* **`d$`：删除光标所在的字符到该行的最后一个字符（包括光标所指向的字符）**
-* **`d%`：删除光标所在的字符（光标所在的字符到该行的最后一个字符之间必须包含左括号，可以是`(`、`[`、`{`）到另一个右括号（与前一个左括号配对）之间的所有数据**
-* **`df<x>`/`d[n]f<x>`：删除光标所在字符到第1个/第n个为`x`的字符**
-* **`dt<x>`/`d[n]t<x>`：删除光标所在字符到第1个/第n个为`x`的字符前**
-* **`d/<word>`：删除光标所在的字符到搜索关键词`<word>`前**
-* **`D`：同`d$`**
-* **`cc`：改写光标所在一整行**
-* **`cw`：改写光标所在的字符到光标所在单词的最后一个字符**
-* **`[n]cc`：改写光标所在的向下n行（包括当前这一行）**
-* **`c1G`：改写光标所在到第一行的所有数据（包括当前这一行）**
-* **`cG`：改写光标所在到最后一行的所有数据（包括当前这一行）**
-* **`c0（这是零）`：改写从光标所在的字符到该行最前面一个字符（不包括光标所指向的字符）**
-* **`c^`：改写从光标所在的字符到该行最前面一个非零字符（不包括光标所指向的字符）**
-* **`c$`：改写光标所在的字符到该行的最后一个字符（包括光标所指向的字符）**
-* **`c%`：改写光标所在的字符（光标所在的字符到该行的最后一个字符之间必须包含左括号，可以是`(`、`[`、`{`）到另一个右括号（与前一个左括号配对）之间的所有数据**
-* **`cf<x>`/`c[n]f<x>`：改写光标所在字符到第1个/第n个为`x`的字符**
-* **`ct<x>`/`c[n]t<x>`：改写光标所在字符到第1个/第n个为`x`的字符前**
-* **`c/<word>`：改写光标所在的字符到搜索关键词`<word>`前**
-    * 用`n/N`找到下一个/上一个匹配项，按`.`重复之前的操作
-* **`C`：同`c$`**
+* **`dd`**: Delete the entire line where the cursor is located.
+* **`dw`**: Delete from the cursor to the end of the current word.
+* **`[n]dd`**: Delete the current line and the next `n-1` lines (including the current line).
+* **`d1G`**: Delete from the current line up to line 1 (including the current line).
+* **`dG`**: Delete from the current line to the last line (including the current line).
+* **`d0`** (zero): Delete from the cursor position to the beginning of the line (excluding the character under the cursor).
+* **`d^`**: Delete from the cursor position to the first non-blank character of the line (excluding the character under the cursor).
+* **`d$`**: Delete from the cursor position to the end of the line (including the character under the cursor).
+* **`d%`**: Delete from the character under the cursor (which must be on a bracket — `(`, `[`, or `{`) to its matching closing bracket, including all characters in between.
+* **`df<x>`/`d[n]f<x>`**: Delete from the cursor position up to and including the first/nth occurrence of character `x`.
+* **`dt<x>`/`d[n]t<x>`**: Delete from the cursor position up to (but not including) the first/nth occurrence of character `x`.
+* **`d/<word>`**: Delete from the cursor position up to (but not including) the next occurrence of the search keyword `<word>`.
+* **`D`**: Same as `d$`.
+* **`cc`**: Change (replace) the entire current line.
+* **`cw`**: Change from the cursor position to the end of the current word.
+* **`[n]cc`**: Change the current line and the next `n-1` lines.
+* **`c1G`**: Change from the current line up to line 1.
+* **`cG`**: Change from the current line to the last line.
+* **`c0`** (zero): Change from the cursor to the beginning of the line (excluding the cursor character).
+* **`c^`**: Change from the cursor to the first non-blank character of the line (excluding the cursor character).
+* **`c$`**: Change from the cursor to the end of the line (including the cursor character).
+* **`c%`**: Change from the character under the cursor (must be a bracket — `(`, `[`, `{`) to its matching closing bracket.
+* **`cf<x>`/`c[n]f<x>`**: Change from the cursor up to and including the first/nth occurrence of character `x`.
+* **`ct<x>`/`c[n]t<x>`**: Change from the cursor up to (but not including) the first/nth occurrence of character `x`.
+* **`c/<word>`**: Change from the cursor up to (but not including) the next occurrence of the search keyword `<word>`.
+    * Use `n`/`N` to find the next/previous match; press `.` to repeat the last change.
+* **`C`**: Same as `c$`.
 
-**其他：**
+**Others:**
 
-* **`J`：将光标所在行与下一行的数据结合成同一行**
-* **`x,X`：在一行字当中，x为向后删除一个字符（相当于`[Del]`键）,X为向前删除一个字符（相当于`[Backspace]`）**
-* `[n]x`：连续向后删除n个字符
-* **`g~`/`gu`/`gU`：转换大小写/转为小写/转为大写，一般需要配合文本对象一起使用，例如**
+* **`J`**: Join the current line with the next line.
+* **`x`, `X`**: Delete one character; `x` deletes forward (like `[Del]`), `X` deletes backward (like `[Backspace]`).
+* **`[n]x`**: Delete `n` characters forward.
+* **`g~`/`gu`/`gU`**: Toggle case/convert to lowercase/convert to uppercase; usually combined with a text object, for example:
     * `guiw`
     * `guw`
-* **`<`：减少缩进**
-* **`>`：增加缩进**
-* `[Ctrl] + a`：数字+1
-* `[Ctrl] + x`：数字-1
-* **`u`：复原（撤销）前一个操作**
-* **`[Ctrl] + r`：重做上一个操作**
-* **`.`：重做上一个操作**
+* **`<`**: Decrease indentation.
+* **`>`**: Increase indentation.
+* **`[Ctrl] + a`**: Increment number under cursor by 1.
+* **`[Ctrl] + x`**: Decrement number under cursor by 1.
+* **`u`**: Undo the last operation.
+* **`[Ctrl] + r`**: Redo the last undone operation.
+* **`.`**: Repeat the last operation.
 
 ## 2.4 Copy & Paste
 
-* **`yy`：复制光标所在那一行**
-* **`[n]yy`：复制光标所在的向下n行（包括当前这一行）**
-* **`y1G`：复制光标所在行到第一行的所有数据（包括当前这一行）**
-* **`yG`：复制光标所在行到最后一行的数据（包括当前这一行）**
-* **`y0（这是零）`：复制光标所在那个字符到该行第一个字符的所有数据（不包括光标所指向的字符）**
-* **`y$`：复制光标所在那个字符到该行最后一个字符的所有数据（包括光标所指向的字符）**
-* **`p`：将已复制的数据粘贴到光标之前**
-* **`P`：将已复制的数据粘贴到光标之后**
+* **`yy`**: Yank (copy) the entire line where the cursor is located.
+* **`[n]yy`**: Yank the current line and the next `n-1` lines (including the current line).
+* **`y1G`**: Yank from the current line up to line 1 (including the current line).
+* **`yG`**: Yank from the current line to the last line (including the current line).
+* **`y0`** (zero): Yank from the cursor position to the beginning of the line (excluding the character under the cursor).
+* **`y$`**: Yank from the cursor position to the end of the line (including the character under the cursor).
+* **`p`**: Paste the yanked text after the cursor.
+* **`P`**: Paste the yanked text before the cursor.
 
 ### 2.4.1 Register
 
-**vim中有许多寄存器（该寄存器并不是cpu中的寄存器），分别是：**
+**Vim has many registers (these are not CPU registers), including:**
 
-* `0-9`：vim用来保存最近复制、删除等操作的内容
-    * `0`：保存的是最近一次拷贝的内容
-    * `1-9`：保存最近几次删除的内容，最近一次放在`1`，若有新的内容被删除，那么原来的`i`中的内容会存放到`i+1`中，由于`9`编号最大，因此该寄存器中原来的内容被丢弃
-* `a-zA-Z`：用户寄存器，vim不会读写这部分寄存器
-* **`"`：未命名的寄存器。所有删除和拷贝操作默认都会到匿名寄存器**
-* `*`：系统寄存器
-    * `Mac`/`Windows`：同`+`
-    * `Linux-X11`：代表鼠标选中的区域，桌面系统中可按鼠标中键粘贴
-* `+`：系统寄存器
-    * `Mac`/`Windows`：同`*`
-    * `Linux-X11`：在桌面系统中可按`Ctrl+V`粘贴
-* `_`：`Black hole register`，类似于文件系统中的`/dev/null`
+* `0-9`: Vim uses these to store recent copy, delete, and other operations
+    * `0`: Stores the most recent copy (yank) content
+    * `1-9`: Store the most recent deletes; the latest delete goes into `1`. When a new delete happens, the old `i` register content moves to `i+1`. Since `9` is the max, content in register `9` is discarded.
+* `a-zA-Z`: User registers; Vim does not read or write these automatically
+* **`"`**: The unnamed register. All delete and copy operations default to this anonymous register.
+* `*`: System clipboard register
+    * On `Mac`/`Windows`: Same as `+`
+    * On `Linux-X11`: Represents the selected mouse region; middle-click pastes on desktop environments
+* `+`: System clipboard register
+    * On `Mac`/`Windows`: Same as `*`
+    * On `Linux-X11`: On desktop, can paste with `Ctrl+V`
+* `_`: The "black hole register", similar to `/dev/null` in file systems (discard register)
 
-**如何使用这些寄存器：`"<reg name><operator>`**
+**How to use these registers: `"<reg name><operator>`**
 
-* 最左侧的`"`是固定语法
-* `<reg name>`：寄存器名称，比如`0`、`a`、`+`、`"`等
-* `<operator>`：需要执行的操作，就是`y/d/p`等等
-* `q<reg name>q`：清除寄存器的内容
+* The leading `"` is fixed syntax
+* `<reg name>`: Register name, e.g., `0`, `a`, `+`, `"` etc.
+* `<operator>`: Operation to perform, like `y` (yank), `d` (delete), `p` (paste), etc.
+* `q<reg name>q`: Clear the content of a register
 
-**示例：**
+**Examples:**
 
-* `:reg`：查看寄存器的信息
-* `:reg <reg name>`：查看某个寄存器的内容
-* `"+yy`：将当前行拷贝到系统寄存器
-* `"+p`：将系统寄存器中的内容粘贴到光标之后
+* `:reg`: Show information about all registers
+* `:reg <reg name>`: Show the content of a specific register
+* `"+yy`: Yank the current line into the system clipboard register
+* `"+p`: Paste content from the system clipboard register after the cursor
 
-**ssh到远程主机后，如何将本机系统寄存器的内容粘贴到远程主机的vim中？**
+**How to paste the local system clipboard content into Vim on a remote host via SSH?**
 
-* 首先确认远程主机的vim是否支持`clipboard`，通过`vim --version | grep clipboard`。`-clipboard`说明不支持，`+clipboard`说明支持。`clipboard`需要在`X`环境下才能工作
-* 如果系统是CentOS，需要安装图形化界面，比如`GNOME`，然后再安装`vim-X11`，然后用`vimx`代替`vim`。`vimx --version | grep clipboard`可以发现已经支持了`clipboard`。至此，已经可以在ssh终端中通过`vimx`使用远程主机的`clipboard`了
-* 未完待续，目前还没搞定本机和远程的`clipboard`的共享
+* First, confirm if Vim on the remote host supports `clipboard` by running `vim --version | grep clipboard`. `-clipboard` means no support; `+clipboard` means supported. Clipboard support requires an X environment.
+* If the system is CentOS, install a graphical environment like `GNOME`, then install `vim-X11`, and use `vimx` instead of `vim`. Running `vimx --version | grep clipboard` should show clipboard support. Then you can use `vimx` in the SSH terminal to access the remote clipboard.
+* To be continued — sharing the clipboard between local and remote machines is not yet solved.
 
 ## 2.5 Visual Selection
 
-* **`v`：字符选择：会将光标经过的地方反白选择**
-* **`vw`：选择光标开始处的当前单词（若光标在单词中间，不会选择整个单词）**
-* **`viw`：选择光标所处的单词（若光标在单词中间，也可以选中整个单词）**
-* **`vi'`：选择单引号中的内容**
-* **`vi"`：选择双引号中的内容**
-* **`vi(`：选择小括号中的内容**
-* **`vi[`：选择中括号中的内容**
-* **`vi{`：选择大括号中的内容**
-* **`V`：行选择：会将光标经过的行反白选择**
-    * **`<line number>G`：跳到指定行，并反白选择中间所有内容**
-* **`[Ctrl] + v`：块选择，可以用长方形的方式选择数据**
-* **`>`：增加缩进**
-* **`<`：减少缩进**
-* **`~`：转换大小写**
-* **`c/y/d`：改写/拷贝/删除**
-* **`u`：变为小写**
-* **`U`：变为大写**
-* **`o`：跳转到标记区的另外一端**
-* **`O`：跳转到标记块的另外一端**
-* **`gv`：在使用`p`或者`P`替换选中内容后，会重新选中被替换的区域**
-* **`gn`：选中下一个查找的内容**
-* **`gN`：选中上一个查找的内容**
+* **`v`**: Character-wise visual selection; highlights characters as the cursor moves.
+* **`vw`**: Select from the cursor position to the end of the current word (if cursor is inside a word, it won't select the entire word).
+* **`viw`**: Select the entire word under the cursor (even if the cursor is in the middle of the word).
+* **`vi'`**: Select content inside single quotes.
+* **`vi"`**: Select content inside double quotes.
+* **`vi(`**: Select content inside parentheses.
+* **`vi[`**: Select content inside square brackets.
+* **`vi{`**: Select content inside curly braces.
+* **`V`**: Line-wise visual selection; highlights entire lines as the cursor moves.
+    * **`<line number>G`**: Jump to the specified line and visually select all lines in between.
+* **`[Ctrl] + v`**: Block-wise visual selection; allows rectangular selection of text.
+* **`>`**: Increase indentation.
+* **`<`**: Decrease indentation.
+* **`~`**: Toggle case.
+* **`c/y/d`**: Change/Yank (copy)/Delete.
+* **`u`**: Change to lowercase.
+* **`U`**: Change to uppercase.
+* **`o`**: Jump to the other end of the visual selection.
+* **`O`**: Jump to the other end of the visual block.
+* **`gv`**: After using `p` or `P` to replace a selection, reselect the replaced area.
+* **`gn`**: Select the next search match.
+* **`gN`**: Select the previous search match.
 
 ## 2.6 Search & Replace
 
-* **查找**
-    * **`/[word]`：向下寻找一个名为word的字符串，支持正则表达式**
-    * **`/\<[word]\>`：向下寻找一个名为word的字符串（全词匹配），支持正则表达式**
-    * **`/\V[word]`：向下寻找一个名为word的字符串，所有字符（除了`/`）均被视为普通字符**
-    * `?[word]`：向上寻找一个名为word的字符串，支持正则表达式
-    * `?\<[word]\>`：向上寻找一个名为word的字符串（全词匹配），支持正则表达式
-    * **`?\V[word]`：向上寻找一个名为word的字符串，所有字符（除了`?`）均被视为普通字符**
-    * `n`：重复前一个查找操作
-    * `N`："反向"进行前一个查找操作
-    * **`*`：以全词匹配的模式（`\<[word]\>`）向后搜索关键词，用于匹配的关键词的获取规则如下：**
-        * 光标下的关键词
-        * 当前行，光标后最近的关键词
-        * 光标下的非空字符串
-        * 当前行，光标后最近的非空字符串
-    * **大小写是否敏感**
-        * `/[word]\c`：大小写不敏感
-        * `/[word]\C`：大小写敏感
-    * **`#`：同`*`，区别是向前搜索关键词**
-    * **`g*`：同`*`，区别是以非全词匹配的模式**
-    * **`g#`：同`#`，区别是以非全词匹配的模式**
-    * **搜索上一次选中的内容，步骤如下：**
-        1. 进入`visual`模式
-        1. 复制：`y`
-        1. 进入搜索模式：`/`
-        1. 选择寄存器：`[Ctrl] + r`
-        1. 输入默认寄存器：`"`
-* **替换**
-    * **`:[n1],[n2]s/[word1]/[word2]/g`：在n1与n2行之间寻找word1这个字符串，并将该字符串替换为word2，支持正则表达式**
-    * **`:[n1],[n2]s/\<[word1]\>/[word2]/g`：在n1与n2行之间寻找word1这个字符串（全词匹配），并将该字符串替换为word2，支持正则表达式**
-    * **`:1,$s/[word1]/[word2]/g`或者`:%s/[word1]/[word2]/g`：从第一行到最后一行查找word1字符串，并将该字符串替换为word2，支持正则表达式**
-    * **`:1,$s/[word1]/[word2]/gc`或者`:%s/[word1]/[word2]/gc`：从第一行到最后一行查找word1字符串，并将该字符串替换为word2，且在替换前显示提示字符给用户确认是否替换，支持正则表达式**
-    * **可视模式选中范围，输入`:s/[word1]/[word2]/gc`进行替换**
-* **`[Ctrl]+r`以及`[Ctrl]+w`：将光标下的字符串添加到搜索或者替换表达式中**
-* **`gn`：选中下一个查找的内容**
-* **`gN`：选中上一个查找的内容**
+* **Search**
+    * **`/[word]`**: Search downward for a string named `word`, supports regular expressions.
+    * **`/\<[word]\>`**: Search downward for the exact whole word `word` (word boundary match), supports regular expressions.
+    * **`/\V[word]`**: Search downward for the literal string `word` where all characters (except `/`) are treated as normal characters.
+    * `?[word]`: Search upward for a string named `word`, supports regular expressions.
+    * `?\<[word]\>`: Search upward for the exact whole word `word`, supports regular expressions.
+    * **`?\V[word]`**: Search upward for the literal string `word` where all characters (except `?`) are treated as normal characters.
+    * `n`: Repeat the previous search in the same direction.
+    * `N`: Repeat the previous search in the opposite direction.
+    * **`*`**: Search forward for the keyword under the cursor in whole word mode (`\<[word]\>`). The keyword selection rules:
+        * Keyword under the cursor
+        * The nearest keyword after the cursor on the current line
+        * Non-blank string under the cursor
+        * The nearest non-blank string after the cursor on the current line
+    * **Case sensitivity:**
+        * `/[word]\c`: Case insensitive search.
+        * `/[word]\C`: Case sensitive search.
+    * **`#`**: Like `*`, but searches backward.
+    * **`g*`**: Like `*`, but searches for partial matches (non-whole word).
+    * **`g#`**: Like `#`, but searches for partial matches.
+    * **To search the last visually selected text, follow these steps:**
+        1. Enter visual mode
+        2. Yank with `y`
+        3. Enter search mode with `/`
+        4. Insert register content with `[Ctrl] + r`
+        5. Enter default register with `"`
+* **Replace**
+    * **`:[n1],[n2]s/[word1]/[word2]/g`**: Search for `word1` between lines `n1` and `n2` and replace with `word2`, supports regular expressions.
+    * **`:[n1],[n2]s/\<[word1]\>/[word2]/g`**: Same as above but with whole word matching.
+    * **`:1,$s/[word1]/[word2]/g`** or **`:%s/[word1]/[word2]/g`**: Search and replace `word1` with `word2` from the first to the last line, supports regular expressions.
+    * **`:1,$s/[word1]/[word2]/gc`** or **`:%s/[word1]/[word2]/gc`**: Same as above but prompts for confirmation before each replacement.
+    * **In visual mode, select a range and enter `:s/[word1]/[word2]/gc` to replace within the selection.**
+* **`[Ctrl]+r`** and **`[Ctrl]+w`**: Add the string under the cursor to the search or replace expression.
+* **`gn`**: Select the next search match.
+* **`gN`**: Select the previous search match.
 
 ## 2.7 Record
 
@@ -370,165 +372,165 @@ Record refers to a feature that allows you to record a sequence of keystrokes an
 
 ## 2.8 File
 
-* **`:w`：保存文件**
-* **`:wa`：保存所有文件**
-* **`:w!`：若文件属性为只读时，强制写入该文件，不过到底能不能写入，还是跟你对该文件的文件属性权限有关**
-* **`:q`：离开**
-* **`:q!`：若曾修改过文件，又不想存储，使用"!"为强制离开不保存的意思**
-* **`:wq`：保存后离开,若为:wq!则代表强制保存并离开**
-* **`:e [filename]`：打开文件并编辑**
-* **`:e`：重新载入当前文件**
-* `ZZ`：若文件没有变更，则不保存离开，若文件已经变更过，保存后离开
-* `:w [filename]`：将编辑文件保存称为另一个文件,注意w和文件名中间有空格
-* `:r [filename]`：在编辑的数据中，读入另一个文件的数据，即将filename这个文件的内容加到光标所在行后面，注意r和文件名之间有空格
-* `:[n1],[n2]w [filename]`：将`n1`到`n2`的内容保存成`filename`这个文件，注意w和文件名中间有空格，`[n2]`与`w`之间可以没有空格
-* `vim [filename1] [filename2]...`：同时编辑多个文件
-* `:n`：编辑下一个文件
-* `:N`：编辑上一个文件
-* `:files`：列出这个vim打开的所有文件
-* `:file`：显示文件路径
-* **`:Vex`：打开目录**
+* **`:w`**: Save the current file.
+* **`:wa`**: Save all files.
+* **`:w!`**: Force write to the file if it is read-only; whether it succeeds depends on your file system permissions.
+* **`:q`**: Quit Vim.
+* **`:q!`**: Quit without saving changes (force quit).
+* **`:wq`**: Save and quit; `:wq!` forces save and quit.
+* **`:e [filename]`**: Open and edit the specified file.
+* **`:e`**: Reload the current file.
+* `ZZ`: If the file is unchanged, quit without saving; if changed, save and quit.
+* `:w [filename]`: Save the current buffer to a different file (note the space between `w` and filename).
+* `:r [filename]`: Read the content of another file and insert it after the cursor line (note the space between `r` and filename).
+* `:[n1],[n2]w [filename]`: Write lines `n1` to `n2` to the specified file (space between `w` and filename; space between `[n2]` and `w` optional).
+* `vim [filename1] [filename2]...`: Edit multiple files simultaneously.
+* `:n`: Edit the next file.
+* `:N`: Edit the previous file.
+* `:files`: List all files opened by this Vim session.
+* `:file`: Show the current file's path.
+* **`:Vex`**: Open the directory explorer.
 
 ## 2.9 Text Object
 
-**文本对象：`c`、`d`、`v`、`y`、`g~`、`gu`、`gU`等命令后接文本对象，一般格式为：`<范围><类型>`**
+**Text objects: Commands like `c`, `d`, `v`, `y`, `g~`, `gu`, `gU` are followed by text objects, generally in the format: `<scope><type>`**
 
-* **范围：可选值有`a`和`i`**
-    * `a`：表示包含边界
-    * `i`：表示不包含边界
-* **类型：小括号、大括号、中括号、单引号、双引号等等**
+* **Scope: Optional values are `a` and `i`**
+    * `a`: Includes the boundaries
+    * `i`: Excludes the boundaries
+* **Type: Parentheses, braces, brackets, single quotes, double quotes, etc.**
     * `'`
     * `"`
     * `(`/`b`
     * `[`
     * `{`/`B`
 
-**示例：**
+**Examples:**
 
-* `i)`：小括号内
-* `a)`：小括号内（包含小括号本身）
-* `i]`：中括号内
-* `a]`：中括号内（包含中括号本身）
-* `i}`：大括号内
-* `a}`：大括号内（包含大括号本身）
-* `i'`：单引号内
-* `a'`：单引号内（包含单引号本身）
-* `i"`：双引号内
-* `a"`：双引号内（包含双引号本身）
+* `i)` : Inside parentheses (excluding the parentheses themselves)
+* `a)` : Inside parentheses (including the parentheses)
+* `i]` : Inside square brackets (excluding the brackets)
+* `a]` : Inside square brackets (including the brackets)
+* `i}` : Inside curly braces (excluding the braces)
+* `a}` : Inside curly braces (including the braces)
+* `i'` : Inside single quotes (excluding the quotes)
+* `a'` : Inside single quotes (including the quotes)
+* `i"` : Inside double quotes (excluding the quotes)
+* `a"` : Inside double quotes (including the quotes)
 
 ## 2.10 Text Fold
 
-**按照折叠所依据的规则，可以分为如下4种：**
+**According to the folding rules, there are 4 types:**
 
-1. **`manual`：手工折叠**
+1. **`manual` (manual folding)**
     * **`:set foldmethod=manual`**
-    * **`zf`：需要配合范围选择，创建折叠**
-    * **`zf`还可以与文本对象配合，例如**
-        * `zfi{`：折叠大括号之间的内容，不包括大括号所在行
-        * `zfa{`：折叠大括号之间的内容，包括大括号所在行
-    * **`zd/zD`：删除当前折叠**
-    * `zE`：删除所有折叠
-1. **`indent`：缩进折叠**
+    * **`zf`**: Create a fold, used with a motion or visual range
+    * **`zf` can also be combined with text objects, for example:**
+        * `zfi{`: Fold the content inside curly braces, excluding the lines with the braces themselves
+        * `zfa{`: Fold the content inside curly braces, including the lines with the braces
+    * **`zd`/`zD`**: Delete the current fold
+    * **`zE`**: Delete all folds
+2. **`indent` (indentation-based folding)**
     * **`:set foldmethod=indent`**
     * **`:set foldlevel=[n]`**
-1. `marker`：标记折叠
-    * `:set foldmethod=marker`
-1. `syntax`：语法折叠
-    * `:set foldmethod=syntax`
+3. **`marker` (marker folding)**
+    * **`:set foldmethod=marker`**
+4. **`syntax` (syntax-based folding)**
+    * **`:set foldmethod=syntax`**
 
-**通用操作（大写表示递归）：**
+**Common operations (uppercase commands are recursive):**
 
-* **`zN`：启用折叠**
-* **`zn`：禁用折叠**
-* **`za/zA`：折叠/展开当前的代码**
-* **`zc/zC`：折叠当前的代码**
-* **`zo/zO`：展开当前的代码**
-* **`zm/zM`：折叠所有代码**
-* **`zr/zR`：展开所有代码**
-* **`zj`：移动到下一个折叠**
-* **`zk`：移动到上一个折叠**
+* **`zN`**: Enable folding
+* **`zn`**: Disable folding
+* **`za`/`zA`**: Toggle fold (fold/unfold) on the current code block
+* **`zc`/`zC`**: Close (fold) the current fold
+* **`zo`/`zO`**: Open (unfold) the current fold
+* **`zm`/`zM`**: Fold all folds
+* **`zr`/`zR`**: Open all folds
+* **`zj`**: Move to the next fold
+* **`zk`**: Move to the previous fold
 
 ## 2.11 Buffer
 
-* **`:buffers`：列出所有buffer**
-* **`:buffer [n]`：显示指定buffer**
-* **`:bnext`：显示下一个buffer**
-* **`:bprev`：显示上一个buffer**
-* **`:edit [filename]`：将一个文件放入一个新的buffer中**
-* **`:bdelete [n]`：删除指定buffer（不指定时，表示当前buffer）**
-* **`:%bdelete`：删除所有buffer**
-    * **`:%bdelete|e#`：删除除了当前buffer之外的所有buffer。其中`:e#`表示重新打开最后一个关闭的buffer**
-* **`:bufdo <cmd>`：对所有buffer执行操作**
-    * **`:bufdo e`：重新载入所有buffer对应的文件**
+* **`:buffers`**: List all buffers.
+* **`:buffer [n]`**: Switch to the specified buffer.
+* **`:bnext`**: Switch to the next buffer.
+* **`:bprev`**: Switch to the previous buffer.
+* **`:edit [filename]`**: Load a file into a new buffer.
+* **`:bdelete [n]`**: Delete the specified buffer (if no number given, deletes the current buffer).
+* **`:%bdelete`**: Delete all buffers.
+    * **`:%bdelete|e#`**: Delete all buffers except the current one; `:e#` reopens the last closed buffer.
+* **`:bufdo <cmd>`**: Execute a command on all buffers.
+    * **`:bufdo e`**: Reload the files corresponding to all buffers.
 
 ## 2.12 Window
 
-* **`[Ctrl] + w + <xxx>`：先`[Ctrl]`再`w`，放掉`[Ctrl]`和`w`再按`<xxx>`，以下操作以此为基准**
-1. `vim -On file1 file2...`：垂直分屏
-1. `vim -on file1 file2...`：左右分屏
-1. `[Ctrl] + w + c`：关闭当前窗口（无法关闭最后一个）
-1. `[Ctrl] + w + q`：关闭当前窗口（可以关闭最后一个）
-1. `[Ctrl] + w + o`：关闭其他窗口
-1. `[Ctrl] + w + s`：上下分割当前打开的文件
-1. `[Ctrl] + w + v`：左右分割当前打开的文件
-1. `:sp filename`：上下分割并打开一个新的文件
-1. `:vsp filename`：左右分割，并打开一个新的文件
-1. **`[Ctrl] + w + l`：把光标移动到右边的屏中**
-1. **`[Ctrl] + w + h`：把光标移动到左边的屏中**
-1. **`[Ctrl] + w + k`：把光标移动到上边的屏中**
-1. **`[Ctrl] + w + j`：把光标移动到下边的屏中**
-1. **`[Ctrl] + w + w`：把光标移动到下一个屏中，如果只有两个窗口的话，就可以相互切换了**
-1. `[Ctrl] + w + L`：向右移动屏幕
-1. `[Ctrl] + w + H`：向左移动屏幕
-1. `[Ctrl] + w + K`：向上移动屏幕
-1. `[Ctrl] + w + J`：向下移动屏幕
-1. `[Ctrl] + w + =`：让所有屏幕都有一样的高度
-1. `[Ctrl] + w + [+]`：高度增加1
-1. `[Ctrl] + w + [n] [+]`：高度增加n
-1. `[Ctrl] + w + -`：高度减小1
-1. `[Ctrl] + w + [n] -`：高度减小n
-1. `[Ctrl] + w + >`：宽度增加1
-1. `[Ctrl] + w + [n] + >`：宽度增加n
-1. `[Ctrl] + w + <`：宽度减小1
-1. `[Ctrl] + w + [n] + <`：宽度减小n
+* **`[Ctrl] + w + <xxx>`**: Press `[Ctrl]` then `w`, release both, then press `<xxx>`. The following operations are based on this sequence.
+* `vim -On file1 file2...` : Vertical split windows.
+* `vim -on file1 file2...` : Horizontal split windows.
+* `[Ctrl] + w + c` : Close the current window (cannot close the last one).
+* `[Ctrl] + w + q` : Close the current window (can close the last one).
+* `[Ctrl] + w + o` : Close all other windows except the current one.
+* `[Ctrl] + w + s` : Split the current file horizontally.
+* `[Ctrl] + w + v` : Split the current file vertically.
+* `:sp filename` : Split horizontally and open a new file.
+* `:vsp filename` : Split vertically and open a new file.
+* **`[Ctrl] + w + l`** : Move the cursor to the window on the right.
+* **`[Ctrl] + w + h`** : Move the cursor to the window on the left.
+* **`[Ctrl] + w + k`** : Move the cursor to the window above.
+* **`[Ctrl] + w + j`** : Move the cursor to the window below.
+* **`[Ctrl] + w + w`** : Move the cursor to the next window (toggles between two windows if only two).
+* `[Ctrl] + w + L` : Move the current window to the far right.
+* `[Ctrl] + w + H` : Move the current window to the far left.
+* `[Ctrl] + w + K` : Move the current window to the top.
+* `[Ctrl] + w + J` : Move the current window to the bottom.
+* `[Ctrl] + w + =` : Make all windows equal height and width.
+* `[Ctrl] + w + [+]` : Increase window height by 1.
+* `[Ctrl] + w + [n] + [+]` : Increase window height by n.
+* `[Ctrl] + w + -` : Decrease window height by 1.
+* `[Ctrl] + w + [n] + -` : Decrease window height by n.
+* `[Ctrl] + w + >` : Increase window width by 1.
+* `[Ctrl] + w + [n] + >` : Increase window width by n.
+* `[Ctrl] + w + <` : Decrease window width by 1.
+* `[Ctrl] + w + [n] + <` : Decrease window width by n.
 
 ## 2.13 Tab
 
-* **`:tabnew [filename]`：在一个新的tab中打开文件**
-    * **`:tabnew %`：在另一个`tab`中打开当前文件**
-* **`:tabedit`：同`tabnew`**
-* **`:tabm [n]`：将当前标签页移动到位置`n`（`n`从0开始），若不指定`n`，则移动到最后**
-* **`gt`/`:tabnext`：下一个tab**
-* **`gT`/`:tabprev`：上一个tab**
-* **`:tab sball`：将所有buffer**
-* **`:tabdo <cmd>`：对所有tab执行操作**
-    * **`:tabdo e`：重新载入所有tab对应的文件**
+* **`:tabnew [filename]`**: Open a file in a new tab.
+    * **`:tabnew %`**: Open the current file in another tab.
+* **`:tabedit`**: Same as `tabnew`.
+* **`:tabm [n]`**: Move the current tab to position `n` (starting from 0). If `n` is not specified, move to the last position.
+* **`gt`/`:tabnext`**: Go to the next tab.
+* **`gT`/`:tabprev`**: Go to the previous tab.
+* **`:tab sball`**: Open all buffers in tabs.
+* **`:tabdo <cmd>`**: Execute a command on all tabs.
+    * **`:tabdo e`**: Reload the files corresponding to all tabs.
 
 ## 2.14 Quickfix
 
-* `:copen`：打开`quickfix`窗口（查看编译，grep等信息）
-* `:copen 10`：打开`quickfix`窗口，并且设置高度为`10`
-* `:cclose`：关闭`quickfix`窗口
-* `:cfirst`：跳到`quickfix`中第一个错误信息
-* `:clast`：跳到`quickfix`中最后一条错误信息
-* `:cc [nr]`：查看错误`[nr]`
-* `:cnext`：跳到`quickfix`中下一个错误信息
-* `:cprev`：跳到`quickfix`中上一个错误信息
-* `:set modifiable`，将`quickfix`改成可写，可以用`dd`等删除某个条目
+* `:copen`：Open the quickfix window (view compile, grep, etc. information).
+* `:copen 10`：Open the quickfix window with a height of 10.
+* `:cclose`：Close the quickfix window.
+* `:cfirst`：Jump to the first error in quickfix.
+* `:clast`：Jump to the last error in quickfix.
+* `:cc [nr]`：View error number `[nr]`.
+* `:cnext`：Jump to the next error in quickfix.
+* `:cprev`：Jump to the previous error in quickfix.
+* `:set modifiable`：Make quickfix writable, allowing deletion of entries using commands like `dd`.
 
 ## 2.15 Terminal
 
-**vim中可以内嵌终端**
+**Vim can embed a terminal**
 
-* `:terminal`：打开终端
-* `[Ctrl] + \ + [Ctrl] + n`：退出终端
+* `:terminal` : Open the terminal.
+* `[Ctrl] + \ + [Ctrl] + n` : Exit terminal mode.
 
 ## 2.16 Mapping
 
-1. **`map`：递归映射**
-1. **`noremap`：非递归映射**
-1. **`unmap`：将指定按键重置成默认行为**
-1. `mapclear`：消所有`map`配置，慎用
+* **`map`**: Recursive mapping  
+* **`noremap`**: Non-recursive mapping  
+* **`unmap`**: Reset specified key to default behavior  
+* `mapclear`: Clear all `map` configurations, use with caution  
 
 | COMMANDS | MODES |
 |:--|:--|
@@ -544,7 +546,7 @@ Record refers to a feature that allows you to record a sequence of keystrokes an
 | `cmap`、`cnoremap`、`cunmap` | Command-line |
 | `tmap`、`tnoremap`、`tunmap` | Terminal-Job |
 
-**查看所有`map`：**
+**View all `map` commands:**
 
 * `:map`
     * `:map <c-l>`
@@ -553,17 +555,17 @@ Record refers to a feature that allows you to record a sequence of keystrokes an
 * `:noremap`
 * `:nnoremap`
 
-**重定向所有`map`到文件中：**
+**Redirect all `map` commands to a file:**
 
 1. `:redir! > vim_keys.txt`
 1. `:silent verbose map`
 1. `:redir END`
 
-**特殊参数：**
+**Special parameters:**
 
-* `<buffer>`：表示映射仅对当前`<buffer>`生效
+* `<buffer>`: The mapping applies only to the current buffer.
 * `<nowait>`
-* `<silent>`：禁止输出映射信息
+* `<silent>`: Disable showing mapping messages.
 * `<special>`
 * `<script>`
 * `<expr>`
@@ -571,63 +573,64 @@ Record refers to a feature that allows you to record a sequence of keystrokes an
 
 ## 2.17 Key Representation
 
-* **`<f-num>`：例如`<f1>`、`<f2>`**
-* **`<c-key>`：表示`[Ctrl]`加另一个字母**
-* **`<a-key>/<m-key>`：表示`[Alt]`加另一个字母**
-* **对于mac上的`[Option]`，并没有`<p-key>`这样的表示方法。而是用`[Option]`加另一个字母实际输出的结果作为映射键值，例如：**
-    * `[Option] + a`：`å`
+* **`<f-num>`**: For example, `<f1>`, `<f2>`.
+* **`<c-key>`**: Represents `[Ctrl]` plus another key.
+* **`<a-key>`/`<m-key>`**: Represents `[Alt]` plus another key.
+* **On Mac, there is no `<p-key>` for `[Option]`. Instead, the actual output character produced by pressing `[Option]` plus another key is used as the mapping key, for example:**
+    * `[Option] + a`: `å`
 
 ## 2.18 Config
 
-* **`:set <config>?`：可以查看`<config>`的值**
-    * `:set filetype?`：查看文件类型
-* **`:echo &<config>`：也可以查看`<config>`的值**
-    * `:echo &filetype`：查看文件类型
-* **`set <config> += <value>`：增加配置，可以一次增加多个项目，以逗号分隔**
-* **`set <config> -= <value>`：删除配置，一次只能删除一个项目**
+* **`:set <config>?`**: View the value of `<config>`.
+    * `verbose set <config>?`: Shows the source of the configuration.
+    * `:set filetype?`: View the file type.
+* **`:echo &<config>`**: Also view the value of `<config>`.
+    * `:echo &filetype`: View the file type.
+* **`set <config> += <value>`**: Add to a setting; multiple items can be added separated by commas.
+* **`set <config> -= <value>`**: Remove from a setting; only one item can be removed at a time.
 
 ### 2.18.1 Frequently-used Configs
 
 ```vim
-:set nocompatible                   " 设置不兼容原始 vi 模式（必须设置在最开头）
-:set backspace=indent,eol,start     " 设置BS键模式
-:set softtabstop=4                  " 表示在编辑模式下按退格键时候退回缩进的宽度，建议设置为4
-:set shiftwidth=4                   " 表示缩进的宽度，一般设置成和softtabstop一样
-:set autoindent                     " 表示自动缩进
-:set tabstop=4                      " 表示一个Tab键的宽度，默认是8，建议设置为4
-:set expandtab                      " 表示缩进用空格来表示
-:set noexpandtab                    " 表示缩进用制表符来表示
-:set winaltkeys=no                  " 设置 GVim 下正常捕获 ALT 键
-:set nowrap                         " 关闭自动换行
-:set ttimeout                       " 允许终端按键检测超时（终端下功能键为一串ESC开头的扫描码）
-:set ttm=100                        " 设置终端按键检测超时为100毫秒
-:set term=?                         " 设置终端类型，比如常见的 xterm
-:set ignorecase                     " 设置搜索忽略大小写（可缩写为 :set ic）
-:set noignorecase                   " 设置搜索不忽略大小写（可缩写为 :set noic）
-:set smartcase                      " 智能大小写，默认忽略大小写，除非搜索内容里包含大写字母
-:set list                           " 显式隐藏字符
-:set nolist                         " 隐藏隐藏字符
-:set listchars?                     " 查看有哪些隐藏字符
-:set number                         " 设置显示行号，禁止显示行号可以用 :set nonumber
-:set relativenumber                 " 设置显示相对行号（其他行与当前行的距离）
-:set paste                          " 进入粘贴模式（粘贴时禁用缩进等影响格式的东西）
-:set wrap                           " 启用文本折行
-:set nowrap                         " 禁用文本折行
-:set nopaste                        " 结束粘贴模式
-:set spell                          " 允许拼写检查
-:set hlsearch                       " 设置高亮查找
-:set nohlsearch                     " 结束高亮
-:set ruler                          " 总是显示光标位置
-:set guicursor                      " 光标形状设置
-:set incsearch                      " 查找输入时动态增量显示查找结果
-:set insertmode                     " vim 始终处于插入模式下，使用 [Ctrl] + o 临时执行命令
-:set all                            " 列出所有选项设置情况
-:set cursorcolumn                   " 高亮当前列
-:set cursorline                     " 高亮当前行
-:set fileencoding                   " 查看当前文件的编码格式
-:set showtabline=0/1/2              " 0：不显示标签页；1：默认值，只有在新建新的tab时才显式标签页；2：总是显式标签页
-:syntax on                          " 允许语法高亮
-:syntax off                         " 禁止语法高亮
+:set nocompatible                   " Set to be incompatible with original vi mode (must be set at the very beginning)
+:set backspace=indent,eol,start     " Set BS (Backspace) key behavior
+:set softtabstop=4                  " Number of spaces a <BS> deletes while in insert mode; recommended to set to 4
+:set shiftwidth=4                   " Width of auto-indents; usually same as softtabstop
+:set autoindent                     " Enable automatic indentation
+:set tabstop=4                      " Width of a Tab character; default is 8, recommended to set to 4
+:set expandtab                      " Use spaces instead of tabs for indentation
+:set noexpandtab                    " Use tabs instead of spaces for indentation
+:set winaltkeys=no                  " Enable normal ALT key capture in GVim
+:set nowrap                         " Disable line wrapping
+:set ttimeout                       " Enable terminal key code timeout (special keys send sequences starting with ESC)
+:set ttm=100                        " Set terminal key code timeout to 100 milliseconds
+:set term=?                         " Set terminal type, e.g., xterm
+:set ignorecase                     " Ignore case in search (can be shortened to :set ic)
+:set noignorecase                   " Don't ignore case in search (can be shortened to :set noic)
+:set smartcase                      " Smart case: ignore case unless search pattern includes uppercase
+:set list                           " Show invisible characters
+:set nolist                         " Hide invisible characters
+:set listchars?                     " Show current list of invisible characters
+:set number                         " Show line numbers; use :set nonumber to disable
+:set relativenumber                 " Show relative line numbers (distance from current line)
+:set paste                          " Enter paste mode (disable auto indent and such during paste)
+:set wrap                           " Enable line wrapping
+:set nowrap                         " Disable line wrapping
+:set nopaste                        " Exit paste mode
+:set spell                          " Enable spell checking
+:set hlsearch                       " Highlight search results
+:set nohlsearch                     " Disable search highlighting
+:set ruler                          " Always show cursor position
+:set guicursor                      " Set GUI cursor shape
+:set incsearch                      " Show search matches incrementally while typing
+:set insertmode                     " Always stay in insert mode; use [Ctrl] + o for temporary commands
+:set all                            " List all current settings
+:set cursorcolumn                   " Highlight current column
+:set cursorline                     " Highlight current line
+:set fileencoding                   " Show current file encoding
+:set showtabline=0/1/2              " 0: never show tabline; 1: show when multiple tabs; 2: always show tabline
+:syntax on                          " Enable syntax highlighting
+:syntax off                         " Disable syntax highlighting
 ```
 
 ### 2.18.2 Debugging Configs
@@ -648,11 +651,11 @@ Record refers to a feature that allows you to record a sequence of keystrokes an
 
 ### 2.18.3 Config File
 
-vim会主动将你曾经做过的行为记录下来，好让你下次可以轻松作业，记录操作的文件就是`~/.viminfo`
+Vim actively records your past actions so that you can easily continue your work next time. The file that stores these records is `~/.viminfo`.
 
-vim的全局设置值一般放置在`/etc/vimrc`（or `/etc/vim/vimrc`）这个文件中，不过不建议修改它，但是可以修改`~/.vimrc`这个文件（默认不存在，手动创建）
+Global Vim settings are generally placed in `/etc/vimrc` (or `/etc/vim/vimrc`). It is not recommended to modify this file directly. Instead, you can modify your personal configuration file `~/.vimrc` (which does not exist by default and must be created manually).
 
-**在运行vim的时候，如果修改了`~/.vimrc`文件的内容，可以通过执行`:source ~/.vimrc`或者`:so %`来重新加载`~/.vimrc`，立即生效配置**
+**When running Vim, if you modify the contents of `~/.vimrc`, you can reload it immediately by executing `:source ~/.vimrc` or `:so %` to apply the new configurations.**
 
 ## 2.19 Variable
 
@@ -690,16 +693,16 @@ let t:my_tab_variable = {'key': 'value'}
 
 ## 2.20 Help Doc
 
-1. `:help CTRL-W`：查看普通模式下`ctrl + w`按键的帮助
-1. `:help i_CTRL-V`：查看插入模式下`ctrl + v`按键的帮助，其中`i_`表示`insert mode`
-1. `:help v_CTRL-A`：查看可视模式下`ctrl + a`按键的帮助，，其中`v_`表示`visual mode`
-1. `help :s`：查看`:s`命令的帮助
+* `:help CTRL-W`: View help for `ctrl + w` in normal mode.
+* `:help i_CTRL-V`: View help for `ctrl + v` in insert mode (`i_` means insert mode).
+* `:help v_CTRL-A`: View help for `ctrl + a` in visual mode (`v_` means visual mode).
+* `:help :s`: View help for the `:s` command.
 
-**文档路径：`/usr/share/vim/vim82/doc`**
+**Documentation path:** `/usr/share/vim/vim82/doc`
 
-* `/usr/share/vim/vim82/doc/help.txt`：主目录文档
+* `/usr/share/vim/vim82/doc/help.txt`: Main documentation file.
 
-**`vimtutor`：提供一个简易的教程**
+**`vimtutor`**: Provides a simple tutorial.
 
 ## 2.21 Troubleshooting
 
@@ -709,59 +712,59 @@ let t:my_tab_variable = {'key': 'value'}
 ## 2.22 Assorted
 
 * **`echo`**
-    * **`:echom xxx`：信息会保留在message中，可以通过`:message`查看**
-* **命令历史**
-    * **`q:`：进入命令历史编辑**
-    * **`q/`：进入搜索历史编辑**
-    * **`q[a-z`]：q后接任意字母，进入命令记录**
-    * 可以像编辑缓冲区一样编辑某个命令，然后回车执行
-    * 可以用`[Ctrl] + c`退出历史编辑回到编辑缓冲区，但此时历史编辑窗口不关闭，可以参照之前的命令再自己输入
-    * **输入`:x`关闭历史编辑并放弃编辑结果回到编辑缓冲区**
-    * 可以在空命令上回车相当于退出历史编辑区回到编辑缓冲区
-* **`[Ctrl] + g`：统计信息**
-* **`g + [Ctrl] + g`：字节统计信息**
+    * **`:echom xxx`**: The message will be saved in the message history, which can be viewed with `:message`.
+* **Command history**
+    * **`q:`**: Enter command-line history editing.
+    * **`q/`**: Enter search history editing.
+    * **`q[a-z`]`**: Press `q` followed by any letter to enter command history.
+    * You can edit a command like editing a buffer, then press Enter to execute it.
+    * Press `[Ctrl] + c` to exit history editing and return to the editing buffer; however, the history editing window remains open, allowing you to refer to previous commands and input your own.
+    * **Type `:x` to close history editing and discard changes, returning to the editing buffer.**
+    * Pressing Enter on an empty command also exits history editing and returns to the editing buffer.
+* **`[Ctrl] + g`**: Show file statistics.
+* **`g + [Ctrl] + g`**: Show byte statistics.
 
 ### 2.22.1 Symbol Index
 
-* **`[Ctrl] + ]`：跳转到光标指向的符号的定义处**
-* **`gf`：跳转光标指向的头文件**
-    * 通过`set path=`或`set path+=`设置或增加头文件搜索路径
-    * 通过`set path?`可以查看该变量的内容
-* **`[Ctrl] + ^`：在前后两个文件之间跳转**
+* **`[Ctrl] + ]`**: Jump to the definition of the symbol under the cursor.
+* **`gf`**: Jump to the header file under the cursor.
+    * Use `set path=` or `set path+=` to set or add header file search paths.
+    * Use `set path?` to view the current value of this variable.
+* **`[Ctrl] + ^`**: Switch between the two most recently edited files.
 
 ### 2.22.2 Insert Form Feed(tab)
 
-参考[How can I insert a real tab character in Vim?](https://stackoverflow.com/questions/6951672/how-can-i-insert-a-real-tab-character-in-vim)，在我们设置了`tabstop`、`softtabstop`、`expandtab`等参数后，`tab`会被替换成空格，如果要输入原始的`\t`字符，可以在`insert`模式下，按`[Ctrl] + v + i`，其中：
+Referring to [How can I insert a real tab character in Vim?](https://stackoverflow.com/questions/6951672/how-can-i-insert-a-real-tab-character-in-vim), after setting parameters like `tabstop`, `softtabstop`, and `expandtab`, the `tab` key will be replaced by spaces. If you want to insert a literal `\t` character, you can press `[Ctrl] + v + i` in insert mode, where:
 
-* `[Ctrl] + v`表示输入原始的字面值
-* `i`表示`\t`
+* `[Ctrl] + v` means to input the literal character.
+* `i` represents the `\t` character.
 
 ### 2.22.3 Multiply-line Editing
 
-**示例：多行同时插入相同内容**
+**Example: Insert the same content on multiple lines simultaneously**
 
-1. 在需要插入内容的列的位置，按`[Ctrl] + v`，选择需要同时修改的行
-1. 按`I`进入编辑模式
-1. 编写需要插入的文本
-1. 按两下`ecs`
+1. At the column where you need to insert content, press `[Ctrl] + v` and select the lines to modify simultaneously  
+1. Press `I` to enter insert mode  
+1. Type the text you want to insert  
+1. Press `esc` twice  
 
-**示例：多行行尾同时插入相同内容**
+**Example: Insert the same content at the end of multiple lines simultaneously**
 
-1. 在需要插入内容的列的位置，按`[Ctrl] + v`，选择需要同时修改的行
-1. 按`$`移动到行尾
-1. 按`A`进入编辑模式
-1. 编写需要插入的文本
-1. 按两下`ecs`
+1. At the column where you need to insert content, press `[Ctrl] + v` and select the lines to modify simultaneously  
+1. Press `$` to move to the end of the line  
+1. Press `A` to enter insert mode  
+1. Type the text you want to insert  
+1. Press `esc` twice  
 
-**示例：多行同时删除相同的内容**
+**Example: Delete the same content on multiple lines simultaneously**
 
-1. 在需要插入内容的列的位置，按`[Ctrl] + v`，选择需要同时修改的行
-1. 选中需要同时修改的列
-1. 按`d`即可同时删除
+1. At the column where you need to delete content, press `[Ctrl] + v` and select the lines to modify simultaneously  
+1. Select the columns to delete simultaneously  
+1. Press `d` to delete simultaneously  
 
 ### 2.22.4 中文乱码
 
-**编辑`/etc/vimrc`，追加如下内容**
+**Edit `/etc/vimrc` and append the following content**
 
 ```sh
 set fileencodings=utf-8,ucs-bom,gb18030,gbk,gb2312,cp936
@@ -771,7 +774,7 @@ set encoding=utf-8
 
 ### 2.22.5 Project Customized Config
 
-同一份`~./vimrc`无法适用于所有的项目，不同的项目可能需要一些特化的配置项，可以采用如下的设置方式
+The same `~/.vimrc` cannot be used for all projects. Different projects may require some specialized configuration options. You can use the following setup method.
 
 ```vim
 if filereadable("./.workspace.vim")
@@ -3657,7 +3660,7 @@ Or Install from Nvim development (prerelease) build (Prefer)
 
 ```sh
 wget https://github.com/neovim/neovim/releases/download/v0.11.2/nvim-linux-x86_64.tar.gz
-tar -zxvf nvim-linux64.tar.gz
+tar -zxvf nvim-linux-x86_64.tar.gz
 ```
 
 ### 6.1.1 Node Version Management

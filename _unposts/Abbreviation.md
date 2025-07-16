@@ -94,6 +94,7 @@
 | Abbreviation | Explanation |
 |:--|:--|
 | ARR | Annual Recurring Revenue |
+| CDC | Change Data Capture |
 | CNN | Convolutional Neural Network |
 | DAU | Daily Active Users |
 | DFA | Deterministic Finite Automation |
