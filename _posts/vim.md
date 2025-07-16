@@ -891,23 +891,23 @@ git clone --depth 1 https://github.com/wbthomason/packer.nvim\
 
 ## 3.2 Prepare
 
-**为什么需要准备环境，vim的插件管理不是会为我们安装插件么？因为某些复杂插件，比如`ycm`是需要手动编译的，而编译就会依赖一些编译相关的工具，并且要求的版本比较高**
+**Why is it necessary to prepare the environment? Doesn't vim's plugin manager install plugins for us?**Because certain complex plugins, such as `ycm`, require manual compilation, and the compilation process depends on some build-related tools, often with relatively high version requirements.
 
-**由于我用的系统是`CentOS 7.9`，通过`yum install`安装的工具都过于陈旧，包括`gcc`、`g++`、`clang`、`clang++`、`cmake`等等，这些工具都需要通过其他方式重新安装**
+**Since the system I'm using is `CentOS 7.9`, the tools installed via `yum install` are too outdated, including `gcc`, `g++`, `clang`, `clang++`, `cmake`, etc. These tools all need to be reinstalled through other means.**
 
 ### 3.2.1 vim8 (Required)
 
-上述很多插件对vim的版本有要求，至少是`vim8`，而一般通过`yum install`安装的vim版本是`7.x`
+Many of the plugins mentioned above have version requirements for vim, requiring at least `vim8`. However, the version of vim installed via `yum install` is generally `7.x`.
 
 ```sh
-# 卸载
+# Uninstall
 yum remove vim-* -y
 
-# 通过非官方源fedora安装最新版的vim
+# Install the latest version of vim via the unofficial Fedora repository
 curl -L https://copr.fedorainfracloud.org/coprs/lantw44/vim-latest/repo/epel-7/lantw44-vim-latest-epel-7.repo -o /etc/yum.repos.d/lantw44-vim-latest-epel-7.repo
 yum install -y vim
 
-# 确认
+# Verify
 vim --version | head -1
 ```
 
@@ -915,15 +915,15 @@ vim --version | head -1
 
 Home: [ctags](https://ctags.io/)
 
-**`ctags`的全称是`universal-ctags`**
+**The full name of `ctags` is `universal-ctags`**
 
-**安装：参照[github官网文档](https://github.com/universal-ctags/ctags)进行编译安装即可**
+**Installation: Refer to the [official GitHub documentation](https://github.com/universal-ctags/ctags) for compilation and installation**
 
 ```sh
 git clone https://github.com/universal-ctags/ctags.git --depth 1
 cd ctags
 
-# 安装依赖工具
+# Install dependencies
 yum install -y autoconf automake
 
 ./autogen.sh
@@ -932,40 +932,40 @@ make
 make install # may require extra privileges depending on where to install
 ```
 
-**`ctags`参数：**
+**`ctags` parameters:**
 
-* `--c++-kinds=+px`：`ctags`记录c++文件中的函数声明，各种外部和前向声明
-* `--fields=+ailnSz`：`ctags`要求描述的信息，其中：
-    * `a`：如果元素是类成员的话，要标明其调用权限(即public或者private)
-    * `i`：如果有继承，则标明父类
-    * `l`：标明标记源文件的语言
-    * `n`：标明行号
-    * `S`：标明函数的签名（即函数原型或者参数列表）
-    * `z`：标明`kind`
-* `--extras=+q`：强制要求ctags做如下操作，如果某个语法元素是类的一个成员，ctags默认会给其记录一行，以要求ctags对同一个语法元素再记一行，这样可以保证在VIM中多个同名函数可以通过路径不同来区分
-* `-R`：`ctags`递归生成子目录的tags（在项目的根目录下很有意义）
+* `--c++-kinds=+px`: `ctags` records function declarations in C++ files, including various external and forward declarations.
+* `--fields=+ailnSz`: Specifies the information that `ctags` should describe, where:
+    * `a`: If the element is a class member, mark its access level (i.e., public or private).
+    * `i`: If there is inheritance, indicate the parent class.
+    * `l`: Mark the language of the source file containing the tag.
+    * `n`: Mark the line number.
+    * `S`: Mark the function signature (i.e., function prototype or parameter list).
+    * `z`: Mark the `kind`.
+* `--extras=+q`: Forces `ctags` to perform the following — if a syntax element is a class member, `ctags` will normally record one line for it. This option instructs `ctags` to record another line for the same syntax element to ensure that in VIM, multiple functions with the same name can be distinguished by different paths.
+* `-R`: `ctags` recursively generates tags for subdirectories (very useful when executed in the root directory of a project).
 
-**在工程中生成`ctags`：**
+**Generate `ctags` in a project:**
 
 ```sh
-# 与上面的~/.vimrc中的配置对应，需要将tag文件名指定为.tags
+# To match the configuration in the above ~/.vimrc, the tag file name needs to be specified as .tags
 ctags --c++-kinds=+px --fields=+ailnSz --extras=+q -R -f .tags *
 ```
 
-**如何为`C/C++`标准库生成`ctags`，这里生成的标准库对应的`ctags`文件是`~/.vim/.cfamily_systags`**
+**How to generate `ctags` for the `C/C++` standard library — the resulting `ctags` file for the standard library will be located at `~/.vim/.cfamily_systags`**
 
 ```sh
 mkdir -p ~/.vim
-# 下面2种选一个即可
+# Choose one of the following two methods
 
-# 1. 通过yum install -y gcc安装的gcc是4.8.5版本
+# 1. Installing gcc via `yum install -y gcc` gives version 4.8.5
 ctags --c++-kinds=+px --fields=+ailnSz --extras=+q -R -f ~/.vim/.cfamily_systags \
 /usr/include \
 /usr/local/include \
 /usr/lib/gcc/x86_64-redhat-linux/4.8.5/include/ \
 /usr/include/c++/4.8.5/
 
-# 2. 通过上面编译安装的gcc是10.3.0版本
+# 2. The gcc compiled and installed using the method above is version 10.3.0
 ctags --c++-kinds=+px --fields=+ailnSz --extras=+q -R -f ~/.vim/.cfamily_systags \
 /usr/include \
 /usr/local/include \
@@ -973,7 +973,7 @@ ctags --c++-kinds=+px --fields=+ailnSz --extras=+q -R -f ~/.vim/.cfamily_systags
 /usr/local/include/c++/10.3.0
 ```
 
-**如何为`Python`标准库生成`ctags`，这里生成的标准库对应的`ctags`文件是`~/.vim/.python_systags`（[ctags, vim and python code](https://stackoverflow.com/questions/47948545/ctags-vim-and-python-code)）**
+**How to generate `ctags` for the `Python` standard library — the resulting `ctags` file for the standard library is`~/.vim/.python_systags`（[ctags, vim and python code](https://stackoverflow.com/questions/47948545/ctags-vim-and-python-code)）**
 
 ```sh
 ctags --languages=python --python-kinds=-iv --fields=+ailnSz --extras=+q -R -f ~/.vim/.python_systags /usr/lib64/python3.6
@@ -981,18 +981,18 @@ ctags --languages=python --python-kinds=-iv --fields=+ailnSz --extras=+q -R -f ~
 
 **Usage:**
 
-* `[Ctrl] + ]`：跳转到符号定义处。如果有多条匹配项，则会跳转到第一个匹配项
-* `[Ctrl] + w + ]`：在新的窗口中跳转到符号定义处。如果有多条匹配项，则会跳转到第一个匹配项
-* `:ts`：显示所有的匹配项。按`ECS`再输入序号，再按`Enter`就可以进入指定的匹配项
-* `:tn`：跳转到下一个匹配项
-* `:tp`：跳转到上一个匹配项
-* `g + ]`：如果有多条匹配项，会直接显式（同`:ts`）
+* `[Ctrl] + ]`: Jump to the definition of the symbol. If there are multiple matches, it jumps to the first one.
+* `[Ctrl] + w + ]`: Jump to the symbol definition in a new window. If there are multiple matches, it jumps to the first one.
+* `:ts`: Show all matching items. Press `ESC`, then enter the number, and press `Enter` to jump to the specified match.
+* `:tn`: Jump to the next matching item.
+* `:tp`: Jump to the previous matching item.
+* `g + ]`: If there are multiple matches, it directly displays them (same as `:ts`).
 
-**Configuration(`~/.vimrc`):**
+**Configuration (`~/.vimrc`):**
 
-* **注意，这里将tag的文件名从`tags`换成了`.tags`，这样避免污染项目中的其他文件。因此在使用`ctags`命令生成tag文件时，需要通过`-f .tags`参数指定文件名**
-* **`./.tags;`表示在文件所在目录下查找名字为`.tags`的符号文件，`;`表示查找不到的话，向上递归到父目录，直到找到`.tags`或者根目录**
-* **`.tags`是指在vim的当前目录（在vim中执行`:pwd`）下查找`.tags`文件**
+* **Note that the tag file name has been changed from `tags` to `.tags` to avoid polluting other files in the project. Therefore, when generating the tag file with the `ctags` command, you need to specify the file name with the `-f .tags` parameter.**
+* **`./.tags;` means searching for the `.tags` symbol file in the directory of the current file. The `;` means that if it is not found, the search recurses upwards to the parent directories until `.tags` or the root directory is found.**
+* **`.tags` refers to searching for the `.tags` file in the current directory of vim (check with `:pwd` inside vim).**
 
 ```vim
 " tags search mode
@@ -1007,7 +1007,7 @@ set tags+=~/.vim/.python_systags
 
 Home: [cscope](http://cscope.sourceforge.net/)
 
-**相比于`ctags`，`cscope`支持更多功能，包括查找定义、查找引用等等。但是该项目最近一次更新是2012年，因此不推荐使用。推荐使用`gtags`**
+**Compared to `ctags`, `cscope` supports more features, including finding definitions, finding references, and more. However, the project was last updated in 2012, so it is not recommended to use. Instead, `gtags` is recommended.**
 
 **Install:**
 
@@ -1021,50 +1021,50 @@ make
 sudo make install
 ```
 
-**如何使用命令行工具：**
+**How to use the command-line tools:**
 
 ```sh
-# 创建索引，该命令会在当前目录生成一个名为cscope.out索引文件
-# -R: 在生成索引文件时，搜索子目录树中的代码
-# -b: 只生成索引文件，不进入cscope的界面
-# -k: 在生成索引文件时，不搜索/usr/include目录
-# -q: 生成cscope.in.out和cscope.po.out文件，加快cscope的索引速度
-# -i: 指定namefile
-# -f: 可以指定索引文件的路径
+# Create an index — this command generates an index file named cscope.out in the current directory
+# -R: Search code in the subdirectory tree when generating the index file
+# -b: Only generate the index file, do not enter the cscope interface
+# -k: Do not search the /usr/include directory when generating the index file
+# -q: Generate cscope.in.out and cscope.po.out files to speed up cscope indexing
+# -i: Specify namefile
+# -f: Specify the path of the index file
 cscope -Rbkq
 
-# 查找符号，执行下面的命令可以进入一个交互式的查询界面
+# Find symbols — run the following command to enter an interactive query interface
 cscope
 ```
 
-**如何在vim中使用**
+**How to use it in vim**
 
 ```vim
-" 添加数据库
+" Add database  
 :cscope add cscope.out
 
-" 查找定义
+" Find definition  
 :cscope find g <symbol>
 
-" 查找引用
+" Find references  
 :cscope find s <symbol>
 
-" 启用 quickfix
-" +: 将结果追加到 quickfix 中
-" -: 清除 quickfix 中的内容，并将结果添加到 quickfix 中
+" Enable quickfix  
+" +: Append results to quickfix  
+" -: Clear quickfix and add results to quickfix  
 :set cscopequickfix=s-,c-,d-,i-,t-,e-,a-
 
-" 其他配置方式以及使用方式参考help
+" For other configuration methods and usage, refer to help  
 :help cscope
 ```
 
 **Configuration(`~/.vimrc`):**
 
 ```vim
-" 启用 quickfix
+" Enable quickfix
 set cscopequickfix=s-,c-,d-,i-,t-,e-,a-
 
-" 最后面的 :copen<cr> 表示打开 quickfix
+" The final `:copen<cr>` means to open the quickfix window
 nnoremap <leader>sd :cscope find g <c-r><c-w><cr>:copen<cr>
 nnoremap <leader>sr :cscope find s <c-r><c-w><cr>:copen<cr>
 nnoremap <leader>sa :cscope find a <c-r><c-w><cr>:copen<cr>
@@ -1074,75 +1074,75 @@ nnoremap <leader>sf :cscope find f <c-r>=expand("<cfile>")<cr><cr>:copen<cr>
 nnoremap <leader>si :cscope find i <c-r>=expand("<cfile>")<cr><cr>:copen<cr>
 ```
 
-**注意事项：**
+**Notes:**
 
-* 尽量在源码目录创建数据库，否则cscope默认会扫描所有文件，效率很低
+* Try to create the database in the source code directory; otherwise, cscope will scan all files by default, which is very inefficient.
 
 ### 3.2.4 Symbol-gtags (Optional)
 
 Home: [gtags](https://www.gnu.org/software/global/global.html)
 
-**`gtags`的全称是`GNU Global source code tagging system`**
+**The full name of `gtags` is `GNU Global source code tagging system`**
 
-**这里有个坑，上面安装的是`gcc-10.3.0`，这个版本编译安装`global`源码会报错（[dev-util/global-6.6.4 : fails to build with -fno-common or gcc-10](https://bugs.gentoo.org/706890)），错误信息大概是`global.o:(.bss+0x74): first defined here`，因此，我们需要再安装一个低版本的gcc，并且用这个低版本的gcc来编译`global`**
+**Here is a pitfall: the `gcc-10.3.0` installed above will cause an error when compiling and installing the `global` source code (see [dev-util/global-6.6.4 : fails to build with -fno-common or gcc-10](https://bugs.gentoo.org/706890)). The error message is roughly `global.o:(.bss+0x74): first defined here`. Therefore, we need to install a lower version of gcc and use that lower version of gcc to compile `global`.**
 
 ```sh
-# 安装源
+# Install repo
 yum install -y centos-release-scl scl-utils
 
-# 安装gcc 7
+# Install gcc 7
 yum install -y devtoolset-7-toolchain
 
-# 切换软件环境（本小节剩余的操作都需要在这个环境中执行，如果不小心退出来的话，可以再执行一遍重新进入该环境）
+# Switch software environment (all the remaining operations in this section need to be performed in this environment; if you accidentally exit, you can run the command again to re-enter the environment)
 scl enable devtoolset-7 bash
 ```
 
 **[gtags下载地址](https://ftp.gnu.org/pub/gnu/global/)**
 
 ```sh
-# 安装相关软件
+# Install dependencies
 yum install -y ncurses-devel gperf bison flex libtool libtool-ltdl-devel texinfo
 
 wget https://ftp.gnu.org/pub/gnu/global/global-6.6.7.tar.gz --no-check-certificate
 tar -zxvf global-6.6.7.tar.gz
 cd global-6.6.7
 
-# 检测脚本，缺什么就装什么
+# Detection script — installs missing dependencies as needed  
 sh reconf.sh
 
-# 编译安装
-./configure
-make
+# Compile and install  
+./configure  
+make  
 sudo make install
 
-# 安装成功后，在目录 /usr/local/share/gtags 中会有 gtags.vim 以及 gtags-cscope.vim 这两个文件
-# 将这两个文件拷贝到 ~/.vim 目录中
+# After successful installation, the directory /usr/local/share/gtags will contain two files: gtags.vim and gtags-cscope.vim  
+# Copy these two files to the ~/.vim directory
 cp -vrf /usr/local/share/gtags/gtags.vim /usr/local/share/gtags/gtags-cscope.vim ~/.vim
 ```
 
-**如何使用命令行工具：**
+**How to use the command-line tools:**
 
 ```sh
-# 把头文件也当成源文件进行解析，否则可能识别不到头文件中的符号
+# Treat header files as source files for parsing; otherwise, symbols in header files may not be recognized  
 export GTAGSFORCECPP=1
 
-# 在当前目录构建数据库，会在当前目录生成如下三个文件
-# 1. GTAGS: 存储符号定义的数据库
-# 2. GRTAGS: 存储符号引用的数据库
-# 3. GPATH: 存储路径的数据库
+# Build the database in the current directory, which will generate the following three files:  
+# 1. GTAGS: database storing symbol definitions  
+# 2. GRTAGS: database storing symbol references  
+# 3. GPATH: database storing paths  
 gtags
 
-# 查找定义
+# Find definition  
 global -d <symbol>
 
-# 查找引用
+# Find references  
 global -r <symbol>
 ```
 
-**Configuration(`~/.vimrc`):**
+**Configuration (`~/.vimrc`):**
 
-1. 第一个`GTAGSLABEL`告诉`gtags`默认`C/C++/Java`等六种原生支持的代码直接使用`gtags`本地分析器，而其他语言使用`pygments`模块
-1. 第二个环境变量必须设置（在我的环境里，不设置也能work），否则会找不到`native-pygments`和`language map`的定义
+1. The first `GTAGSLABEL` tells `gtags` to use the local analyzer for six natively supported languages such as `C/C++/Java`, while other languages use the `pygments` module.  
+1. The second environment variable must be set (in my environment, it works without setting it), otherwise `native-pygments` and the `language map` definitions will not be found.
 
 ```vim
 " Setting native-pygments causes "gutentags: gtags-cscope job failed, returned: 1", so I changed it to native
@@ -1159,19 +1159,19 @@ endif
 
 **`FAQ`：**
 
-1. `global -d`找不到类定义，可能原因包括
-    1. **final修饰的类，`gtags`找不到其定义，坑爹的bug，害我折腾了很久**
-1. `global -d`无法查找成员变量的定义
+1. `global -d` cannot find class definitions; possible reasons include:  
+    1. **Classes marked with `final` — `gtags` cannot find their definitions, a frustrating bug that caused me a lot of trouble.**  
+1. `global -d` cannot find definitions of member variables.
 
 ### 3.2.5 LSP-clangd (Recommend)
 
-**`clangd`是`LSP, Language Server Protocol`的一种实现，主要用于`C/C++/Objective-C`等语言**
+**`clangd` is an implementation of `LSP (Language Server Protocol)`, mainly used for languages such as `C/C++/Objective-C`.**
 
 ### 3.2.6 LSP-ccls (Optional)
 
-**`ccls`是`LSP, Language Server Protocol`的一种实现，主要用于`C/C++/Objective-C`等语言**
+**`ccls` is an implementation of `LSP (Language Server Protocol)`, mainly used for languages such as `C/C++/Objective-C`.**
 
-**安装：参照[github官网文档](https://github.com/MaskRay/ccls)进行编译安装即可**
+**Installation: Refer to the [official GitHub documentation](https://github.com/MaskRay/ccls) for compilation and installation**
 
 ```sh
 git clone https://mirror.ghproxy.com/https://github.com/MaskRay/ccls.git
@@ -1185,43 +1185,43 @@ function setup_github_repo() {
         sed -i -r 's|([^/]?)https://github.com/|\1https://mirror.ghproxy.com/https://github.com/|g' ${gitmodule}
     done
 }
-# 初始化子模块
-setup_github_repo
+# Initialize submodules  
+setup_github_repo  
 git submodule init && git submodule update
 
-# 其中 CMAKE_PREFIX_PATH 用于指定 clang/llvm 相关头文件和lib的搜索路径，按照「安装llvm」小节中的安装方法，安装路径就是 /usr/local
+# `CMAKE_PREFIX_PATH` is used to specify the search path for clang/llvm related headers and libraries. According to the installation method in the "Install llvm" section, the installation path is /usr/local  
 cmake -H. -BRelease -DCMAKE_BUILD_TYPE=Release -DCMAKE_PREFIX_PATH=/usr/local
 
-# 编译
+# Build  
 cmake --build Release
 
-# 安装
+# Install  
 cmake --build Release --target install
 ```
 
-**如何为工程生成全量索引？**
+**How to generate a full index for the project?**
 
-1. 通过`cmake`等构建工具生成`compile_commands.json`，并将该文件至于工程根目录下
-1. 配置`LSP-client`插件，我用的是`LanguageClient-neovim`
-1. vim打开工程，便开始自动创建索引
+1. Use build tools like `cmake` to generate `compile_commands.json` and place this file in the root directory of the project.  
+1. Configure the `LSP-client` plugin; I use `LanguageClient-neovim`.  
+1. Open the project in vim, and the index will be created automatically.
 
 ### 3.2.7 LSP-jdtls (Optional)
 
-**`jdtls`是`LSP, Language Server Protocol`的一种实现，主要用于`Java`语言**
+**`jdtls` is an implementation of `LSP (Language Server Protocol)`, mainly used for the `Java` language**
 
-**安装：参照[github官网文档](https://github.com/eclipse/eclipse.jdt.ls)进行编译安装即可**
+**Installation: Refer to the [official GitHub documentation](https://github.com/eclipse/eclipse.jdt.ls) for compilation and installation**
 
 ```sh
 git clone https://github.com/eclipse/eclipse.jdt.ls.git --depth 1
 cd eclipse.jdt.ls
 
-# 要求java 11及以上的版本
+# Requires Java version 11 or higher
 JAVA_HOME=/path/to/java/11 ./mvnw clean verify
 ```
 
-**安装后的配置文件以及二进制都在`./org.eclipse.jdt.ls.product/target/repository`目录中**
+**The configuration files and binaries after installation are located in the `./org.eclipse.jdt.ls.product/target/repository` directory**
 
-* 运行日志默认在config目录中，例如`./org.eclipse.jdt.ls.product/target/repository/config_linux/`目录下
+* The runtime logs are by default in the config directory, for example, under `./org.eclipse.jdt.ls.product/target/repository/config_linux/`
 
 ## 3.3 Color Scheme
 
@@ -1588,27 +1588,27 @@ call plug#end()
 
 **Usage:**
 
-* **`:CocStart`：若在配置中取消了自启动，则需要手动开启**
-* **`:CocUpdate`：更新所有插件**
-* **`:CocConfig`：编辑配置文件，其路径为`~/.vim/coc-settings.json`**
-* **`:CocAction`：代码生成**
-* **`:CocInfo`**
-* **`:CocList [options] [args]`**
-    * `:CocList extensions`
-    * Operation
-        * 编辑模式
-            * `[Ctrl] + o`：切换到一般模式
-        * 一般模式
-            * `i/I/o/O/a/A`：进入编辑模式
-            * `p`：开启或关闭预览窗口
-            * `[Ctrl] + e`：向下滚动预览窗口中的内容
-            * `[Ctrl] + y`：向上滚动预览窗口中的内容
-* **`:CocCommand <插件命令>`**
-    * `:CocCommand workspace.showOutput`：查看日志
+* **`:CocStart`**: If auto-start is disabled in the configuration, this command needs to be run manually to start Coc.  
+* **`:CocUpdate`**: Update all plugins.  
+* **`:CocConfig`**: Edit the configuration file located at `~/.vim/coc-settings.json`.  
+* **`:CocAction`**: Code actions (e.g., code generation).  
+* **`:CocInfo`**  
+* **`:CocList [options] [args]`**  
+    * `:CocList extensions`  
+    * Operations:  
+        * Insert mode  
+            * `[Ctrl] + o`: Switch to normal mode  
+        * Normal mode  
+            * `i/I/o/O/a/A`: Enter insert mode  
+            * `p`: Toggle preview window  
+            * `[Ctrl] + e`: Scroll down in preview window  
+            * `[Ctrl] + y`: Scroll up in preview window  
+* **`:CocCommand <plugin-command>`**  
+    * `:CocCommand workspace.showOutput`: View logs
 
 **Paths:**
 
-* `~/.config/coc/extensions`：插件目录
+* `~/.config/coc/extensions`: Plugin directory
 
 **Help Doc(`:help coc-nvim`):**
 
@@ -1616,15 +1616,15 @@ call plug#end()
 
 **FAQ:**
 
-* `client coc abnormal exit with: 1`：大概率是`node`有问题
-* `node`版本别太新也别太旧，`v16`比较好
-* `clangd`版本16以上，支持展开宏定义（`K`）
-* 如何修改头文件搜索路径？在`compile_commands.json`或`compile_flags.txt`中通过`-I`参数指定即可
-* 索引文件路径：`<project path>/.cache/clangd`
-* 在`cmake`中设置`set(CMAKE_CXX_STANDARD 17)`，其生成的`compile_commands.json`中包含的编译命令不会包含`-std=gnu++17`参数，于是`clangd`在处理代码中用到的`c++17`新特性时会报`warning`（例如`Decomposition declarations are a C++17 extension (clang -Wc++17-extensions)`）。通过设置`CMAKE_CXX_FLAGS`，加上编译参数`-std=gnu++17`可以解决该问题
-    * 仅仅设置`CMAKE_CXX_STANDARD`是不够的，还需要设置`CMAKE_CXX_STANDARD_REQUIRED`，参考[CMake's set(CMAKE_CXX_STANDARD 11) does not work](https://github.com/OSGeo/PROJ/issues/1924)
-* 在`cmake`中设置`set(CMAKE_CXX_COMPILER g++)`也不会对`clangd`起作用，例如`clang`没有`-fopt-info-vec`这个参数，仍然会`warning`
-* `clangd`使用的标准库搜索路径：由编译器决定，即`compile_commands.json`中编译命令所使用的编译器决定。如果这个编译器是个低版本的，那么就会用低版本对应的头文件路径，高版本则对应高版本头文件路径
+* `client coc abnormal exit with: 1`: Most likely an issue with `node`.  
+* The `node` version should neither be too new nor too old; `v16` is recommended.  
+* `clangd` version 16 or above supports macro expansion (`K`).  
+* How to modify header file search paths? Specify the `-I` parameter in `compile_commands.json` or `compile_flags.txt`.  
+* Index file path: `<project path>/.cache/clangd`.  
+* Setting `set(CMAKE_CXX_STANDARD 17)` in `cmake` generates `compile_commands.json` whose compile commands do not include the `-std=gnu++17` flag, causing `clangd` to warn when processing C++17 features (e.g., `Decomposition declarations are a C++17 extension (clang -Wc++17-extensions)`). This can be fixed by setting `CMAKE_CXX_FLAGS` to add the compile flag `-std=gnu++17`.  
+    * Setting only `CMAKE_CXX_STANDARD` is not enough; you also need to set `CMAKE_CXX_STANDARD_REQUIRED`. See [CMake's set(CMAKE_CXX_STANDARD 11) does not work](https://github.com/OSGeo/PROJ/issues/1924).  
+* Setting `set(CMAKE_CXX_COMPILER g++)` in `cmake` does not affect `clangd`. For example, `clang` does not support the `-fopt-info-vec` flag, and will still warn.  
+* The standard library search path used by `clangd` is determined by the compiler used in the compile commands inside `compile_commands.json`. If the compiler is an older version, it will use the corresponding older header paths; a newer compiler uses newer header paths.
 
 ### 3.9.1 coc-explorer
 
@@ -1652,43 +1652,43 @@ call plug#end()
 
 **Usage:**
 
-* `?`：帮助文档
-* `j`：下移光标
-* `k`：上移光标
-* `h`：收起目录
-* `l`：展开目录或打开文件
-* `gh`：递归收起（全部收起）
-* `gl`：递归展开（全部展开)
-* `*`：选择/取消选择
-* `J`：选择/取消选择，并下移光标
-* `K`：选择/取消选择，并上移光标
-* `Il`：启用/关闭文件`label`预览
-* `Ic`：启用/关闭文件内容预览
-* `q`：退出
-* `a`：新建文件
-* `A`：新建目录
-* `r`：重命名
-* `df/dF`：删除文件，`df`放入回收站，`dF`永久删除
-* **Symbols:**
-    * `?`：新文件，尚未纳入`git`
-    * `A`：新文件，已加入暂存区
-    * `M`：文件已修改
-        * `dim`：文件与上一个提交不一致
-        * `bright`：文件与暂存区不一致
-* **Assorted:**
-    * 文件前面的数字是错误数量，可以通过`Il`查看查看完整的label
+* `?`: Help documentation  
+* `j`: Move cursor down  
+* `k`: Move cursor up  
+* `h`: Collapse directory  
+* `l`: Expand directory or open file  
+* `gh`: Recursively collapse all  
+* `gl`: Recursively expand all  
+* `*`: Select/Deselect  
+* `J`: Select/Deselect and move cursor down  
+* `K`: Select/Deselect and move cursor up  
+* `Il`: Enable/disable file `label` preview  
+* `Ic`: Enable/disable file content preview  
+* `q`: Quit  
+* `a`: Create new file  
+* `A`: Create new directory  
+* `r`: Rename  
+* `df/dF`: Delete file; `df` moves to recycle bin, `dF` deletes permanently  
+* **Symbols:**  
+    * `?`: New file, not yet tracked by `git`  
+    * `A`: New file, added to staging area  
+    * `M`: File modified  
+        * `dim`: File differs from last commit  
+        * `bright`: File differs from staging area  
+* **Assorted:**  
+    * The number before the file indicates the number of errors; you can use `Il` to view the full label.
 
 ### 3.9.2 coc-java
 
 Home: [coc-java](https://github.com/search?q=coc-java)
 
-**`Java`语言的`LSP-Server`的实现是[jdt.ls](https://github.com/eclipse/eclipse.jdt.ls)。而`coc-java`是`coc.nvim`的扩展，对`jdt.ls`进行进一步的封装**
+**The `LSP-Server` implementation for the `Java` language is [jdt.ls](https://github.com/eclipse/eclipse.jdt.ls). The `coc-java` extension for `coc.nvim` provides further encapsulation of `jdt.ls`.**
 
 **Install:**
 
 * `:CocInstall coc-java`
-* 安装路径：`~/.config/coc/extensions/node_modules/coc-java`
-* 数据路径：`~/.config/coc/extensions/coc-java-data`
+* Install Path: `~/.config/coc/extensions/node_modules/coc-java`
+* Data Path: `~/.config/coc/extensions/coc-java-data`
 
 **Configuration(`:CocConfig`)**
 
@@ -1707,19 +1707,19 @@ Home: [coc-java](https://github.com/search?q=coc-java)
 
 **Usage:**
 
-* `:CocCommand workspace.showOutput java`：查看`jdt.ls`日志
-    * `"java.trace.server": "verbose"`：更详细的日志
-* `:CocCommand java.open.serverLog`：查看`jdt.ls`原始日志
+* `:CocCommand workspace.showOutput java`: View `jdt.ls` logs  
+    * `"java.trace.server": "verbose"`: More detailed logs  
+* `:CocCommand java.open.serverLog`: View raw `jdt.ls` logs
 
 **Tips：**
 
-* 若项目用到了`thrift`或者`protobuf`这些会创建源码的三方库。需要将这部分源码以及源码编译生成的`.class`文件打包成`.jar`文件，然后通过配置，告知`jdt.ls`
-    * 通过配置`java.project.referencedLibraries`，传入额外的jar路径。该配置好像无法起作用。[Doesn't recognize imports in classpath on a simple project](https://github.com/neoclide/coc-java/issues/93)提到将`vim`换成`neovim`可以解决，其他相关的`issue`如下：
-        * [java.project.referencedLibraries](https://github.com/redhat-developer/vscode-java/pull/1196#issuecomment-568192224)
-        * [Add multiple folders to src path](https://github.com/microsoft/vscode-java-dependency/issues/412)
-        * [Managing Java Projects in VS Code](https://code.visualstudio.com/docs/java/java-project)
-        * [referencedLibraries / classpath additions not working](https://github.com/neoclide/coc-java/issues/146)
-    * 通过配置`.classpath`，参考配置[eclipse.jdt.ls/org.eclipse.jdt.ls.core/.classpath](https://github.com/eclipse/eclipse.jdt.ls/blob/master/org.eclipse.jdt.ls.core/.classpath)
+* If the project uses third-party libraries like `thrift` or `protobuf` that generate source code, you need to package the generated source code and `.class` files into `.jar` files, then inform `jdt.ls` via configuration:  
+    * Use the `java.project.referencedLibraries` setting to pass additional jar paths. This setting may not work properly. The issue [Doesn't recognize imports in classpath on a simple project](https://github.com/neoclide/coc-java/issues/93) mentions switching from `vim` to `neovim` can fix this. Other related issues:  
+        * [java.project.referencedLibraries](https://github.com/redhat-developer/vscode-java/pull/1196#issuecomment-568192224)  
+        * [Add multiple folders to src path](https://github.com/microsoft/vscode-java-dependency/issues/412)  
+        * [Managing Java Projects in VS Code](https://code.visualstudio.com/docs/java/java-project)  
+        * [referencedLibraries / classpath additions not working](https://github.com/neoclide/coc-java/issues/146)  
+    * Alternatively, configure `.classpath` as per [eclipse.jdt.ls/org.eclipse.jdt.ls.core/.classpath](https://github.com/eclipse/eclipse.jdt.ls/blob/master/org.eclipse.jdt.ls.core/.classpath).
         ```xml
         <?xml version="1.0" encoding="UTF-8"?>
         <classpath>
@@ -1727,8 +1727,8 @@ Home: [coc-java](https://github.com/search?q=coc-java)
         </classpath>
         ```
 
-        * 假设子模块用到了`thrift`，那么需要在子模块的目录下放置`.classpath`，而不是在工程根目录放置`.classpath`
-* 有插件`org.eclipse.m2e:lifecycle-mapping`的时候，`jdt.ls`没法正常工作，目前暂未解决
+    * Assuming a submodule uses `thrift`, you need to place the `.classpath` file in the submodule’s directory, not in the root directory of the project.  
+* When the plugin `org.eclipse.m2e:lifecycle-mapping` is present, `jdt.ls` cannot work properly. This issue is currently unresolved.
 
 ### 3.9.3 coc-pyright
 
@@ -1740,7 +1740,7 @@ Home: [coc-pyright](https://github.com/fannheyward/coc-pyright)
 
 **Configuration(`:CocConfig`)**
 
-* `python.analysis.typeCheckingMode`：禁用`reportGeneralTypeIssues`等错误信息。python是动态类型的语言，静态类型推导的错误信息可以忽略
+* `python.analysis.typeCheckingMode`: Disable error messages like `reportGeneralTypeIssues`. Since Python is a dynamically typed language, errors from static type inference can be ignored.
 
 ```json
 {
@@ -1750,8 +1750,8 @@ Home: [coc-pyright](https://github.com/fannheyward/coc-pyright)
 
 **Tips：**
 
-* 用pip安装的三方库，pyright找不到
-    * 可以使用[venv](https://www.liaoxuefeng.com/wiki/1016959663602400/1019273143120480)模块来构建隔离的python环境，步骤如下（`coc-pyright`官网）
+* Third-party libraries installed via pip cannot be found by pyright  
+    * You can use the [venv](https://www.liaoxuefeng.com/wiki/1016959663602400/1019273143120480) module to create an isolated Python environment. The steps are as follows (from the `coc-pyright` official documentation):
     ```sh
     python3 -m venv ~/.venv
     source ~/.venv/bin/activate
@@ -1759,7 +1759,7 @@ Home: [coc-pyright](https://github.com/fannheyward/coc-pyright)
     deactivate
     ```
 
-* 格式化import
+* Format imports
     * `CocCommand pyright.organizeimports`
 
 ### 3.9.4 coc-rust-analyzer
@@ -1769,18 +1769,18 @@ Home: [coc-rust-analyzer](https://github.com/fannheyward/coc-rust-analyzer)
 **Install:**
 
 * `:CocInstall coc-rust-analyzer`
-* 确保`rust-analyzer`已经正常安装：`rustup component add rust-analyzer`
+* Make sure `rust-analyzer` is installed：`rustup component add rust-analyzer`
 
 ### 3.9.5 coc-snippets
 
 Home: [coc-snippets](https://github.com/neoclide/coc-snippets)
 
-**`coc-snippets`用于提供片段扩展功能（类似于`IDEA`中的`sout`、`psvm`、`.var`等等）**
+**`coc-snippets` provides snippet expansion functionality (similar to `sout`, `psvm`, `.var`, etc. in `IDEA`).**
 
 **Install:**
 
 * `:CocInstall coc-snippets`
-* 安装路径：`~/.config/coc/extensions/node_modules/coc-snippets`
+* Install Path: `~/.config/coc/extensions/node_modules/coc-snippets`
 
 **Configuration(`~/.vimrc`):**
 
@@ -1791,13 +1791,13 @@ call plug#begin()
 " .....Other Plugins....
 " ......................
 
-" 省略公共配置
-" 将 触发代码片段扩展 映射到快捷键 [Ctrl] + l
-imap <c-e> <Plug>(coc-snippets-expand)
-" 在 visual 模式下，将 跳转到下一个占位符 映射到快捷键 [Ctrl] + j
-vmap <c-j> <Plug>(coc-snippets-select)
-" 在编辑模式下，将 跳转到下一个/上一个占位符 分别映射到 [Ctrl] + j 和 [Ctrl] + k
-let g:coc_snippet_next = '<c-j>'
+" Omit common configuration  
+" Map snippet expansion trigger to shortcut [Ctrl] + e  
+imap <c-e> <Plug>(coc-snippets-expand)  
+" In visual mode, map jump to next placeholder to shortcut [Ctrl] + j  
+vmap <c-j> <Plug>(coc-snippets-select)  
+" In insert mode, map jump to next/previous placeholder to [Ctrl] + j and [Ctrl] + k respectively  
+let g:coc_snippet_next = '<c-j>'  
 let g:coc_snippet_prev = '<c-k>'
 
 call plug#end()
@@ -1805,18 +1805,18 @@ call plug#end()
 
 **Usage:**
 
-* 在编辑模式下，输入片段后，按`<c-e>`触发片段扩展
-* `:CocList snippets`：查看所有可用的`snippet`
+* In insert mode, after typing a snippet trigger, press `<c-e>` to expand the snippet  
+* `:CocList snippets`: View all available snippets
 
 **FAQ:**
 
-* 最新版本无法跳转到`fori`的类型占位符，转而使用另一个插件`UltiSnips`
+* The latest version cannot jump to the type placeholder in `fori`, so another plugin, `UltiSnips`, is used instead.
 
 #### 3.9.5.1 vim-snippets
 
 Home: [vim-snippets](https://github.com/honza/vim-snippets)
 
-`vim-snippets`插件提供了一系列`snippet`的定义
+The `vim-snippets` plugin provides a collection of snippet definitions.
 
 **Configuration(`~/.vimrc`):**
 
@@ -1832,7 +1832,7 @@ Plug 'honza/vim-snippets'
 call plug#end()
 ```
 
-**使用：与`coc-snippets`自带`snippet`的用法一致**
+**Usage: Same as the built-in snippets in `coc-snippets`**
 
 ### 3.9.6 coc-settings.json
 
@@ -1870,13 +1870,13 @@ call plug#end()
 }
 ```
 
-* `coc.preferences.diagnostic.displayByAle`：是否以`ALE`插件的模式进行显示
-* `diagnostic.virtualText`：是否显式诊断信息
-* `diagnostic.virtualTextPrefix`：诊断信息的前缀
-* `diagnostic.virtualTextCurrentLineOnly`：是否只显示光标所在行的诊断信息
-* `explorer.file.reveal.auto`：使用在文件管理器中高亮当前`buffer`的所对应的文件
-* `suggest.noselect`：`true/false`，表示自动补全时，是否自动选中第一个。默认为`false`，即自动选中第一个，如果再按`tab`则会跳转到第二个。[Ability to tab to first option](https://github.com/neoclide/coc.nvim/issues/1339)
-* `inlayHint.display`：是否默认显示`inlayHint`
+* `coc.preferences.diagnostic.displayByAle`: Whether to display diagnostics in the style of the `ALE` plugin  
+* `diagnostic.virtualText`: Whether to display diagnostic information as virtual text  
+* `diagnostic.virtualTextPrefix`: Prefix for the diagnostic virtual text  
+* `diagnostic.virtualTextCurrentLineOnly`: Whether to show diagnostics only for the current line where the cursor is located  
+* `explorer.file.reveal.auto`: Automatically highlight the file corresponding to the current buffer in the file explorer  
+* `suggest.noselect`: `true`/`false`, indicates whether the first item is automatically selected during autocomplete. Default is `false`, meaning the first item is auto-selected; pressing `tab` again moves to the second item. See [Ability to tab to first option](https://github.com/neoclide/coc.nvim/issues/1339)  
+* `inlayHint.display`: Whether to display inlay hints by default
 
 ## 3.10 vimspector
 
@@ -1916,14 +1916,14 @@ call plug#end()
 
 **Usage:**
 
-* **页面布局**
-    * `Variables and scopes`：左上角。回车用于展开和收起
-    * `Watches`：左中。进入编辑模式，输入表达式按回车可新增`Watch`；删除键可删除`Watch`
-    * `StackTrace`：左下角。按回车可展开线程堆栈
-    * `Console`：标准输出，标准错误
-* **对于每个项目，我们都需要在项目的根目录提供一个`.vimspector.json`，来配置项目相关的`debug`参数**
-    * `configurations.<config_name>.default: true`，是否默认使用该配置。如果有多个配置项的话，不要设置这个
-    * `C-Family`示例：
+* **Layout**  
+    * `Variables and scopes`: Top-left corner. Press Enter to expand or collapse.  
+    * `Watches`: Middle-left. Enter edit mode, type an expression and press Enter to add a watch; use Delete key to remove a watch.  
+    * `StackTrace`: Bottom-left corner. Press Enter to expand thread stack.  
+    * `Console`: Standard output and standard error.  
+* **For each project, a `.vimspector.json` file needs to be provided in the project root directory to configure project-related debug parameters**  
+    * `configurations.<config_name>.default: true`: Whether to use this configuration as default. If there are multiple configurations, do not set this.  
+    * Example for `C-Family`:
         ```json
         {
             "configurations": {
@@ -1965,24 +1965,25 @@ call plug#end()
 
 Home: [coc-java-debug](https://github.com/dansomething/coc-java-debug)
 
-`coc-java-debug`依赖`coc.nvim`、`coc-java`以及`vimspector`
+`coc-java-debug` depends on `coc.nvim`, `coc-java`, and `vimspector`
 
-* 通过`coc.nvim`来安装、卸载插件，其接口通过`CocCommand`对外露出
-* `coc-java-debug`是`vimspector`的`adapter`
+* Plugins are installed/uninstalled via `coc.nvim` with interfaces exposed through `CocCommand`  
+* `coc-java-debug` acts as an adapter for `vimspector`
 
-**安装：进入vim界面后执行`:CocInstall coc-java-debug`即可**
+**Installation: Run `:CocInstall coc-java-debug` inside the vim interface**
 
 **Usage:**
 
-* **`:CocCommand java.debug.vimspector.start`**
-* **对于每个项目，我们都需要在项目的根目录提供一个`.vimspector.json`，来配置项目相关的`debug`参数**
-    * `adapters.java-debug-server.port`：是`java-debug-server`启动时需要占用的端口号，这里填占位符，在启动时会自动为其分配一个可用的端口号
-    * `configurations.<config_name>.configuration.port`：对应`Java`程序的`debug`端口号
-    * `configurations.<config_name>.configuration.projectName`：对应`pom.xml`的项目名称。[Debugging Java with JDB or Vim](https://urfoex.blogspot.com/2020/08/debugging-java-with-jdb-or-vim.html)。如果这个参数对不上的话，那么在`Watches`页面添加`Watch`时，会报如下的错误
-        * 未设置该参数时：`Result: Cannot evaluate because of java.lang.IllegalStateException: Cannot evaluate, please specify projectName in launch.json`
-        * 填写错误的项目名称时：`Result: Cannot evaluate because of java.lang.IllegalStateException: Project <wrong name> cannot be found`
-        * [Visual Studio Code projectName](https://stackoverflow.com/questions/48490671/visual-studio-code-projectname)
-        * [Debugger for Java](https://marketplace.visualstudio.com/items?itemName=vscjava.vscode-java-debug)
+* **`:CocCommand java.debug.vimspector.start`**  
+* **For each project, a `.vimspector.json` file must be provided in the project root directory to configure project-specific debug parameters:**  
+    * `adapters.java-debug-server.port`: The port number required by the `java-debug-server` at startup. This is a placeholder; a free port will be assigned automatically at runtime.  
+    * `configurations.<config_name>.configuration.port`: The debug port number for the Java program.  
+    * `configurations.<config_name>.configuration.projectName`: The project name corresponding to `pom.xml`. See [Debugging Java with JDB or Vim](https://urfoex.blogspot.com/2020/08/debugging-java-with-jdb-or-vim.html). If this parameter does not match, adding a `Watch` in the `Watches` page will result in errors:  
+        * When not set: `Result: Cannot evaluate because of java.lang.IllegalStateException: Cannot evaluate, please specify projectName in launch.json`  
+        * When set incorrectly: `Result: Cannot evaluate because of java.lang.IllegalStateException: Project <wrong name> cannot be found`  
+        * Related links:  
+            * [Visual Studio Code projectName](https://stackoverflow.com/questions/48490671/visual-studio-code-projectname)  
+            * [Debugger for Java](https://marketplace.visualstudio.com/items?itemName=vscjava.vscode-java-debug)
     ```json
     {
         "adapters": {
@@ -2021,9 +2022,9 @@ Home: [Copilot.vim](https://github.com/github/copilot.vim)
 
 [Getting started with GitHub Copilot](https://docs.github.com/en/copilot/getting-started-with-github-copilot?tool=neovim)
 
-`OpenAI`加持的自动补全，可以根据函数名补全实现
+`OpenAI`-powered auto-completion can complete implementations based on function names.
 
-**版本要求：**
+**Version requirements:**
 
 * `Neovim`
 * `Vim >= 9.0.0185`
@@ -2092,9 +2093,9 @@ call plug#end()
 
 **Usage:**
 
-* **`ia/aa`：参数对象。可以用`via/vaa`/`dia/daa`/`cia/caa`来选中/删除/改写当前参数**
-* **`ii/ai`：缩进对象。可以用`vii/vai`/`dii/dai`/`cii/cai`来选中/删除/改写同一缩进层次的内容**
-* **`if/af`：函数对象。可以用`vif/vaf`/`dif/daf`/`cif/caf`来选中/删除/改写当前函数的内容**
+* **`ia/aa`**: Parameter object. You can use `via/vaa`/`dia/daa`/`cia/caa` to select/delete/change the current parameter.  
+* **`ii/ai`**: Indentation object. You can use `vii/vai`/`dii/dai`/`cii/cai` to select/delete/change content at the same indentation level.  
+* **`if/af`**: Function object. You can use `vif/vaf`/`dif/daf`/`cif/caf` to select/delete/change the current function's content.
 
 ## 3.13 LeaderF
 
@@ -2137,22 +2138,22 @@ call plug#end()
 
 **Usage:**
 
-1. `:LeaderfFunction!`：弹出函数列表
-1. `:LeaderfMru`：查找最近访问的文件，通过上面的配置映射到快捷键`[Ctrl] + n`
-1. 通过上面的配置，将文件模糊搜索映射到快捷键`[Ctrl] + p`
-* 搜索模式，输入即可进行模糊搜索
-    * `tab`：切换到普通模式，普通模式下，可以通过`j/k`上下移动
-    * `<c-r>`：在`fuzzy search mode`以及`regex mode`之间进行切换
-    * `<c-f>`：在`full path search mode`以及`name only search mode`之间进行切换
-    * `<c-u>`：清空搜索内容
-    * `<c-j>/<c-k>`：上下移动
-    * `<c-a>`：选中所有
-    * `<c-l>`：清除选中
-    * `<c-s>`：选中当前文件
-    * `<c-t>`：在新的`tab`中打开选中的文件
-    * `<c-p>`：预览
-1. 不起作用，可能是`python`的问题
-    * `:checkhealth`
+* `:LeaderfFunction!`: Pops up the function list  
+* `:LeaderfMru`: Searches recently accessed files; mapped to shortcut `[Ctrl] + n` via the above configuration  
+* File fuzzy search is mapped to shortcut `[Ctrl] + p` as configured above  
+* Search mode: start typing to perform fuzzy search  
+    * `tab`: Switch to normal mode; in normal mode, use `j/k` to move up/down  
+    * `<c-r>`: Toggle between fuzzy search mode and regex mode  
+    * `<c-f>`: Toggle between full path search mode and name-only search mode  
+    * `<c-u>`: Clear search input  
+    * `<c-j>/<c-k>`: Move cursor down/up  
+    * `<c-a>`: Select all  
+    * `<c-l>`: Clear selection  
+    * `<c-s>`: Select current file  
+    * `<c-t>`: Open selected file in a new tab  
+    * `<c-p>`: Preview selected file  
+* If it doesn’t work, it might be a Python-related issue  
+    * Run `:checkhealth`  
 
 ## 3.14 fzf.vim
 
@@ -2201,22 +2202,22 @@ command! -bang -nargs=* Rg call fzf#vim#grep("rg --column --line-number --no-hea
 call plug#end()
 ```
 
-* 安装会额外执行`~/.vim/plugged/fzf/install`这个脚本，来下载`fzf`的二进制，如果长时间下载不下来的话，可以改成代理地址后（在脚本中搜索`github`关键词，加上`https://mirror.ghproxy.com/`前缀），再手动执行脚本进行下载安装
+* Installation additionally runs the script `~/.vim/plugged/fzf/install` to download the `fzf` binary. If the download is very slow or stuck, you can modify the script to use a proxy address (search for the keyword `github` in the script and add the prefix `https://mirror.ghproxy.com/`), then manually run the script to download and install.
 
-**用法（搜索相关的语法可以参考[junegunn/fzf-search-syntax](https://github.com/junegunn/fzf#search-syntax)）：**
+**Usage (search syntax reference: [junegunn/fzf-search-syntax](https://github.com/junegunn/fzf#search-syntax)):**
 
-1. `:Ag`：进行全局搜索（依赖命令行工具`ag`，安装方式参考该插件[github主页](https://github.com/ggreer/the_silver_searcher)）
-1. `:Rg`：进行全局搜索（依赖命令行工具`rg`，安装方式参考该插件[github主页](https://github.com/BurntSushi/ripgrep)）
-* `[Ctrl] + j/k`/`[Ctrl] + n/p`：以行为单位上下移动
-* `PageUp/PageDown`：以页为单位上下移动
-* **匹配规则**
-    * **`xxx`：模糊匹配（可能被分词）**
-    * **`'xxx`：非模糊匹配（不会被分词）**
-    * **`^xxx`：前缀匹配**
-    * **`xxx$`：后缀匹配**
-    * **`!xxx`：反向匹配**
-    * **上述规则均可自由组合**
-    * **如何精确匹配一个包含空格的字符串：`'Hello\ world`。由于常规的空格被用作分词符，因此空格前要用`\`进行转义**
+1. `:Ag`: Perform a global search (depends on the command-line tool `ag`. Installation instructions on the plugin’s [GitHub page](https://github.com/ggreer/the_silver_searcher))  
+2. `:Rg`: Perform a global search (depends on the command-line tool `rg`. Installation instructions on the plugin’s [GitHub page](https://github.com/BurntSushi/ripgrep))  
+* `[Ctrl] + j/k` / `[Ctrl] + n/p`: Move up/down by line  
+* `PageUp/PageDown`: Move up/down by page  
+* **Matching rules:**  
+    * **`xxx`**: Fuzzy match (may be tokenized)  
+    * **`'xxx`**: Non-fuzzy match (no tokenization)  
+    * **`^xxx`**: Prefix match  
+    * **`xxx$`**: Suffix match  
+    * **`!xxx`**: Inverse match  
+    * **The above rules can be freely combined**  
+    * **To precisely match a string containing spaces: `'Hello\ world`**. Since spaces are used as token separators, the space must be escaped with a backslash (`\`).
 
 ## 3.15 Git Plugins
 
@@ -2240,7 +2241,7 @@ call plug#end()
 
 **Usage:**
 
-* `:Git`：作为`git`的替代，后跟`git`命令行工具的正常参数即可
+* `:Git`: Acts as a replacement for the `git` command; you can follow it with normal `git` CLI arguments.
 
 ### 3.15.2 diffview.nvim
 
@@ -2296,18 +2297,18 @@ call plug#end()
 
 **Usage:**
 
-* **`\cc`：添加注释，对每一行都会添加注释**
-* **`\cm`：对被选区域用一对注释符进行注释**
-* **`\cs`：添加性感的注释**
-* **`\ca`：更换注释的方式**
-* **`\cu`：取消注释**
-* **`\c<space>`：如果被选区域有部分被注释，则对被选区域执行取消注释操作，其它情况执行反转注释操作**
+* **`\cc`**: Add comment; adds comment to each line  
+* **`\cm`**: Comment the selected region with a pair of comment symbols  
+* **`\cs`**: Add a "sexy" comment  
+* **`\ca`**: Change the comment style  
+* **`\cu`**: Uncomment  
+* **`\c<space>`**: If part of the selected region is commented, uncomment the selected region; otherwise, toggle comment
 
 ## 3.17 vim-codefmt
 
 Home: [vim-codefmt](https://github.com/google/vim-codefmt)
 
-**支持各种格式化工具：**
+**Supports various formatting tools:**
 
 * `C-Family`：`clang-format`
 * `CSS`/`Sass`/`SCSS`/`Less`：`js-beautify`
@@ -2359,35 +2360,35 @@ Glaive codefmt google_java_executable="java -jar /usr/local/share/google-java-fo
 
 **Usage:**
 
-* `:FormatCode`：格式化
-* `:Glaive codefmt`：查看配置（也可以通过`:help codefmt`查看所有配置项）
-    * `clang_format_executable`: `clang_format`可执行文件路径，可以通过`Glaive codefmt clang_format_executable="clang-format-10"`进行修改
+* `:FormatCode`: Format code  
+* `:Glaive codefmt`: View configuration (you can also see all configuration options via `:help codefmt`)  
+    * `clang_format_executable`: Path to the `clang_format` executable; can be modified with `:Glaive codefmt clang_format_executable="clang-format-10"`
 
-**安装`Python`的格式化工具`autopep8`**
+**Install the Python formatter `autopep8`**
 
 ```sh
 pip install --upgrade autopep8
 
-# 创建软连接（下面是我的安装路径，改成你自己的就行）
+# Create a symbolic link (below is my installation path, change it to your own)
 sudo chmod a+x /home/home/liuyehcf/.local/lib/python3.6/site-packages/autopep8.py
 sudo ln /home/home/liuyehcf/.local/lib/python3.6/site-packages/autopep8.py /usr/local/bin/autopep8
 ```
 
-**安装`Perl`的格式化工具`perltidy`**
+**Install the Perl formatter `perltidy`**
 
-* `cpan install Perl::Tidy`
-* `brew install perltidy`
-* `perltidy`相关的`pull request`尚未合入，需要自行合入，[Add perl formatting support using Perltidy](https://github.com/google/vim-codefmt/pull/227)，步骤如下：
+* `cpan install Perl::Tidy`  
+* `brew install perltidy`  
+* The `perltidy` related pull request has not yet been merged and needs to be manually applied: [Add perl formatting support using Perltidy](https://github.com/google/vim-codefmt/pull/227). Steps are as follows:
     ```sh
     git fetch origin pull/227/head:pull_request_227
     git rebase pull_request_227
     ```
 
-    * 或者，如果不想这么做，可以用如下方式暂时代替：
+    * Alternatively, if you don't want to do that, you can temporarily replace it using the following method:
         ```
-        " 配置 perl 的格式化，需要用 gg=G 进行格式化
-        " https://superuser.com/questions/805695/autoformat-for-perl-in-vim
-        " 通过 cpan Perl::Tidy 安装 perltidy
+        " Configure Perl formatting; use `gg=G` to format  
+        " https://superuser.com/questions/805695/autoformat-for-perl-in-vim  
+        " Install perltidy via `cpan Perl::Tidy`
         autocmd FileType perl setlocal equalprg=perltidy\ -st\ -ce
         if has('nvim')
             autocmd FileType perl nnoremap <silent><buffer> <c-l> gg=G<c-o>
@@ -2395,7 +2396,8 @@ sudo ln /home/home/liuyehcf/.local/lib/python3.6/site-packages/autopep8.py /usr/
             autocmd FileType perl nnoremap <silent><buffer> <c-l> gg=G<c-o><c-o>
         endif
         ```
-**安装`json`的格式化工具`js-beauty`**
+
+**Install the JSON formatter `js-beauty`**
 
 * `npm -g install js-beautify`
 
@@ -2419,38 +2421,38 @@ call plug#end()
 
 **Usage:**
 
-* 完整用法参考`:help surround`
-* `cs`：`cs, change surroundings`，用于替换当前文本的环绕符号
-    * `cs([`
-    * `cs[{`
-    * `cs{<q>`
-    * `cs{>`
-* `ds`：`ds, delete surroundings`，用于删除当前文本的环绕符号
-    * `ds{`
-    * `ds<`
-    * `ds<q>`
-* `ys`：`you surround`，用于给指定文本加上环绕符号。文本指定通常需要配合文本对象一起使用
-    * `ysiw[`：`iw`是文本对象
-    * `ysa"fprint`：其中`a"`是文本对象，`f`表示用函数调用的方式环绕起来，`print`是函数名。形式为`print(<text>)`
-    * `ysa"Fprint`：类似`ysa"fprint`，`F`表示会在参数列表前后多加额外的空格。形式为`print( <text> )`
-    * `ysa"<c-f>print`：类似`ysa"fprint`，`<c-f>`表示环绕符号加到最外侧。形式为`(print <text>)`
-* `yss`：给当前行加上环绕符号（不包含`leading whitespace`和`trailing whitespace`）
-    * `yss(`
-    * `yssb`
-    * `yss{`
-    * `yssB`
-* `yS`：类似`ys`，但会在选中文本的前一行和后一行加上环绕符号
-    * `ySiw[`：`iw`是文本对象
-* `ySS`：类似`yes`，但会在选中文本的前一行和后一行加上环绕符号
-    * `ySS(`
-    * `ySSb`
-    * `ySS{`
-    * `ySSB`
-* `[visual]S`：用于给`visual mode`选中的文本加上环绕符号
-    * `vllllS'`：其中，`v`表示进入`visual`模式，`llll`表示向右移动4个字符
-    * `vllllSfprint`：其中，`v`表示进入`visual`模式，`llll`表示向右移动4个字符，`f`表示用函数调用的方式环绕起来，`print`是函数名。形式为`print(<text>)`
-    * `vllllSFprint`：类似`vllllSfprint`，`F`表示会在参数列表前后多加额外的空格。形式为`print( <text> )`
-    * `vllllS<c-f>print`：类似`vllllSfprint`，`<c-f>`表示环绕符号加到最外侧。形式为`(print <text>)`
+* Full usage reference: `:help surround`  
+* `cs`: `cs, change surroundings` — replace the surrounding characters of the current text  
+    * `cs([`  
+    * `cs[{`  
+    * `cs{<q>`  
+    * `cs{>`  
+* `ds`: `ds, delete surroundings` — delete the surrounding characters of the current text  
+    * `ds{`  
+    * `ds<`  
+    * `ds<q>`  
+* `ys`: `you surround` — add surrounding characters to specified text. Usually used with text objects  
+    * `ysiw[` — `iw` is a text object  
+    * `ysa"fprint` — `a"` is the text object, `f` means surround by function call, `print` is the function name. Format: `print(<text>)`  
+    * `ysa"Fprint` — like above, `F` adds extra spaces inside parentheses: `print( <text> )`  
+    * `ysa"<c-f>print` — like above, `<c-f>` adds the surrounding on the outermost side: `(print <text>)`  
+* `yss`: surround the current line (excluding leading and trailing whitespace)  
+    * `yss(`  
+    * `yssb`  
+    * `yss{`  
+    * `yssB`  
+* `yS`: like `ys`, but adds surrounding characters on the line before and after the selection  
+    * `ySiw[` — `iw` is the text object  
+* `ySS`: like `yss`, but adds surrounding characters on the line before and after the selection  
+    * `ySS(`  
+    * `ySSb`  
+    * `ySS{`  
+    * `ySSB`  
+* `[visual]S`: add surrounding characters to the visually selected text  
+    * `vllllS'` — `v` enters visual mode, `llll` moves 4 chars right  
+    * `vllllSfprint` — like above, `f` means surround by function call, `print` is the function name: `print(<text>)`  
+    * `vllllSFprint` — like above, `F` adds extra spaces: `print( <text> )`  
+    * `vllllS<c-f>print` — like above, `<c-f>` adds the surrounding on the outermost side: `(print <text>)`
 
 ## 3.19 UltiSnips
 
