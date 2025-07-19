@@ -284,6 +284,23 @@ Debug tool like `gdb`
 
 [commands](https://arthas.aliyun.com/doc/commands.html)
 
+**Usage:**
+
+1. `help`:
+    * `help`
+    * `help <command>`
+1. `trace`:
+    * `trace org.apache.paimon.catalog.Catalog getTable`
+1. `monitor`:
+    * `monitor -c 5 org.apache.paimon.catalog.Catalog getTable`
+1. `sc`:
+    * `sc org.apache.commons.lang.StringUtils`
+    * `sc -E org\\.apache\\.commons\\.lang\\.StringUtils`
+    * `sc -d -f org.apache.commons.lang.StringUtils`
+1. `classloader`:
+    * `classloader -t`
+    * `classloader -l`
+
 ## 3.2 VisualVM
 
 [All-in-One Java Troubleshooting Tool](https://visualvm.github.io/)
@@ -1033,6 +1050,14 @@ function search() {
     done
 }
 ```
+
+## 7.8 SuppressWarnings types
+
+* `SuppressWarnings("all")`
+* `SuppressWarnings("unchecked")`
+* `SuppressWarnings("rawtypes")`
+* `SuppressWarnings("fallthrough")`
+* `SuppressWarnings("ResultOfMethodCallIgnored")`
 
 # 8 参考
 

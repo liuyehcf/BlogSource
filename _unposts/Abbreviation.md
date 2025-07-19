@@ -32,8 +32,6 @@
 
 # 3 System-Architecture
 
-# 4 缩写表
-
 | Abbreviation | Explanation |
 |:--|:--|
 | ISA | Instruction-Set Architecture |
@@ -89,12 +87,23 @@
 | UMA | Uniform Memory Access |
 | NUMA | Non-Uniform Memory Access |
 
+# 4 Big Data
+
+| Abbreviation | Explanation |
+|:--|:--|
+| CDC | Change Data Capture |
+| ODS | Operational Data Store |
+| DWD | Data Warehouse Detail |
+| DWM | Data Warehouse Middle |
+| DWS | Data Warehouse Summary |
+| DIM | Dimension Table |
+| ADS | Application Data Service |
+
 # 5 Assorted
 
 | Abbreviation | Explanation |
 |:--|:--|
 | ARR | Annual Recurring Revenue |
-| CDC | Change Data Capture |
 | CNN | Convolutional Neural Network |
 | DAU | Daily Active Users |
 | DFA | Deterministic Finite Automation |

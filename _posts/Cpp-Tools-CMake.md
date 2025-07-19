@@ -472,9 +472,54 @@ In addition to storing their type, targets also keep track of general properties
 * `CMAKE_INSTALL_PREFIX`：安装路径前缀
 * `CMAKE_PREFIX_PATH`: Semicolon-separated list of directories specifying installation prefixes to be searched by the `find_package()`, `find_program()`, `find_library()`, `find_file()`, and `find_path()` commands. Each command will add appropriate subdirectories (like `bin`, `lib`, or `include`) as specified in its own documentation.
 
-## 3.2 BUILD_SHARED_LIBS
+### 3.1.1 BUILD_SHARED_LIBS
 
 该参数用于控制`add_library`指令，在缺省类型参数的情况下，生成静态还是动态库
+
+## 3.2 Cached Variables
+
+Sets the given cache `<variable>` (cache entry). Since cache entries are meant to provide user-settable values this does not overwrite existing cache entries by default. Use the `FORCE` option to overwrite existing entries.
+
+```cmake
+set(<variable> <value>... CACHE <type> <docstring> [FORCE])
+```
+
+```sh
+cat > CMakeLists.txt << 'EOF'
+cmake_minimum_required(VERSION 3.20)
+
+set(FOO "foo1" CACHE STRING "foo")
+message("FOO='${FOO}'")
+
+# This assignment will never work
+set(FOO "foo2" CACHE STRING "foo")
+message("FOO='${FOO}'")
+
+set(BAR "bar1" CACHE STRING "bar" FORCE)
+message("BAR='${BAR}'")
+
+# This assignment will always work
+set(BAR "bar2" CACHE STRING "bar" FORCE)
+message("BAR='${BAR}'")
+EOF
+
+echo -e "\n\nFirst run:"
+cmake -B build
+cmake -L -N build
+
+echo -e "\n\nSecond run:"
+cmake -DFOO="exist_foo" -DBAR="exist_bar" -B build
+cmake -L -N build
+
+echo -e "\n\nThird run:"
+cmake -B build
+cmake -L -N build
+```
+
+**Tips:**
+
+* `cmake -L -N build`: view all non-advanced cached variables.
+* `cmake -LA -N build`: view all cached variables, including advanced cached.
 
 # 4 property
 
