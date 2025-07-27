@@ -1352,6 +1352,7 @@ EOF"
 
 **Key points:**
 
+* Do not use the `_HOST` placeholder in Kerberos principal configuration, because the configuration will be shard by multiply containers, like hadoop, hive, etc.
 * Directory `/opt/hadoop/data` must can be accessed by the user started datanode.
 * Credential file `/etc/security/keytabs/hadoop.service.keytab` must can be accessed by the user started datanode.
 * If `ignore.secure.ports.for.testing` is set to `false`, then the http port and tcp port must be smaller than 1023, otherwise it cannot pass the check.
@@ -1434,7 +1435,7 @@ docker exec ${HADOOP_CONTAINER_NAME} bash -c "cat > /opt/hadoop/etc/hadoop/hdfs-
 
     <property>
         <name>dfs.namenode.kerberos.principal</name>
-        <value>nn/_HOST@${KERBEROS_LOGIC_DOMAIN_UPPER}</value>
+        <value>nn/${HADOOP_HOSTNAME}@${KERBEROS_LOGIC_DOMAIN_UPPER}</value>
     </property>
     <property>
         <name>dfs.namenode.keytab.file</name>
@@ -1442,7 +1443,7 @@ docker exec ${HADOOP_CONTAINER_NAME} bash -c "cat > /opt/hadoop/etc/hadoop/hdfs-
     </property>
     <property>
         <name>dfs.datanode.kerberos.principal</name>
-        <value>dn/_HOST@${KERBEROS_LOGIC_DOMAIN_UPPER}</value>
+        <value>dn/${HADOOP_HOSTNAME}@${KERBEROS_LOGIC_DOMAIN_UPPER}</value>
     </property>
     <property>
         <name>dfs.datanode.keytab.file</name>
@@ -1497,7 +1498,7 @@ docker exec ${HADOOP_CONTAINER_NAME} bash -c "cat > /opt/hadoop/etc/hadoop/yarn-
 
     <property>
         <name>yarn.resourcemanager.principal</name>
-        <value>rm/_HOST@${KERBEROS_LOGIC_DOMAIN_UPPER}</value>
+        <value>rm/${HADOOP_HOSTNAME}@${KERBEROS_LOGIC_DOMAIN_UPPER}</value>
     </property>
     <property>
         <name>yarn.resourcemanager.keytab</name>
@@ -1505,7 +1506,7 @@ docker exec ${HADOOP_CONTAINER_NAME} bash -c "cat > /opt/hadoop/etc/hadoop/yarn-
     </property>
     <property>
         <name>yarn.nodemanager.principal</name>
-        <value>nm/_HOST@${KERBEROS_LOGIC_DOMAIN_UPPER}</value>
+        <value>nm/${HADOOP_HOSTNAME}@${KERBEROS_LOGIC_DOMAIN_UPPER}</value>
     </property>
     <property>
         <name>yarn.nodemanager.keytab</name>
