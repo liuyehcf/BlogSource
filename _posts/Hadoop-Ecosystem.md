@@ -1356,6 +1356,7 @@ EOF"
 * Directory `/opt/hadoop/data` must can be accessed by the user started datanode.
 * Credential file `/etc/security/keytabs/hadoop.service.keytab` must can be accessed by the user started datanode.
 * If `ignore.secure.ports.for.testing` is set to `false`, then the http port and tcp port must be smaller than 1023, otherwise it cannot pass the check.
+* Remaining problem: the hadoop container will be very slow if historyserver is started with configuration `mapred-site.xml`.
 
 ```sh
 SHARED_NS=hadoop-ns
@@ -1552,14 +1553,11 @@ docker exec ${HADOOP_CONTAINER_NAME} bash -c 'sudo chmod 644 /etc/security/keyta
 
 # Format
 docker exec ${HADOOP_CONTAINER_NAME} bash -c 'hdfs namenode -format'
-docker exec ${HADOOP_CONTAINER_NAME} bash -c 'sudo mkdir -p /opt/hadoop/data'
+docker exec ${HADOOP_CONTAINER_NAME} bash -c 'mkdir -p /opt/hadoop/data'
 
 # Retart all daemons
 docker exec ${HADOOP_CONTAINER_NAME} bash -c 'hdfs --daemon stop namenode; hdfs --daemon start namenode'
-docker exec ${HADOOP_CONTAINER_NAME} bash -c 'HDFS_DATANODE_SECURE_USER=root; \
-        JAVA_HOME=/usr/lib/jvm/jre; \
-        sudo -E /opt/hadoop/bin/hdfs --daemon stop datanode; \
-        sudo -E /opt/hadoop/bin/hdfs --daemon start datanode'
+docker exec ${HADOOP_CONTAINER_NAME} bash -c 'hdfs --daemon stop datanode; hdfs --daemon start datanode'
 docker exec ${HADOOP_CONTAINER_NAME} bash -c 'yarn --daemon stop resourcemanager; yarn --daemon start resourcemanager'
 docker exec ${HADOOP_CONTAINER_NAME} bash -c 'yarn --daemon stop nodemanager; yarn --daemon start nodemanager'
 
