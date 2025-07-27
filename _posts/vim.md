@@ -3788,6 +3788,18 @@ let g:gutentags_dont_load = 1
 
 * `:intro`
 
+## 7.8 Display invisiable ASCII characters
+
+```vim
+:set listchars=tab:>-,trail:·,space:␣,extends:»,precedes:«,eol:¶
+
+" Enable
+:set list
+
+" Disable
+:set nolist
+```
+
 # 8 Reference
 
 * **[《Vim 中文速查表》](https://github.com/skywind3000/awesome-cheatsheets/blob/master/editors/vim.txt)**

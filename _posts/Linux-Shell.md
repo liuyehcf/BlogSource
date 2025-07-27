@@ -682,37 +682,94 @@ fi
 #### 3.1.8.1 Method 1: Use `=~`
 
 ```sh
-str1="abcd"
-str2="bc"
-if [[ "${str1}" =~ "${str2}" ]]; then
-    echo "contains"
-else
-    echo "not contains"
-fi
+function contains() {
+    local str1=$1
+    local str2=$2
+    if [[ "${str1}" =~ "${str2}" ]]; then
+        echo "'${str1}' contains '${str2}'"
+    else
+        echo "'${str1}' not contains '${str2}'"
+    fi
+}
+
+function contains_case_insensitive() {
+    local str1=$1
+    local str2=$2
+    if [[ "${str1,,}" =~ "${str2,,}" ]]; then
+        echo "'${str1}' contains(case insensitive) '${str2}'"
+    else
+        echo "'${str1}' not contains(case insensitive) '${str2}'"
+    fi
+}
+
+contains "abcd" "bc"
+contains "abcd" "Bc"
+
+contains_case_insensitive "abcd" "bc"
+contains_case_insensitive "abcd" "Bc"
+contains_case_insensitive "abcd" "ca"
 ```
 
 #### 3.1.8.2 Method 2: Use wildcard `*`
 
 ```sh
-str1="abcd"
-str2="bc"
-if [[ "${str1}" = *"${str2}"* ]]; then
-    echo "contains"
-else
-    echo "not contains"
-fi
+function contains() {
+    local str1=$1
+    local str2=$2
+    if [[ "${str1}" = *"${str2}"* ]]; then
+        echo "'${str1}' contains '${str2}'"
+    else
+        echo "'${str1}' not contains '${str2}'"
+    fi
+}
+
+function contains_case_insensitive() {
+    local str1=$1
+    local str2=$2
+    if [[ "${str1,,}" = *"${str2,,}"* ]]; then
+        echo "'${str1}' contains(case insensitive) '${str2}'"
+    else
+        echo "'${str1}' not contains(case insensitive) '${str2}'"
+    fi
+}
+
+contains "abcd" "bc"
+contains "abcd" "Bc"
+
+contains_case_insensitive "abcd" "bc"
+contains_case_insensitive "abcd" "Bc"
+contains_case_insensitive "abcd" "ca"
 ```
 
 #### 3.1.8.3 Method 3: Use `grep`
 
 ```sh
-str1="abcd"
-str2="bc"
-if grep "${str2}" <<< "${str1}" > /dev/null 2>&1; then
-    echo "contains"
-else
-    echo "not contains"
-fi
+function contains() {
+    local str1=$1
+    local str2=$2
+    if grep "${str2}" <<< "${str1}" > /dev/null 2>&1; then
+        echo "'${str1}' contains '${str2}'"
+    else
+        echo "'${str1}' not contains '${str2}'"
+    fi
+}
+
+function contains_case_insensitive() {
+    local str1=$1
+    local str2=$2
+    if grep -i "${str2}" <<< "${str1}" > /dev/null 2>&1; then
+        echo "'${str1}' contains(case insensitive) '${str2}'"
+    else
+        echo "'${str1}' not contains(case insensitive) '${str2}'"
+    fi
+}
+
+contains "abcd" "bc"
+contains "abcd" "Bc"
+
+contains_case_insensitive "abcd" "bc"
+contains_case_insensitive "abcd" "Bc"
+contains_case_insensitive "abcd" "ca"
 ```
 
 ### 3.1.9 trim
@@ -1202,6 +1259,62 @@ for key in ${!map[@]}
 do
     echo "value=${map[${key}]}"
 done
+```
+
+### 3.4.1 Check Key Exists
+
+**Method 1: For bash 4.2**
+
+* The following script cannot work in bash 5.0.3, but work well in bash 5.1.0.
+* [[Solved] bash 5.1.0(1)-release associative array](https://bbs.archlinux.org/viewtopic.php?id=261608&utm_source=chatgpt.com)
+
+```sh
+function map_key_exists() {
+    local -n local_map=$1
+    local key=$2
+    # DO NOT wrap ${key} with "
+    if [[ -v local_map[${key}] ]]; then
+        echo "Key '${key}' exists, value='${local_map[${key}]}'"
+    else
+        echo "Key '${key}' not exists"
+    fi
+}
+
+declare -A map=()
+
+key1="key1"
+key2="a='content',b=1"
+map[${key1}]="value1"
+map[${key2}]="c='content',d=1"
+
+map_key_exists map ${key1}
+map_key_exists map ${key2}
+map_key_exists map "not exists"
+```
+
+**Method 2: For old bash**
+
+```sh
+function map_key_exists() {
+    local -n local_map=$1
+    local key=$2
+    if [[ ${local_map[$key]+exists} ]]; then
+        echo "Key '${key}' exists, value='${local_map[${key}]}'"
+    else
+        echo "Key '${key}' not exists"
+    fi
+}
+
+declare -A map=()
+
+key1="key1"
+key2="a='content',b=1"
+map[${key1}]="value1"
+map[${key2}]="c='content',d=1"
+
+map_key_exists map ${key1}
+map_key_exists map ${key2}
+map_key_exists map "not exists"
 ```
 
 ## 3.5 Differences between `[@]` and `[*]` for array and map

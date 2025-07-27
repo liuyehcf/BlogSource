@@ -184,451 +184,7 @@ docker exec ${HADOOP_CONTAINER_NAME} bash -c 'hdfs dfsadmin -report'
 docker exec ${HADOOP_CONTAINER_NAME} bash -c 'hadoop jar /opt/hadoop/share/hadoop/mapreduce/hadoop-mapreduce-examples-*.jar pi 10 100'
 ```
 
-## 2.2 Deployment via Docker and Kerberos
-
-### 2.2.1 Kerberos Component Relationship
-
-```plantuml
-' ============================================
-' Kerberos component diagram (improved version)
-' ============================================
-
-skinparam component {
-  BackgroundColor #F6F6F6
-  BorderColor #333333
-  FontSize 12
-  FontName "Segoe UI"
-}
-skinparam arrow {
-  Color #555555
-  Thickness 1.2
-}
-
-title Kerberos Component Relationship Diagram
-
-' ---- Define components ----
-package "Kerberos KDC" {
-  [Authentication Server\n(AS)] as AS
-  [Ticket‑Granting Server\n(TGS)] as TGS
-  [Kerberos Database] as DB
-}
-
-[Kerberos Admin Server\n(kadmin / kpasswd)] as KADMIN
-[Client\n(kinit / libkrb5)] as CLIENT
-[Application Server\n(Service)] as SERVICE
-
-' ---- Component interactions ----
-DB --> AS : Lookup user secret keys
-DB --> TGS : Lookup service secret keys
-KADMIN --> DB : Register user/service principals\nReset passwords, etc.
-
-CLIENT -up-> AS : ① AS-REQ (username)
-AS -down-> CLIENT : ② AS-REP (TGT encrypted with KDC key\nSession key encrypted with user key)
-
-CLIENT -up-> TGS : ③ TGS-REQ (TGT + service principal\n+ authenticator)
-TGS -down-> CLIENT : ④ TGS-REP (Service Ticket\nencrypted with session key)
-
-CLIENT -up-> SERVICE : ⑤ AP-REQ (Service Ticket\n+ timestamp authenticator)
-SERVICE -down-> CLIENT : ⑥ AP-REP (optional\nmutual authentication)
-
-' ---- Note to clarify service key usage ----
-note right of SERVICE
-  Uses key registered in DB
-  (no direct DB access)
-end note
-
-legend right
-<color:#0000FF>**Kerberos Protocol Flow**</color>
-①-⑥ Standard authentication sequence
-* TGT = Ticket-Granting Ticket (KDC encrypted)
-* Service Ticket = Encrypted with service key
-* Authenticator contains timestamp
-* Session key shared between client and service
-endlegend
-```
-
-| Step | Initiator | Receiver | Description|
-|:--|:--|:--|:--|
-| ① | CLIENT | AS | Requests initial ticket (TGT) |
-| ② | AS | CLIENT | Returns encrypted TGT and session key |
-| ③ | CLIENT | TGS| Requests service ticket using TGT |
-| ④ | TGS| CLIENT | Returns encrypted service ticket and session key |
-| ⑤ | CLIENT | SERVICE| Uses service ticket to request access |
-| ⑥ | SERVICE| CLIENT | Optional mutual authentication response |
-
-### 2.2.2 Kerberos Basics
-
-**Concepts:**
-
-* Key Distribution Center, KDC
-    * The central server responsible for managing authentication.
-    * Comprises two sub-components:
-        * Authentication Server (AS): Authenticates the client and issues the Ticket Granting Ticket (TGT).
-        * Ticket Granting Server (TGS): Issues service-specific tickets upon request.
-* Principal: A unique identity (user, service, or host) in the Kerberos system, e.g., `user@REALM` or `service/hostname@REALM`.
-* Realm: A logical network served by a single KDC, identified by an uppercase string, e.g., `EXAMPLE.COM`.
-* Keytab: A file storing pre-shared credentials for a user or service, used for automated authentication.
-* Ticket: A temporary set of credentials that allows a principal to authenticate to services.
-    * Ticket Granting Ticket (TGT): Issued by the AS, used to request service tickets.
-    * Service Ticket: Allows access to a specific service.
-
-**Kerberos Commands:**
-
-* `kinit <principal>[@<kerberos_realm>]`: Login with password.
-    * `kinit -c <cache_path> <principal>[@<kerberos_realm>]`: Login with password and specific cache path.
-* `kinit -kt <keytabpath> <principal>[@<kerberos_realm>]`: Login with keytab.
-    * `kinit -kt <keytabpath> -c <cache_path> <principal>[@<kerberos_realm>]`: Login with keytab and specific cache path.
-* `klist`: Display credentials cache.
-* `klist -c <cache_path>`: Display specifies credentials cache.
-* `klist -e -d -k -t -K <keytabpath>`: Display keytab information.
-* `kdestroy`: Destroy credentials cache.
-* `kdestroy -c <cache_path>`: Destroy specifies credentials cache.
-* Environments:
-    * `export KRB5_TRACE=/dev/stdout`: For debug.
-    * `export KRB5_CONFIG=<path/to/krb5.conf>`: Specify the config file, parse logic domain to real domain.
-    * `export KRB5CCNAME=FILE:/tmp/krb5cc_testuser`: Use local file as cache.
-    * `export KRB5CCNAME=MEMORY:`: Use meory as cache.
-
-**`kadmin.local` Commands:**
-
-* `?`: help doc.
-
-**Tips:**
-
-* Make sure target user has permission to read related files, including config, TGT, keyTab etc.
-
-### 2.2.3 Kerberos Container
-
-Prepare ubuntu image with kerberos dependencies
-
-```sh
-mkdir -p /tmp/ubuntu-with-kerberos
-cat > /tmp/ubuntu-with-kerberos/Dockerfile << 'EOF'
-FROM ubuntu:xenial
-
-RUN apt update && \
-    DEBIAN_FRONTEND=noninteractive apt install -y ntp python-dev python-pip python-wheel python-setuptools python-pkg-resources krb5-admin-server krb5-kdc && \
-    apt install -y vim iputils-ping iproute2
-EOF
-
-docker build -t ubuntu:xenial_with_kerberos /tmp/ubuntu-with-kerberos
-```
-
-```sh
-SHARED_NS=hadoop-ns
-HADOOP_CONTAINER_NAME=hadoop-with-kerberos
-KERBEROS_CONTAINER_NAME=kerberos
-REAL_DOMAIN=liuyehcf.org
-HADOOP_HOSTNAME=${HADOOP_CONTAINER_NAME}.${REAL_DOMAIN}
-KERBEROS_HOSTNAME=${KERBEROS_CONTAINER_NAME}.${REAL_DOMAIN}
-KERBEROS_LOGIC_DOMAIN=example.com
-KERBEROS_LOGIC_DOMAIN_UPPER=$(echo ${KERBEROS_LOGIC_DOMAIN} | tr "[:lower:]" "[:upper:]")
-
-# Must explicit mapping for udp, otherwise ICMP package from host machine cannot work with kerberos inside container.
-docker run -dit --name ${KERBEROS_CONTAINER_NAME} --hostname ${KERBEROS_HOSTNAME} --network ${SHARED_NS} --privileged \
-    -p 127.0.0.1:88:88/tcp -p 127.0.0.1:88:88/udp \
-    -p 127.0.0.1:464:464/tcp -p 127.0.0.1:464:464/udp \
-    -p 127.0.0.1:749:749/tcp -p 127.0.0.1:749:749/udp \
-    ubuntu:xenial_with_kerberos
-
-# Setup kerberos config
-docker exec ${KERBEROS_CONTAINER_NAME} bash -c "tee /etc/krb5.conf > /dev/null << EOF
-[libdefaults]
-    default_realm = ${KERBEROS_LOGIC_DOMAIN_UPPER}
-    dns_lookup_realm = false
-    dns_lookup_kdc = false
-    ticket_lifetime = 24h
-    renew_lifetime = 7d
-    forwardable = true
-
-[realms]
-    ${KERBEROS_LOGIC_DOMAIN_UPPER} = {
-        kdc = ${KERBEROS_HOSTNAME}
-        admin_server = ${KERBEROS_HOSTNAME}
-    }
-
-[domain_realm]
-    ${REAL_DOMAIN} = ${KERBEROS_LOGIC_DOMAIN_UPPER}
-    .${REAL_DOMAIN} = ${KERBEROS_LOGIC_DOMAIN_UPPER}
-EOF"
-
-docker exec ${KERBEROS_CONTAINER_NAME} bash -c "cat > /etc/krb5kdc/kdc.conf << EOF
-[kdcdefaults]
-    kdc_ports = 88
-    kdc_tcp_ports = 88
-
-[realms]
-    ${KERBEROS_LOGIC_DOMAIN_UPPER} = {
-        database_name = /var/lib/krb5kdc/principal
-        admin_keytab = /etc/krb5kdc/kadm5.keytab
-        acl_file = /etc/krb5kdc/kadm5.acl
-        key_stash_file = /etc/krb5kdc/stash
-        log_file = /var/log/krb5kdc.log
-        kdc_ports = 88
-        max_life = 10h 0m 0s
-        max_renewable_life = 7d 0h 0m 0s
-    }
-EOF"
-
-docker exec ${KERBEROS_CONTAINER_NAME} bash -c "cat > /etc/krb5kdc/kadm5.acl << EOF
-*/admin@${KERBEROS_LOGIC_DOMAIN_UPPER} *
-EOF"
-
-docker exec ${KERBEROS_CONTAINER_NAME} bash -c 'kdb5_util create -s <<EOF
-!Abcd1234
-!Abcd1234
-EOF'
-docker exec ${KERBEROS_CONTAINER_NAME} bash -c '/usr/sbin/krb5kdc'
-docker exec ${KERBEROS_CONTAINER_NAME} bash -c '/usr/sbin/kadmind'
-
-# Create principal for hadoop
-docker exec ${KERBEROS_CONTAINER_NAME} bash -c 'mkdir -p /etc/security/keytabs'
-docker exec ${KERBEROS_CONTAINER_NAME} bash -c "kadmin.local <<EOF
-addprinc -randkey nn/${HADOOP_HOSTNAME}@${KERBEROS_LOGIC_DOMAIN_UPPER}
-addprinc -randkey dn/${HADOOP_HOSTNAME}@${KERBEROS_LOGIC_DOMAIN_UPPER}
-listprincs
-
-ktadd -k /etc/security/keytabs/nn.service.keytab nn/${HADOOP_HOSTNAME}@${KERBEROS_LOGIC_DOMAIN_UPPER}
-ktadd -k /etc/security/keytabs/dn.service.keytab dn/${HADOOP_HOSTNAME}@${KERBEROS_LOGIC_DOMAIN_UPPER}
-
-quit
-EOF"
-
-# Create principal for user_with_password
-docker exec ${KERBEROS_CONTAINER_NAME} bash -c "kadmin.local <<EOF
-addprinc -pw 123456 user_with_password@${KERBEROS_LOGIC_DOMAIN_UPPER}
-listprincs
-
-quit
-EOF"
-
-# Create principal for user_with_keytab
-docker exec ${KERBEROS_CONTAINER_NAME} bash -c "kadmin.local <<EOF
-addprinc -randkey user_with_keytab@${KERBEROS_LOGIC_DOMAIN_UPPER}
-ktadd -k /etc/security/keytabs/user_with_keytab.service.keytab user_with_keytab@${KERBEROS_LOGIC_DOMAIN_UPPER}
-listprincs
-
-quit
-EOF"
-```
-
-**Test:**
-
-* Test user_with_password
-
-    ```sh
-    # inside docker(password: 123456)
-    kinit user_with_password
-    klist
-
-    # outside docker(password: 123456)
-    docker cp ${KERBEROS_CONTAINER_NAME}:/etc/krb5.conf ~/.krb5.conf
-    sudo sed -i "/127.0.0.1 ${KERBEROS_HOSTNAME}/d" /etc/hosts
-    echo "127.0.0.1 ${KERBEROS_HOSTNAME}" | sudo tee -a /etc/hosts > /dev/null
-    export KRB5_CONFIG=~/.krb5.conf
-    kinit user_with_password
-    klist
-    ```
-
-* Test user_with_keytab
-
-    ```sh
-    # inside docker
-    kinit -kt /etc/security/keytabs/user_with_keytab.service.keytab user_with_keytab
-    klist
-
-    # outside docker
-    docker cp ${KERBEROS_CONTAINER_NAME}:/etc/krb5.conf ~/.krb5.conf
-    sudo sed -i "/127.0.0.1 ${KERBEROS_HOSTNAME}/d" /etc/hosts
-    echo "127.0.0.1 ${KERBEROS_HOSTNAME}" | sudo tee -a /etc/hosts > /dev/null
-    docker cp ${KERBEROS_CONTAINER_NAME}:/etc/security/keytabs/user_with_keytab.service.keytab ~/.user_with_keytab.service.keytab
-    export KRB5_CONFIG=~/.krb5.conf
-    kinit -kt ~/.user_with_keytab.service.keytab user_with_keytab
-    klist
-    ```
-
-### 2.2.4 Hadoop Container
-
-```sh
-SHARED_NS=hadoop-ns
-HADOOP_CONTAINER_NAME=hadoop-with-kerberos
-KERBEROS_CONTAINER_NAME=kerberos
-REAL_DOMAIN=liuyehcf.org
-HADOOP_HOSTNAME=${HADOOP_CONTAINER_NAME}.${REAL_DOMAIN}
-KERBEROS_HOSTNAME=${KERBEROS_CONTAINER_NAME}.${REAL_DOMAIN}
-KERBEROS_LOGIC_DOMAIN=example.com
-KERBEROS_LOGIC_DOMAIN_UPPER=$(echo ${KERBEROS_LOGIC_DOMAIN} | tr "[:lower:]" "[:upper:]")
-
-docker run -dit --name ${HADOOP_CONTAINER_NAME} --hostname ${HADOOP_HOSTNAME} --network ${SHARED_NS} --privileged \
-    -p 127.0.0.1:8020:8020 \
-    -p 127.0.0.1:9866:9866 \
-    apache/hadoop:3.3.6 bash
-docker exec ${HADOOP_CONTAINER_NAME} bash -c "cat > /opt/hadoop/etc/hadoop/core-site.xml << EOF
-<configuration>
-    <property>
-        <name>fs.defaultFS</name>
-        <value>hdfs://${HADOOP_HOSTNAME}:8020</value>
-    </property>
-    <property>
-      <name>hadoop.security.authentication</name>
-      <value>kerberos</value>
-    </property>
-    <property>
-      <name>hadoop.security.authorization</name>
-      <value>true</value>
-    </property>
-</configuration>
-EOF"
-
-docker exec ${HADOOP_CONTAINER_NAME} bash -c "cat > /opt/hadoop/etc/hadoop/hdfs-site.xml << EOF
-<configuration>
-    <property>
-        <name>dfs.replication</name>
-        <value>1</value>
-    </property>
-    <property>
-        <name>dfs.permissions.enabled</name>
-        <value>false</value>
-    </property>
-    <property>
-        <name>dfs.datanode.data.dir</name>
-        <value>/opt/hadoop/data</value>
-    </property>
-    <property>
-        <name>dfs.datanode.address</name>
-        <value>${HADOOP_HOSTNAME}:9866</value>
-    </property>
-    <property>
-        <name>dfs.datanode.http.address</name>
-        <value>${HADOOP_HOSTNAME}:9864</value>
-    </property>
-    <property>
-        <name>dfs.datanode.ipc.address</name>
-        <value>${HADOOP_HOSTNAME}:9867</value>
-    </property>
-    <property>
-        <name>dfs.datanode.hostname</name>
-        <value>${HADOOP_HOSTNAME}</value>
-    </property>
-
-    <property>
-        <name>dfs.namenode.kerberos.principal</name>
-        <value>nn/_HOST@${KERBEROS_LOGIC_DOMAIN_UPPER}</value>
-    </property>
-    <property>
-        <name>dfs.namenode.keytab.file</name>
-        <value>/etc/security/keytabs/nn.service.keytab</value>
-    </property>
-    <property>
-        <name>dfs.datanode.kerberos.principal</name>
-        <value>dn/_HOST@${KERBEROS_LOGIC_DOMAIN_UPPER}</value>
-    </property>
-    <property>
-        <name>dfs.datanode.keytab.file</name>
-        <value>/etc/security/keytabs/dn.service.keytab</value>
-    </property>
-
-    <property>
-        <name>dfs.block.access.token.enable</name>
-        <value>true</value>
-    </property>
-    <property>
-        <name>dfs.block.access.token.master.key.num</name>
-        <value>2</value>
-    </property>
-    <property>
-        <name>dfs.block.access.token.lifetime</name>
-        <value>600</value>
-    </property>
-    <property>
-        <name>ignore.secure.ports.for.testing</name>
-        <value>true</value>
-    </property>
-</configuration>
-EOF"
-
-# Setup kerberos config
-docker exec ${HADOOP_CONTAINER_NAME} bash -c "sudo tee /etc/krb5.conf > /dev/null << EOF
-[libdefaults]
-    default_realm = ${KERBEROS_LOGIC_DOMAIN_UPPER}
-    dns_lookup_realm = false
-    dns_lookup_kdc = false
-    ticket_lifetime = 24h
-    renew_lifetime = 7d
-    forwardable = true
-
-[realms]
-    ${KERBEROS_LOGIC_DOMAIN_UPPER} = {
-        kdc = ${KERBEROS_HOSTNAME}
-        admin_server = ${KERBEROS_HOSTNAME}
-    }
-
-[domain_realm]
-    ${REAL_DOMAIN} = ${KERBEROS_LOGIC_DOMAIN_UPPER}
-    .${REAL_DOMAIN} = ${KERBEROS_LOGIC_DOMAIN_UPPER}
-EOF"
-
-# Copy keytab
-docker cp ${KERBEROS_CONTAINER_NAME}:/etc/security/keytabs/nn.service.keytab /tmp/nn.service.keytab
-docker cp ${KERBEROS_CONTAINER_NAME}:/etc/security/keytabs/dn.service.keytab /tmp/dn.service.keytab
-docker cp /tmp/nn.service.keytab ${HADOOP_CONTAINER_NAME}:/etc/security/keytabs/nn.service.keytab
-docker cp /tmp/dn.service.keytab ${HADOOP_CONTAINER_NAME}:/etc/security/keytabs/dn.service.keytab
-docker exec ${HADOOP_CONTAINER_NAME} bash -c 'sudo chmod 644 /etc/security/keytabs/nn.service.keytab'
-docker exec ${HADOOP_CONTAINER_NAME} bash -c 'sudo chmod 644 /etc/security/keytabs/dn.service.keytab'
-
-# Format
-docker exec ${HADOOP_CONTAINER_NAME} bash -c 'hdfs namenode -format'
-docker exec ${HADOOP_CONTAINER_NAME} bash -c 'sudo mkdir -p /opt/hadoop/data'
-
-# Retart all daemons
-docker exec ${HADOOP_CONTAINER_NAME} bash -c 'hdfs --daemon stop namenode; hdfs --daemon start namenode'
-docker exec ${HADOOP_CONTAINER_NAME} bash -c 'HDFS_DATANODE_SECURE_USER=root; \
-        JAVA_HOME=/usr/lib/jvm/jre; \
-        sudo -E /opt/hadoop/bin/hdfs --daemon stop datanode; \
-        sudo -E /opt/hadoop/bin/hdfs --daemon start datanode'
-
-# Report status
-docker exec ${HADOOP_CONTAINER_NAME} bash -c "kinit user_with_password <<EOF
-123456
-EOF"
-docker exec ${HADOOP_CONTAINER_NAME} bash -c 'hdfs dfsadmin -report'
-```
-
-**Key points:**
-
-* Directory `/opt/hadoop/data` must can be accessed by the user started datanode.
-* Credential file `/etc/security/keytabs/dn.service.keytab` must can be accessed by the user started datanode.
-* If `ignore.secure.ports.for.testing` is set to `false`, then the http port and tcp port must be smaller than 1023, otherwise it cannot pass the check.
-
-**Test:**
-
-```sh
-# Setup yarn-site.xml, reuse datanode's principal
-docker exec ${HADOOP_CONTAINER_NAME} bash -c "cat > /opt/hadoop/etc/hadoop/yarn-site.xml << EOF
-<configuration>
-    <property>
-        <name>yarn.resourcemanager.principal</name>
-        <value>dn/_HOST@EXAMPLE.COM</value>
-    </property>
-    <property>
-        <name>yarn.resourcemanager.keytab</name>
-        <value>/etc/security/keytabs/dn.service.keytab</value>
-    </property>
-    <property>
-        <name>yarn.nodemanager.principal</name>
-        <value>dn/_HOST@EXAMPLE.COM</value>
-    </property>
-    <property>
-        <name>yarn.nodemanager.keytab</name>
-        <value>/etc/security/keytabs/dn.service.keytab</value>
-    </property>
-</configuration>
-EOF"
-
-docker exec ${HADOOP_CONTAINER_NAME} bash -c 'hadoop jar /opt/hadoop/share/hadoop/mapreduce/hadoop-mapreduce-examples-*.jar pi 10 100'
-```
-
-## 2.3 Configuration
+## 2.2 Configuration
 
 1. `core-site.xml`
     * Path: `$HADOOP_HOME/etc/hadoop/core-site.xml`
@@ -656,7 +212,7 @@ docker exec ${HADOOP_CONTAINER_NAME} bash -c 'hadoop jar /opt/hadoop/share/hadoo
     * Path: `$HADOOP_HOME/etc/hadoop/log4j.properties`
     * Description: Configures logging for Hadoop.
 
-### 2.3.1 How to config dfs.nameservices
+### 2.2.1 How to config dfs.nameservices
 
 **`core-site.xml`**
 ```xml
@@ -704,7 +260,7 @@ docker exec ${HADOOP_CONTAINER_NAME} bash -c 'hadoop jar /opt/hadoop/share/hadoo
 </configuration>
 ```
 
-### 2.3.2 Support config hot loading
+### 2.2.2 Support config hot loading
 
 `FileSystem::CACHE` will cache filesystem object, cache key is built from `uri` and `Configuration`, if you only modify `hdfs-site.xml` file itself, the object `Configuration` will be exactly the same, so comes with the cache hit.
 
@@ -712,14 +268,14 @@ How to disable it?, set property `fs.<protocol>.impl.disable.cache` to `true` in
 
 * For hdfs, the property name is: `fs.hdfs.impl.disable.cache`
 
-### 2.3.3 Hedge read
+### 2.2.3 Hedge read
 
 * `dfs.client.hedged.read.threadpool.size`
 * `dfs.client.hedged.read.threshold.millis`
 
-## 2.4 Command
+## 2.3 Command
 
-### 2.4.1 daemon
+### 2.3.1 daemon
 
 ```sh
 hdfs --daemon stop namenode
@@ -735,22 +291,22 @@ yarn --daemon start nodemanager
 mapred --daemon start historyserver
 ```
 
-### 2.4.2 hdfs
+### 2.3.2 hdfs
 
-#### 2.4.2.1 File Path
+#### 2.3.2.1 File Path
 
 ```sh
 hdfs dfs -ls -R <path>
 ```
 
-#### 2.4.2.2 File Status
+#### 2.3.2.2 File Status
 
 ```sh
 hdfs fsck <path>
 hdfs fsck <path> -files -blocks -replication
 ```
 
-#### 2.4.2.3 Show Content
+#### 2.3.2.3 Show Content
 
 ```sh
 # For text file
@@ -760,7 +316,7 @@ hdfs dfs -cat <path>
 hdfs dfs -text <path.avro>
 ```
 
-#### 2.4.2.4 Grant Permission
+#### 2.3.2.4 Grant Permission
 
 ```sh
 hdfs dfs -setfacl -R -m user:hive:rwx /
@@ -768,16 +324,16 @@ hdfs dfs -setfacl -R -m default:user:hive:rwx /
 hdfs dfs -getfacl /
 ```
 
-### 2.4.3 yarn
+### 2.3.3 yarn
 
-#### 2.4.3.1 Node
+#### 2.3.3.1 Node
 
 ```sh
 yarn node -list
 yarn node -list -showDetails
 ```
 
-#### 2.4.3.2 Application
+#### 2.3.3.2 Application
 
 ```sh
 yarn application -list
@@ -789,9 +345,9 @@ yarn logs -applicationId <appid>
 yarn application -kill <appid>
 ```
 
-## 2.5 Tips
+## 2.4 Tips
 
-### 2.5.1 How to access a hadoop cluster started via docker
+### 2.4.1 How to access a hadoop cluster started via docker
 
 For linux, there are two ways of approaching this:
 
@@ -806,7 +362,7 @@ For mac with m chip, the above methods cannot work, because there will be an ext
 1. Config `dfs.client.use.datanode.hostname` to `true` at the client side (i.e. Mac side), otherwise it will use container's ip address, which is unconnected between mac and container because of the extra virtualization layer.
 1. Access hadoop via container's name.
 
-### 2.5.2 SDK don't recognize HADOOP_CONF_DIR automatically
+### 2.4.2 SDK don't recognize HADOOP_CONF_DIR automatically
 
 You need to implement the parsing of the path yourself.
 
@@ -1292,6 +848,10 @@ drop table hive_example;
 "
 ```
 
+### 4.2.3 Tips
+
+1. Logdir: `/tmp/hive`
+
 ## 4.3 Hive Metastore Demo
 
 [hive_metastore.thrift](https://github.com/apache/hive/blob/master/standalone-metastore/metastore-common/src/main/thrift/hive_metastore.thrift)
@@ -1472,7 +1032,855 @@ CREATE TABLE person (
 SELECT * FROM person;
 ```
 
-# 6 Docker-Compose
+# 6 Deployment with Kerberos
+
+## 6.1 Kerberos Component Relationship
+
+```plantuml
+' ============================================
+' Kerberos component diagram (improved version)
+' ============================================
+
+skinparam component {
+  BackgroundColor #F6F6F6
+  BorderColor #333333
+  FontSize 12
+  FontName "Segoe UI"
+}
+skinparam arrow {
+  Color #555555
+  Thickness 1.2
+}
+
+title Kerberos Component Relationship Diagram
+
+' ---- Define components ----
+package "Kerberos KDC" {
+  [Authentication Server\n(AS)] as AS
+  [Ticket‑Granting Server\n(TGS)] as TGS
+  [Kerberos Database] as DB
+}
+
+[Kerberos Admin Server\n(kadmin / kpasswd)] as KADMIN
+[Client\n(kinit / libkrb5)] as CLIENT
+[Application Server\n(Service)] as SERVICE
+
+' ---- Component interactions ----
+DB --> AS : Lookup user secret keys
+DB --> TGS : Lookup service secret keys
+KADMIN --> DB : Register user/service principals\nReset passwords, etc.
+
+CLIENT -up-> AS : ① AS-REQ (username)
+AS -down-> CLIENT : ② AS-REP (TGT encrypted with KDC key\nSession key encrypted with user key)
+
+CLIENT -up-> TGS : ③ TGS-REQ (TGT + service principal\n+ authenticator)
+TGS -down-> CLIENT : ④ TGS-REP (Service Ticket\nencrypted with session key)
+
+CLIENT -up-> SERVICE : ⑤ AP-REQ (Service Ticket\n+ timestamp authenticator)
+SERVICE -down-> CLIENT : ⑥ AP-REP (optional\nmutual authentication)
+
+' ---- Note to clarify service key usage ----
+note right of SERVICE
+  Uses key registered in DB
+  (no direct DB access)
+end note
+
+legend right
+<color:#0000FF>**Kerberos Protocol Flow**</color>
+①-⑥ Standard authentication sequence
+* TGT = Ticket-Granting Ticket (KDC encrypted)
+* Service Ticket = Encrypted with service key
+* Authenticator contains timestamp
+* Session key shared between client and service
+endlegend
+```
+
+| Step | Initiator | Receiver | Description|
+|:--|:--|:--|:--|
+| ① | CLIENT | AS | Requests initial ticket (TGT) |
+| ② | AS | CLIENT | Returns encrypted TGT and session key |
+| ③ | CLIENT | TGS| Requests service ticket using TGT |
+| ④ | TGS| CLIENT | Returns encrypted service ticket and session key |
+| ⑤ | CLIENT | SERVICE| Uses service ticket to request access |
+| ⑥ | SERVICE| CLIENT | Optional mutual authentication response |
+
+## 6.2 Kerberos Basics
+
+**Concepts:**
+
+* Key Distribution Center, KDC
+    * The central server responsible for managing authentication.
+    * Comprises two sub-components:
+        * Authentication Server (AS): Authenticates the client and issues the Ticket Granting Ticket (TGT).
+        * Ticket Granting Server (TGS): Issues service-specific tickets upon request.
+* Principal: A unique identity (user, service, or host) in the Kerberos system, e.g., `user@REALM` or `service/hostname@REALM`.
+* Realm: A logical network served by a single KDC, identified by an uppercase string, e.g., `EXAMPLE.COM`.
+* Keytab: A file storing pre-shared credentials for a user or service, used for automated authentication.
+* Ticket: A temporary set of credentials that allows a principal to authenticate to services.
+    * Ticket Granting Ticket (TGT): Issued by the AS, used to request service tickets.
+    * Service Ticket: Allows access to a specific service.
+
+**Kerberos Commands:**
+
+* `kinit <principal>[@<kerberos_realm>]`: Login with password.
+    * `kinit -c <cache_path> <principal>[@<kerberos_realm>]`: Login with password and specific cache path.
+* `kinit -kt <keytabpath> <principal>[@<kerberos_realm>]`: Login with keytab.
+    * `kinit -kt <keytabpath> -c <cache_path> <principal>[@<kerberos_realm>]`: Login with keytab and specific cache path.
+* `klist`: Display credentials cache.
+* `klist -c <cache_path>`: Display specifies credentials cache.
+* `klist -e -d -k -t -K <keytabpath>`: Display keytab information.
+* `kdestroy`: Destroy credentials cache.
+* `kdestroy -c <cache_path>`: Destroy specifies credentials cache.
+* Environments:
+    * `export KRB5_TRACE=/dev/stdout`: For debug.
+    * `export KRB5_CONFIG=<path/to/krb5.conf>`: Specify the config file, parse logic domain to real domain.
+    * `export KRB5CCNAME=FILE:/tmp/krb5cc_testuser`: Use local file as cache.
+    * `export KRB5CCNAME=MEMORY:`: Use meory as cache.
+
+**`kadmin.local` Commands:**
+
+* `?`: help doc.
+
+**Tips:**
+
+* Make sure target user has permission to read related files, including config, TGT, keyTab etc.
+
+## 6.3 Prepare Kerberos Images
+
+### 6.3.1 ubuntu:xenial_with_kerberos
+
+```sh
+rm -rf /tmp/ubuntu-with-kerberos
+mkdir -p /tmp/ubuntu-with-kerberos
+cat > /tmp/ubuntu-with-kerberos/Dockerfile << 'EOF'
+FROM ubuntu:xenial
+
+RUN apt update && \
+    DEBIAN_FRONTEND=noninteractive apt install -y ntp python-dev python-pip python-wheel python-setuptools python-pkg-resources \
+    krb5-admin-server krb5-kdc \
+    vim iputils-ping iproute2 less
+EOF
+
+docker build -t ubuntu:xenial_with_kerberos /tmp/ubuntu-with-kerberos
+```
+
+### 6.3.2 apache/hive:4.0.0_with_kerberos
+
+```sh
+rm -rf /tmp/hive_with_kerberos
+mkdir -p /tmp/hive_with_kerberos
+cat > /tmp/hive_with_kerberos/Dockerfile << 'EOF'
+FROM apache/hive:4.0.0
+USER root
+
+RUN apt-get update && \
+    DEBIAN_FRONTEND=noninteractive apt-get install -y krb5-user libkrb5-3 \
+    sudo iproute2 iputils-ping vim-tiny less
+
+RUN mkdir -p /home/hive && chown -R hive:hive /home/hive
+
+RUN echo "hive ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers
+
+RUN mkdir -p /etc/security/keytabs && chmod 755 /etc/security/keytabs
+
+USER hive
+EOF
+
+docker build -t apache/hive:4.0.0_with_kerberos /tmp/hive_with_kerberos
+```
+
+## 6.4 Deploy Kerberos
+
+Prepare ubuntu image with kerberos dependencies
+
+```sh
+SHARED_NS=hadoop-ns
+KERBEROS_CONTAINER_NAME=kerberos
+HADOOP_CONTAINER_NAME=hadoop-with-kerberos
+HIVE_PREFIX=hive-with-derby
+HIVE_METASTORE_CONTAINER_NAME=${HIVE_PREFIX}-metastore-with-kerberos
+HIVE_SERVER_CONTAINER_NAME=${HIVE_PREFIX}-server-with-kerberos
+REAL_DOMAIN=liuyehcf.org
+KERBEROS_HOSTNAME=${KERBEROS_CONTAINER_NAME}.${REAL_DOMAIN}
+HADOOP_HOSTNAME=${HADOOP_CONTAINER_NAME}.${REAL_DOMAIN}
+HIVE_METASTORE_HOSTNAME=${HIVE_METASTORE_CONTAINER_NAME}.${REAL_DOMAIN}
+HIVE_SERVER_HOSTNAME=${HIVE_SERVER_CONTAINER_NAME}.${REAL_DOMAIN}
+KERBEROS_LOGIC_DOMAIN=example.com
+KERBEROS_LOGIC_DOMAIN_UPPER=$(echo ${KERBEROS_LOGIC_DOMAIN} | tr "[:lower:]" "[:upper:]")
+
+# Must explicit mapping for udp, otherwise ICMP package from host machine cannot work with kerberos inside container.
+docker run -dit --name ${KERBEROS_CONTAINER_NAME} --hostname ${KERBEROS_HOSTNAME} --network ${SHARED_NS} --privileged \
+    -p 127.0.0.1:88:88/tcp -p 127.0.0.1:88:88/udp \
+    -p 127.0.0.1:464:464/tcp -p 127.0.0.1:464:464/udp \
+    -p 127.0.0.1:749:749/tcp -p 127.0.0.1:749:749/udp \
+    ubuntu:xenial_with_kerberos
+
+# Setup kerberos config
+docker exec ${KERBEROS_CONTAINER_NAME} bash -c "tee /etc/krb5.conf > /dev/null << EOF
+[libdefaults]
+    default_realm = ${KERBEROS_LOGIC_DOMAIN_UPPER}
+    dns_lookup_realm = false
+    dns_lookup_kdc = false
+    ticket_lifetime = 24h
+    renew_lifetime = 7d
+    forwardable = true
+
+[realms]
+    ${KERBEROS_LOGIC_DOMAIN_UPPER} = {
+        kdc = ${KERBEROS_HOSTNAME}
+        admin_server = ${KERBEROS_HOSTNAME}
+    }
+
+[domain_realm]
+    ${REAL_DOMAIN} = ${KERBEROS_LOGIC_DOMAIN_UPPER}
+    .${REAL_DOMAIN} = ${KERBEROS_LOGIC_DOMAIN_UPPER}
+EOF"
+
+docker exec ${KERBEROS_CONTAINER_NAME} bash -c "cat > /etc/krb5kdc/kdc.conf << EOF
+[kdcdefaults]
+    kdc_ports = 88
+    kdc_tcp_ports = 88
+
+[realms]
+    ${KERBEROS_LOGIC_DOMAIN_UPPER} = {
+        database_name = /var/lib/krb5kdc/principal
+        admin_keytab = /etc/krb5kdc/kadm5.keytab
+        acl_file = /etc/krb5kdc/kadm5.acl
+        key_stash_file = /etc/krb5kdc/stash
+        log_file = /var/log/krb5kdc.log
+        kdc_ports = 88
+        max_life = 10h 0m 0s
+        max_renewable_life = 7d 0h 0m 0s
+    }
+EOF"
+
+docker exec ${KERBEROS_CONTAINER_NAME} bash -c "cat > /etc/krb5kdc/kadm5.acl << EOF
+*/admin@${KERBEROS_LOGIC_DOMAIN_UPPER} *
+EOF"
+
+docker exec ${KERBEROS_CONTAINER_NAME} bash -c 'kdb5_util create -s <<EOF
+!Abcd1234
+!Abcd1234
+EOF'
+docker exec ${KERBEROS_CONTAINER_NAME} bash -c '/usr/sbin/krb5kdc'
+docker exec ${KERBEROS_CONTAINER_NAME} bash -c '/usr/sbin/kadmind'
+
+# Create principal for hadoop
+docker exec ${KERBEROS_CONTAINER_NAME} bash -c 'mkdir -p /etc/security/keytabs'
+docker exec ${KERBEROS_CONTAINER_NAME} bash -c "kadmin.local <<EOF
+addprinc -randkey nn/${HADOOP_HOSTNAME}@${KERBEROS_LOGIC_DOMAIN_UPPER}
+addprinc -randkey dn/${HADOOP_HOSTNAME}@${KERBEROS_LOGIC_DOMAIN_UPPER}
+addprinc -randkey rm/${HADOOP_HOSTNAME}@${KERBEROS_LOGIC_DOMAIN_UPPER}
+addprinc -randkey nm/${HADOOP_HOSTNAME}@${KERBEROS_LOGIC_DOMAIN_UPPER}
+listprincs
+
+ktadd -k /etc/security/keytabs/hadoop.service.keytab \
+    nn/${HADOOP_HOSTNAME}@${KERBEROS_LOGIC_DOMAIN_UPPER} \
+    dn/${HADOOP_HOSTNAME}@${KERBEROS_LOGIC_DOMAIN_UPPER} \
+    rm/${HADOOP_HOSTNAME}@${KERBEROS_LOGIC_DOMAIN_UPPER} \
+    nm/${HADOOP_HOSTNAME}@${KERBEROS_LOGIC_DOMAIN_UPPER}
+
+quit
+EOF"
+
+# Create principal for hive
+docker exec ${KERBEROS_CONTAINER_NAME} bash -c 'mkdir -p /etc/security/keytabs'
+docker exec ${KERBEROS_CONTAINER_NAME} bash -c "kadmin.local <<EOF
+addprinc -randkey hive/${HIVE_METASTORE_HOSTNAME}@${KERBEROS_LOGIC_DOMAIN_UPPER}
+addprinc -randkey hive/${HIVE_SERVER_HOSTNAME}@${KERBEROS_LOGIC_DOMAIN_UPPER}
+listprincs
+
+ktadd -k /etc/security/keytabs/hive.service.keytab hive/${HIVE_METASTORE_HOSTNAME}@${KERBEROS_LOGIC_DOMAIN_UPPER} hive/${HIVE_SERVER_HOSTNAME}@${KERBEROS_LOGIC_DOMAIN_UPPER}
+
+quit
+EOF"
+
+# Create principal for user_with_password
+docker exec ${KERBEROS_CONTAINER_NAME} bash -c "kadmin.local <<EOF
+addprinc -pw 123456 user_with_password@${KERBEROS_LOGIC_DOMAIN_UPPER}
+listprincs
+
+quit
+EOF"
+
+# Create principal for user_with_keytab
+docker exec ${KERBEROS_CONTAINER_NAME} bash -c "kadmin.local <<EOF
+addprinc -randkey user_with_keytab@${KERBEROS_LOGIC_DOMAIN_UPPER}
+ktadd -k /etc/security/keytabs/user_with_keytab.service.keytab user_with_keytab@${KERBEROS_LOGIC_DOMAIN_UPPER}
+listprincs
+
+quit
+EOF"
+```
+
+**Test:**
+
+* Test user_with_password
+
+    ```sh
+    # inside docker(password: 123456)
+    kinit user_with_password
+    klist
+
+    # outside docker(password: 123456)
+    docker cp ${KERBEROS_CONTAINER_NAME}:/etc/krb5.conf ~/.krb5.conf
+    sudo sed -i "/127.0.0.1 ${KERBEROS_HOSTNAME}/d" /etc/hosts
+    echo "127.0.0.1 ${KERBEROS_HOSTNAME}" | sudo tee -a /etc/hosts > /dev/null
+    export KRB5_CONFIG=~/.krb5.conf
+    kinit user_with_password
+    klist
+    ```
+
+* Test user_with_keytab
+
+    ```sh
+    # inside docker
+    kinit -kt /etc/security/keytabs/user_with_keytab.service.keytab user_with_keytab
+    klist
+
+    # outside docker
+    docker cp ${KERBEROS_CONTAINER_NAME}:/etc/krb5.conf ~/.krb5.conf
+    sudo sed -i "/127.0.0.1 ${KERBEROS_HOSTNAME}/d" /etc/hosts
+    echo "127.0.0.1 ${KERBEROS_HOSTNAME}" | sudo tee -a /etc/hosts > /dev/null
+    docker cp ${KERBEROS_CONTAINER_NAME}:/etc/security/keytabs/user_with_keytab.service.keytab ~/.user_with_keytab.service.keytab
+    export KRB5_CONFIG=~/.krb5.conf
+    kinit -kt ~/.user_with_keytab.service.keytab user_with_keytab
+    klist
+    ```
+
+## 6.5 Deploy Hadoop
+
+**Key points:**
+
+* Directory `/opt/hadoop/data` must can be accessed by the user started datanode.
+* Credential file `/etc/security/keytabs/hadoop.service.keytab` must can be accessed by the user started datanode.
+* If `ignore.secure.ports.for.testing` is set to `false`, then the http port and tcp port must be smaller than 1023, otherwise it cannot pass the check.
+
+```sh
+SHARED_NS=hadoop-ns
+KERBEROS_CONTAINER_NAME=kerberos
+HADOOP_CONTAINER_NAME=hadoop-with-kerberos
+HIVE_PREFIX=hive-with-derby
+HIVE_METASTORE_CONTAINER_NAME=${HIVE_PREFIX}-metastore-with-kerberos
+HIVE_SERVER_CONTAINER_NAME=${HIVE_PREFIX}-server-with-kerberos
+REAL_DOMAIN=liuyehcf.org
+KERBEROS_HOSTNAME=${KERBEROS_CONTAINER_NAME}.${REAL_DOMAIN}
+HADOOP_HOSTNAME=${HADOOP_CONTAINER_NAME}.${REAL_DOMAIN}
+HIVE_METASTORE_HOSTNAME=${HIVE_METASTORE_CONTAINER_NAME}.${REAL_DOMAIN}
+HIVE_SERVER_HOSTNAME=${HIVE_SERVER_CONTAINER_NAME}.${REAL_DOMAIN}
+KERBEROS_LOGIC_DOMAIN=example.com
+KERBEROS_LOGIC_DOMAIN_UPPER=$(echo ${KERBEROS_LOGIC_DOMAIN} | tr "[:lower:]" "[:upper:]")
+
+docker run -dit --name ${HADOOP_CONTAINER_NAME} --hostname ${HADOOP_HOSTNAME} --network ${SHARED_NS} --privileged \
+    -p 127.0.0.1:8020:8020 \
+    -p 127.0.0.1:9866:9866 \
+    apache/hadoop:3.3.6 bash
+docker exec ${HADOOP_CONTAINER_NAME} bash -c "cat > /opt/hadoop/etc/hadoop/core-site.xml << EOF
+<configuration>
+    <property>
+        <name>fs.defaultFS</name>
+        <value>hdfs://${HADOOP_HOSTNAME}:8020</value>
+    </property>
+    <property>
+      <name>hadoop.security.authentication</name>
+      <value>kerberos</value>
+    </property>
+    <property>
+      <name>hadoop.security.authorization</name>
+      <value>true</value>
+    </property>
+
+    <property>
+        <name>hadoop.proxyuser.hive.hosts</name>
+        <value>*</value>
+    </property>
+    <property>
+        <name>hadoop.proxyuser.hive.groups</name>
+        <value>*</value>
+    </property>
+</configuration>
+EOF"
+
+docker exec ${HADOOP_CONTAINER_NAME} bash -c "cat > /opt/hadoop/etc/hadoop/hdfs-site.xml << EOF
+<configuration>
+    <property>
+        <name>dfs.replication</name>
+        <value>1</value>
+    </property>
+    <property>
+        <name>dfs.permissions.enabled</name>
+        <value>false</value>
+    </property>
+    <property>
+        <name>dfs.datanode.data.dir</name>
+        <value>/opt/hadoop/data</value>
+    </property>
+    <property>
+        <name>dfs.datanode.address</name>
+        <value>${HADOOP_HOSTNAME}:9866</value>
+    </property>
+    <property>
+        <name>dfs.datanode.http.address</name>
+        <value>${HADOOP_HOSTNAME}:9864</value>
+    </property>
+    <property>
+        <name>dfs.datanode.ipc.address</name>
+        <value>${HADOOP_HOSTNAME}:9867</value>
+    </property>
+    <property>
+        <name>dfs.datanode.hostname</name>
+        <value>${HADOOP_HOSTNAME}</value>
+    </property>
+
+    <property>
+        <name>dfs.namenode.kerberos.principal</name>
+        <value>nn/_HOST@${KERBEROS_LOGIC_DOMAIN_UPPER}</value>
+    </property>
+    <property>
+        <name>dfs.namenode.keytab.file</name>
+        <value>/etc/security/keytabs/hadoop.service.keytab</value>
+    </property>
+    <property>
+        <name>dfs.datanode.kerberos.principal</name>
+        <value>dn/_HOST@${KERBEROS_LOGIC_DOMAIN_UPPER}</value>
+    </property>
+    <property>
+        <name>dfs.datanode.keytab.file</name>
+        <value>/etc/security/keytabs/hadoop.service.keytab</value>
+    </property>
+
+    <property>
+        <name>dfs.block.access.token.enable</name>
+        <value>true</value>
+    </property>
+    <property>
+        <name>dfs.block.access.token.master.key.num</name>
+        <value>2</value>
+    </property>
+    <property>
+        <name>dfs.block.access.token.lifetime</name>
+        <value>600</value>
+    </property>
+    <property>
+        <name>ignore.secure.ports.for.testing</name>
+        <value>true</value>
+    </property>
+</configuration>
+EOF"
+
+docker exec ${HADOOP_CONTAINER_NAME} bash -c "cat > /opt/hadoop/etc/hadoop/yarn-site.xml << EOF
+<configuration>
+    <property>
+        <name>yarn.resourcemanager.hostname</name>
+        <value>${HADOOP_HOSTNAME}</value>
+    </property>
+    <property>
+        <name>yarn.nodemanager.aux-services</name>
+        <value>mapreduce_shuffle</value>
+    </property>
+    <property>
+    <name>yarn.nodemanager.resource.memory-mb</name>
+        <value>8192</value>
+    </property>
+    <property>
+        <name>yarn.nodemanager.resource.cpu-vcores</name>
+        <value>4</value>
+    </property>
+    <property>
+        <name>yarn.scheduler.minimum-allocation-mb</name>
+        <value>1024</value>
+    </property>
+    <property>
+        <name>yarn.scheduler.maximum-allocation-mb</name>
+        <value>8192</value>
+    </property>
+
+    <property>
+        <name>yarn.resourcemanager.principal</name>
+        <value>rm/_HOST@${KERBEROS_LOGIC_DOMAIN_UPPER}</value>
+    </property>
+    <property>
+        <name>yarn.resourcemanager.keytab</name>
+        <value>/etc/security/keytabs/hadoop.service.keytab</value>
+    </property>
+    <property>
+        <name>yarn.nodemanager.principal</name>
+        <value>nm/_HOST@${KERBEROS_LOGIC_DOMAIN_UPPER}</value>
+    </property>
+    <property>
+        <name>yarn.nodemanager.keytab</name>
+        <value>/etc/security/keytabs/hadoop.service.keytab</value>
+    </property>
+
+    <property>
+        <name>yarn.acl.enable</name>
+        <value>true</value>
+    </property>
+    <property>
+        <name>yarn.nodemanager.container-executor.class</name>
+        <value>org.apache.hadoop.yarn.server.nodemanager.DefaultContainerExecutor</value>
+    </property>
+</configuration>
+EOF"
+
+docker exec ${HADOOP_CONTAINER_NAME} bash -c "cat > /opt/hadoop/etc/hadoop/mapred-site.xml << EOF
+<configuration>
+    <property>
+        <name>mapreduce.framework.name</name>
+        <value>yarn</value>
+    </property>
+    <property>
+        <name>yarn.app.mapreduce.am.env</name>
+        <value>HADOOP_MAPRED_HOME=/opt/hadoop</value>
+    </property>
+    <property>
+        <name>mapreduce.map.env</name>
+        <value>HADOOP_MAPRED_HOME=/opt/hadoop</value>
+    </property>
+    <property>
+        <name>mapreduce.reduce.env</name>
+        <value>HADOOP_MAPRED_HOME=/opt/hadoop</value>
+    </property>
+    <property>
+        <name>mapreduce.application.classpath</name>
+        <value>/opt/hadoop/share/hadoop/mapreduce/*,/opt/hadoop/share/hadoop/mapreduce/lib/*</value>
+    </property>
+</configuration>
+EOF"
+
+# Setup kerberos config
+docker exec ${HADOOP_CONTAINER_NAME} bash -c "sudo tee /etc/krb5.conf > /dev/null << EOF
+[libdefaults]
+    default_realm = ${KERBEROS_LOGIC_DOMAIN_UPPER}
+    dns_lookup_realm = false
+    dns_lookup_kdc = false
+    ticket_lifetime = 24h
+    renew_lifetime = 7d
+    forwardable = true
+
+[realms]
+    ${KERBEROS_LOGIC_DOMAIN_UPPER} = {
+        kdc = ${KERBEROS_HOSTNAME}
+        admin_server = ${KERBEROS_HOSTNAME}
+    }
+
+[domain_realm]
+    ${REAL_DOMAIN} = ${KERBEROS_LOGIC_DOMAIN_UPPER}
+    .${REAL_DOMAIN} = ${KERBEROS_LOGIC_DOMAIN_UPPER}
+EOF"
+
+# Copy keytab
+docker cp ${KERBEROS_CONTAINER_NAME}:/etc/security/keytabs/hadoop.service.keytab /tmp/hadoop.service.keytab
+docker cp /tmp/hadoop.service.keytab ${HADOOP_CONTAINER_NAME}:/etc/security/keytabs/hadoop.service.keytab
+docker exec ${HADOOP_CONTAINER_NAME} bash -c 'sudo chmod 644 /etc/security/keytabs/hadoop.service.keytab'
+
+# Format
+docker exec ${HADOOP_CONTAINER_NAME} bash -c 'hdfs namenode -format'
+docker exec ${HADOOP_CONTAINER_NAME} bash -c 'sudo mkdir -p /opt/hadoop/data'
+
+# Retart all daemons
+docker exec ${HADOOP_CONTAINER_NAME} bash -c 'hdfs --daemon stop namenode; hdfs --daemon start namenode'
+docker exec ${HADOOP_CONTAINER_NAME} bash -c 'HDFS_DATANODE_SECURE_USER=root; \
+        JAVA_HOME=/usr/lib/jvm/jre; \
+        sudo -E /opt/hadoop/bin/hdfs --daemon stop datanode; \
+        sudo -E /opt/hadoop/bin/hdfs --daemon start datanode'
+docker exec ${HADOOP_CONTAINER_NAME} bash -c 'yarn --daemon stop resourcemanager; yarn --daemon start resourcemanager'
+docker exec ${HADOOP_CONTAINER_NAME} bash -c 'yarn --daemon stop nodemanager; yarn --daemon start nodemanager'
+docker exec ${HADOOP_CONTAINER_NAME} bash -c 'mapred --daemon stop historyserver; mapred --daemon start historyserver'
+
+# Report status
+docker exec ${HADOOP_CONTAINER_NAME} bash -c "kinit user_with_password <<EOF
+123456
+EOF"
+docker exec ${HADOOP_CONTAINER_NAME} bash -c 'hdfs dfsadmin -report'
+```
+
+**Test:**
+
+```sh
+docker exec ${HADOOP_CONTAINER_NAME} bash -c 'hadoop jar /opt/hadoop/share/hadoop/mapreduce/hadoop-mapreduce-examples-*.jar pi 10 100'
+```
+
+## 6.6 Deploy Hive
+
+**Key points:**
+
+* First part of principal must be `hive`, equals to the user of the container.
+* Also need to add `hadoop.proxyuser.hive.hosts` and `hadoop.proxyuser.hive.groups` to `core-site.xml`.
+* Check if kerberos authentication successfully: `grep -rni 'keytab' /tmp/hive`.
+
+```sh
+SHARED_NS=hadoop-ns
+KERBEROS_CONTAINER_NAME=kerberos
+HADOOP_CONTAINER_NAME=hadoop-with-kerberos
+HIVE_PREFIX=hive-with-derby
+HIVE_METASTORE_CONTAINER_NAME=${HIVE_PREFIX}-metastore-with-kerberos
+HIVE_SERVER_CONTAINER_NAME=${HIVE_PREFIX}-server-with-kerberos
+REAL_DOMAIN=liuyehcf.org
+KERBEROS_HOSTNAME=${KERBEROS_CONTAINER_NAME}.${REAL_DOMAIN}
+HADOOP_HOSTNAME=${HADOOP_CONTAINER_NAME}.${REAL_DOMAIN}
+HIVE_METASTORE_HOSTNAME=${HIVE_METASTORE_CONTAINER_NAME}.${REAL_DOMAIN}
+HIVE_SERVER_HOSTNAME=${HIVE_SERVER_CONTAINER_NAME}.${REAL_DOMAIN}
+KERBEROS_LOGIC_DOMAIN=example.com
+KERBEROS_LOGIC_DOMAIN_UPPER=$(echo ${KERBEROS_LOGIC_DOMAIN} | tr "[:lower:]" "[:upper:]")
+
+# Download tez resources and put to hdfs
+if [ ! -e /tmp/apache-tez-0.10.3-bin.tar.gz ]; then
+    wget -O /tmp/apache-tez-0.10.3-bin.tar.gz  https://downloads.apache.org/tez/0.10.3/apache-tez-0.10.3-bin.tar.gz
+fi
+docker exec ${HADOOP_CONTAINER_NAME} bash -c 'mkdir -p /opt/tez'
+docker cp /tmp/apache-tez-0.10.3-bin.tar.gz ${HADOOP_CONTAINER_NAME}:/opt/tez
+docker exec ${HADOOP_CONTAINER_NAME} bash -c '
+if ! hdfs dfs -ls /opt/tez/tez.tar.gz > /dev/null 2>&1; then
+    rm -rf /opt/tez/apache-tez-0.10.3-bin
+    tar -zxf /opt/tez/apache-tez-0.10.3-bin.tar.gz -C /opt/tez
+    hdfs dfs -mkdir -p /opt/tez
+    hdfs dfs -put -f /opt/tez/apache-tez-0.10.3-bin/share/tez.tar.gz /opt/tez
+fi
+'
+
+HIVE_SITE_CONFIG_COMMON=$(cat << EOF
+    <property>
+        <name>hive.tez.exec.inplace.progress</name>
+        <value>false</value>
+    </property>
+    <property>
+        <name>hive.exec.scratchdir</name>
+        <value>/opt/${HIVE_PREFIX}/scratch_dir</value>
+    </property>
+    <property>
+        <name>hive.user.install.directory</name>
+        <value>/opt/${HIVE_PREFIX}/install_dir</value>
+    </property>
+    <property>
+        <name>tez.runtime.optimize.local.fetch</name>
+        <value>true</value>
+    </property>
+    <property>
+        <name>hive.exec.submit.local.task.via.child</name>
+        <value>false</value>
+    </property>
+    <property>
+        <name>mapreduce.framework.name</name>
+        <value>yarn</value>
+    </property>
+    <property>
+        <name>tez.local.mode</name>
+        <value>false</value>
+    </property>
+    <property>
+        <name>tez.lib.uris</name>
+        <value>/opt/tez/tez.tar.gz</value>
+    </property>
+    <property>
+        <name>hive.execution.engine</name>
+        <value>tez</value>
+    </property>
+    <property>
+        <name>metastore.warehouse.dir</name>
+        <value>/opt/${HIVE_PREFIX}/data/warehouse</value>
+    </property>
+    <property>
+        <name>metastore.metastore.event.db.notification.api.auth</name>
+        <value>false</value>
+    </property>
+EOF
+)
+
+HIVE_SITE_CONFIG_KERBEROS=$(cat << EOF
+    <property>
+        <name>hive.metastore.sasl.enabled</name>
+        <value>true</value>
+    </property>
+    <property>
+        <name>hive.metastore.kerberos.principal</name>
+        <value>hive/${HIVE_METASTORE_HOSTNAME}@${KERBEROS_LOGIC_DOMAIN_UPPER}</value>
+    </property>
+    <property>
+        <name>hive.metastore.kerberos.keytab.file</name>
+        <value>/etc/security/keytabs/hive.service.keytab</value>
+    </property>
+    <property>
+        <name>hive.server2.authentication</name>
+        <value>KERBEROS</value>
+    </property>
+    <property>
+        <name>hive.server2.authentication.kerberos.principal</name>
+        <value>hive/${HIVE_SERVER_HOSTNAME}@${KERBEROS_LOGIC_DOMAIN_UPPER}</value>
+    </property>
+    <property>
+        <name>hive.server2.authentication.kerberos.keytab</name>
+        <value>/etc/security/keytabs/hive.service.keytab</value>
+    </property>
+        <property>
+        <name>hive.server2.enable.doAs</name>
+        <value>true</value>
+    </property>
+    <property>
+        <name>hive.server2.proxy.user</name>
+        <value>*</value>
+    </property>
+EOF
+)
+
+cat > /tmp/hive-site-for-metastore.xml << EOF
+<configuration>
+    ${HIVE_SITE_CONFIG_COMMON}
+    ${HIVE_SITE_CONFIG_KERBEROS}
+</configuration>
+EOF
+
+cat > /tmp/hive-site-for-hiveserver2.xml << EOF
+<configuration>
+    <property>
+        <name>hive.metastore.uris</name>
+        <value>thrift://${HIVE_METASTORE_HOSTNAME}:9083</value>
+    </property>
+    ${HIVE_SITE_CONFIG_COMMON}
+    ${HIVE_SITE_CONFIG_KERBEROS}
+</configuration>
+EOF
+
+# Copy hadoop config file to hive container
+docker cp ${HADOOP_CONTAINER_NAME}:/opt/hadoop/etc/hadoop/core-site.xml /tmp/core-site.xml
+docker cp ${HADOOP_CONTAINER_NAME}:/opt/hadoop/etc/hadoop/hdfs-site.xml /tmp/hdfs-site.xml
+docker cp ${HADOOP_CONTAINER_NAME}:/opt/hadoop/etc/hadoop/yarn-site.xml /tmp/yarn-site.xml
+docker cp ${HADOOP_CONTAINER_NAME}:/opt/hadoop/etc/hadoop/mapred-site.xml /tmp/mapred-site.xml
+
+# Temporary entrypoint
+cat > /tmp/tmp_entrypoint.sh << 'EOF'
+#!/bin/bash
+
+sleep 86400
+EOF
+chmod a+x /tmp/tmp_entrypoint.sh
+
+# Use customized entrypoint for hivemetastore
+cat > /tmp/hivemetastore_entrypoint.sh << 'EOF'
+#!/bin/bash
+
+echo "IS_RESUME=${IS_RESUME}"
+FLAG_FILE=/opt/hive/already_init_schema
+
+if [ -z "${IS_RESUME}" ] || [ "${IS_RESUME}" = "false" ]; then
+    if [ -f ${FLAG_FILE} ]; then
+        echo "Skip init schema when restart."
+        IS_RESUME=true /entrypoint.sh
+    else
+        echo "Try to init schema for the first time."
+        touch ${FLAG_FILE}
+        IS_RESUME=false /entrypoint.sh
+    fi
+else
+    echo "Skip init schema for every time."
+    IS_RESUME=true /entrypoint.sh
+fi 
+EOF
+chmod a+x /tmp/hivemetastore_entrypoint.sh
+
+# Use customized entrypoint for hiveserver
+cat > /tmp/hiveserver_entrypoint.sh << 'EOF'
+#!/bin/bash
+/entrypoint.sh
+EOF
+chmod a+x /tmp/hiveserver_entrypoint.sh
+
+# Start standalone metastore
+docker create --name ${HIVE_METASTORE_CONTAINER_NAME} --hostname ${HIVE_METASTORE_HOSTNAME} --network ${SHARED_NS} -p 127.0.0.1:9083:9083 -e SERVICE_NAME=metastore --entrypoint /hivemetastore_entrypoint.sh apache/hive:4.0.0_with_kerberos
+
+docker cp /tmp/hive-site-for-metastore.xml ${HIVE_METASTORE_CONTAINER_NAME}:/opt/hive/conf/hive-site.xml
+docker cp /tmp/core-site.xml ${HIVE_METASTORE_CONTAINER_NAME}:/opt/hadoop/etc/hadoop/core-site.xml
+docker cp /tmp/hdfs-site.xml ${HIVE_METASTORE_CONTAINER_NAME}:/opt/hadoop/etc/hadoop/hdfs-site.xml
+docker cp /tmp/yarn-site.xml ${HIVE_METASTORE_CONTAINER_NAME}:/opt/hadoop/etc/hadoop/yarn-site.xml
+docker cp /tmp/mapred-site.xml ${HIVE_METASTORE_CONTAINER_NAME}:/opt/hadoop/etc/hadoop/mapred-site.xml
+docker cp /tmp/tmp_entrypoint.sh ${HIVE_METASTORE_CONTAINER_NAME}:/hivemetastore_entrypoint.sh
+
+docker start ${HIVE_METASTORE_CONTAINER_NAME}
+
+# Setup kerberos config and copy keytab
+docker exec ${HIVE_METASTORE_CONTAINER_NAME} bash -c "sudo tee /etc/krb5.conf > /dev/null << EOF
+[libdefaults]
+    default_realm = ${KERBEROS_LOGIC_DOMAIN_UPPER}
+    dns_lookup_realm = false
+    dns_lookup_kdc = false
+    ticket_lifetime = 24h
+    renew_lifetime = 7d
+    forwardable = true
+
+[realms]
+    ${KERBEROS_LOGIC_DOMAIN_UPPER} = {
+        kdc = ${KERBEROS_HOSTNAME}
+        admin_server = ${KERBEROS_HOSTNAME}
+    }
+
+[domain_realm]
+    ${REAL_DOMAIN} = ${KERBEROS_LOGIC_DOMAIN_UPPER}
+    .${REAL_DOMAIN} = ${KERBEROS_LOGIC_DOMAIN_UPPER}
+EOF"
+docker cp ${KERBEROS_CONTAINER_NAME}:/etc/security/keytabs/hive.service.keytab /tmp/hive.service.keytab
+docker cp /tmp/hive.service.keytab ${HIVE_METASTORE_CONTAINER_NAME}:/etc/security/keytabs/hive.service.keytab
+docker exec ${HIVE_METASTORE_CONTAINER_NAME} bash -c 'sudo chmod 644 /etc/security/keytabs/hive.service.keytab'
+
+docker cp /tmp/hivemetastore_entrypoint.sh ${HIVE_METASTORE_CONTAINER_NAME}:/hivemetastore_entrypoint.sh
+docker restart ${HIVE_METASTORE_CONTAINER_NAME}
+
+# Start standalone hiveserver2
+docker create --name ${HIVE_SERVER_CONTAINER_NAME} --hostname ${HIVE_SERVER_HOSTNAME} --network ${SHARED_NS} -p 127.0.0.1:10000:10000 -e SERVICE_NAME=hiveserver2 -e IS_RESUME=true --entrypoint /hiveserver_entrypoint.sh apache/hive:4.0.0_with_kerberos
+
+docker cp /tmp/hive-site-for-hiveserver2.xml ${HIVE_SERVER_CONTAINER_NAME}:/opt/hive/conf/hive-site.xml
+docker cp /tmp/core-site.xml ${HIVE_SERVER_CONTAINER_NAME}:/opt/hadoop/etc/hadoop/core-site.xml
+docker cp /tmp/hdfs-site.xml ${HIVE_SERVER_CONTAINER_NAME}:/opt/hadoop/etc/hadoop/hdfs-site.xml
+docker cp /tmp/yarn-site.xml ${HIVE_SERVER_CONTAINER_NAME}:/opt/hadoop/etc/hadoop/yarn-site.xml
+docker cp /tmp/mapred-site.xml ${HIVE_SERVER_CONTAINER_NAME}:/opt/hadoop/etc/hadoop/mapred-site.xml
+docker cp /tmp/tmp_entrypoint.sh ${HIVE_SERVER_CONTAINER_NAME}:/hiveserver_entrypoint.sh
+
+docker start ${HIVE_SERVER_CONTAINER_NAME}
+
+# Setup kerberos config and copy keytab
+docker exec ${HIVE_SERVER_CONTAINER_NAME} bash -c "sudo tee /etc/krb5.conf > /dev/null << EOF
+[libdefaults]
+    default_realm = ${KERBEROS_LOGIC_DOMAIN_UPPER}
+    dns_lookup_realm = false
+    dns_lookup_kdc = false
+    ticket_lifetime = 24h
+    renew_lifetime = 7d
+    forwardable = true
+
+[realms]
+    ${KERBEROS_LOGIC_DOMAIN_UPPER} = {
+        kdc = ${KERBEROS_HOSTNAME}
+        admin_server = ${KERBEROS_HOSTNAME}
+    }
+
+[domain_realm]
+    ${REAL_DOMAIN} = ${KERBEROS_LOGIC_DOMAIN_UPPER}
+    .${REAL_DOMAIN} = ${KERBEROS_LOGIC_DOMAIN_UPPER}
+EOF"
+docker cp ${KERBEROS_CONTAINER_NAME}:/etc/security/keytabs/hive.service.keytab /tmp/hive.service.keytab
+docker cp /tmp/hive.service.keytab ${HIVE_SERVER_CONTAINER_NAME}:/etc/security/keytabs/hive.service.keytab
+docker exec ${HIVE_SERVER_CONTAINER_NAME} bash -c 'sudo chmod 644 /etc/security/keytabs/hive.service.keytab'
+
+docker cp /tmp/hiveserver_entrypoint.sh ${HIVE_SERVER_CONTAINER_NAME}:/hiveserver_entrypoint.sh
+docker restart ${HIVE_SERVER_CONTAINER_NAME}
+
+docker exec ${HIVE_SERVER_CONTAINER_NAME} bash -c "kinit user_with_password <<EOF
+123456
+EOF"
+```
+
+**Test:**
+
+```sh
+docker exec -it ${HIVE_SERVER_CONTAINER_NAME} beeline -u "jdbc:hive2://localhost:10000/default;principal=hive/${HIVE_SERVER_HOSTNAME}@${KERBEROS_LOGIC_DOMAIN_UPPER}" -e "
+create table hive_example(a string, b int) partitioned by(c int);
+alter table hive_example add partition(c=1);
+insert into hive_example partition(c=1) values('a', 1), ('a', 2),('b',3);
+select * from hive_example;
+drop table hive_example;
+"
+```
+
+# 7 Docker-Compose
 
 * [Big Data Europe](https://github.com/big-data-europe)
     * [docker-hadoop](https://github.com/big-data-europe/docker-hadoop)

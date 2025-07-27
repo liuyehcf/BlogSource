@@ -124,3 +124,6 @@
 | ROI | Return On Investment |
 | SLA | Service Level Agreement |
 | SMT | Simultaneous Multithreading |
+| DAU | Daily Active Users |
+| WAU | Weekly Active Users |
+| MAU | Monthly Active Users |
