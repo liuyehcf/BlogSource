@@ -270,7 +270,7 @@ done
 
 * For hadoop: (You need to start hadoop cluster in same namespace by your own)
     ```sh
-    HADOOP_CONTAINER_NAME="hadoop"
+    HADOOP_CONTAINER_NAME="namenode"
 
     cat > /tmp/paimon.sql << EOF
     CREATE CATALOG my_catalog WITH (

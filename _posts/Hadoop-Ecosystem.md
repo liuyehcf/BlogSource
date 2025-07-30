@@ -50,37 +50,91 @@ Below are the Hadoop components, that together form a Hadoop ecosystem:
     * `/var/log/hadoop/hadoop-hadoop-nodemanager-$(hostname).out`
     * `userlogs`: Logs for applications that are submitted to yarn.
 
-**Important ports:**
-
-* `8020`: The NameNode's default RPC port is 8020.
-* `9866`: The datanode server address and port for data transfer.
-* `8042`: NodeManager (Web UI).
-* `8088`: ResourceManager (Web UI).
-
 ```sh
 SHARED_NS=hadoop-ns
-HADOOP_CONTAINER_NAME=hadoop
+NN_CONTAINER_NAME=namenode
+DN_CONTAINER_NAME=datanode
+NM_CONTAINER_NAME=nodemanager
+RM_CONTAINER_NAME=resourcemanager
+NN_HOSTNAME=${NN_CONTAINER_NAME}.${SHARED_NS}
+DN_HOSTNAME=${DN_CONTAINER_NAME}.${SHARED_NS}
+NM_HOSTNAME=${NM_CONTAINER_NAME}.${SHARED_NS}
+RM_HOSTNAME=${RM_CONTAINER_NAME}.${SHARED_NS}
 
-docker run -dit \
-    --name ${HADOOP_CONTAINER_NAME} \
-    --hostname ${HADOOP_CONTAINER_NAME} \
-    --network ${SHARED_NS} --privileged \
-    -p 127.0.0.1:8020:8020 \
-    -p 127.0.0.1:9866:9866 \
-    -p 127.0.0.1:8042:8042 \
-    -p 127.0.0.1:8088:8088 \
-    apache/hadoop:3.3.6 bash
+docker rm -f ${NN_CONTAINER_NAME} > /dev/null 2>&1
+docker rm -f ${DN_CONTAINER_NAME} > /dev/null 2>&1
+docker rm -f ${NM_CONTAINER_NAME} > /dev/null 2>&1
+docker rm -f ${RM_CONTAINER_NAME} > /dev/null 2>&1
 
-docker exec ${HADOOP_CONTAINER_NAME} bash -c "cat > /opt/hadoop/etc/hadoop/core-site.xml << EOF
+# Hadoop container is not stable in MacOS, always exited right after started without any logs, so start them in loop here.
+while true; do
+    # namenode
+    if ! docker inspect ${NN_CONTAINER_NAME} > /dev/null 2>&1; then
+        docker run -dit \
+            --name ${NN_CONTAINER_NAME} \
+            --hostname ${NN_HOSTNAME} \
+            --network ${SHARED_NS} --privileged \
+            -p 127.0.0.1:8020:8020 \
+            apache/hadoop:3.3.6 bash
+    fi
+
+    # datanode
+    if ! docker inspect ${DN_CONTAINER_NAME} > /dev/null 2>&1; then
+        docker run -dit \
+            --name ${DN_CONTAINER_NAME} \
+            --hostname ${DN_HOSTNAME} \
+            --network ${SHARED_NS} --privileged \
+            -p 127.0.0.1:9866:9866 \
+            apache/hadoop:3.3.6 bash
+    fi
+
+    # nodemanager
+    if ! docker inspect ${NM_CONTAINER_NAME} > /dev/null 2>&1; then
+        docker run -dit \
+            --name ${NM_CONTAINER_NAME} \
+            --hostname ${NM_HOSTNAME} \
+            --network ${SHARED_NS} --privileged \
+            -p 127.0.0.1:8042:8042 \
+            apache/hadoop:3.3.6 bash
+    fi
+    
+    # resourcemanager
+    if ! docker inspect ${RM_CONTAINER_NAME} > /dev/null 2>&1; then
+        docker run -dit \
+            --name ${RM_CONTAINER_NAME} \
+            --hostname ${RM_HOSTNAME} \
+            --network ${SHARED_NS} --privileged \
+            -p 127.0.0.1:8088:8088 \
+            apache/hadoop:3.3.6 bash
+    fi
+
+    sleep 5
+    cnt=0;
+    for container in "${NN_CONTAINER_NAME}" "${DN_CONTAINER_NAME}" "${NM_CONTAINER_NAME}" "${RM_CONTAINER_NAME}"
+    do
+        if [ "$(docker inspect -f '{{.State.Status}}' ${container})" = "running" ]; then
+            ((cnt++))
+        else
+            echo "${container} is not running"
+            docker rm -f ${container}
+        fi
+    done
+    if [ ${cnt} -eq 4 ]; then
+        break
+    fi
+done
+
+# Generate configs
+cat > /tmp/core-site.xml << EOF
 <configuration>
     <property>
         <name>fs.defaultFS</name>
-        <value>hdfs://${HADOOP_CONTAINER_NAME}:8020</value>
+        <value>hdfs://${NN_HOSTNAME}:8020</value>
     </property>
 </configuration>
-EOF"
+EOF
 
-docker exec ${HADOOP_CONTAINER_NAME} bash -c "cat > /opt/hadoop/etc/hadoop/hdfs-site.xml << EOF
+cat > /tmp/hdfs-site.xml << EOF
 <configuration>
     <property>
         <name>dfs.replication</name>
@@ -96,28 +150,28 @@ docker exec ${HADOOP_CONTAINER_NAME} bash -c "cat > /opt/hadoop/etc/hadoop/hdfs-
     </property>
     <property>
         <name>dfs.datanode.address</name>
-        <value>${HADOOP_CONTAINER_NAME}:9866</value>
+        <value>${DN_HOSTNAME}:9866</value>
     </property>
     <property>
         <name>dfs.datanode.http.address</name>
-        <value>${HADOOP_CONTAINER_NAME}:9864</value>
+        <value>${DN_HOSTNAME}:9864</value>
     </property>
     <property>
         <name>dfs.datanode.ipc.address</name>
-        <value>${HADOOP_CONTAINER_NAME}:9867</value>
+        <value>${DN_HOSTNAME}:9867</value>
     </property>
     <property>
         <name>dfs.datanode.hostname</name>
-        <value>${HADOOP_CONTAINER_NAME}</value>
+        <value>${DN_HOSTNAME}</value>
     </property>
 </configuration>
-EOF"
+EOF
 
-docker exec ${HADOOP_CONTAINER_NAME} bash -c "cat > /opt/hadoop/etc/hadoop/yarn-site.xml << EOF
+cat > /tmp/yarn-site.xml << EOF
 <configuration>
     <property>
         <name>yarn.resourcemanager.hostname</name>
-        <value>${HADOOP_CONTAINER_NAME}</value>
+        <value>${RM_HOSTNAME}</value>
     </property>
     <property>
         <name>yarn.nodemanager.aux-services</name>
@@ -140,52 +194,33 @@ docker exec ${HADOOP_CONTAINER_NAME} bash -c "cat > /opt/hadoop/etc/hadoop/yarn-
         <value>8192</value>
     </property>
 </configuration>
-EOF"
+EOF
 
-docker exec ${HADOOP_CONTAINER_NAME} bash -c "cat > /opt/hadoop/etc/hadoop/mapred-site.xml << EOF
-<configuration>
-    <property>
-        <name>mapreduce.framework.name</name>
-        <value>yarn</value>
-    </property>
-    <property>
-        <name>yarn.app.mapreduce.am.env</name>
-        <value>HADOOP_MAPRED_HOME=/opt/hadoop</value>
-    </property>
-    <property>
-        <name>mapreduce.map.env</name>
-        <value>HADOOP_MAPRED_HOME=/opt/hadoop</value>
-    </property>
-    <property>
-        <name>mapreduce.reduce.env</name>
-        <value>HADOOP_MAPRED_HOME=/opt/hadoop</value>
-    </property>
-    <property>
-        <name>mapreduce.application.classpath</name>
-        <value>/opt/hadoop/share/hadoop/mapreduce/*,/opt/hadoop/share/hadoop/mapreduce/lib/*</value>
-    </property>
-</configuration>
-EOF"
+for container in "${NN_CONTAINER_NAME}" "${DN_CONTAINER_NAME}" "${NM_CONTAINER_NAME}" "${RM_CONTAINER_NAME}"
+do
+    docker cp /tmp/core-site.xml ${container}:/opt/hadoop/etc/hadoop/core-site.xml
+    docker cp /tmp/hdfs-site.xml ${container}:/opt/hadoop/etc/hadoop/hdfs-site.xml
+    docker cp /tmp/yarn-site.xml ${container}:/opt/hadoop/etc/hadoop/yarn-site.xml
+done
 
 # Format
-docker exec ${HADOOP_CONTAINER_NAME} bash -c 'hdfs namenode -format'
-docker exec ${HADOOP_CONTAINER_NAME} bash -c 'mkdir -p /opt/hadoop/data'
+docker exec ${NN_CONTAINER_NAME} bash -c 'hdfs namenode -format'
+docker exec ${DN_CONTAINER_NAME} bash -c 'mkdir -p /opt/hadoop/data'
 
 # Retart all daemons
-docker exec ${HADOOP_CONTAINER_NAME} bash -c 'hdfs --daemon stop namenode; hdfs --daemon start namenode'
-docker exec ${HADOOP_CONTAINER_NAME} bash -c 'hdfs --daemon stop datanode; hdfs --daemon start datanode'
-docker exec ${HADOOP_CONTAINER_NAME} bash -c 'yarn --daemon stop resourcemanager; yarn --daemon start resourcemanager'
-docker exec ${HADOOP_CONTAINER_NAME} bash -c 'yarn --daemon stop nodemanager; yarn --daemon start nodemanager'
-docker exec ${HADOOP_CONTAINER_NAME} bash -c 'mapred --daemon stop historyserver; mapred --daemon start historyserver'
+docker exec ${NN_CONTAINER_NAME} bash -c 'hdfs --daemon stop namenode; hdfs --daemon start namenode'
+docker exec ${DN_CONTAINER_NAME} bash -c 'hdfs --daemon stop datanode; hdfs --daemon start datanode'
+docker exec ${NM_CONTAINER_NAME} bash -c 'yarn --daemon stop nodemanager; yarn --daemon start nodemanager'
+docker exec ${RM_CONTAINER_NAME} bash -c 'yarn --daemon stop resourcemanager; yarn --daemon start resourcemanager'
 
 # Report status
-docker exec ${HADOOP_CONTAINER_NAME} bash -c 'hdfs dfsadmin -report'
+docker exec ${NN_CONTAINER_NAME} bash -c 'hdfs dfsadmin -report'
 ```
 
 **Test:**
 
 ```sh
-docker exec ${HADOOP_CONTAINER_NAME} bash -c 'hadoop jar /opt/hadoop/share/hadoop/mapreduce/hadoop-mapreduce-examples-*.jar pi 10 100'
+docker exec ${NN_CONTAINER_NAME} bash -c 'hadoop jar /opt/hadoop/share/hadoop/mapreduce/hadoop-mapreduce-examples-*.jar pi 10 100'
 ```
 
 ## 2.2 Configuration
@@ -531,7 +566,31 @@ Here is a summary of the compatible versions of Apache Hive and Hadoop (refer to
 * **When setting `IS_RESUME=true`, container `hiveserver2` can restart if it is started via `docker run -d`. And it cannot restart if it is started via `docker create & docker start`, still don't know why.**
 * **Don't use `apache-tez-0.10.3-bin.tar.gz` directly but use `share/tez.tar.gz` after uncompressing. ([Error: Could not find or load main class org.apache.tez.dag.app.DAGAppMaster](https://stackoverflow.com/questions/72211046/error-could-not-find-or-load-main-class-org-apache-tez-dag-app-dagappmaster))**
 
-### 4.2.1 Use built-in Derby
+### 4.2.1 Prepare Hive Image
+
+Add some tools to official image.
+
+```sh
+rm -rf /tmp/hive_with_tools
+mkdir -p /tmp/hive_with_tools
+cat > /tmp/hive_with_tools/Dockerfile << 'EOF'
+FROM apache/hive:4.0.0
+USER root
+
+RUN apt-get update && \
+    DEBIAN_FRONTEND=noninteractive apt-get install -y sudo iproute2 iputils-ping netcat vim-tiny less
+
+RUN mkdir -p /home/hive && chown -R hive:hive /home/hive
+
+RUN echo "hive ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers
+
+USER hive
+EOF
+
+docker build -t apache/hive:4.0.0_with_tools /tmp/hive_with_tools
+```
+
+### 4.2.2 Use built-in Derby
 
 [Apache Hive - Quickstart](https://hive.apache.org/developement/quickstart/)
 
@@ -539,18 +598,23 @@ Start a hive container joining the shared network.
 
 ```sh
 SHARED_NS=hadoop-ns
-HADOOP_CONTAINER_NAME=hadoop
-HIVE_PREFIX=hive-with-derby
-HIVE_METASTORE_CONTAINER_NAME=${HIVE_PREFIX}-metastore
-HIVE_SERVER_CONTAINER_NAME=${HIVE_PREFIX}-server
+NN_CONTAINER_NAME=namenode
+NN_HOSTNAME=${NN_CONTAINER_NAME}.${SHARED_NS}
+HIVE_METASTORE_CONTAINER_NAME=hive-metastore
+HIVE_SERVER_CONTAINER_NAME=hive-server
+HIVE_METASTORE_HOSTNAME=${HIVE_METASTORE_CONTAINER_NAME}.${SHARED_NS}
+HIVE_SERVER_HOSTNAME=${HIVE_SERVER_CONTAINER_NAME}.${SHARED_NS}
+
+docker rm -f ${HIVE_METASTORE_CONTAINER_NAME} > /dev/null 2>&1
+docker rm -f ${HIVE_SERVER_CONTAINER_NAME} > /dev/null 2>&1
 
 # Download tez resources and put to hdfs
 if [ ! -e /tmp/apache-tez-0.10.3-bin.tar.gz ]; then
     wget -O /tmp/apache-tez-0.10.3-bin.tar.gz  https://downloads.apache.org/tez/0.10.3/apache-tez-0.10.3-bin.tar.gz
 fi
-docker exec ${HADOOP_CONTAINER_NAME} bash -c 'mkdir -p /opt/tez'
-docker cp /tmp/apache-tez-0.10.3-bin.tar.gz ${HADOOP_CONTAINER_NAME}:/opt/tez
-docker exec ${HADOOP_CONTAINER_NAME} bash -c '
+docker exec ${NN_CONTAINER_NAME} bash -c 'mkdir -p /opt/tez'
+docker cp /tmp/apache-tez-0.10.3-bin.tar.gz ${NN_CONTAINER_NAME}:/opt/tez
+docker exec ${NN_CONTAINER_NAME} bash -c '
 if ! hdfs dfs -ls /opt/tez/tez.tar.gz > /dev/null 2>&1; then
     rm -rf /opt/tez/apache-tez-0.10.3-bin
     tar -zxf /opt/tez/apache-tez-0.10.3-bin.tar.gz -C /opt/tez
@@ -570,11 +634,11 @@ HIVE_SITE_CONFIG_COMMON=$(cat << EOF
     </property>
     <property>
         <name>hive.exec.scratchdir</name>
-        <value>/opt/${HIVE_PREFIX}/scratch_dir</value>
+        <value>/opt/hive-with-derby/scratch_dir</value>
     </property>
     <property>
         <name>hive.user.install.directory</name>
-        <value>/opt/${HIVE_PREFIX}/install_dir</value>
+        <value>/opt/hive-with-derby/install_dir</value>
     </property>
     <property>
         <name>tez.runtime.optimize.local.fetch</name>
@@ -602,7 +666,7 @@ HIVE_SITE_CONFIG_COMMON=$(cat << EOF
     </property>
     <property>
         <name>metastore.warehouse.dir</name>
-        <value>/opt/${HIVE_PREFIX}/data/warehouse</value>
+        <value>/opt/hive-with-derby/data/warehouse</value>
     </property>
     <property>
         <name>metastore.metastore.event.db.notification.api.auth</name>
@@ -621,17 +685,16 @@ cat > /tmp/hive-site-for-hiveserver2.xml << EOF
 <configuration>
     <property>
         <name>hive.metastore.uris</name>
-        <value>thrift://${HIVE_METASTORE_CONTAINER_NAME}:9083</value>
+        <value>thrift://${HIVE_METASTORE_HOSTNAME}:9083</value>
     </property>
     ${HIVE_SITE_CONFIG_COMMON}
 </configuration>
 EOF
 
 # Copy hadoop config file to hive container
-docker cp ${HADOOP_CONTAINER_NAME}:/opt/hadoop/etc/hadoop/core-site.xml /tmp/core-site.xml
-docker cp ${HADOOP_CONTAINER_NAME}:/opt/hadoop/etc/hadoop/hdfs-site.xml /tmp/hdfs-site.xml
-docker cp ${HADOOP_CONTAINER_NAME}:/opt/hadoop/etc/hadoop/yarn-site.xml /tmp/yarn-site.xml
-docker cp ${HADOOP_CONTAINER_NAME}:/opt/hadoop/etc/hadoop/mapred-site.xml /tmp/mapred-site.xml
+docker cp ${NN_CONTAINER_NAME}:/opt/hadoop/etc/hadoop/core-site.xml /tmp/core-site.xml
+docker cp ${NN_CONTAINER_NAME}:/opt/hadoop/etc/hadoop/hdfs-site.xml /tmp/hdfs-site.xml
+docker cp ${NN_CONTAINER_NAME}:/opt/hadoop/etc/hadoop/yarn-site.xml /tmp/yarn-site.xml
 
 # Use customized entrypoint
 cat > /tmp/updated_entrypoint.sh << 'EOF'
@@ -657,25 +720,37 @@ EOF
 chmod a+x /tmp/updated_entrypoint.sh
 
 # Start standalone metastore
-docker create --name ${HIVE_METASTORE_CONTAINER_NAME} --network ${SHARED_NS} -p 127.0.0.1:9083:9083 -e SERVICE_NAME=metastore --entrypoint /updated_entrypoint.sh apache/hive:4.0.0
+docker create \
+    --name ${HIVE_METASTORE_CONTAINER_NAME} \
+    --hostname ${HIVE_METASTORE_HOSTNAME} \
+    --network ${SHARED_NS} \
+    -p 127.0.0.1:9083:9083 \
+    -e SERVICE_NAME=metastore \
+    --entrypoint /updated_entrypoint.sh \
+    apache/hive:4.0.0_with_tools
 
 docker cp /tmp/hive-site-for-metastore.xml ${HIVE_METASTORE_CONTAINER_NAME}:/opt/hive/conf/hive-site.xml
 docker cp /tmp/core-site.xml ${HIVE_METASTORE_CONTAINER_NAME}:/opt/hadoop/etc/hadoop/core-site.xml
 docker cp /tmp/hdfs-site.xml ${HIVE_METASTORE_CONTAINER_NAME}:/opt/hadoop/etc/hadoop/hdfs-site.xml
 docker cp /tmp/yarn-site.xml ${HIVE_METASTORE_CONTAINER_NAME}:/opt/hadoop/etc/hadoop/yarn-site.xml
-docker cp /tmp/mapred-site.xml ${HIVE_METASTORE_CONTAINER_NAME}:/opt/hadoop/etc/hadoop/mapred-site.xml
 docker cp /tmp/updated_entrypoint.sh ${HIVE_METASTORE_CONTAINER_NAME}:/updated_entrypoint.sh
 
 docker start ${HIVE_METASTORE_CONTAINER_NAME}
 
 # Start standalone hiveserver2
-docker create --name ${HIVE_SERVER_CONTAINER_NAME} --network ${SHARED_NS} -p 127.0.0.1:10000:10000 -e SERVICE_NAME=hiveserver2 -e IS_RESUME=true apache/hive:4.0.0
+docker create \
+    --name ${HIVE_SERVER_CONTAINER_NAME} \
+    --hostname ${HIVE_SERVER_HOSTNAME} \
+    --network ${SHARED_NS} \
+    -p 127.0.0.1:10000:10000 \
+    -e SERVICE_NAME=hiveserver2 \
+    -e IS_RESUME=true \
+    apache/hive:4.0.0_with_tools
 
 docker cp /tmp/hive-site-for-hiveserver2.xml ${HIVE_SERVER_CONTAINER_NAME}:/opt/hive/conf/hive-site.xml
 docker cp /tmp/core-site.xml ${HIVE_SERVER_CONTAINER_NAME}:/opt/hadoop/etc/hadoop/core-site.xml
 docker cp /tmp/hdfs-site.xml ${HIVE_SERVER_CONTAINER_NAME}:/opt/hadoop/etc/hadoop/hdfs-site.xml
 docker cp /tmp/yarn-site.xml ${HIVE_SERVER_CONTAINER_NAME}:/opt/hadoop/etc/hadoop/yarn-site.xml
-docker cp /tmp/mapred-site.xml ${HIVE_SERVER_CONTAINER_NAME}:/opt/hadoop/etc/hadoop/mapred-site.xml
 
 docker start ${HIVE_SERVER_CONTAINER_NAME}
 ```
@@ -692,36 +767,47 @@ drop table hive_example;
 "
 ```
 
-### 4.2.2 Use External Postgres
+### 4.2.3 Use External Postgres
 
 ```sh
 SHARED_NS=hadoop-ns
+NN_CONTAINER_NAME=namenode
+NN_HOSTNAME=${NN_CONTAINER_NAME}.${SHARED_NS}
+HIVE_METASTORE_CONTAINER_NAME=hive-metastore
+HIVE_SERVER_CONTAINER_NAME=hive-server
+HIVE_METASTORE_HOSTNAME=${HIVE_METASTORE_CONTAINER_NAME}.${SHARED_NS}
+HIVE_SERVER_HOSTNAME=${HIVE_SERVER_CONTAINER_NAME}.${SHARED_NS}
+IS_RESUME="false"
+
 POSTGRES_CONTAINER_NAME=postgres
+POSTGRES_HOSTNAME=${POSTGRES_CONTAINER_NAME}.${SHARED_NS}
 POSTGRES_USER="hive_postgres"
 POSTGRES_PASSWORD="Abcd1234"
 POSTGRES_DB="hive-metastore"
-HADOOP_CONTAINER_NAME=hadoop
-HIVE_PREFIX=hive-with-postgres
-HIVE_METASTORE_CONTAINER_NAME=${HIVE_PREFIX}-metastore
-HIVE_SERVER_CONTAINER_NAME=${HIVE_PREFIX}-server
-IS_RESUME="false"
+
+docker rm -f ${HIVE_METASTORE_CONTAINER_NAME} > /dev/null 2>&1
+docker rm -f ${HIVE_SERVER_CONTAINER_NAME} > /dev/null 2>&1
+docker rm -f ${POSTGRES_CONTAINER_NAME} > /dev/null 2>&1
 
 # How to use sql:
 # 1. docker exec -it ${POSTGRES_CONTAINER_NAME} bash
 # 2. psql -U ${POSTGRES_USER} -d ${POSTGRES_DB}
-docker run --name ${POSTGRES_CONTAINER_NAME} --network ${SHARED_NS} \
+docker run -dit \
+    --name ${POSTGRES_CONTAINER_NAME} \
+    --hostname ${POSTGRES_HOSTNAME} \
+    --network ${SHARED_NS} \
     -e POSTGRES_USER="${POSTGRES_USER}" \
     -e POSTGRES_PASSWORD="${POSTGRES_PASSWORD}" \
     -e POSTGRES_DB="${POSTGRES_DB}" \
-    -d postgres:17.0
+    postgres:17.0
 
 # Download tez resources and put to hdfs
 if [ ! -e /tmp/apache-tez-0.10.3-bin.tar.gz ]; then
     wget -O /tmp/apache-tez-0.10.3-bin.tar.gz  https://downloads.apache.org/tez/0.10.3/apache-tez-0.10.3-bin.tar.gz
 fi
-docker exec ${HADOOP_CONTAINER_NAME} bash -c 'mkdir -p /opt/tez'
-docker cp /tmp/apache-tez-0.10.3-bin.tar.gz ${HADOOP_CONTAINER_NAME}:/opt/tez
-docker exec ${HADOOP_CONTAINER_NAME} bash -c '
+docker exec ${NN_CONTAINER_NAME} bash -c 'mkdir -p /opt/tez'
+docker cp /tmp/apache-tez-0.10.3-bin.tar.gz ${NN_CONTAINER_NAME}:/opt/tez
+docker exec ${NN_CONTAINER_NAME} bash -c '
 if ! hdfs dfs -ls /opt/tez/tez.tar.gz > /dev/null 2>&1; then
     rm -rf /opt/tez/apache-tez-0.10.3-bin
     tar -zxf /opt/tez/apache-tez-0.10.3-bin.tar.gz -C /opt/tez
@@ -741,11 +827,11 @@ HIVE_SITE_CONFIG_COMMON=$(cat << EOF
     </property>
     <property>
         <name>hive.exec.scratchdir</name>
-        <value>/opt/${HIVE_PREFIX}/scratch_dir</value>
+        <value>/opt/hive-with-postgres/scratch_dir</value>
     </property>
     <property>
         <name>hive.user.install.directory</name>
-        <value>/opt/${HIVE_PREFIX}/install_dir</value>
+        <value>/opt/hive-with-postgres/install_dir</value>
     </property>
     <property>
         <name>tez.runtime.optimize.local.fetch</name>
@@ -773,7 +859,7 @@ HIVE_SITE_CONFIG_COMMON=$(cat << EOF
     </property>
     <property>
         <name>metastore.warehouse.dir</name>
-        <value>/opt/${HIVE_PREFIX}/data/warehouse</value>
+        <value>/opt/hive-with-postgres/data/warehouse</value>
     </property>
     <property>
         <name>metastore.metastore.event.db.notification.api.auth</name>
@@ -786,7 +872,7 @@ cat > /tmp/hive-site-for-metastore.xml << EOF
 <configuration>
     <property>
         <name>javax.jdo.option.ConnectionURL</name>
-        <value>jdbc:postgresql://${POSTGRES_CONTAINER_NAME}/${POSTGRES_DB}</value>
+        <value>jdbc:postgresql://${POSTGRES_HOSTNAME}/${POSTGRES_DB}</value>
     </property>
     <property>
         <name>javax.jdo.option.ConnectionDriverName</name>
@@ -808,17 +894,16 @@ cat > /tmp/hive-site-for-hiveserver2.xml << EOF
 <configuration>
     <property>
         <name>hive.metastore.uris</name>
-        <value>thrift://${HIVE_METASTORE_CONTAINER_NAME}:9083</value>
+        <value>thrift://${HIVE_METASTORE_HOSTNAME}:9083</value>
     </property>
     ${HIVE_SITE_CONFIG_COMMON}
 </configuration>
 EOF
 
 # Copy hadoop config file to hive container
-docker cp ${HADOOP_CONTAINER_NAME}:/opt/hadoop/etc/hadoop/core-site.xml /tmp/core-site.xml
-docker cp ${HADOOP_CONTAINER_NAME}:/opt/hadoop/etc/hadoop/hdfs-site.xml /tmp/hdfs-site.xml
-docker cp ${HADOOP_CONTAINER_NAME}:/opt/hadoop/etc/hadoop/yarn-site.xml /tmp/yarn-site.xml
-docker cp ${HADOOP_CONTAINER_NAME}:/opt/hadoop/etc/hadoop/mapred-site.xml /tmp/mapred-site.xml
+docker cp ${NN_CONTAINER_NAME}:/opt/hadoop/etc/hadoop/core-site.xml /tmp/core-site.xml
+docker cp ${NN_CONTAINER_NAME}:/opt/hadoop/etc/hadoop/hdfs-site.xml /tmp/hdfs-site.xml
+docker cp ${NN_CONTAINER_NAME}:/opt/hadoop/etc/hadoop/yarn-site.xml /tmp/yarn-site.xml
 
 # Prepare jdbc driver
 if [ ! -e /tmp/postgresql-42.7.4.jar ]; then
@@ -849,26 +934,41 @@ EOF
 chmod a+x /tmp/updated_entrypoint.sh
 
 # Start standalone metastore
-docker create --name ${HIVE_METASTORE_CONTAINER_NAME} --network ${SHARED_NS} -p 127.0.0.1:9083:9083 -e SERVICE_NAME=metastore -e DB_DRIVER=postgres -e IS_RESUME=${IS_RESUME} --entrypoint /updated_entrypoint.sh apache/hive:4.0.0
+docker create \
+    --name ${HIVE_METASTORE_CONTAINER_NAME} \
+    --hostname ${HIVE_METASTORE_HOSTNAME} \
+    --network ${SHARED_NS} \
+    -p 127.0.0.1:9083:9083 \
+    -e SERVICE_NAME=metastore \
+    -e DB_DRIVER=postgres \
+    -e IS_RESUME=${IS_RESUME} \
+    --entrypoint /updated_entrypoint.sh \
+    apache/hive:4.0.0_with_tools
 
 docker cp /tmp/hive-site-for-metastore.xml ${HIVE_METASTORE_CONTAINER_NAME}:/opt/hive/conf/hive-site.xml
 docker cp /tmp/core-site.xml ${HIVE_METASTORE_CONTAINER_NAME}:/opt/hadoop/etc/hadoop/core-site.xml
 docker cp /tmp/hdfs-site.xml ${HIVE_METASTORE_CONTAINER_NAME}:/opt/hadoop/etc/hadoop/hdfs-site.xml
 docker cp /tmp/yarn-site.xml ${HIVE_METASTORE_CONTAINER_NAME}:/opt/hadoop/etc/hadoop/yarn-site.xml
-docker cp /tmp/mapred-site.xml ${HIVE_METASTORE_CONTAINER_NAME}:/opt/hadoop/etc/hadoop/mapred-site.xml
 docker cp /tmp/updated_entrypoint.sh ${HIVE_METASTORE_CONTAINER_NAME}:/updated_entrypoint.sh
 docker cp /tmp/postgresql-42.7.4.jar ${HIVE_METASTORE_CONTAINER_NAME}:/opt/hive/lib/postgresql-42.7.4.jar
 
 docker start ${HIVE_METASTORE_CONTAINER_NAME}
 
 # Start standalone hiveserver2
-docker create --name ${HIVE_SERVER_CONTAINER_NAME} --network ${SHARED_NS} -p 127.0.0.1:10000:10000 -e SERVICE_NAME=hiveserver2 -e DB_DRIVER=postgres -e IS_RESUME=true apache/hive:4.0.0
+docker create \
+    --name ${HIVE_SERVER_CONTAINER_NAME} \
+    --hostname ${HIVE_SERVER_HOSTNAME} \
+    --network ${SHARED_NS} \
+    -p 127.0.0.1:10000:10000 \
+    -e SERVICE_NAME=hiveserver2 \
+    -e DB_DRIVER=postgres \
+    -e IS_RESUME=true \
+    apache/hive:4.0.0_with_tools
 
 docker cp /tmp/hive-site-for-hiveserver2.xml ${HIVE_SERVER_CONTAINER_NAME}:/opt/hive/conf/hive-site.xml
 docker cp /tmp/core-site.xml ${HIVE_SERVER_CONTAINER_NAME}:/opt/hadoop/etc/hadoop/core-site.xml
 docker cp /tmp/hdfs-site.xml ${HIVE_SERVER_CONTAINER_NAME}:/opt/hadoop/etc/hadoop/hdfs-site.xml
 docker cp /tmp/yarn-site.xml ${HIVE_SERVER_CONTAINER_NAME}:/opt/hadoop/etc/hadoop/yarn-site.xml
-docker cp /tmp/mapred-site.xml ${HIVE_SERVER_CONTAINER_NAME}:/opt/hadoop/etc/hadoop/mapred-site.xml
 docker cp /tmp/postgresql-42.7.4.jar ${HIVE_SERVER_CONTAINER_NAME}:/opt/hive/lib/postgresql-42.7.4.jar
 
 docker start ${HIVE_SERVER_CONTAINER_NAME}
@@ -886,7 +986,7 @@ drop table hive_example;
 "
 ```
 
-### 4.2.3 Tips
+### 4.2.4 Tips
 
 1. Logdir: `/tmp/hive`
 
@@ -1213,7 +1313,7 @@ USER root
 
 RUN apt-get update && \
     DEBIAN_FRONTEND=noninteractive apt-get install -y krb5-user libkrb5-3 \
-    sudo iproute2 iputils-ping vim-tiny less
+    sudo iproute2 iputils-ping netcat vim-tiny less
 
 RUN mkdir -p /home/hive && chown -R hive:hive /home/hive
 
@@ -1239,19 +1339,28 @@ docker build -t apache/hive:4.0.0_with_kerberos /tmp/hive_with_kerberos
 ```sh
 SHARED_NS=liuyehcf.org
 KERBEROS_CONTAINER_NAME=kerberos
-HADOOP_CONTAINER_NAME=hadoop-with-kerberos
+NN_CONTAINER_NAME=namenode-with-kerberos
+DN_CONTAINER_NAME=datanode-with-kerberos
+NM_CONTAINER_NAME=nodemanager-with-kerberos
+RM_CONTAINER_NAME=resourcemanager-with-kerberos
 HIVE_METASTORE_CONTAINER_NAME=hive-metastore-with-kerberos
 HIVE_SERVER_CONTAINER_NAME=hive-server-with-kerberos
 REAL_DOMAIN=${SHARED_NS}
 KERBEROS_HOSTNAME=${KERBEROS_CONTAINER_NAME}.${REAL_DOMAIN}
-HADOOP_HOSTNAME=${HADOOP_CONTAINER_NAME}.${REAL_DOMAIN}
+NN_HOSTNAME=${NN_CONTAINER_NAME}.${REAL_DOMAIN}
+DN_HOSTNAME=${DN_CONTAINER_NAME}.${REAL_DOMAIN}
+NM_HOSTNAME=${NM_CONTAINER_NAME}.${REAL_DOMAIN}
+RM_HOSTNAME=${RM_CONTAINER_NAME}.${REAL_DOMAIN}
 HIVE_METASTORE_HOSTNAME=${HIVE_METASTORE_CONTAINER_NAME}.${REAL_DOMAIN}
 HIVE_SERVER_HOSTNAME=${HIVE_SERVER_CONTAINER_NAME}.${REAL_DOMAIN}
 KERBEROS_LOGIC_DOMAIN=example.com
 KERBEROS_LOGIC_DOMAIN_UPPER=$(echo ${KERBEROS_LOGIC_DOMAIN} | tr "[:lower:]" "[:upper:]")
 
 # Must explicit mapping for udp, otherwise ICMP package from host machine cannot work with kerberos inside container.
-docker run -dit --name ${KERBEROS_CONTAINER_NAME} --hostname ${KERBEROS_HOSTNAME} --network ${SHARED_NS} --privileged \
+docker run -dit \
+    --name ${KERBEROS_CONTAINER_NAME} \
+    --hostname ${KERBEROS_HOSTNAME} \
+    --network ${SHARED_NS} --privileged \
     -p 127.0.0.1:88:88/tcp -p 127.0.0.1:88:88/udp \
     -p 127.0.0.1:464:464/tcp -p 127.0.0.1:464:464/udp \
     -p 127.0.0.1:749:749/tcp -p 127.0.0.1:749:749/udp \
@@ -1310,17 +1419,17 @@ docker exec ${KERBEROS_CONTAINER_NAME} bash -c '/usr/sbin/kadmind'
 # Create principal for hadoop
 docker exec ${KERBEROS_CONTAINER_NAME} bash -c 'mkdir -p /etc/security/keytabs'
 docker exec ${KERBEROS_CONTAINER_NAME} bash -c "kadmin.local <<EOF
-addprinc -randkey nn/${HADOOP_HOSTNAME}@${KERBEROS_LOGIC_DOMAIN_UPPER}
-addprinc -randkey dn/${HADOOP_HOSTNAME}@${KERBEROS_LOGIC_DOMAIN_UPPER}
-addprinc -randkey rm/${HADOOP_HOSTNAME}@${KERBEROS_LOGIC_DOMAIN_UPPER}
-addprinc -randkey nm/${HADOOP_HOSTNAME}@${KERBEROS_LOGIC_DOMAIN_UPPER}
+addprinc -randkey nn/${NN_HOSTNAME}@${KERBEROS_LOGIC_DOMAIN_UPPER}
+addprinc -randkey dn/${DN_HOSTNAME}@${KERBEROS_LOGIC_DOMAIN_UPPER}
+addprinc -randkey nm/${NM_HOSTNAME}@${KERBEROS_LOGIC_DOMAIN_UPPER}
+addprinc -randkey rm/${RM_HOSTNAME}@${KERBEROS_LOGIC_DOMAIN_UPPER}
 listprincs
 
 ktadd -k /etc/security/keytabs/hadoop.service.keytab \
-    nn/${HADOOP_HOSTNAME}@${KERBEROS_LOGIC_DOMAIN_UPPER} \
-    dn/${HADOOP_HOSTNAME}@${KERBEROS_LOGIC_DOMAIN_UPPER} \
-    rm/${HADOOP_HOSTNAME}@${KERBEROS_LOGIC_DOMAIN_UPPER} \
-    nm/${HADOOP_HOSTNAME}@${KERBEROS_LOGIC_DOMAIN_UPPER}
+    nn/${NN_HOSTNAME}@${KERBEROS_LOGIC_DOMAIN_UPPER} \
+    dn/${DN_HOSTNAME}@${KERBEROS_LOGIC_DOMAIN_UPPER} \
+    nm/${NM_HOSTNAME}@${KERBEROS_LOGIC_DOMAIN_UPPER} \
+    rm/${RM_HOSTNAME}@${KERBEROS_LOGIC_DOMAIN_UPPER}
 
 quit
 EOF"
@@ -1403,26 +1512,92 @@ EOF"
 ```sh
 SHARED_NS=liuyehcf.org
 KERBEROS_CONTAINER_NAME=kerberos
-HADOOP_CONTAINER_NAME=hadoop-with-kerberos
+NN_CONTAINER_NAME=namenode-with-kerberos
+DN_CONTAINER_NAME=datanode-with-kerberos
+NM_CONTAINER_NAME=nodemanager-with-kerberos
+RM_CONTAINER_NAME=resourcemanager-with-kerberos
 HIVE_METASTORE_CONTAINER_NAME=hive-metastore-with-kerberos
 HIVE_SERVER_CONTAINER_NAME=hive-server-with-kerberos
 REAL_DOMAIN=${SHARED_NS}
 KERBEROS_HOSTNAME=${KERBEROS_CONTAINER_NAME}.${REAL_DOMAIN}
-HADOOP_HOSTNAME=${HADOOP_CONTAINER_NAME}.${REAL_DOMAIN}
+NN_HOSTNAME=${NN_CONTAINER_NAME}.${REAL_DOMAIN}
+DN_HOSTNAME=${DN_CONTAINER_NAME}.${REAL_DOMAIN}
+NM_HOSTNAME=${NM_CONTAINER_NAME}.${REAL_DOMAIN}
+RM_HOSTNAME=${RM_CONTAINER_NAME}.${REAL_DOMAIN}
 HIVE_METASTORE_HOSTNAME=${HIVE_METASTORE_CONTAINER_NAME}.${REAL_DOMAIN}
 HIVE_SERVER_HOSTNAME=${HIVE_SERVER_CONTAINER_NAME}.${REAL_DOMAIN}
 KERBEROS_LOGIC_DOMAIN=example.com
 KERBEROS_LOGIC_DOMAIN_UPPER=$(echo ${KERBEROS_LOGIC_DOMAIN} | tr "[:lower:]" "[:upper:]")
 
-docker run -dit --name ${HADOOP_CONTAINER_NAME} --hostname ${HADOOP_HOSTNAME} --network ${SHARED_NS} --privileged \
-    -p 127.0.0.1:8020:8020 \
-    -p 127.0.0.1:9866:9866 \
-    apache/hadoop:3.3.6 bash
-docker exec ${HADOOP_CONTAINER_NAME} bash -c "cat > /opt/hadoop/etc/hadoop/core-site.xml << EOF
+docker rm -f ${NN_CONTAINER_NAME} > /dev/null 2>&1
+docker rm -f ${DN_CONTAINER_NAME} > /dev/null 2>&1
+docker rm -f ${NM_CONTAINER_NAME} > /dev/null 2>&1
+docker rm -f ${RM_CONTAINER_NAME} > /dev/null 2>&1
+
+# Hadoop container is not stable in MacOS, always exited right after started without any logs, so start them in loop here.
+while true; do
+    # namenode
+    if ! docker inspect ${NN_CONTAINER_NAME} > /dev/null 2>&1; then
+        docker run -dit \
+            --name ${NN_CONTAINER_NAME} \
+            --hostname ${NN_HOSTNAME} \
+            --network ${SHARED_NS} --privileged \
+            -p 127.0.0.1:8020:8020 \
+            apache/hadoop:3.3.6 bash
+    fi
+
+    # datanode
+    if ! docker inspect ${DN_CONTAINER_NAME} > /dev/null 2>&1; then
+        docker run -dit \
+            --name ${DN_CONTAINER_NAME} \
+            --hostname ${DN_HOSTNAME} \
+            --network ${SHARED_NS} --privileged \
+            -p 127.0.0.1:9866:9866 \
+            apache/hadoop:3.3.6 bash
+    fi
+
+    # nodemanager
+    if ! docker inspect ${NM_CONTAINER_NAME} > /dev/null 2>&1; then
+        docker run -dit \
+            --name ${NM_CONTAINER_NAME} \
+            --hostname ${NM_HOSTNAME} \
+            --network ${SHARED_NS} --privileged \
+            -p 127.0.0.1:8042:8042 \
+            apache/hadoop:3.3.6 bash
+    fi
+    
+    # resourcemanager
+    if ! docker inspect ${RM_CONTAINER_NAME} > /dev/null 2>&1; then
+        docker run -dit \
+            --name ${RM_CONTAINER_NAME} \
+            --hostname ${RM_HOSTNAME} \
+            --network ${SHARED_NS} --privileged \
+            -p 127.0.0.1:8088:8088 \
+            apache/hadoop:3.3.6 bash
+    fi
+
+    sleep 5
+    cnt=0;
+    for container in "${NN_CONTAINER_NAME}" "${DN_CONTAINER_NAME}" "${NM_CONTAINER_NAME}" "${RM_CONTAINER_NAME}"
+    do
+        if [ "$(docker inspect -f '{{.State.Status}}' ${container})" = "running" ]; then
+            ((cnt++))
+        else
+            echo "${container} is not running"
+            docker rm -f ${container}
+        fi
+    done
+    if [ ${cnt} -eq 4 ]; then
+        break
+    fi
+done
+
+# Generate configs
+cat > /tmp/core-site.xml << EOF
 <configuration>
     <property>
         <name>fs.defaultFS</name>
-        <value>hdfs://${HADOOP_HOSTNAME}:8020</value>
+        <value>hdfs://${NN_HOSTNAME}:8020</value>
     </property>
     <property>
       <name>hadoop.security.authentication</name>
@@ -1434,6 +1609,14 @@ docker exec ${HADOOP_CONTAINER_NAME} bash -c "cat > /opt/hadoop/etc/hadoop/core-
     </property>
 
     <property>
+        <name>hadoop.proxyuser.hdfs.hosts</name>
+        <value>*</value>
+    </property>
+    <property>
+        <name>hadoop.proxyuser.hdfs.groups</name>
+        <value>*</value>
+    </property>
+    <property>
         <name>hadoop.proxyuser.hive.hosts</name>
         <value>*</value>
     </property>
@@ -1442,9 +1625,9 @@ docker exec ${HADOOP_CONTAINER_NAME} bash -c "cat > /opt/hadoop/etc/hadoop/core-
         <value>*</value>
     </property>
 </configuration>
-EOF"
+EOF
 
-docker exec ${HADOOP_CONTAINER_NAME} bash -c "cat > /opt/hadoop/etc/hadoop/hdfs-site.xml << EOF
+cat > /tmp/hdfs-site.xml << EOF
 <configuration>
     <property>
         <name>dfs.replication</name>
@@ -1460,24 +1643,24 @@ docker exec ${HADOOP_CONTAINER_NAME} bash -c "cat > /opt/hadoop/etc/hadoop/hdfs-
     </property>
     <property>
         <name>dfs.datanode.address</name>
-        <value>${HADOOP_HOSTNAME}:9866</value>
+        <value>${DN_HOSTNAME}:9866</value>
     </property>
     <property>
         <name>dfs.datanode.http.address</name>
-        <value>${HADOOP_HOSTNAME}:9864</value>
+        <value>${DN_HOSTNAME}:9864</value>
     </property>
     <property>
         <name>dfs.datanode.ipc.address</name>
-        <value>${HADOOP_HOSTNAME}:9867</value>
+        <value>${DN_HOSTNAME}:9867</value>
     </property>
     <property>
         <name>dfs.datanode.hostname</name>
-        <value>${HADOOP_HOSTNAME}</value>
+        <value>${DN_HOSTNAME}</value>
     </property>
 
     <property>
         <name>dfs.namenode.kerberos.principal</name>
-        <value>nn/${HADOOP_HOSTNAME}@${KERBEROS_LOGIC_DOMAIN_UPPER}</value>
+        <value>nn/${NN_HOSTNAME}@${KERBEROS_LOGIC_DOMAIN_UPPER}</value>
     </property>
     <property>
         <name>dfs.namenode.keytab.file</name>
@@ -1485,7 +1668,7 @@ docker exec ${HADOOP_CONTAINER_NAME} bash -c "cat > /opt/hadoop/etc/hadoop/hdfs-
     </property>
     <property>
         <name>dfs.datanode.kerberos.principal</name>
-        <value>dn/${HADOOP_HOSTNAME}@${KERBEROS_LOGIC_DOMAIN_UPPER}</value>
+        <value>dn/${DN_HOSTNAME}@${KERBEROS_LOGIC_DOMAIN_UPPER}</value>
     </property>
     <property>
         <name>dfs.datanode.keytab.file</name>
@@ -1509,13 +1692,13 @@ docker exec ${HADOOP_CONTAINER_NAME} bash -c "cat > /opt/hadoop/etc/hadoop/hdfs-
         <value>true</value>
     </property>
 </configuration>
-EOF"
+EOF
 
-docker exec ${HADOOP_CONTAINER_NAME} bash -c "cat > /opt/hadoop/etc/hadoop/yarn-site.xml << EOF
+cat > /tmp/yarn-site.xml << EOF
 <configuration>
     <property>
         <name>yarn.resourcemanager.hostname</name>
-        <value>${HADOOP_HOSTNAME}</value>
+        <value>${RM_HOSTNAME}</value>
     </property>
     <property>
         <name>yarn.nodemanager.aux-services</name>
@@ -1540,7 +1723,7 @@ docker exec ${HADOOP_CONTAINER_NAME} bash -c "cat > /opt/hadoop/etc/hadoop/yarn-
 
     <property>
         <name>yarn.resourcemanager.principal</name>
-        <value>rm/${HADOOP_HOSTNAME}@${KERBEROS_LOGIC_DOMAIN_UPPER}</value>
+        <value>rm/${RM_HOSTNAME}@${KERBEROS_LOGIC_DOMAIN_UPPER}</value>
     </property>
     <property>
         <name>yarn.resourcemanager.keytab</name>
@@ -1548,7 +1731,7 @@ docker exec ${HADOOP_CONTAINER_NAME} bash -c "cat > /opt/hadoop/etc/hadoop/yarn-
     </property>
     <property>
         <name>yarn.nodemanager.principal</name>
-        <value>nm/${HADOOP_HOSTNAME}@${KERBEROS_LOGIC_DOMAIN_UPPER}</value>
+        <value>nm/${NM_HOSTNAME}@${KERBEROS_LOGIC_DOMAIN_UPPER}</value>
     </property>
     <property>
         <name>yarn.nodemanager.keytab</name>
@@ -1564,10 +1747,10 @@ docker exec ${HADOOP_CONTAINER_NAME} bash -c "cat > /opt/hadoop/etc/hadoop/yarn-
         <value>org.apache.hadoop.yarn.server.nodemanager.DefaultContainerExecutor</value>
     </property>
 </configuration>
-EOF"
+EOF
 
-# Setup kerberos config
-docker exec ${HADOOP_CONTAINER_NAME} bash -c "sudo tee /etc/krb5.conf > /dev/null << EOF
+# Generate kerberos config
+cat > /tmp/krb5.conf << EOF
 [libdefaults]
     default_realm = ${KERBEROS_LOGIC_DOMAIN_UPPER}
     dns_lookup_realm = false
@@ -1585,48 +1768,60 @@ docker exec ${HADOOP_CONTAINER_NAME} bash -c "sudo tee /etc/krb5.conf > /dev/nul
 [domain_realm]
     ${REAL_DOMAIN} = ${KERBEROS_LOGIC_DOMAIN_UPPER}
     .${REAL_DOMAIN} = ${KERBEROS_LOGIC_DOMAIN_UPPER}
-EOF"
+EOF
 
-# Copy keytab
 docker cp ${KERBEROS_CONTAINER_NAME}:/etc/security/keytabs/hadoop.service.keytab /tmp/hadoop.service.keytab
-docker cp /tmp/hadoop.service.keytab ${HADOOP_CONTAINER_NAME}:/etc/security/keytabs/hadoop.service.keytab
-docker exec ${HADOOP_CONTAINER_NAME} bash -c 'sudo chmod 644 /etc/security/keytabs/hadoop.service.keytab'
+
+for container in "${NN_CONTAINER_NAME}" "${DN_CONTAINER_NAME}" "${NM_CONTAINER_NAME}" "${RM_CONTAINER_NAME}"
+do
+    docker cp /tmp/core-site.xml ${container}:/opt/hadoop/etc/hadoop/core-site.xml
+    docker cp /tmp/hdfs-site.xml ${container}:/opt/hadoop/etc/hadoop/hdfs-site.xml
+    docker cp /tmp/yarn-site.xml ${container}:/opt/hadoop/etc/hadoop/yarn-site.xml
+    docker cp /tmp/krb5.conf ${container}:/etc/krb5.conf
+
+    # Copy keytab
+    docker cp /tmp/hadoop.service.keytab ${container}:/etc/security/keytabs/hadoop.service.keytab
+    docker exec ${container} bash -c 'sudo chmod 644 /etc/security/keytabs/hadoop.service.keytab'
+done
 
 # Format
-docker exec ${HADOOP_CONTAINER_NAME} bash -c 'hdfs namenode -format'
-docker exec ${HADOOP_CONTAINER_NAME} bash -c 'mkdir -p /opt/hadoop/data'
+docker exec ${NN_CONTAINER_NAME} bash -c 'hdfs namenode -format'
+docker exec ${DN_CONTAINER_NAME} bash -c 'mkdir -p /opt/hadoop/data'
 
 # Retart all daemons
-docker exec ${HADOOP_CONTAINER_NAME} bash -c 'hdfs --daemon stop namenode; hdfs --daemon start namenode'
-docker exec ${HADOOP_CONTAINER_NAME} bash -c 'hdfs --daemon stop datanode; hdfs --daemon start datanode'
-docker exec ${HADOOP_CONTAINER_NAME} bash -c 'yarn --daemon stop resourcemanager; yarn --daemon start resourcemanager'
-docker exec ${HADOOP_CONTAINER_NAME} bash -c 'yarn --daemon stop nodemanager; yarn --daemon start nodemanager'
+docker exec ${NN_CONTAINER_NAME} bash -c 'hdfs --daemon stop namenode; hdfs --daemon start namenode'
+docker exec ${DN_CONTAINER_NAME} bash -c 'hdfs --daemon stop datanode; hdfs --daemon start datanode'
+docker exec ${NM_CONTAINER_NAME} bash -c 'yarn --daemon stop nodemanager; yarn --daemon start nodemanager'
+docker exec ${RM_CONTAINER_NAME} bash -c 'yarn --daemon stop resourcemanager; yarn --daemon start resourcemanager'
 
 # Report status
-docker exec ${HADOOP_CONTAINER_NAME} bash -c "kinit user_with_password <<EOF
+docker exec ${NN_CONTAINER_NAME} bash -c "kinit user_with_password <<EOF
 123456
 EOF"
-docker exec ${HADOOP_CONTAINER_NAME} bash -c 'hdfs dfsadmin -report'
+docker exec ${NN_CONTAINER_NAME} bash -c 'hdfs dfsadmin -report'
 ```
 
 **Verify**
 
 ```sh
-forward_lookup=$(docker exec ${KERBEROS_CONTAINER_NAME} bash -c "getent hosts ${HADOOP_HOSTNAME}")
-ip=$(echo ${forward_lookup} | cut -d " " -f1)
-reverse_lookup=$(docker exec ${KERBEROS_CONTAINER_NAME} bash -c "getent hosts ${ip}")
+for container in "${NN_HOSTNAME}" "${DN_HOSTNAME}" "${NM_HOSTNAME}" "${RM_HOSTNAME}"
+do
+    forward_lookup=$(docker exec ${KERBEROS_CONTAINER_NAME} bash -c "getent hosts ${container}")
+    ip=$(echo ${forward_lookup} | cut -d " " -f1)
+    reverse_lookup=$(docker exec ${KERBEROS_CONTAINER_NAME} bash -c "getent hosts ${ip}")
 
-if [ "${forward_lookup}" = "${reverse_lookup}" ]; then
-    echo "DNS check for container '${HADOOP_CONTAINER_NAME}'" is successful.
-else
-    echo "DNS check for container '${HADOOP_CONTAINER_NAME}'" is failed.
-fi
+    if [ "${forward_lookup}" = "${reverse_lookup}" ]; then
+        echo "DNS check for container host '${container}'" is successful.
+    else
+        echo "DNS check for container host '${container}'" is failed.
+    fi
+done
 ```
 
 **Test:**
 
 ```sh
-docker exec ${HADOOP_CONTAINER_NAME} bash -c 'hadoop jar /opt/hadoop/share/hadoop/mapreduce/hadoop-mapreduce-examples-*.jar pi 10 100'
+docker exec ${NN_CONTAINER_NAME} bash -c 'hadoop jar /opt/hadoop/share/hadoop/mapreduce/hadoop-mapreduce-examples-*.jar pi 10 100'
 ```
 
 ## 6.6 Deploy Hive
@@ -1646,24 +1841,33 @@ docker exec ${HADOOP_CONTAINER_NAME} bash -c 'hadoop jar /opt/hadoop/share/hadoo
 ```sh
 SHARED_NS=liuyehcf.org
 KERBEROS_CONTAINER_NAME=kerberos
-HADOOP_CONTAINER_NAME=hadoop-with-kerberos
+NN_CONTAINER_NAME=namenode-with-kerberos
+DN_CONTAINER_NAME=datanode-with-kerberos
+NM_CONTAINER_NAME=nodemanager-with-kerberos
+RM_CONTAINER_NAME=resourcemanager-with-kerberos
 HIVE_METASTORE_CONTAINER_NAME=hive-metastore-with-kerberos
 HIVE_SERVER_CONTAINER_NAME=hive-server-with-kerberos
 REAL_DOMAIN=${SHARED_NS}
 KERBEROS_HOSTNAME=${KERBEROS_CONTAINER_NAME}.${REAL_DOMAIN}
-HADOOP_HOSTNAME=${HADOOP_CONTAINER_NAME}.${REAL_DOMAIN}
+NN_HOSTNAME=${NN_CONTAINER_NAME}.${REAL_DOMAIN}
+DN_HOSTNAME=${DN_CONTAINER_NAME}.${REAL_DOMAIN}
+NM_HOSTNAME=${NM_CONTAINER_NAME}.${REAL_DOMAIN}
+RM_HOSTNAME=${RM_CONTAINER_NAME}.${REAL_DOMAIN}
 HIVE_METASTORE_HOSTNAME=${HIVE_METASTORE_CONTAINER_NAME}.${REAL_DOMAIN}
 HIVE_SERVER_HOSTNAME=${HIVE_SERVER_CONTAINER_NAME}.${REAL_DOMAIN}
 KERBEROS_LOGIC_DOMAIN=example.com
 KERBEROS_LOGIC_DOMAIN_UPPER=$(echo ${KERBEROS_LOGIC_DOMAIN} | tr "[:lower:]" "[:upper:]")
 
+docker rm -f ${HIVE_METASTORE_CONTAINER_NAME} > /dev/null 2>&1
+docker rm -f ${HIVE_SERVER_CONTAINER_NAME} > /dev/null 2>&1
+
 # Download tez resources and put to hdfs
 if [ ! -e /tmp/apache-tez-0.10.3-bin.tar.gz ]; then
     wget -O /tmp/apache-tez-0.10.3-bin.tar.gz  https://downloads.apache.org/tez/0.10.3/apache-tez-0.10.3-bin.tar.gz
 fi
-docker exec ${HADOOP_CONTAINER_NAME} bash -c 'mkdir -p /opt/tez'
-docker cp /tmp/apache-tez-0.10.3-bin.tar.gz ${HADOOP_CONTAINER_NAME}:/opt/tez
-docker exec ${HADOOP_CONTAINER_NAME} bash -c '
+docker exec ${NN_CONTAINER_NAME} bash -c 'mkdir -p /opt/tez'
+docker cp /tmp/apache-tez-0.10.3-bin.tar.gz ${NN_CONTAINER_NAME}:/opt/tez
+docker exec ${NN_CONTAINER_NAME} bash -c '
 if ! hdfs dfs -ls /opt/tez/tez.tar.gz > /dev/null 2>&1; then
     rm -rf /opt/tez/apache-tez-0.10.3-bin
     tar -zxf /opt/tez/apache-tez-0.10.3-bin.tar.gz -C /opt/tez
@@ -1775,10 +1979,9 @@ cat > /tmp/hive-site-for-hiveserver2.xml << EOF
 EOF
 
 # Copy hadoop config file to hive container
-docker cp ${HADOOP_CONTAINER_NAME}:/opt/hadoop/etc/hadoop/core-site.xml /tmp/core-site.xml
-docker cp ${HADOOP_CONTAINER_NAME}:/opt/hadoop/etc/hadoop/hdfs-site.xml /tmp/hdfs-site.xml
-docker cp ${HADOOP_CONTAINER_NAME}:/opt/hadoop/etc/hadoop/yarn-site.xml /tmp/yarn-site.xml
-docker cp ${HADOOP_CONTAINER_NAME}:/opt/hadoop/etc/hadoop/mapred-site.xml /tmp/mapred-site.xml
+docker cp ${NN_CONTAINER_NAME}:/opt/hadoop/etc/hadoop/core-site.xml /tmp/core-site.xml
+docker cp ${NN_CONTAINER_NAME}:/opt/hadoop/etc/hadoop/hdfs-site.xml /tmp/hdfs-site.xml
+docker cp ${NN_CONTAINER_NAME}:/opt/hadoop/etc/hadoop/yarn-site.xml /tmp/yarn-site.xml
 
 # Temporary entrypoint
 cat > /tmp/tmp_entrypoint.sh << 'EOF'
@@ -1819,13 +2022,19 @@ EOF
 chmod a+x /tmp/hiveserver_entrypoint.sh
 
 # Start standalone metastore
-docker create --name ${HIVE_METASTORE_CONTAINER_NAME} --hostname ${HIVE_METASTORE_HOSTNAME} --network ${SHARED_NS} -p 127.0.0.1:9083:9083 -e SERVICE_NAME=metastore --entrypoint /hivemetastore_entrypoint.sh apache/hive:4.0.0_with_kerberos
+docker create \
+    --name ${HIVE_METASTORE_CONTAINER_NAME} \
+    --hostname ${HIVE_METASTORE_HOSTNAME} \
+    --network ${SHARED_NS} \
+    -p 127.0.0.1:9083:9083 \
+    -e SERVICE_NAME=metastore \
+    --entrypoint /hivemetastore_entrypoint.sh \
+    apache/hive:4.0.0_with_kerberos
 
 docker cp /tmp/hive-site-for-metastore.xml ${HIVE_METASTORE_CONTAINER_NAME}:/opt/hive/conf/hive-site.xml
 docker cp /tmp/core-site.xml ${HIVE_METASTORE_CONTAINER_NAME}:/opt/hadoop/etc/hadoop/core-site.xml
 docker cp /tmp/hdfs-site.xml ${HIVE_METASTORE_CONTAINER_NAME}:/opt/hadoop/etc/hadoop/hdfs-site.xml
 docker cp /tmp/yarn-site.xml ${HIVE_METASTORE_CONTAINER_NAME}:/opt/hadoop/etc/hadoop/yarn-site.xml
-docker cp /tmp/mapred-site.xml ${HIVE_METASTORE_CONTAINER_NAME}:/opt/hadoop/etc/hadoop/mapred-site.xml
 docker cp /tmp/tmp_entrypoint.sh ${HIVE_METASTORE_CONTAINER_NAME}:/hivemetastore_entrypoint.sh
 
 docker start ${HIVE_METASTORE_CONTAINER_NAME}
@@ -1858,13 +2067,20 @@ docker cp /tmp/hivemetastore_entrypoint.sh ${HIVE_METASTORE_CONTAINER_NAME}:/hiv
 docker restart ${HIVE_METASTORE_CONTAINER_NAME}
 
 # Start standalone hiveserver2
-docker create --name ${HIVE_SERVER_CONTAINER_NAME} --hostname ${HIVE_SERVER_HOSTNAME} --network ${SHARED_NS} -p 127.0.0.1:10000:10000 -e SERVICE_NAME=hiveserver2 -e IS_RESUME=true --entrypoint /hiveserver_entrypoint.sh apache/hive:4.0.0_with_kerberos
+docker create \
+    --name ${HIVE_SERVER_CONTAINER_NAME} \
+    --hostname ${HIVE_SERVER_HOSTNAME} \
+    --network ${SHARED_NS} \
+    -p 127.0.0.1:10000:10000 \
+    -e SERVICE_NAME=hiveserver2 \
+    -e IS_RESUME=true \
+    --entrypoint /hiveserver_entrypoint.sh \
+    apache/hive:4.0.0_with_kerberos
 
 docker cp /tmp/hive-site-for-hiveserver2.xml ${HIVE_SERVER_CONTAINER_NAME}:/opt/hive/conf/hive-site.xml
 docker cp /tmp/core-site.xml ${HIVE_SERVER_CONTAINER_NAME}:/opt/hadoop/etc/hadoop/core-site.xml
 docker cp /tmp/hdfs-site.xml ${HIVE_SERVER_CONTAINER_NAME}:/opt/hadoop/etc/hadoop/hdfs-site.xml
 docker cp /tmp/yarn-site.xml ${HIVE_SERVER_CONTAINER_NAME}:/opt/hadoop/etc/hadoop/yarn-site.xml
-docker cp /tmp/mapred-site.xml ${HIVE_SERVER_CONTAINER_NAME}:/opt/hadoop/etc/hadoop/mapred-site.xml
 docker cp /tmp/tmp_entrypoint.sh ${HIVE_SERVER_CONTAINER_NAME}:/hiveserver_entrypoint.sh
 
 docker start ${HIVE_SERVER_CONTAINER_NAME}
@@ -1904,27 +2120,18 @@ EOF"
 **Verify**
 
 ```sh
-# check hivemetastore
-forward_lookup=$(docker exec ${KERBEROS_CONTAINER_NAME} bash -c "getent hosts ${HIVE_METASTORE_HOSTNAME}")
-ip=$(echo ${forward_lookup} | cut -d " " -f1)
-reverse_lookup=$(docker exec ${KERBEROS_CONTAINER_NAME} bash -c "getent hosts ${ip}")
+for container in "${HIVE_METASTORE_HOSTNAME}" "${HIVE_SERVER_HOSTNAME}"
+do
+    forward_lookup=$(docker exec ${KERBEROS_CONTAINER_NAME} bash -c "getent hosts ${container}")
+    ip=$(echo ${forward_lookup} | cut -d " " -f1)
+    reverse_lookup=$(docker exec ${KERBEROS_CONTAINER_NAME} bash -c "getent hosts ${ip}")
 
-if [ "${forward_lookup}" = "${reverse_lookup}" ]; then
-    echo "DNS check for container '${HIVE_METASTORE_CONTAINER_NAME}'" is successful.
-else
-    echo "DNS check for container '${HIVE_METASTORE_CONTAINER_NAME}'" is failed.
-fi
-
-# check hiveserver
-forward_lookup=$(docker exec ${KERBEROS_CONTAINER_NAME} bash -c "getent hosts ${HIVE_SERVER_HOSTNAME}")
-ip=$(echo ${forward_lookup} | cut -d " " -f1)
-reverse_lookup=$(docker exec ${KERBEROS_CONTAINER_NAME} bash -c "getent hosts ${ip}")
-
-if [ "${forward_lookup}" = "${reverse_lookup}" ]; then
-    echo "DNS check for container '${HIVE_SERVER_CONTAINER_NAME}'" is successful.
-else
-    echo "DNS check for container '${HIVE_SERVER_CONTAINER_NAME}'" is failed.
-fi
+    if [ "${forward_lookup}" = "${reverse_lookup}" ]; then
+        echo "DNS check for container host '${container}'" is successful.
+    else
+        echo "DNS check for container host '${container}'" is failed.
+    fi
+done
 ```
 
 **Test:**
@@ -1944,39 +2151,53 @@ drop table hive_example;
 ```sh
 SHARED_NS=liuyehcf.org
 KERBEROS_CONTAINER_NAME=kerberos
-HADOOP_CONTAINER_NAME=hadoop-with-kerberos
+NN_CONTAINER_NAME=namenode-with-kerberos
+DN_CONTAINER_NAME=datanode-with-kerberos
+NM_CONTAINER_NAME=nodemanager-with-kerberos
+RM_CONTAINER_NAME=resourcemanager-with-kerberos
 HIVE_METASTORE_CONTAINER_NAME=hive-metastore-with-kerberos
 HIVE_SERVER_CONTAINER_NAME=hive-server-with-kerberos
 REAL_DOMAIN=${SHARED_NS}
 KERBEROS_HOSTNAME=${KERBEROS_CONTAINER_NAME}.${REAL_DOMAIN}
-HADOOP_HOSTNAME=${HADOOP_CONTAINER_NAME}.${REAL_DOMAIN}
+NN_HOSTNAME=${NN_CONTAINER_NAME}.${REAL_DOMAIN}
+DN_HOSTNAME=${DN_CONTAINER_NAME}.${REAL_DOMAIN}
+NM_HOSTNAME=${NM_CONTAINER_NAME}.${REAL_DOMAIN}
+RM_HOSTNAME=${RM_CONTAINER_NAME}.${REAL_DOMAIN}
 HIVE_METASTORE_HOSTNAME=${HIVE_METASTORE_CONTAINER_NAME}.${REAL_DOMAIN}
 HIVE_SERVER_HOSTNAME=${HIVE_SERVER_CONTAINER_NAME}.${REAL_DOMAIN}
 KERBEROS_LOGIC_DOMAIN=example.com
 KERBEROS_LOGIC_DOMAIN_UPPER=$(echo ${KERBEROS_LOGIC_DOMAIN} | tr "[:lower:]" "[:upper:]")
 
 POSTGRES_CONTAINER_NAME=postgres
+POSTGRES_HOSTNAME=${POSTGRES_CONTAINER_NAME}.${SHARED_NS}
 POSTGRES_USER="hive_postgres"
 POSTGRES_PASSWORD="Abcd1234"
 POSTGRES_DB="hive-metastore"
 IS_RESUME="false"
 
+docker rm -f ${HIVE_METASTORE_CONTAINER_NAME} > /dev/null 2>&1
+docker rm -f ${HIVE_SERVER_CONTAINER_NAME} > /dev/null 2>&1
+docker rm -f ${POSTGRES_CONTAINER_NAME} > /dev/null 2>&1
+
 # How to use sql:
 # 1. docker exec -it ${POSTGRES_CONTAINER_NAME} bash
 # 2. psql -U ${POSTGRES_USER} -d ${POSTGRES_DB}
-docker run --name ${POSTGRES_CONTAINER_NAME} --network ${SHARED_NS} \
+docker run -dit \
+    --name ${POSTGRES_CONTAINER_NAME} \
+    --hostname ${POSTGRES_HOSTNAME} \
+    --network ${SHARED_NS} \
     -e POSTGRES_USER="${POSTGRES_USER}" \
     -e POSTGRES_PASSWORD="${POSTGRES_PASSWORD}" \
     -e POSTGRES_DB="${POSTGRES_DB}" \
-    -d postgres:17.0
+    postgres:17.0
 
 # Download tez resources and put to hdfs
 if [ ! -e /tmp/apache-tez-0.10.3-bin.tar.gz ]; then
     wget -O /tmp/apache-tez-0.10.3-bin.tar.gz  https://downloads.apache.org/tez/0.10.3/apache-tez-0.10.3-bin.tar.gz
 fi
-docker exec ${HADOOP_CONTAINER_NAME} bash -c 'mkdir -p /opt/tez'
-docker cp /tmp/apache-tez-0.10.3-bin.tar.gz ${HADOOP_CONTAINER_NAME}:/opt/tez
-docker exec ${HADOOP_CONTAINER_NAME} bash -c '
+docker exec ${NN_CONTAINER_NAME} bash -c 'mkdir -p /opt/tez'
+docker cp /tmp/apache-tez-0.10.3-bin.tar.gz ${NN_CONTAINER_NAME}:/opt/tez
+docker exec ${NN_CONTAINER_NAME} bash -c '
 if ! hdfs dfs -ls /opt/tez/tez.tar.gz > /dev/null 2>&1; then
     rm -rf /opt/tez/apache-tez-0.10.3-bin
     tar -zxf /opt/tez/apache-tez-0.10.3-bin.tar.gz -C /opt/tez
@@ -2073,7 +2294,7 @@ cat > /tmp/hive-site-for-metastore.xml << EOF
 <configuration>
     <property>
         <name>javax.jdo.option.ConnectionURL</name>
-        <value>jdbc:postgresql://${POSTGRES_CONTAINER_NAME}/${POSTGRES_DB}</value>
+        <value>jdbc:postgresql://${POSTGRES_HOSTNAME}/${POSTGRES_DB}</value>
     </property>
     <property>
         <name>javax.jdo.option.ConnectionDriverName</name>
@@ -2104,10 +2325,9 @@ cat > /tmp/hive-site-for-hiveserver2.xml << EOF
 EOF
 
 # Copy hadoop config file to hive container
-docker cp ${HADOOP_CONTAINER_NAME}:/opt/hadoop/etc/hadoop/core-site.xml /tmp/core-site.xml
-docker cp ${HADOOP_CONTAINER_NAME}:/opt/hadoop/etc/hadoop/hdfs-site.xml /tmp/hdfs-site.xml
-docker cp ${HADOOP_CONTAINER_NAME}:/opt/hadoop/etc/hadoop/yarn-site.xml /tmp/yarn-site.xml
-docker cp ${HADOOP_CONTAINER_NAME}:/opt/hadoop/etc/hadoop/mapred-site.xml /tmp/mapred-site.xml
+docker cp ${NN_CONTAINER_NAME}:/opt/hadoop/etc/hadoop/core-site.xml /tmp/core-site.xml
+docker cp ${NN_CONTAINER_NAME}:/opt/hadoop/etc/hadoop/hdfs-site.xml /tmp/hdfs-site.xml
+docker cp ${NN_CONTAINER_NAME}:/opt/hadoop/etc/hadoop/yarn-site.xml /tmp/yarn-site.xml
 
 # Prepare jdbc driver
 if [ ! -e /tmp/postgresql-42.7.4.jar ]; then
@@ -2153,13 +2373,21 @@ EOF
 chmod a+x /tmp/hiveserver_entrypoint.sh
 
 # Start standalone metastore
-docker create --name ${HIVE_METASTORE_CONTAINER_NAME} --hostname ${HIVE_METASTORE_HOSTNAME} --network ${SHARED_NS} -p 127.0.0.1:9083:9083 -e SERVICE_NAME=metastore -e DB_DRIVER=postgres -e IS_RESUME=${IS_RESUME} --entrypoint /hivemetastore_entrypoint.sh apache/hive:4.0.0_with_kerberos
+docker create \
+    --name ${HIVE_METASTORE_CONTAINER_NAME} \
+    --hostname ${HIVE_METASTORE_HOSTNAME} \
+    --network ${SHARED_NS} \
+    -p 127.0.0.1:9083:9083 \
+    -e SERVICE_NAME=metastore \
+    -e DB_DRIVER=postgres \
+    -e IS_RESUME=${IS_RESUME} \
+    --entrypoint /hivemetastore_entrypoint.sh \
+    apache/hive:4.0.0_with_kerberos
 
 docker cp /tmp/hive-site-for-metastore.xml ${HIVE_METASTORE_CONTAINER_NAME}:/opt/hive/conf/hive-site.xml
 docker cp /tmp/core-site.xml ${HIVE_METASTORE_CONTAINER_NAME}:/opt/hadoop/etc/hadoop/core-site.xml
 docker cp /tmp/hdfs-site.xml ${HIVE_METASTORE_CONTAINER_NAME}:/opt/hadoop/etc/hadoop/hdfs-site.xml
 docker cp /tmp/yarn-site.xml ${HIVE_METASTORE_CONTAINER_NAME}:/opt/hadoop/etc/hadoop/yarn-site.xml
-docker cp /tmp/mapred-site.xml ${HIVE_METASTORE_CONTAINER_NAME}:/opt/hadoop/etc/hadoop/mapred-site.xml
 docker cp /tmp/tmp_entrypoint.sh ${HIVE_METASTORE_CONTAINER_NAME}:/hivemetastore_entrypoint.sh
 docker cp /tmp/postgresql-42.7.4.jar ${HIVE_METASTORE_CONTAINER_NAME}:/opt/hive/lib/postgresql-42.7.4.jar
 
@@ -2193,13 +2421,21 @@ docker cp /tmp/hivemetastore_entrypoint.sh ${HIVE_METASTORE_CONTAINER_NAME}:/hiv
 docker restart ${HIVE_METASTORE_CONTAINER_NAME}
 
 # Start standalone hiveserver2
-docker create --name ${HIVE_SERVER_CONTAINER_NAME} --hostname ${HIVE_SERVER_HOSTNAME} --network ${SHARED_NS} -p 127.0.0.1:10000:10000 -e SERVICE_NAME=hiveserver2 -e DB_DRIVER=postgres -e IS_RESUME=true --entrypoint /hiveserver_entrypoint.sh apache/hive:4.0.0_with_kerberos
+docker create \
+    --name ${HIVE_SERVER_CONTAINER_NAME} \
+    --hostname ${HIVE_SERVER_HOSTNAME} \
+    --network ${SHARED_NS} \
+    -p 127.0.0.1:10000:10000 \
+    -e SERVICE_NAME=hiveserver2 \
+    -e DB_DRIVER=postgres \
+    -e IS_RESUME=true \
+    --entrypoint /hiveserver_entrypoint.sh \
+    apache/hive:4.0.0_with_kerberos
 
 docker cp /tmp/hive-site-for-hiveserver2.xml ${HIVE_SERVER_CONTAINER_NAME}:/opt/hive/conf/hive-site.xml
 docker cp /tmp/core-site.xml ${HIVE_SERVER_CONTAINER_NAME}:/opt/hadoop/etc/hadoop/core-site.xml
 docker cp /tmp/hdfs-site.xml ${HIVE_SERVER_CONTAINER_NAME}:/opt/hadoop/etc/hadoop/hdfs-site.xml
 docker cp /tmp/yarn-site.xml ${HIVE_SERVER_CONTAINER_NAME}:/opt/hadoop/etc/hadoop/yarn-site.xml
-docker cp /tmp/mapred-site.xml ${HIVE_SERVER_CONTAINER_NAME}:/opt/hadoop/etc/hadoop/mapred-site.xml
 docker cp /tmp/tmp_entrypoint.sh ${HIVE_SERVER_CONTAINER_NAME}:/hiveserver_entrypoint.sh
 docker cp /tmp/postgresql-42.7.4.jar ${HIVE_SERVER_CONTAINER_NAME}:/opt/hive/lib/postgresql-42.7.4.jar
 
@@ -2240,27 +2476,18 @@ EOF"
 **Verify**
 
 ```sh
-# check hivemetastore
-forward_lookup=$(docker exec ${KERBEROS_CONTAINER_NAME} bash -c "getent hosts ${HIVE_METASTORE_HOSTNAME}")
-ip=$(echo ${forward_lookup} | cut -d " " -f1)
-reverse_lookup=$(docker exec ${KERBEROS_CONTAINER_NAME} bash -c "getent hosts ${ip}")
+for container in "${HIVE_METASTORE_HOSTNAME}" "${HIVE_SERVER_HOSTNAME}"
+do
+    forward_lookup=$(docker exec ${KERBEROS_CONTAINER_NAME} bash -c "getent hosts ${container}")
+    ip=$(echo ${forward_lookup} | cut -d " " -f1)
+    reverse_lookup=$(docker exec ${KERBEROS_CONTAINER_NAME} bash -c "getent hosts ${ip}")
 
-if [ "${forward_lookup}" = "${reverse_lookup}" ]; then
-    echo "DNS check for container '${HIVE_METASTORE_CONTAINER_NAME}'" is successful.
-else
-    echo "DNS check for container '${HIVE_METASTORE_CONTAINER_NAME}'" is failed.
-fi
-
-# check hiveserver
-forward_lookup=$(docker exec ${KERBEROS_CONTAINER_NAME} bash -c "getent hosts ${HIVE_SERVER_HOSTNAME}")
-ip=$(echo ${forward_lookup} | cut -d " " -f1)
-reverse_lookup=$(docker exec ${KERBEROS_CONTAINER_NAME} bash -c "getent hosts ${ip}")
-
-if [ "${forward_lookup}" = "${reverse_lookup}" ]; then
-    echo "DNS check for container '${HIVE_SERVER_CONTAINER_NAME}'" is successful.
-else
-    echo "DNS check for container '${HIVE_SERVER_CONTAINER_NAME}'" is failed.
-fi
+    if [ "${forward_lookup}" = "${reverse_lookup}" ]; then
+        echo "DNS check for container host '${container}'" is successful.
+    else
+        echo "DNS check for container host '${container}'" is failed.
+    fi
+done
 ```
 
 **Test:**
