@@ -562,7 +562,19 @@ docker network inspect <ns-name>
 docker run -dit -p 127.0.0.1:3306:3306 -e MYSQL_ROOT_PASSWORD='Abcd1234' mysql:5.7.37 mysqld --lower_case_table_names=1
 ```
 
-## 7.13 Config Path
+## 7.13 How to check if a service is up
+
+When using `-p` to map container ports to the host, seeing that the port is open on the host does not necessarily mean the application inside the container is actively listening on that port.
+
+This is because Docker sets up the port mapping at the host level — either via a docker-proxy process or through kernel-level NAT rules (e.g. iptables). These mechanisms can make the port appear open on the host even if the containerized application hasn't started or isn't listening yet.
+
+You can use following command to check, using container's ip and port:
+
+```sh
+nc -vz $(docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' namenode) 8020
+```
+
+## 7.14 Config Path
 
 1. Client: `~/.docker/config.json`
 1. Daemon: `/etc/docker/daemon.json`

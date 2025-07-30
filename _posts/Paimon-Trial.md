@@ -111,108 +111,215 @@ SELECT * FROM my_test_paimon.default.my_table;
 
 [Doc](https://paimon.apache.org/docs/master/flink/quick-start/)
 
-First, start a flink container by [Flink Docker Setup](https://nightlies.apache.org/flink/flink-docs-master/docs/deployment/resource-providers/standalone/docker/)
-
 ```sh
-cat > docker-compose.yml << 'EOF'
+PAIMON_VERSION=0.8.2
+SHARED_NS=hadoop-ns
+FILESYSTEM_TYPE=${FILESYSTEM_TYPE:-minio} # or hadoop
+FLINK_JOBMANAGER_CONTAINER_NAME="flink-jobmanager"
+FLINK_TASKMANAGER_CONTAINER_NAME="flink-taskmanager"
+MINIO_CONTAINER_NAME="minio"
+
+# First, start a flink container by [Flink Docker Setup](https://nightlies.apache.org/flink/flink-docs-master/docs/deployment/resource-providers/standalone/docker/)
+cat > /tmp/paimon-docker-compose.yml << EOF
 version: "2.2"
 services:
-  jobmanager:
+  ${FLINK_JOBMANAGER_CONTAINER_NAME}:
     image: apache/flink:1.19-java8
-    container_name: jobmanager
+    container_name: ${FLINK_JOBMANAGER_CONTAINER_NAME}
+    hostname: ${FLINK_JOBMANAGER_CONTAINER_NAME}
     ports:
       - "8081:8081"
     command: jobmanager
     environment:
       - |
         FLINK_PROPERTIES=
-        jobmanager.rpc.address: jobmanager        
+        jobmanager.rpc.address: ${FLINK_JOBMANAGER_CONTAINER_NAME}        
 
-  taskmanager:
+  ${FLINK_TASKMANAGER_CONTAINER_NAME}:
     image: apache/flink:1.19-java8
-    container_name: taskmanager
+    container_name: ${FLINK_TASKMANAGER_CONTAINER_NAME}
+    hostname: ${FLINK_TASKMANAGER_CONTAINER_NAME}
     depends_on:
-      - jobmanager
+      - ${FLINK_JOBMANAGER_CONTAINER_NAME}
     command: taskmanager
     scale: 1
     environment:
       - |
         FLINK_PROPERTIES=
-        jobmanager.rpc.address: jobmanager
+        jobmanager.rpc.address: ${FLINK_JOBMANAGER_CONTAINER_NAME}
         taskmanager.numberOfTaskSlots: 2     
+
+  ${MINIO_CONTAINER_NAME}:
+    image: minio/minio:RELEASE.2024-04-18T19-09-19Z
+    container_name: ${MINIO_CONTAINER_NAME}
+    hostname: ${MINIO_CONTAINER_NAME}
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    environment:
+      MINIO_ROOT_USER: admin
+      MINIO_ROOT_PASSWORD: admin123
+    command: server /data --console-address ":9001"
+    volumes:
+      - minio_data:/data
+
+volumes:
+  minio_data:
+
+networks:
+  default:
+    name: ${SHARED_NS}
+    external: true
 EOF
 
-docker-compose up -d
-```
+docker compose -f /tmp/paimon-docker-compose.yml up -d
 
-Second, download paimon-flink with corresponding version.
+# Second, download paimon-flink with corresponding version.
+if [ ! -e /tmp/paimon-flink-1.19-${PAIMON_VERSION}.jar ]; then
+    wget -O /tmp/paimon-flink-1.19-${PAIMON_VERSION}.jar 'https://repo.maven.apache.org/maven2/org/apache/paimon/paimon-flink-1.19/${PAIMON_VERSION}/paimon-flink-1.19-${PAIMON_VERSION}.jar'
+fi
+if [ ! -e /tmp/paimon-flink-action-${PAIMON_VERSION}.jar ]; then
+    wget -O /tmp/paimon-flink-action-${PAIMON_VERSION}.jar 'https://repo.maven.apache.org/maven2/org/apache/paimon/paimon-flink-action/${PAIMON_VERSION}/paimon-flink-action-${PAIMON_VERSION}.jar'
+fi
+if [ ! -e /tmp/flink-shaded-hadoop-2-uber-2.8.3-10.0.jar ]; then
+    wget -O /tmp/flink-shaded-hadoop-2-uber-2.8.3-10.0.jar 'https://repo.maven.apache.org/maven2/org/apache/flink/flink-shaded-hadoop-2-uber/2.8.3-10.0/flink-shaded-hadoop-2-uber-2.8.3-10.0.jar'
+fi
+if [ ! -e /tmp/paimon-s3-${PAIMON_VERSION}.jar ]; then
+    wget -O /tmp/paimon-s3-${PAIMON_VERSION}.jar 'https://repo.maven.apache.org/maven2/org/apache/paimon/paimon-s3/${PAIMON_VERSION}/paimon-s3-${PAIMON_VERSION}.jar'
+fi
 
-```sh
-wget -O paimon-flink-1.19-0.8.0.jar 'https://repo.maven.apache.org/maven2/org/apache/paimon/paimon-flink-1.19/0.8.0/paimon-flink-1.19-0.8.0.jar'
-wget -O paimon-flink-action-0.8.0.jar 'https://repo.maven.apache.org/maven2/org/apache/paimon/paimon-flink-action/0.8.0/paimon-flink-action-0.8.0.jar'
-wget -O flink-shaded-hadoop-2-uber-2.8.3-10.0.jar 'https://repo.maven.apache.org/maven2/org/apache/flink/flink-shaded-hadoop-2-uber/2.8.3-10.0/flink-shaded-hadoop-2-uber-2.8.3-10.0.jar'
-```
-
-Then, copy the jar file into flink's container
-
-```sh
-containers=( "jobmanager" "taskmanager" )
+# Then, copy the jar files into flink's container
+containers=( "${FLINK_JOBMANAGER_CONTAINER_NAME}" "${FLINK_TASKMANAGER_CONTAINER_NAME}" )
 for container in ${containers[@]}
 do
-    docker cp paimon-flink-1.19-0.8.0.jar ${container}:/opt/flink/lib
-    docker cp paimon-flink-action-0.8.0.jar ${container}:/opt/flink/lib
-    docker cp flink-shaded-hadoop-2-uber-2.8.3-10.0.jar ${container}:/opt/flink/lib
+    docker cp /tmp/paimon-flink-1.19-${PAIMON_VERSION}.jar ${container}:/opt/flink/lib
+    docker cp /tmp/paimon-flink-action-${PAIMON_VERSION}.jar ${container}:/opt/flink/lib
+    docker cp /tmp/flink-shaded-hadoop-2-uber-2.8.3-10.0.jar ${container}:/opt/flink/lib
+
+    if [ "${FILESYSTEM_TYPE}" = "minio" ]; then
+        docker cp /tmp/paimon-s3-${PAIMON_VERSION}.jar ${container}:/opt/flink/lib
+        docker exec -it ${container} cp /opt/flink/opt/flink-s3-fs-hadoop-1.19.3.jar /opt/flink/lib/
+        docker exec -it ${container} cp /opt/flink/opt/flink-s3-fs-hadoop-1.19.3.jar /opt/flink/lib/
+    fi
 done
 ```
 
-Finally, test it:
+**Test:**
 
-```sh
-docker exec -it jobmanager /opt/flink/bin/sql-client.sh
+* For minio:
 
-CREATE CATALOG my_catalog WITH (
-    'type'='paimon',
-    'warehouse'='file:/tmp/paimon'
-);
-USE CATALOG my_catalog;
+    ```sh
+    docker exec -it ${MINIO_CONTAINER_NAME} bash -c "
+    mc alias set local http://localhost:9000 admin admin123
+    mc mb local/paimon-bucket
+    mc ls local/
+    "
 
--- create a word count table
-CREATE TABLE word_count (
-    word STRING PRIMARY KEY NOT ENFORCED,
-    cnt BIGINT
-);
+    cat > /tmp/paimon.sql << EOF
+    CREATE CATALOG my_catalog WITH (
+        'type'='paimon',
+        'warehouse'='s3://paimon-bucket/warehouse',
+        's3.endpoint' = 'http://${MINIO_CONTAINER_NAME}:9000',
+        's3.access-key' = 'admin',
+        's3.secret-key' = 'admin123',
+        's3.path.style.access' = 'true'
+    );
+    USE CATALOG my_catalog;
 
--- create a word data generator table
-CREATE TEMPORARY TABLE word_table (
-    word STRING
-) WITH (
-    'connector' = 'datagen',
-    'fields.word.length' = '1'
-);
+    -- create a word count table
+    CREATE TABLE word_count (
+        word STRING PRIMARY KEY NOT ENFORCED,
+        cnt BIGINT
+    );
 
--- paimon requires checkpoint interval in streaming mode
-SET 'execution.checkpointing.interval' = '10 s';
+    -- create a word data generator table
+    CREATE TEMPORARY TABLE word_table (
+        word STRING
+    ) WITH (
+        'connector' = 'datagen',
+        'fields.word.length' = '1'
+    );
 
--- write streaming data to dynamic table
-INSERT INTO word_count SELECT word, COUNT(*) FROM word_table GROUP BY word;
+    -- paimon requires checkpoint interval in streaming mode
+    SET 'execution.checkpointing.interval' = '10 s';
 
--- use tableau result mode
-SET 'sql-client.execution.result-mode' = 'tableau';
+    -- write streaming data to dynamic table
+    INSERT INTO word_count SELECT word, COUNT(*) FROM word_table GROUP BY word;
 
--- switch to batch mode
-RESET 'execution.checkpointing.interval';
-SET 'execution.runtime-mode' = 'batch';
+    -- use tableau result mode
+    SET 'sql-client.execution.result-mode' = 'tableau';
 
--- olap query the table
-SELECT * FROM word_count;
+    -- switch to batch mode
+    RESET 'execution.checkpointing.interval';
+    SET 'execution.runtime-mode' = 'batch';
 
--- switch to streaming mode
-SET 'execution.runtime-mode' = 'streaming';
+    -- olap query the table
+    SELECT * FROM word_count;
 
--- track the changes of table and calculate the count interval statistics
-SELECT `interval`, COUNT(*) AS interval_cnt FROM
-    (SELECT cnt / 10000 AS `interval` FROM word_count) GROUP BY `interval`;
-```
+    -- switch to streaming mode
+    SET 'execution.runtime-mode' = 'streaming';
+
+    -- track the changes of table and calculate the count interval statistics
+    SELECT \`interval\`, COUNT(*) AS interval_cnt FROM
+        (SELECT cnt / 10000 AS \`interval\` FROM word_count) GROUP BY \`interval\`;
+    EOF
+
+    docker cp /tmp/paimon.sql ${FLINK_JOBMANAGER_CONTAINER_NAME}:/tmp/paimon.sql
+    docker exec -it ${FLINK_JOBMANAGER_CONTAINER_NAME} /opt/flink/bin/sql-client.sh embedded -f /tmp/paimon.sql
+    ```
+
+* For hadoop: (You need to start hadoop cluster in same namespace by your own)
+    ```sh
+    HADOOP_CONTAINER_NAME="hadoop"
+
+    cat > /tmp/paimon.sql << EOF
+    CREATE CATALOG my_catalog WITH (
+        'type'='paimon',
+        'warehouse'='hdfs://${HADOOP_CONTAINER_NAME}/paimon/warehouse'
+    );
+    USE CATALOG my_catalog;
+
+    -- create a word count table
+    CREATE TABLE word_count (
+        word STRING PRIMARY KEY NOT ENFORCED,
+        cnt BIGINT
+    );
+
+    -- create a word data generator table
+    CREATE TEMPORARY TABLE word_table (
+        word STRING
+    ) WITH (
+        'connector' = 'datagen',
+        'fields.word.length' = '1'
+    );
+
+    -- paimon requires checkpoint interval in streaming mode
+    SET 'execution.checkpointing.interval' = '10 s';
+
+    -- write streaming data to dynamic table
+    INSERT INTO word_count SELECT word, COUNT(*) FROM word_table GROUP BY word;
+
+    -- use tableau result mode
+    SET 'sql-client.execution.result-mode' = 'tableau';
+
+    -- switch to batch mode
+    RESET 'execution.checkpointing.interval';
+    SET 'execution.runtime-mode' = 'batch';
+
+    -- olap query the table
+    SELECT * FROM word_count;
+
+    -- switch to streaming mode
+    SET 'execution.runtime-mode' = 'streaming';
+
+    -- track the changes of table and calculate the count interval statistics
+    SELECT \`interval\`, COUNT(*) AS interval_cnt FROM
+        (SELECT cnt / 10000 AS \`interval\` FROM word_count) GROUP BY \`interval\`;
+    EOF
+
+    docker cp /tmp/paimon.sql ${FLINK_JOBMANAGER_CONTAINER_NAME}:/tmp/paimon.sql
+    docker exec -it ${FLINK_JOBMANAGER_CONTAINER_NAME} /opt/flink/bin/sql-client.sh embedded -f /tmp/paimon.sql
+    ```
 
 # 4 Paimon With Trino
 
