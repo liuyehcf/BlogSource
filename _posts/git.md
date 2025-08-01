@@ -120,7 +120,9 @@ git config --global icdiff.options '--highlight --line-numbers'
 * `git icdiff HEAD`
 * `git icdiff -- <file>`
 
-# 3 Adding/Deleting Files
+# 3 Git Operations
+
+## 3.1 Adding/Deleting Files
 
 ```sh
 # Add specified files to the staging area
@@ -155,7 +157,7 @@ git ls-files
 git mv <file-original> <file-renamed>
 ```
 
-## 3.1 Permanently Deleting Files
+### 3.1.1 Permanently Deleting Files
 
 **How to find large files in the repository history:**
 
@@ -185,7 +187,7 @@ git gc --prune=now
 git gc --aggressive --prune=now
 ```
 
-# 4 Submit
+## 3.2 Submit
 
 ```sh
 # Commit the staging area to the repository
@@ -208,7 +210,7 @@ git commit --amend -m <message>
 git commit --amend <file1> <file2> ...
 ```
 
-# 5 Undo
+## 3.3 Undo
 
 ```sh
 # Restore all files in the workspace to the staging area
@@ -277,7 +279,7 @@ git restore <file>
 git restore --staged <file>
 ```
 
-# 6 Branch
+## 3.4 Branch
 
 ```sh
 # List all local branches
@@ -356,7 +358,7 @@ git branch -m <oldbranch> <newbranch>
 git branch -M <oldbranch> <newbranch>
 ```
 
-# 7 Tag
+## 3.5 Tag
 
 ```sh
 # List all tags
@@ -387,7 +389,7 @@ git push <remote> --tags
 git checkout -b <branch> <tag>
 ```
 
-# 8 Log/Diff/Show
+## 3.6 Log/Diff/Show
 
 ```sh
 # Show changed files
@@ -439,7 +441,15 @@ git whatchanged [--stat] [<path>]
 git reflog
 ```
 
-# 9 Clone
+## 3.7 Patch
+
+```sh
+git diff <commit1> <commit2> > /tmp/patch.diff
+git apply --stat ~/tmp/patch.txt
+git apply ~/tmp/patch.txt
+```
+
+## 3.8 Clone
 
 ```sh
 # Download using HTTPS
@@ -462,7 +472,7 @@ git remote set-branches origin <branch_name>
 git fetch --depth 1 origin <branch_name>
 ```
 
-# 10 Sync
+## 3.9 Sync
 
 ```sh
 # Fetch updates from all branches of the specified remote repository, but does not apply them to any local branches. The updates are stored in the remote-tracking branches.
@@ -513,7 +523,7 @@ git push <remote> <branch>
 git push <remote> -f <branch>:<remote_branch>
 ```
 
-# 11 Submodule
+# 4 Submodule
 
 Commit hash of each submodule is stored as normal git object. You can check it by `git submodule status`
 
@@ -533,7 +543,7 @@ git submodule sync --recursive <path/to/submodule>
 git submodule status
 ```
 
-# 12 Plugin
+# 5 Plugin
 
 [git-extra](https://github.com/tj/git-extras)
 
@@ -542,14 +552,14 @@ git submodule status
 git summary --line
 ```
 
-# 13 Publish
+# 6 Publish
 
 ```sh
 # Generate a distributable archive
 git archive
 ```
 
-# 14 .gitignore
+# 7 .gitignore
 
 **基础规则**
 
@@ -569,29 +579,29 @@ git archive
 1. `/**` at the start of a pattern matches everything inside. For example, `abc/**` matches all files within the `abc` directory. **`abc/**` and `abc/` are equivalent.**
 1. `/**/` matches zero or more directories. For example, `a/**/b` matches `a/b`, `a/x/b`, and `a/x/y/b`.
 
-# 15 git-lfs
+# 8 git-lfs
 
 [Git Large File Storage](https://git-lfs.github.com/)
 
-# 16 git-worktree
+# 9 git-worktree
 
 [git-worktree](https://git-scm.com/docs/git-worktree)
 
-# 17 gist
+# 10 gist
 
 Gists allow developers to share code or text snippets with others, making it easy to collaborate or seek help with specific programming tasks.
 
 [Gist](https://gist.github.com/)
 
-# 18 copilot
+# 11 copilot
 
 [copilot](https://github.com/features/copilot)
 
-# 19 Tips
+# 12 Tips
 
-## 19.1 Install Latest Version
+## 12.1 Install Latest Version
 
-### 19.1.1 Centos
+### 12.1.1 Centos
 
 ```sh
 sudo yum -y remove git
@@ -602,7 +612,7 @@ sudo yum -y install https://packages.endpointdev.com/rhel/7/os/x86_64/endpoint-r
 sudo yum install git
 ```
 
-### 19.1.2 From Source
+### 12.1.2 From Source
 
 * [git-tags](https://github.com/git/git/tags)
 
@@ -619,7 +629,7 @@ make -j $(( (cores=$(nproc))>1?cores/2:1 ))
 sudo make install
 ```
 
-## 19.2 Issue with Chinese Displayed in Octal Form
+## 12.2 Issue with Chinese Displayed in Octal Form
 
 In Windows, git bash may display Chinese characters as `\+three digits` in octal notation. You can resolve this issue with the following command:
 
@@ -627,9 +637,9 @@ In Windows, git bash may display Chinese characters as `\+three digits` in octal
 git config --global core.quotepath false
 ```
 
-## 19.3 Proxy
+## 12.3 Proxy
 
-### 19.3.1 SSH Protocol
+### 12.3.1 SSH Protocol
 
 Edit `~/.ssh/config`
 
@@ -643,32 +653,32 @@ Host github.com
    ProxyCommand nc -v -x 127.0.0.1:7890 %h %p
 ```
 
-### 19.3.2 HTTP Protocol
+### 12.3.2 HTTP Protocol
 
 ```sh
 git config --global http.proxy "http://127.0.0.1:7890"
 git config --global https.proxy "https://127.0.0.1:7890"
 ```
 
-## 19.4 DNS
+## 12.4 DNS
 
 ```config
 140.82.114.4 github.com
 ```
 
-## 19.5 Access Tokens
+## 12.5 Access Tokens
 
 `Settings` -> `Developer Settings` -> `Personal access tokens`
 
 You can use token as your password to push to remote repository
 
-## 19.6 How to download a single file from github
+## 12.6 How to download a single file from github
 
 ```sh
 wget https://raw.githubusercontent.com/<user>/<repository>/<branch>/<filepath>
 ```
 
-## 19.7 Format only modified part
+## 12.7 Format only modified part
 
 ```sh
 git diff HEAD -U0 --no-color | clang-format-diff -p1 -i
@@ -676,7 +686,7 @@ git diff HEAD -U0 --no-color | clang-format-diff -p1 -i
 git diff --name-only HEAD | grep -E '(\.h$)|(\.cpp$)|(\.hpp$)|(\.tpp$)|(\.c$)' | xargs git diff HEAD -U0 --no-color | clang-format-diff -p1 -i
 ```
 
-## 19.8 fatal: bad object
+## 12.8 fatal: bad object
 
 ```
 fatal: bad object refs/remotes/origin/ivt_i_dont_want_read_any_data
@@ -688,7 +698,7 @@ How to fix:
 git update-ref -d refs/remotes/origin/ivt_i_dont_want_read_any_data
 ```
 
-# 20 Reference
+# 13 Reference
 
 * [git官方文档](https://git-scm.com/docs/gitignore)
 * [git教程](https://www.liaoxuefeng.com/wiki/0013739516305929606dd18361248578c67b8067c8c017b000/)

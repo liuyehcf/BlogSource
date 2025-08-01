@@ -280,7 +280,39 @@ This command is used to view system-related information.
 
 * `getconf -a | grep CACHE`: View CPU cache-related configuration items
 
-## 1.25 hostnamectl
+## 1.25 getent
+
+The command is a standard Linux/Unix utility used to query entries from system databases configured in `/etc/nsswitch.conf`. It pulls data using the Name Service Switch (NSS), meaning it works consistently across local files (`/etc/passwd`, `/etc/group`, etc.), `LDAP`, `NIS`, or other directory services.
+
+**Database types:**
+
+* `passwd`
+    * `getent passwd`
+    * `getent passwd root`
+* `shadow`
+    * `sudo getent shadow`
+    * `sudo getent shadow root`
+* `group`
+    * `getent group`
+    * `getent group sudo`
+* `gshadow`
+    * `sudo getent gshadow`
+* `hosts`/`ahosts`
+    * `getent hosts www.google.com`
+    * `getent hosts <ip>`
+    * `getent ahosts www.google.com`
+    * `getent ahosts <ip>`
+* `networks`
+    * `getent networks`
+    * `getent networks loopback`
+* `protocols`
+    * `getent protocols`
+    * `getent protocols tcp`
+* `services`
+    * `getent services`
+    * `getent services ssh`
+
+## 1.26 hostnamectl
 
 **Examples:**
 
@@ -288,7 +320,7 @@ This command is used to view system-related information.
 hostnamectl set-hostname <name>
 ```
 
-## 1.26 date
+## 1.27 date
 
 **Examples:**
 
@@ -296,21 +328,21 @@ hostnamectl set-hostname <name>
 * `date "+%Y-%m-%d %H:%M:%S"`
 * `date -s '2014-12-25 12:34:56'`: Change system time.
 
-## 1.27 timedatectl
+## 1.28 timedatectl
 
 **Examples:**
 
 * `timedatectl`: Show time info
 * `timedatectl set-timezone Asia/Shanghai`: Change timezone
 
-## 1.28 ntpdate
+## 1.29 ntpdate
 
 **Examples:**
 
 * `ntpdate ntp.aliyun.com`
 * `ntpdate ntp.cloud.aliyuncs.com`: On Alibaba Cloud ECS, time synchronization requires specifying the internal NTP service.
 
-## 1.29 hexdump
+## 1.30 hexdump
 
 Display file contents in hexadecimal, decimal, octal, or ascii
 
@@ -318,7 +350,7 @@ Display file contents in hexadecimal, decimal, octal, or ascii
 
 * `hexdump -C <filename> | head -n 10`
 
-## 1.30 xxd
+## 1.31 xxd
 
 `xxd` is a command-line utility that creates a hex dump of a file or standard input. It can also do the reverse: convert a hex dump back into binary.
 
@@ -327,7 +359,7 @@ Display file contents in hexadecimal, decimal, octal, or ascii
 * `xxd file.bin`
 * `xxd -r hex_dump.txt > recovered.bin`
 
-## 1.31 showkey
+## 1.32 showkey
 
 Examine the codes sent by the keyboard
 

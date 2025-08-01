@@ -33,6 +33,46 @@ Below are the Hadoop components, that together form a Hadoop ecosystem:
 
 ![HadoopEcosystem-min](/images/Hadoop-Ecosystem/HadoopEcosystem-min.png)
 
+```plantuml
+title Hadoop Component Interaction Diagram (Revised)
+
+actor Client
+
+package "HDFS" {
+    node NameNode
+    node DataNode1
+    node DataNode2
+}
+
+package "YARN" {
+    node ResourceManager
+    node NodeManager1
+    node NodeManager2
+    node ApplicationMaster
+}
+
+' Client interactions
+Client --> NameNode : Request file metadata\n(path → block locations)
+Client --> DataNode1 : Read/Write HDFS blocks
+Client --> DataNode2 : Read/Write HDFS blocks
+
+Client --> ResourceManager : Submit YARN job
+
+' HDFS internal
+DataNode1 --> NameNode : Heartbeat + Block Report
+DataNode2 --> NameNode : Heartbeat + Block Report
+
+' YARN internal
+ResourceManager --> NodeManager1 : Launch ApplicationMaster
+ApplicationMaster --> ResourceManager : Request resources
+ApplicationMaster --> NodeManager1 : Request container
+ApplicationMaster --> NodeManager2 : Request container
+ResourceManager --> NodeManager1 : Launch container\n(allocate resources)
+ResourceManager --> NodeManager2 : Launch container\n(allocate resources)
+NodeManager1 --> ResourceManager : Heartbeat + Resource Status
+NodeManager2 --> ResourceManager : Heartbeat + Resource Status
+```
+
 # 2 HDFS
 
 > HDFS has a master/slave architecture. An HDFS cluster consists of a single NameNode, a master server that manages the file system namespace and regulates access to files by clients. In addition, there are a number of DataNodes, usually one per node in the cluster, which manage storage attached to the nodes that they run on. HDFS exposes a file system namespace and allows user data to be stored in files. Internally, a file is split into one or more blocks and these blocks are stored in a set of DataNodes. The NameNode executes file system namespace operations like opening, closing, and renaming files and directories. It also determines the mapping of blocks to DataNodes. The DataNodes are responsible for serving read and write requests from the file system's clients. The DataNodes also perform block creation, deletion, and replication upon instruction from the NameNode.
@@ -49,6 +89,15 @@ Below are the Hadoop components, that together form a Hadoop ecosystem:
     * `/var/log/hadoop/hadoop-hadoop-resourcemanager-$(hostname).out`
     * `/var/log/hadoop/hadoop-hadoop-nodemanager-$(hostname).out`
     * `userlogs`: Logs for applications that are submitted to yarn.
+
+**Ports:**
+
+* `8020`: HDFS NameNode RPC Port
+* `9866`: HDFS DataNode Data Transfer Port
+* `8088`: YARN ResourceManager Web UI
+* `8042`: YARN NodeManager Web UI
+
+### 2.1.1 One Container per Component Architecture
 
 ```sh
 SHARED_NS=hadoop-ns
@@ -196,11 +245,37 @@ cat > /tmp/yarn-site.xml << EOF
 </configuration>
 EOF
 
+cat > /tmp/mapred-site.xml << EOF
+<configuration>
+    <property>
+        <name>mapreduce.framework.name</name>
+        <value>yarn</value>
+    </property>
+    <property>
+        <name>yarn.app.mapreduce.am.env</name>
+        <value>HADOOP_MAPRED_HOME=/opt/hadoop</value>
+    </property>
+    <property>
+        <name>mapreduce.map.env</name>
+        <value>HADOOP_MAPRED_HOME=/opt/hadoop</value>
+    </property>
+    <property>
+        <name>mapreduce.reduce.env</name>
+        <value>HADOOP_MAPRED_HOME=/opt/hadoop</value>
+    </property>
+    <property>
+        <name>mapreduce.application.classpath</name>
+        <value>/opt/hadoop/share/hadoop/mapreduce/*,/opt/hadoop/share/hadoop/mapreduce/lib/*</value>
+    </property>
+</configuration>
+EOF
+
 for container in "${NN_CONTAINER_NAME}" "${DN_CONTAINER_NAME}" "${NM_CONTAINER_NAME}" "${RM_CONTAINER_NAME}"
 do
     docker cp /tmp/core-site.xml ${container}:/opt/hadoop/etc/hadoop/core-site.xml
     docker cp /tmp/hdfs-site.xml ${container}:/opt/hadoop/etc/hadoop/hdfs-site.xml
     docker cp /tmp/yarn-site.xml ${container}:/opt/hadoop/etc/hadoop/yarn-site.xml
+    docker cp /tmp/mapred-site.xml ${container}:/opt/hadoop/etc/hadoop/mapred-site.xml
 done
 
 # Format
@@ -215,12 +290,243 @@ docker exec ${RM_CONTAINER_NAME} bash -c 'yarn --daemon stop resourcemanager; ya
 
 # Report status
 docker exec ${NN_CONTAINER_NAME} bash -c 'hdfs dfsadmin -report'
+docker exec ${NN_CONTAINER_NAME} bash -c 'yarn node -list -showDetails'
 ```
 
 **Test:**
 
 ```sh
 docker exec ${NN_CONTAINER_NAME} bash -c 'hadoop jar /opt/hadoop/share/hadoop/mapreduce/hadoop-mapreduce-examples-*.jar pi 10 100'
+docker exec ${NN_CONTAINER_NAME} bash -c 'yarn application -list -appStates ALL'
+```
+
+### 2.1.2 Multi-Component Shared Container Model
+
+**Compoment Structure:**
+
+* 1 Namenode and 1 ResourceManager share 1 node
+* 2 Datanodes and 2 NodeManagers share 2 nodes
+
+```sh
+SHARED_NS=hadoop-ns
+NN_CONTAINER_NAME=namenode
+DN_1_CONTAINER_NAME=datanode-1
+DN_2_CONTAINER_NAME=datanode-2
+NN_HOSTNAME=${NN_CONTAINER_NAME}.${SHARED_NS}
+DN_1_HOSTNAME=${DN_1_CONTAINER_NAME}.${SHARED_NS}
+DN_2_HOSTNAME=${DN_2_CONTAINER_NAME}.${SHARED_NS}
+
+docker rm -f ${NN_CONTAINER_NAME} > /dev/null 2>&1
+docker rm -f ${DN_1_CONTAINER_NAME} > /dev/null 2>&1
+docker rm -f ${DN_2_CONTAINER_NAME} > /dev/null 2>&1
+
+# Hadoop container is not stable in MacOS, always exited right after started without any logs, so start them in loop here.
+while true; do
+    # namenode and resourcemanager
+    if ! docker inspect ${NN_CONTAINER_NAME} > /dev/null 2>&1; then
+        docker run -dit \
+            --name ${NN_CONTAINER_NAME} \
+            --hostname ${NN_HOSTNAME} \
+            --network ${SHARED_NS} --privileged \
+            apache/hadoop:3.3.6 bash
+    fi
+
+    # datanode 1 and nodemanager 1
+    if ! docker inspect ${DN_1_CONTAINER_NAME} > /dev/null 2>&1; then
+        docker run -dit \
+            --name ${DN_1_CONTAINER_NAME} \
+            --hostname ${DN_1_HOSTNAME} \
+            --network ${SHARED_NS} --privileged \
+            apache/hadoop:3.3.6 bash
+    fi
+
+    # datanode 2 and nodemanager 2
+    if ! docker inspect ${DN_2_CONTAINER_NAME} > /dev/null 2>&1; then
+        docker run -dit \
+            --name ${DN_2_CONTAINER_NAME} \
+            --hostname ${DN_2_HOSTNAME} \
+            --network ${SHARED_NS} --privileged \
+            apache/hadoop:3.3.6 bash
+    fi
+
+    sleep 5
+    cnt=0;
+    for container in "${NN_CONTAINER_NAME}" "${DN_1_CONTAINER_NAME}" "${DN_2_CONTAINER_NAME}"
+    do
+        if [ "$(docker inspect -f '{{.State.Status}}' ${container})" = "running" ]; then
+            ((cnt++))
+        else
+            echo "${container} is not running"
+            docker rm -f ${container}
+        fi
+    done
+    if [ ${cnt} -eq 3 ]; then
+        break
+    fi
+done
+
+# Generate configs
+cat > /tmp/core-site.xml << EOF
+<configuration>
+    <property>
+        <name>fs.defaultFS</name>
+        <value>hdfs://${NN_HOSTNAME}:8020</value>
+    </property>
+</configuration>
+EOF
+
+cat > /tmp/hdfs-site-for-datanode-1.xml << EOF
+<configuration>
+    <property>
+        <name>dfs.replication</name>
+        <value>1</value>
+    </property>
+    <property>
+        <name>dfs.permissions.enabled</name>
+        <value>false</value>
+    </property>
+    <property>
+        <name>dfs.datanode.data.dir</name>
+        <value>/opt/hadoop/data</value>
+    </property>
+    <property>
+        <name>dfs.datanode.address</name>
+        <value>${DN_1_HOSTNAME}:9866</value>
+    </property>
+    <property>
+        <name>dfs.datanode.http.address</name>
+        <value>${DN_1_HOSTNAME}:9864</value>
+    </property>
+    <property>
+        <name>dfs.datanode.ipc.address</name>
+        <value>${DN_1_HOSTNAME}:9867</value>
+    </property>
+    <property>
+        <name>dfs.datanode.hostname</name>
+        <value>${DN_1_HOSTNAME}</value>
+    </property>
+</configuration>
+EOF
+
+cat > /tmp/hdfs-site-for-datanode-2.xml << EOF
+<configuration>
+    <property>
+        <name>dfs.replication</name>
+        <value>1</value>
+    </property>
+    <property>
+        <name>dfs.permissions.enabled</name>
+        <value>false</value>
+    </property>
+    <property>
+        <name>dfs.datanode.data.dir</name>
+        <value>/opt/hadoop/data</value>
+    </property>
+    <property>
+        <name>dfs.datanode.address</name>
+        <value>${DN_2_HOSTNAME}:9866</value>
+    </property>
+    <property>
+        <name>dfs.datanode.http.address</name>
+        <value>${DN_2_HOSTNAME}:9864</value>
+    </property>
+    <property>
+        <name>dfs.datanode.ipc.address</name>
+        <value>${DN_2_HOSTNAME}:9867</value>
+    </property>
+    <property>
+        <name>dfs.datanode.hostname</name>
+        <value>${DN_2_HOSTNAME}</value>
+    </property>
+</configuration>
+EOF
+
+cat > /tmp/yarn-site.xml << EOF
+<configuration>
+    <property>
+        <name>yarn.resourcemanager.hostname</name>
+        <value>${NN_HOSTNAME}</value>
+    </property>
+    <property>
+        <name>yarn.nodemanager.aux-services</name>
+        <value>mapreduce_shuffle</value>
+    </property>
+    <property>
+    <name>yarn.nodemanager.resource.memory-mb</name>
+        <value>8192</value>
+    </property>
+    <property>
+        <name>yarn.nodemanager.resource.cpu-vcores</name>
+        <value>4</value>
+    </property>
+    <property>
+        <name>yarn.scheduler.minimum-allocation-mb</name>
+        <value>1024</value>
+    </property>
+    <property>
+        <name>yarn.scheduler.maximum-allocation-mb</name>
+        <value>8192</value>
+    </property>
+</configuration>
+EOF
+
+cat > /tmp/mapred-site.xml << EOF
+<configuration>
+    <property>
+        <name>mapreduce.framework.name</name>
+        <value>yarn</value>
+    </property>
+    <property>
+        <name>yarn.app.mapreduce.am.env</name>
+        <value>HADOOP_MAPRED_HOME=/opt/hadoop</value>
+    </property>
+    <property>
+        <name>mapreduce.map.env</name>
+        <value>HADOOP_MAPRED_HOME=/opt/hadoop</value>
+    </property>
+    <property>
+        <name>mapreduce.reduce.env</name>
+        <value>HADOOP_MAPRED_HOME=/opt/hadoop</value>
+    </property>
+    <property>
+        <name>mapreduce.application.classpath</name>
+        <value>/opt/hadoop/share/hadoop/mapreduce/*,/opt/hadoop/share/hadoop/mapreduce/lib/*</value>
+    </property>
+</configuration>
+EOF
+
+for container in "${NN_CONTAINER_NAME}" "${DN_1_CONTAINER_NAME}" "${DN_2_CONTAINER_NAME}"
+do
+    docker cp /tmp/core-site.xml ${container}:/opt/hadoop/etc/hadoop/core-site.xml
+    docker cp /tmp/yarn-site.xml ${container}:/opt/hadoop/etc/hadoop/yarn-site.xml
+    docker cp /tmp/mapred-site.xml ${container}:/opt/hadoop/etc/hadoop/mapred-site.xml
+done
+docker cp /tmp/hdfs-site-for-datanode-1.xml ${DN_1_CONTAINER_NAME}:/opt/hadoop/etc/hadoop/hdfs-site.xml
+docker cp /tmp/hdfs-site-for-datanode-2.xml ${DN_2_CONTAINER_NAME}:/opt/hadoop/etc/hadoop/hdfs-site.xml
+
+# Format
+docker exec ${NN_CONTAINER_NAME} bash -c 'hdfs namenode -format'
+docker exec ${DN_1_CONTAINER_NAME} bash -c 'mkdir -p /opt/hadoop/data'
+docker exec ${DN_2_CONTAINER_NAME} bash -c 'mkdir -p /opt/hadoop/data'
+
+# Retart all daemons
+docker exec ${NN_CONTAINER_NAME} bash -c 'hdfs --daemon stop namenode; hdfs --daemon start namenode'
+docker exec ${NN_CONTAINER_NAME} bash -c 'yarn --daemon stop resourcemanager; yarn --daemon start resourcemanager'
+docker exec ${DN_1_CONTAINER_NAME} bash -c 'hdfs --daemon stop datanode; hdfs --daemon start datanode'
+docker exec ${DN_1_CONTAINER_NAME} bash -c 'yarn --daemon stop nodemanager; yarn --daemon start nodemanager'
+docker exec ${DN_2_CONTAINER_NAME} bash -c 'hdfs --daemon stop datanode; hdfs --daemon start datanode'
+docker exec ${DN_2_CONTAINER_NAME} bash -c 'yarn --daemon stop nodemanager; yarn --daemon start nodemanager'
+
+# Report status
+docker exec ${NN_CONTAINER_NAME} bash -c 'hdfs dfsadmin -report'
+docker exec ${NN_CONTAINER_NAME} bash -c 'yarn node -list -showDetails'
+```
+
+**Test:**
+
+```sh
+docker exec ${NN_CONTAINER_NAME} bash -c 'hadoop jar /opt/hadoop/share/hadoop/mapreduce/hadoop-mapreduce-examples-*.jar pi 10 100'
+docker exec ${NN_CONTAINER_NAME} bash -c 'yarn application -list -appStates ALL'
 ```
 
 ## 2.2 Configuration
@@ -1302,7 +1608,34 @@ EOF
 docker build -t ubuntu:xenial_with_kerberos /tmp/ubuntu-with-kerberos
 ```
 
-### 6.3.2 apache/hive:4.0.0_with_kerberos
+### 6.3.2 apache/hadoop:3.3.6_with_kerberos
+
+In `org.apache.hadoop.yarn.server.nodemanager.LinuxContainerExecutor` mode, `/opt/hadoop/bin/container-executor` is used as the Linux container executor. This binary depends on `libcrypto.so.1.1`, but the default image only includes `libcrypto.so.1.0`, so `libcrypto.so.1.1` needs to be installed manually.
+
+```sh
+rm -rf /tmp/hadoop_with_libs
+mkdir -p /tmp/hadoop_with_libs
+cat > /tmp/hadoop_with_libs/Dockerfile << 'EOF'
+FROM apache/hadoop:3.3.6
+USER root
+
+RUN wget --no-check-certificate -O /opt/openssl-1.1.1w.tar.gz 'https://www.openssl.org/source/openssl-1.1.1w.tar.gz'
+RUN tar -zxvf /opt/openssl-1.1.1w.tar.gz -C /opt/
+RUN mv /etc/yum.repos.d /etc/yum.repos.d.bak
+RUN mkdir /etc/yum.repos.d
+RUN curl -o /etc/yum.repos.d/CentOS-Base.repo http://mirrors.aliyun.com/repo/Centos-7.repo
+RUN yum clean all
+RUN yum makecache
+RUN yum install -y perl gcc make
+RUN cd /opt/openssl-1.1.1w && ./config && make -j $(( (cores=$(nproc))>1?cores/2:1 )) && make install && echo '/usr/local/lib64' | tee /etc/ld.so.conf.d/crypto.conf && ldconfig
+
+USER hadoop
+EOF
+
+docker build -t apache/hadoop:3.3.6_with_libs /tmp/hadoop_with_libs
+```
+
+### 6.3.3 apache/hive:4.0.0_with_kerberos
 
 ```sh
 rm -rf /tmp/hive_with_kerberos
@@ -1507,7 +1840,8 @@ EOF"
 * Directory `/opt/hadoop/data` must can be accessed by the user started datanode.
 * Credential file `/etc/security/keytabs/hadoop.service.keytab` must can be accessed by the user started datanode.
 * If `ignore.secure.ports.for.testing` is set to `false`, then the http port and tcp port must be smaller than 1023, otherwise it cannot pass the check.
-* Remaining problem: the hadoop container will be very slow if historyserver is started with configuration `mapred-site.xml`.
+* Remember kinit before execute any hadoop commands, like `hdfs`, `yarn`.
+* When use `<principal>` to submit mapreduce task, the node manager must has the Linux account with the same name as `<principal>` for writing data/logs locally. (Other node, like namenode, datanode, resourcemanager are not required to have the Linux account)
 
 ```sh
 SHARED_NS=liuyehcf.org
@@ -1543,7 +1877,7 @@ while true; do
             --hostname ${NN_HOSTNAME} \
             --network ${SHARED_NS} --privileged \
             -p 127.0.0.1:8020:8020 \
-            apache/hadoop:3.3.6 bash
+            apache/hadoop:3.3.6_with_libs bash
     fi
 
     # datanode
@@ -1553,7 +1887,7 @@ while true; do
             --hostname ${DN_HOSTNAME} \
             --network ${SHARED_NS} --privileged \
             -p 127.0.0.1:9866:9866 \
-            apache/hadoop:3.3.6 bash
+            apache/hadoop:3.3.6_with_libs bash
     fi
 
     # nodemanager
@@ -1563,7 +1897,7 @@ while true; do
             --hostname ${NM_HOSTNAME} \
             --network ${SHARED_NS} --privileged \
             -p 127.0.0.1:8042:8042 \
-            apache/hadoop:3.3.6 bash
+            apache/hadoop:3.3.6_with_libs bash
     fi
     
     # resourcemanager
@@ -1573,7 +1907,7 @@ while true; do
             --hostname ${RM_HOSTNAME} \
             --network ${SHARED_NS} --privileged \
             -p 127.0.0.1:8088:8088 \
-            apache/hadoop:3.3.6 bash
+            apache/hadoop:3.3.6_with_libs bash
     fi
 
     sleep 5
@@ -1609,11 +1943,11 @@ cat > /tmp/core-site.xml << EOF
     </property>
 
     <property>
-        <name>hadoop.proxyuser.hdfs.hosts</name>
+        <name>hadoop.proxyuser.hadoop.hosts</name>
         <value>*</value>
     </property>
     <property>
-        <name>hadoop.proxyuser.hdfs.groups</name>
+        <name>hadoop.proxyuser.hadoop.groups</name>
         <value>*</value>
     </property>
     <property>
@@ -1701,6 +2035,10 @@ cat > /tmp/yarn-site.xml << EOF
         <value>${RM_HOSTNAME}</value>
     </property>
     <property>
+        <name>yarn.resourcemanager.resource-tracker.address</name>
+        <value>${RM_HOSTNAME}:8031</value>
+    </property>
+    <property>
         <name>yarn.nodemanager.aux-services</name>
         <value>mapreduce_shuffle</value>
     </property>
@@ -1744,9 +2082,45 @@ cat > /tmp/yarn-site.xml << EOF
     </property>
     <property>
         <name>yarn.nodemanager.container-executor.class</name>
-        <value>org.apache.hadoop.yarn.server.nodemanager.DefaultContainerExecutor</value>
+        <value>org.apache.hadoop.yarn.server.nodemanager.LinuxContainerExecutor</value>
     </property>
 </configuration>
+EOF
+
+cat > /tmp/mapred-site.xml << EOF
+<configuration>
+    <property>
+        <name>mapreduce.framework.name</name>
+        <value>yarn</value>
+    </property>
+    <property>
+        <name>yarn.app.mapreduce.am.env</name>
+        <value>HADOOP_MAPRED_HOME=/opt/hadoop</value>
+    </property>
+    <property>
+        <name>mapreduce.map.env</name>
+        <value>HADOOP_MAPRED_HOME=/opt/hadoop</value>
+    </property>
+    <property>
+        <name>mapreduce.reduce.env</name>
+        <value>HADOOP_MAPRED_HOME=/opt/hadoop</value>
+    </property>
+    <property>
+        <name>mapreduce.application.classpath</name>
+        <value>/opt/hadoop/share/hadoop/mapreduce/*,/opt/hadoop/share/hadoop/mapreduce/lib/*</value>
+    </property>
+</configuration>
+EOF
+
+# Set yarn.nodemanager.container-executor.class to org.apache.hadoop.yarn.server.nodemanager.LinuxContainerExecutor will use /opt/hadoop/bin/container-executor as executor
+# Config for /opt/hadoop/bin/container-executor(users is group which account hadoop belongs to)
+cat > /tmp/container-executor.cfg << EOF
+yarn.nodemanager.local-dirs=/opt/hadoop/data
+yarn.nodemanager.log-dirs=/opt/hadoop/logs
+min.user.id=1000
+allowed.system.users=hadoop
+yarn.nodemanager.linux-container-executor.group=users
+banned.users=root
 EOF
 
 # Generate kerberos config
@@ -1777,12 +2151,23 @@ do
     docker cp /tmp/core-site.xml ${container}:/opt/hadoop/etc/hadoop/core-site.xml
     docker cp /tmp/hdfs-site.xml ${container}:/opt/hadoop/etc/hadoop/hdfs-site.xml
     docker cp /tmp/yarn-site.xml ${container}:/opt/hadoop/etc/hadoop/yarn-site.xml
+    docker cp /tmp/mapred-site.xml ${container}:/opt/hadoop/etc/hadoop/mapred-site.xml
     docker cp /tmp/krb5.conf ${container}:/etc/krb5.conf
 
     # Copy keytab
     docker cp /tmp/hadoop.service.keytab ${container}:/etc/security/keytabs/hadoop.service.keytab
     docker exec ${container} bash -c 'sudo chmod 644 /etc/security/keytabs/hadoop.service.keytab'
 done
+
+# Linux Container Executor permissions(users is group which account hadoop belongs to) and create Linux account user_with_password
+docker cp /tmp/container-executor.cfg ${NM_CONTAINER_NAME}:/opt/hadoop/etc/hadoop/container-executor.cfg
+docker exec ${NM_CONTAINER_NAME} bash -c '
+sudo chown -R root:users /opt
+sudo chmod 0400 /opt/hadoop/etc/hadoop/container-executor.cfg
+sudo chmod 6050 /opt/hadoop/bin/container-executor
+sudo useradd -m user_with_password
+sudo usermod -a -G hadoop user_with_password
+'
 
 # Format
 docker exec ${NN_CONTAINER_NAME} bash -c 'hdfs namenode -format'
@@ -1799,6 +2184,7 @@ docker exec ${NN_CONTAINER_NAME} bash -c "kinit user_with_password <<EOF
 123456
 EOF"
 docker exec ${NN_CONTAINER_NAME} bash -c 'hdfs dfsadmin -report'
+docker exec ${NN_CONTAINER_NAME} bash -c 'yarn node -list -showDetails'
 ```
 
 **Verify**
@@ -1822,15 +2208,15 @@ done
 
 ```sh
 docker exec ${NN_CONTAINER_NAME} bash -c 'hadoop jar /opt/hadoop/share/hadoop/mapreduce/hadoop-mapreduce-examples-*.jar pi 10 100'
+docker exec ${NN_CONTAINER_NAME} bash -c 'yarn application -list -appStates ALL'
 ```
 
 ## 6.6 Deploy Hive
 
 **Key points:**
 
-* First part of principal must be `hive`, equals to the user of the container.
+* First part of principal must be `hive`, equals to the user of the container. Also need to add `hadoop.proxyuser.hive.hosts` and `hadoop.proxyuser.hive.groups` to `core-site.xml`, which allows user hive to impersonate any actual users.
 * Both the Hive Metastore and HiveServer must include Kerberos-related configuration properties for each other, as specified in `HIVE_SITE_CONFIG_KERBEROS`.
-* Also need to add `hadoop.proxyuser.hive.hosts` and `hadoop.proxyuser.hive.groups` to `core-site.xml`.
 * Check if kerberos authentication successfully: `grep -rni 'keytab' /tmp/hive`.
 * When a client accesses the Hive Metastore, whether from within the container network or from outside. It must use a domain name that exactly matches the second part of the Kerberos principal. Otherwise, errors such as 'principal not found' may occur.
     * Outside of container network: You need to setup `<container_ip> <hostname>` in `/etc/hosts` manually, including both hadoop's containers and hive's containers.
