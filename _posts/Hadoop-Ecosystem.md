@@ -97,6 +97,10 @@ NodeManager2 --> ResourceManager : Heartbeat + Resource Status
 * `8088`: YARN ResourceManager Web UI
 * `8042`: YARN NodeManager Web UI
 
+**Alternative images:**
+
+* `sbloodys/hadoop:3.3.6`: For both arch amd64 and arm64.
+
 ### 2.1.1 One Container per Component Architecture
 
 ```sh
@@ -920,7 +924,7 @@ EOF
 docker build -t apache/hive:4.0.0_with_tools /tmp/hive_with_tools
 ```
 
-### 4.2.2 Hive with MapReduce on Yarn(Deprecated)
+### 4.2.2 Hive with MapReduce on Yarn
 
 #### 4.2.2.1 Use built-in Derby
 
@@ -955,6 +959,10 @@ cat > /tmp/hive-site.xml << EOF
     <property>
         <name>hive.execution.engine</name>
         <value>mr</value>
+    </property>
+    <property>
+        <name>mapreduce.framework.name</name>
+        <value>yarn</value>
     </property>
     <property>
         <name>hive.exec.scratchdir</name>
@@ -1013,6 +1021,7 @@ docker cp /tmp/hive-site.xml ${HIVE_METASTORE_CONTAINER_NAME}:/opt/hive/conf/hiv
 docker cp /tmp/core-site.xml ${HIVE_METASTORE_CONTAINER_NAME}:/opt/hadoop/etc/hadoop/core-site.xml
 docker cp /tmp/hdfs-site.xml ${HIVE_METASTORE_CONTAINER_NAME}:/opt/hadoop/etc/hadoop/hdfs-site.xml
 docker cp /tmp/yarn-site.xml ${HIVE_METASTORE_CONTAINER_NAME}:/opt/hadoop/etc/hadoop/yarn-site.xml
+docker cp /tmp/mapred-site.xml ${HIVE_METASTORE_CONTAINER_NAME}:/opt/hadoop/etc/hadoop/mapred-site.xml
 docker cp /tmp/updated_entrypoint.sh ${HIVE_METASTORE_CONTAINER_NAME}:/updated_entrypoint.sh
 
 docker start ${HIVE_METASTORE_CONTAINER_NAME}
@@ -1031,6 +1040,7 @@ docker cp /tmp/hive-site.xml ${HIVE_SERVER_CONTAINER_NAME}:/opt/hive/conf/hive-s
 docker cp /tmp/core-site.xml ${HIVE_SERVER_CONTAINER_NAME}:/opt/hadoop/etc/hadoop/core-site.xml
 docker cp /tmp/hdfs-site.xml ${HIVE_SERVER_CONTAINER_NAME}:/opt/hadoop/etc/hadoop/hdfs-site.xml
 docker cp /tmp/yarn-site.xml ${HIVE_SERVER_CONTAINER_NAME}:/opt/hadoop/etc/hadoop/yarn-site.xml
+docker cp /tmp/mapred-site.xml ${HIVE_SERVER_CONTAINER_NAME}:/opt/hadoop/etc/hadoop/mapred-site.xml
 
 # Wait for hivemetastore to start up
 docker exec ${HIVE_METASTORE_CONTAINER_NAME} bash -c '
@@ -1061,6 +1071,7 @@ Test:
 
 ```sh
 docker exec -it ${HIVE_SERVER_CONTAINER_NAME} beeline -u 'jdbc:hive2://localhost:10000/' -e "
+drop table if exists hive_example;
 create table hive_example(a string, b int) partitioned by(c int);
 alter table hive_example add partition(c=1);
 insert into hive_example partition(c=1) values('a', 1), ('a', 2),('b',3);
@@ -1140,6 +1151,10 @@ cat > /tmp/hive-site.xml << EOF
         <value>mr</value>
     </property>
     <property>
+        <name>mapreduce.framework.name</name>
+        <value>yarn</value>
+    </property>
+    <property>
         <name>hive.exec.scratchdir</name>
         <value>hdfs://${NN_CONTAINER_NAME}:8020/opt/${HIVE_DIR_NAME}/scratch_dir</value>
     </property>
@@ -1203,6 +1218,7 @@ docker cp /tmp/hive-site.xml ${HIVE_METASTORE_CONTAINER_NAME}:/opt/hive/conf/hiv
 docker cp /tmp/core-site.xml ${HIVE_METASTORE_CONTAINER_NAME}:/opt/hadoop/etc/hadoop/core-site.xml
 docker cp /tmp/hdfs-site.xml ${HIVE_METASTORE_CONTAINER_NAME}:/opt/hadoop/etc/hadoop/hdfs-site.xml
 docker cp /tmp/yarn-site.xml ${HIVE_METASTORE_CONTAINER_NAME}:/opt/hadoop/etc/hadoop/yarn-site.xml
+docker cp /tmp/mapred-site.xml ${HIVE_METASTORE_CONTAINER_NAME}:/opt/hadoop/etc/hadoop/mapred-site.xml
 docker cp /tmp/updated_entrypoint.sh ${HIVE_METASTORE_CONTAINER_NAME}:/updated_entrypoint.sh
 docker cp /tmp/postgresql-42.7.4.jar ${HIVE_METASTORE_CONTAINER_NAME}:/opt/hive/lib/postgresql-42.7.4.jar
 
@@ -1223,6 +1239,7 @@ docker cp /tmp/hive-site.xml ${HIVE_SERVER_CONTAINER_NAME}:/opt/hive/conf/hive-s
 docker cp /tmp/core-site.xml ${HIVE_SERVER_CONTAINER_NAME}:/opt/hadoop/etc/hadoop/core-site.xml
 docker cp /tmp/hdfs-site.xml ${HIVE_SERVER_CONTAINER_NAME}:/opt/hadoop/etc/hadoop/hdfs-site.xml
 docker cp /tmp/yarn-site.xml ${HIVE_SERVER_CONTAINER_NAME}:/opt/hadoop/etc/hadoop/yarn-site.xml
+docker cp /tmp/mapred-site.xml ${HIVE_SERVER_CONTAINER_NAME}:/opt/hadoop/etc/hadoop/mapred-site.xml
 docker cp /tmp/postgresql-42.7.4.jar ${HIVE_SERVER_CONTAINER_NAME}:/opt/hive/lib/postgresql-42.7.4.jar
 
 # Wait for hivemetastore to start up
@@ -1254,6 +1271,7 @@ Test:
 
 ```sh
 docker exec -it ${HIVE_SERVER_CONTAINER_NAME} beeline -u 'jdbc:hive2://localhost:10000/' -e "
+drop table if exists hive_example;
 create table hive_example(a string, b int) partitioned by(c int);
 alter table hive_example add partition(c=1);
 insert into hive_example partition(c=1) values('a', 1), ('a', 2),('b',3);
@@ -1475,6 +1493,7 @@ Test:
 
 ```sh
 docker exec -it ${HIVE_SERVER_CONTAINER_NAME} beeline -u 'jdbc:hive2://localhost:10000/' -e "
+drop table if exists hive_example;
 create table hive_example(a string, b int) partitioned by(c int);
 alter table hive_example add partition(c=1);
 insert into hive_example partition(c=1) values('a', 1), ('a', 2),('b',3);
@@ -1707,6 +1726,7 @@ Test:
 
 ```sh
 docker exec -it ${HIVE_SERVER_CONTAINER_NAME} beeline -u 'jdbc:hive2://localhost:10000/' -e "
+drop table if exists hive_example;
 create table hive_example(a string, b int) partitioned by(c int);
 alter table hive_example add partition(c=1);
 insert into hive_example partition(c=1) values('a', 1), ('a', 2),('b',3);
@@ -2603,18 +2623,21 @@ do
 done
 
 # Linux Container Executor permissions(users is group which account hadoop belongs to) and create Linux account user_with_password
-docker cp /tmp/container-executor.cfg ${NM_CONTAINER_NAME}:/opt/hadoop/etc/hadoop/container-executor.cfg
-docker exec ${NM_CONTAINER_NAME} bash -c '
+for container in "${DN_CONTAINER_NAME}" "${NM_CONTAINER_NAME}"
+do
+    docker cp /tmp/container-executor.cfg ${container}:/opt/hadoop/etc/hadoop/container-executor.cfg
+    docker exec ${container} bash -c '
 sudo chown -R root:users /opt
 sudo chmod 0400 /opt/hadoop/etc/hadoop/container-executor.cfg
 sudo chmod 6050 /opt/hadoop/bin/container-executor
 sudo useradd -m user_with_password
 sudo usermod -a -G hadoop user_with_password
 '
+done
 
 # Format
 docker exec ${NN_CONTAINER_NAME} bash -c 'hdfs namenode -format'
-docker exec ${DN_CONTAINER_NAME} bash -c 'mkdir -p /opt/hadoop/data'
+docker exec ${DN_CONTAINER_NAME} bash -c 'sudo mkdir -p /opt/hadoop/data && sudo chown -R hadoop:users /opt/hadoop/data'
 
 # Retart all daemons
 docker exec ${NN_CONTAINER_NAME} bash -c 'hdfs --daemon stop namenode; hdfs --daemon start namenode'
@@ -3137,7 +3160,637 @@ docker exec ${NN_CONTAINER_NAME} bash -c 'yarn application -list -appStates ALL'
     * Outside of container network: You need to setup `<container_ip> <hostname>` in `/etc/hosts` manually, including both hadoop's containers and hive's containers.
 * Make sure the container's hostname matches the second part of the Kerberos principal exactly.
 
-### 6.6.1 Use built-in Derby
+### 6.6.1 Hive with MapReduce on Yarn
+
+#### 6.6.1.1 Use built-in Derby
+
+```sh
+SHARED_NS=liuyehcf.org
+# Kerberos
+REAL_DOMAIN=${SHARED_NS}
+KERBEROS_CONTAINER_NAME=kerberos
+KERBEROS_HOSTNAME=${KERBEROS_CONTAINER_NAME}.${REAL_DOMAIN}
+KERBEROS_LOGIC_DOMAIN=example.com
+KERBEROS_LOGIC_DOMAIN_UPPER=$(echo ${KERBEROS_LOGIC_DOMAIN} | tr "[:lower:]" "[:upper:]")
+# Hadoop
+NN_CONTAINER_NAME=namenode-with-kerberos
+NN_HOSTNAME=${NN_CONTAINER_NAME}.${REAL_DOMAIN}
+# Hive
+HIVE_METASTORE_CONTAINER_NAME=hive-metastore-with-kerberos
+HIVE_SERVER_CONTAINER_NAME=hive-server-with-kerberos
+HIVE_METASTORE_HOSTNAME=${HIVE_METASTORE_CONTAINER_NAME}.${REAL_DOMAIN}
+HIVE_SERVER_HOSTNAME=${HIVE_SERVER_CONTAINER_NAME}.${REAL_DOMAIN}
+HIVE_DIR_NAME=hive-with-derby
+
+docker rm -f ${HIVE_METASTORE_CONTAINER_NAME} > /dev/null 2>&1
+docker rm -f ${HIVE_SERVER_CONTAINER_NAME} > /dev/null 2>&1
+
+cat > /tmp/hive-site.xml << EOF
+<configuration>
+    <property>
+        <name>hive.metastore.uris</name>
+        <value>thrift://${HIVE_METASTORE_HOSTNAME}:9083</value>
+    </property>
+    <property>
+        <name>metastore.warehouse.dir</name>
+        <value>hdfs://${NN_CONTAINER_NAME}:8020/opt/${HIVE_DIR_NAME}/data/warehouse</value>
+    </property>
+    <property>
+        <name>metastore.metastore.event.db.notification.api.auth</name>
+        <value>false</value>
+    </property>
+
+    <property>
+        <name>hive.execution.engine</name>
+        <value>mr</value>
+    </property>
+    <property>
+        <name>mapreduce.framework.name</name>
+        <value>yarn</value>
+    </property>
+    <property>
+        <name>hive.exec.scratchdir</name>
+        <value>hdfs://${NN_CONTAINER_NAME}:8020/opt/${HIVE_DIR_NAME}/scratch_dir</value>
+    </property>
+    <property>
+        <name>hive.user.install.directory</name>
+        <value>hdfs://${NN_CONTAINER_NAME}:8020/opt/${HIVE_DIR_NAME}/install_dir</value>
+    </property>
+
+    <property>
+        <name>hive.metastore.sasl.enabled</name>
+        <value>true</value>
+    </property>
+    <property>
+        <name>hive.metastore.kerberos.principal</name>
+        <value>hive/${HIVE_METASTORE_HOSTNAME}@${KERBEROS_LOGIC_DOMAIN_UPPER}</value>
+    </property>
+    <property>
+        <name>hive.metastore.kerberos.keytab.file</name>
+        <value>/etc/security/keytabs/hive.service.keytab</value>
+    </property>
+    <property>
+        <name>hive.server2.authentication</name>
+        <value>KERBEROS</value>
+    </property>
+    <property>
+        <name>hive.server2.authentication.kerberos.principal</name>
+        <value>hive/${HIVE_SERVER_HOSTNAME}@${KERBEROS_LOGIC_DOMAIN_UPPER}</value>
+    </property>
+    <property>
+        <name>hive.server2.authentication.kerberos.keytab</name>
+        <value>/etc/security/keytabs/hive.service.keytab</value>
+    </property>
+        <property>
+        <name>hive.server2.enable.doAs</name>
+        <value>true</value>
+    </property>
+    <property>
+        <name>hive.server2.proxy.user</name>
+        <value>*</value>
+    </property>
+</configuration>
+EOF
+
+# Copy hadoop config file to hive container
+docker cp ${NN_CONTAINER_NAME}:/opt/hadoop/etc/hadoop/core-site.xml /tmp/core-site.xml
+docker cp ${NN_CONTAINER_NAME}:/opt/hadoop/etc/hadoop/hdfs-site.xml /tmp/hdfs-site.xml
+docker cp ${NN_CONTAINER_NAME}:/opt/hadoop/etc/hadoop/yarn-site.xml /tmp/yarn-site.xml
+
+# Temporary entrypoint
+cat > /tmp/tmp_entrypoint.sh << 'EOF'
+#!/bin/bash
+
+sleep 86400
+EOF
+chmod a+x /tmp/tmp_entrypoint.sh
+
+# Use customized entrypoint for hivemetastore
+cat > /tmp/hivemetastore_entrypoint.sh << 'EOF'
+#!/bin/bash
+
+echo "IS_RESUME=${IS_RESUME}"
+FLAG_FILE=/opt/hive/already_init_schema
+
+if [ -z "${IS_RESUME}" ] || [ "${IS_RESUME}" = "false" ]; then
+    if [ -f ${FLAG_FILE} ]; then
+        echo "Skip init schema when restart."
+        IS_RESUME=true /entrypoint.sh
+    else
+        echo "Try to init schema for the first time."
+        touch ${FLAG_FILE}
+        IS_RESUME=false /entrypoint.sh
+    fi
+else
+    echo "Skip init schema for every time."
+    IS_RESUME=true /entrypoint.sh
+fi
+EOF
+chmod a+x /tmp/hivemetastore_entrypoint.sh
+
+# Use customized entrypoint for hiveserver
+cat > /tmp/hiveserver_entrypoint.sh << 'EOF'
+#!/bin/bash
+/entrypoint.sh
+EOF
+chmod a+x /tmp/hiveserver_entrypoint.sh
+
+# Start standalone metastore
+docker create \
+    --name ${HIVE_METASTORE_CONTAINER_NAME} \
+    --hostname ${HIVE_METASTORE_HOSTNAME} \
+    --network ${SHARED_NS} \
+    -p 127.0.0.1:9083:9083 \
+    -e SERVICE_NAME=metastore \
+    --entrypoint /hivemetastore_entrypoint.sh \
+    apache/hive:4.0.0_with_kerberos
+
+docker cp /tmp/hive-site.xml ${HIVE_METASTORE_CONTAINER_NAME}:/opt/hive/conf/hive-site.xml
+docker cp /tmp/core-site.xml ${HIVE_METASTORE_CONTAINER_NAME}:/opt/hadoop/etc/hadoop/core-site.xml
+docker cp /tmp/hdfs-site.xml ${HIVE_METASTORE_CONTAINER_NAME}:/opt/hadoop/etc/hadoop/hdfs-site.xml
+docker cp /tmp/yarn-site.xml ${HIVE_METASTORE_CONTAINER_NAME}:/opt/hadoop/etc/hadoop/yarn-site.xml
+docker cp /tmp/mapred-site.xml ${HIVE_METASTORE_CONTAINER_NAME}:/opt/hadoop/etc/hadoop/mapred-site.xml
+docker cp /tmp/tmp_entrypoint.sh ${HIVE_METASTORE_CONTAINER_NAME}:/hivemetastore_entrypoint.sh
+
+docker start ${HIVE_METASTORE_CONTAINER_NAME}
+
+# Setup kerberos config and copy keytab
+docker exec ${HIVE_METASTORE_CONTAINER_NAME} bash -c "sudo tee /etc/krb5.conf > /dev/null << EOF
+[libdefaults]
+    default_realm = ${KERBEROS_LOGIC_DOMAIN_UPPER}
+    dns_lookup_realm = false
+    dns_lookup_kdc = false
+    ticket_lifetime = 24h
+    renew_lifetime = 7d
+    forwardable = true
+
+[realms]
+    ${KERBEROS_LOGIC_DOMAIN_UPPER} = {
+        kdc = ${KERBEROS_HOSTNAME}
+        admin_server = ${KERBEROS_HOSTNAME}
+    }
+
+[domain_realm]
+    ${REAL_DOMAIN} = ${KERBEROS_LOGIC_DOMAIN_UPPER}
+    .${REAL_DOMAIN} = ${KERBEROS_LOGIC_DOMAIN_UPPER}
+EOF"
+docker cp ${KERBEROS_CONTAINER_NAME}:/etc/security/keytabs/hive.service.keytab /tmp/hive.service.keytab
+docker cp /tmp/hive.service.keytab ${HIVE_METASTORE_CONTAINER_NAME}:/etc/security/keytabs/hive.service.keytab
+docker exec ${HIVE_METASTORE_CONTAINER_NAME} bash -c 'sudo chmod 644 /etc/security/keytabs/hive.service.keytab'
+
+docker cp /tmp/hivemetastore_entrypoint.sh ${HIVE_METASTORE_CONTAINER_NAME}:/hivemetastore_entrypoint.sh
+docker restart ${HIVE_METASTORE_CONTAINER_NAME}
+
+# Start standalone hiveserver2
+docker create \
+    --name ${HIVE_SERVER_CONTAINER_NAME} \
+    --hostname ${HIVE_SERVER_HOSTNAME} \
+    --network ${SHARED_NS} \
+    -p 127.0.0.1:10000:10000 \
+    -e SERVICE_NAME=hiveserver2 \
+    -e IS_RESUME=true \
+    --entrypoint /hiveserver_entrypoint.sh \
+    apache/hive:4.0.0_with_kerberos
+
+docker cp /tmp/hive-site.xml ${HIVE_SERVER_CONTAINER_NAME}:/opt/hive/conf/hive-site.xml
+docker cp /tmp/core-site.xml ${HIVE_SERVER_CONTAINER_NAME}:/opt/hadoop/etc/hadoop/core-site.xml
+docker cp /tmp/hdfs-site.xml ${HIVE_SERVER_CONTAINER_NAME}:/opt/hadoop/etc/hadoop/hdfs-site.xml
+docker cp /tmp/yarn-site.xml ${HIVE_SERVER_CONTAINER_NAME}:/opt/hadoop/etc/hadoop/yarn-site.xml
+docker cp /tmp/mapred-site.xml ${HIVE_SERVER_CONTAINER_NAME}:/opt/hadoop/etc/hadoop/mapred-site.xml
+docker cp /tmp/tmp_entrypoint.sh ${HIVE_SERVER_CONTAINER_NAME}:/hiveserver_entrypoint.sh
+
+docker start ${HIVE_SERVER_CONTAINER_NAME}
+
+# Setup kerberos config and copy keytab
+docker exec ${HIVE_SERVER_CONTAINER_NAME} bash -c "sudo tee /etc/krb5.conf > /dev/null << EOF
+[libdefaults]
+    default_realm = ${KERBEROS_LOGIC_DOMAIN_UPPER}
+    dns_lookup_realm = false
+    dns_lookup_kdc = false
+    ticket_lifetime = 24h
+    renew_lifetime = 7d
+    forwardable = true
+
+[realms]
+    ${KERBEROS_LOGIC_DOMAIN_UPPER} = {
+        kdc = ${KERBEROS_HOSTNAME}
+        admin_server = ${KERBEROS_HOSTNAME}
+    }
+
+[domain_realm]
+    ${REAL_DOMAIN} = ${KERBEROS_LOGIC_DOMAIN_UPPER}
+    .${REAL_DOMAIN} = ${KERBEROS_LOGIC_DOMAIN_UPPER}
+EOF"
+docker cp ${KERBEROS_CONTAINER_NAME}:/etc/security/keytabs/hive.service.keytab /tmp/hive.service.keytab
+docker cp /tmp/hive.service.keytab ${HIVE_SERVER_CONTAINER_NAME}:/etc/security/keytabs/hive.service.keytab
+docker exec ${HIVE_SERVER_CONTAINER_NAME} bash -c 'sudo chmod 644 /etc/security/keytabs/hive.service.keytab'
+
+docker cp /tmp/hiveserver_entrypoint.sh ${HIVE_SERVER_CONTAINER_NAME}:/hiveserver_entrypoint.sh
+
+# Wait for hivemetastore to start up
+docker exec ${HIVE_METASTORE_CONTAINER_NAME} bash -c '
+while true
+do
+    if nc -vz 127.0.0.1 9083; then
+        break
+    fi
+    sleep 1
+done
+'
+
+docker restart ${HIVE_SERVER_CONTAINER_NAME}
+
+# Wait for hiveserver to start up
+docker exec ${HIVE_SERVER_CONTAINER_NAME} bash -c '
+while true
+do
+    if nc -vz 127.0.0.1 10000; then
+        break
+    fi
+    sleep 1
+done
+'
+
+docker exec ${HIVE_SERVER_CONTAINER_NAME} bash -c "kinit user_with_password <<EOF
+123456
+EOF"
+```
+
+**Verify**
+
+```sh
+for container in "${HIVE_METASTORE_HOSTNAME}" "${HIVE_SERVER_HOSTNAME}"
+do
+    forward_lookup=$(docker exec ${KERBEROS_CONTAINER_NAME} bash -c "getent hosts ${container}")
+    ip=$(echo ${forward_lookup} | cut -d " " -f1)
+    reverse_lookup=$(docker exec ${KERBEROS_CONTAINER_NAME} bash -c "getent hosts ${ip}")
+
+    if [ "${forward_lookup}" = "${reverse_lookup}" ]; then
+        echo "DNS check for container host '${container}'" is successful.
+    else
+        echo "DNS check for container host '${container}'" is failed.
+    fi
+done
+```
+
+**Test:**
+
+```sh
+docker exec -it ${NN_CONTAINER_NAME} bash -c "
+kinit -kt /etc/security/keytabs/hadoop.service.keytab nn/${NN_HOSTNAME}@${KERBEROS_LOGIC_DOMAIN_UPPER}
+hdfs dfs -mkdir -p /tmp
+hdfs dfs -chmod 1777 /tmp
+"
+
+docker exec -it ${HIVE_SERVER_CONTAINER_NAME} beeline -u "jdbc:hive2://localhost:10000/default;principal=hive/${HIVE_SERVER_HOSTNAME}@${KERBEROS_LOGIC_DOMAIN_UPPER}" -e "
+drop table if exists hive_example;
+create table hive_example(a string, b int) partitioned by(c int);
+alter table hive_example add partition(c=1);
+insert into hive_example partition(c=1) values('a', 1), ('a', 2),('b',3);
+select * from hive_example;
+drop table hive_example;
+"
+```
+
+#### 6.6.1.2 Use External Postgres
+
+```sh
+SHARED_NS=liuyehcf.org
+# Kerberos
+REAL_DOMAIN=${SHARED_NS}
+KERBEROS_CONTAINER_NAME=kerberos
+KERBEROS_HOSTNAME=${KERBEROS_CONTAINER_NAME}.${REAL_DOMAIN}
+KERBEROS_LOGIC_DOMAIN=example.com
+KERBEROS_LOGIC_DOMAIN_UPPER=$(echo ${KERBEROS_LOGIC_DOMAIN} | tr "[:lower:]" "[:upper:]")
+# Hadoop
+NN_CONTAINER_NAME=namenode-with-kerberos
+NN_HOSTNAME=${NN_CONTAINER_NAME}.${REAL_DOMAIN}
+# Hive
+HIVE_METASTORE_CONTAINER_NAME=hive-metastore-with-kerberos
+HIVE_SERVER_CONTAINER_NAME=hive-server-with-kerberos
+HIVE_METASTORE_HOSTNAME=${HIVE_METASTORE_CONTAINER_NAME}.${REAL_DOMAIN}
+HIVE_SERVER_HOSTNAME=${HIVE_SERVER_CONTAINER_NAME}.${REAL_DOMAIN}
+HIVE_DIR_NAME=hive-with-postgres
+IS_RESUME="false"
+
+POSTGRES_CONTAINER_NAME=postgres
+POSTGRES_HOSTNAME=${POSTGRES_CONTAINER_NAME}.${REAL_DOMAIN}
+POSTGRES_USER="hive_postgres"
+POSTGRES_PASSWORD="Abcd1234"
+POSTGRES_DB="hive-metastore"
+
+docker rm -f ${HIVE_METASTORE_CONTAINER_NAME} > /dev/null 2>&1
+docker rm -f ${HIVE_SERVER_CONTAINER_NAME} > /dev/null 2>&1
+docker rm -f ${POSTGRES_CONTAINER_NAME} > /dev/null 2>&1
+
+# How to use sql:
+# 1. docker exec -it ${POSTGRES_CONTAINER_NAME} bash
+# 2. psql -U ${POSTGRES_USER} -d ${POSTGRES_DB}
+docker run -dit \
+    --name ${POSTGRES_CONTAINER_NAME} \
+    --hostname ${POSTGRES_HOSTNAME} \
+    --network ${SHARED_NS} \
+    -e POSTGRES_USER="${POSTGRES_USER}" \
+    -e POSTGRES_PASSWORD="${POSTGRES_PASSWORD}" \
+    -e POSTGRES_DB="${POSTGRES_DB}" \
+    postgres:17.0
+
+cat > /tmp/hive-site.xml << EOF
+<configuration>
+    <property>
+        <name>javax.jdo.option.ConnectionURL</name>
+        <value>jdbc:postgresql://${POSTGRES_HOSTNAME}/${POSTGRES_DB}</value>
+    </property>
+    <property>
+        <name>javax.jdo.option.ConnectionDriverName</name>
+        <value>org.postgresql.Driver</value>
+    </property>
+    <property>
+        <name>javax.jdo.option.ConnectionUserName</name>
+        <value>${POSTGRES_USER}</value>
+    </property>
+    <property>
+        <name>javax.jdo.option.ConnectionPassword</name>
+        <value>${POSTGRES_PASSWORD}</value>
+    </property>
+    <property>
+        <name>hive.metastore.uris</name>
+        <value>thrift://${HIVE_METASTORE_HOSTNAME}:9083</value>
+    </property>
+    <property>
+        <name>metastore.warehouse.dir</name>
+        <value>hdfs://${NN_CONTAINER_NAME}:8020/opt/${HIVE_DIR_NAME}/data/warehouse</value>
+    </property>
+    <property>
+        <name>metastore.metastore.event.db.notification.api.auth</name>
+        <value>false</value>
+    </property>
+
+    <property>
+        <name>hive.execution.engine</name>
+        <value>mr</value>
+    </property>
+    <property>
+        <name>mapreduce.framework.name</name>
+        <value>yarn</value>
+    </property>
+    <property>
+        <name>hive.exec.scratchdir</name>
+        <value>hdfs://${NN_CONTAINER_NAME}:8020/opt/${HIVE_DIR_NAME}/scratch_dir</value>
+    </property>
+    <property>
+        <name>hive.user.install.directory</name>
+        <value>hdfs://${NN_CONTAINER_NAME}:8020/opt/${HIVE_DIR_NAME}/install_dir</value>
+    </property>
+
+    <property>
+        <name>hive.metastore.sasl.enabled</name>
+        <value>true</value>
+    </property>
+    <property>
+        <name>hive.metastore.kerberos.principal</name>
+        <value>hive/${HIVE_METASTORE_HOSTNAME}@${KERBEROS_LOGIC_DOMAIN_UPPER}</value>
+    </property>
+    <property>
+        <name>hive.metastore.kerberos.keytab.file</name>
+        <value>/etc/security/keytabs/hive.service.keytab</value>
+    </property>
+    <property>
+        <name>hive.server2.authentication</name>
+        <value>KERBEROS</value>
+    </property>
+    <property>
+        <name>hive.server2.authentication.kerberos.principal</name>
+        <value>hive/${HIVE_SERVER_HOSTNAME}@${KERBEROS_LOGIC_DOMAIN_UPPER}</value>
+    </property>
+    <property>
+        <name>hive.server2.authentication.kerberos.keytab</name>
+        <value>/etc/security/keytabs/hive.service.keytab</value>
+    </property>
+        <property>
+        <name>hive.server2.enable.doAs</name>
+        <value>true</value>
+    </property>
+    <property>
+        <name>hive.server2.proxy.user</name>
+        <value>*</value>
+    </property>
+</configuration>
+EOF
+
+# Copy hadoop config file to hive container
+docker cp ${NN_CONTAINER_NAME}:/opt/hadoop/etc/hadoop/core-site.xml /tmp/core-site.xml
+docker cp ${NN_CONTAINER_NAME}:/opt/hadoop/etc/hadoop/hdfs-site.xml /tmp/hdfs-site.xml
+docker cp ${NN_CONTAINER_NAME}:/opt/hadoop/etc/hadoop/yarn-site.xml /tmp/yarn-site.xml
+
+# Prepare jdbc driver
+if [ ! -e /tmp/postgresql-42.7.4.jar ]; then
+    wget -O /tmp/postgresql-42.7.4.jar 'https://jdbc.postgresql.org/download/postgresql-42.7.4.jar'
+fi
+
+# Temporary entrypoint
+cat > /tmp/tmp_entrypoint.sh << 'EOF'
+#!/bin/bash
+
+sleep 86400
+EOF
+chmod a+x /tmp/tmp_entrypoint.sh
+
+# Use customized entrypoint for hivemetastore
+cat > /tmp/hivemetastore_entrypoint.sh << 'EOF'
+#!/bin/bash
+
+echo "IS_RESUME=${IS_RESUME}"
+FLAG_FILE=/opt/hive/already_init_schema
+
+if [ -z "${IS_RESUME}" ] || [ "${IS_RESUME}" = "false" ]; then
+    if [ -f ${FLAG_FILE} ]; then
+        echo "Skip init schema when restart."
+        IS_RESUME=true /entrypoint.sh
+    else
+        echo "Try to init schema for the first time."
+        touch ${FLAG_FILE}
+        IS_RESUME=false /entrypoint.sh
+    fi
+else
+    echo "Skip init schema for every time."
+    IS_RESUME=true /entrypoint.sh
+fi
+EOF
+chmod a+x /tmp/hivemetastore_entrypoint.sh
+
+# Use customized entrypoint for hiveserver
+cat > /tmp/hiveserver_entrypoint.sh << 'EOF'
+#!/bin/bash
+/entrypoint.sh
+EOF
+chmod a+x /tmp/hiveserver_entrypoint.sh
+
+# Start standalone metastore
+docker create \
+    --name ${HIVE_METASTORE_CONTAINER_NAME} \
+    --hostname ${HIVE_METASTORE_HOSTNAME} \
+    --network ${SHARED_NS} \
+    -p 127.0.0.1:9083:9083 \
+    -e SERVICE_NAME=metastore \
+    -e DB_DRIVER=postgres \
+    -e IS_RESUME=${IS_RESUME} \
+    --entrypoint /hivemetastore_entrypoint.sh \
+    apache/hive:4.0.0_with_kerberos
+
+docker cp /tmp/hive-site.xml ${HIVE_METASTORE_CONTAINER_NAME}:/opt/hive/conf/hive-site.xml
+docker cp /tmp/core-site.xml ${HIVE_METASTORE_CONTAINER_NAME}:/opt/hadoop/etc/hadoop/core-site.xml
+docker cp /tmp/hdfs-site.xml ${HIVE_METASTORE_CONTAINER_NAME}:/opt/hadoop/etc/hadoop/hdfs-site.xml
+docker cp /tmp/yarn-site.xml ${HIVE_METASTORE_CONTAINER_NAME}:/opt/hadoop/etc/hadoop/yarn-site.xml
+docker cp /tmp/mapred-site.xml ${HIVE_METASTORE_CONTAINER_NAME}:/opt/hadoop/etc/hadoop/mapred-site.xml
+docker cp /tmp/tmp_entrypoint.sh ${HIVE_METASTORE_CONTAINER_NAME}:/hivemetastore_entrypoint.sh
+docker cp /tmp/postgresql-42.7.4.jar ${HIVE_METASTORE_CONTAINER_NAME}:/opt/hive/lib/postgresql-42.7.4.jar
+
+docker start ${HIVE_METASTORE_CONTAINER_NAME}
+
+# Setup kerberos config and copy keytab
+docker exec ${HIVE_METASTORE_CONTAINER_NAME} bash -c "sudo tee /etc/krb5.conf > /dev/null << EOF
+[libdefaults]
+    default_realm = ${KERBEROS_LOGIC_DOMAIN_UPPER}
+    dns_lookup_realm = false
+    dns_lookup_kdc = false
+    ticket_lifetime = 24h
+    renew_lifetime = 7d
+    forwardable = true
+
+[realms]
+    ${KERBEROS_LOGIC_DOMAIN_UPPER} = {
+        kdc = ${KERBEROS_HOSTNAME}
+        admin_server = ${KERBEROS_HOSTNAME}
+    }
+
+[domain_realm]
+    ${REAL_DOMAIN} = ${KERBEROS_LOGIC_DOMAIN_UPPER}
+    .${REAL_DOMAIN} = ${KERBEROS_LOGIC_DOMAIN_UPPER}
+EOF"
+docker cp ${KERBEROS_CONTAINER_NAME}:/etc/security/keytabs/hive.service.keytab /tmp/hive.service.keytab
+docker cp /tmp/hive.service.keytab ${HIVE_METASTORE_CONTAINER_NAME}:/etc/security/keytabs/hive.service.keytab
+docker exec ${HIVE_METASTORE_CONTAINER_NAME} bash -c 'sudo chmod 644 /etc/security/keytabs/hive.service.keytab'
+
+docker cp /tmp/hivemetastore_entrypoint.sh ${HIVE_METASTORE_CONTAINER_NAME}:/hivemetastore_entrypoint.sh
+docker restart ${HIVE_METASTORE_CONTAINER_NAME}
+
+# Start standalone hiveserver2
+docker create \
+    --name ${HIVE_SERVER_CONTAINER_NAME} \
+    --hostname ${HIVE_SERVER_HOSTNAME} \
+    --network ${SHARED_NS} \
+    -p 127.0.0.1:10000:10000 \
+    -e SERVICE_NAME=hiveserver2 \
+    -e DB_DRIVER=postgres \
+    -e IS_RESUME=true \
+    --entrypoint /hiveserver_entrypoint.sh \
+    apache/hive:4.0.0_with_kerberos
+
+docker cp /tmp/hive-site.xml ${HIVE_SERVER_CONTAINER_NAME}:/opt/hive/conf/hive-site.xml
+docker cp /tmp/core-site.xml ${HIVE_SERVER_CONTAINER_NAME}:/opt/hadoop/etc/hadoop/core-site.xml
+docker cp /tmp/hdfs-site.xml ${HIVE_SERVER_CONTAINER_NAME}:/opt/hadoop/etc/hadoop/hdfs-site.xml
+docker cp /tmp/yarn-site.xml ${HIVE_SERVER_CONTAINER_NAME}:/opt/hadoop/etc/hadoop/yarn-site.xml
+docker cp /tmp/mapred-site.xml ${HIVE_SERVER_CONTAINER_NAME}:/opt/hadoop/etc/hadoop/mapred-site.xml
+docker cp /tmp/tmp_entrypoint.sh ${HIVE_SERVER_CONTAINER_NAME}:/hiveserver_entrypoint.sh
+docker cp /tmp/postgresql-42.7.4.jar ${HIVE_SERVER_CONTAINER_NAME}:/opt/hive/lib/postgresql-42.7.4.jar
+
+docker start ${HIVE_SERVER_CONTAINER_NAME}
+
+# Setup kerberos config and copy keytab
+docker exec ${HIVE_SERVER_CONTAINER_NAME} bash -c "sudo tee /etc/krb5.conf > /dev/null << EOF
+[libdefaults]
+    default_realm = ${KERBEROS_LOGIC_DOMAIN_UPPER}
+    dns_lookup_realm = false
+    dns_lookup_kdc = false
+    ticket_lifetime = 24h
+    renew_lifetime = 7d
+    forwardable = true
+
+[realms]
+    ${KERBEROS_LOGIC_DOMAIN_UPPER} = {
+        kdc = ${KERBEROS_HOSTNAME}
+        admin_server = ${KERBEROS_HOSTNAME}
+    }
+
+[domain_realm]
+    ${REAL_DOMAIN} = ${KERBEROS_LOGIC_DOMAIN_UPPER}
+    .${REAL_DOMAIN} = ${KERBEROS_LOGIC_DOMAIN_UPPER}
+EOF"
+docker cp ${KERBEROS_CONTAINER_NAME}:/etc/security/keytabs/hive.service.keytab /tmp/hive.service.keytab
+docker cp /tmp/hive.service.keytab ${HIVE_SERVER_CONTAINER_NAME}:/etc/security/keytabs/hive.service.keytab
+docker exec ${HIVE_SERVER_CONTAINER_NAME} bash -c 'sudo chmod 644 /etc/security/keytabs/hive.service.keytab'
+
+docker cp /tmp/hiveserver_entrypoint.sh ${HIVE_SERVER_CONTAINER_NAME}:/hiveserver_entrypoint.sh
+
+# Wait for hivemetastore to start up
+docker exec ${HIVE_METASTORE_CONTAINER_NAME} bash -c '
+while true
+do
+    if nc -vz 127.0.0.1 9083; then
+        break
+    fi
+    sleep 1
+done
+'
+
+docker restart ${HIVE_SERVER_CONTAINER_NAME}
+
+# Wait for hiveserver to start up
+docker exec ${HIVE_SERVER_CONTAINER_NAME} bash -c '
+while true
+do
+    if nc -vz 127.0.0.1 10000; then
+        break
+    fi
+    sleep 1
+done
+'
+
+docker exec ${HIVE_SERVER_CONTAINER_NAME} bash -c "kinit user_with_password <<EOF
+123456
+EOF"
+```
+
+**Verify**
+
+```sh
+for container in "${HIVE_METASTORE_HOSTNAME}" "${HIVE_SERVER_HOSTNAME}"
+do
+    forward_lookup=$(docker exec ${KERBEROS_CONTAINER_NAME} bash -c "getent hosts ${container}")
+    ip=$(echo ${forward_lookup} | cut -d " " -f1)
+    reverse_lookup=$(docker exec ${KERBEROS_CONTAINER_NAME} bash -c "getent hosts ${ip}")
+
+    if [ "${forward_lookup}" = "${reverse_lookup}" ]; then
+        echo "DNS check for container host '${container}'" is successful.
+    else
+        echo "DNS check for container host '${container}'" is failed.
+    fi
+done
+```
+
+**Test:**
+
+```sh
+docker exec -it ${NN_CONTAINER_NAME} bash -c "
+kinit -kt /etc/security/keytabs/hadoop.service.keytab nn/${NN_HOSTNAME}@${KERBEROS_LOGIC_DOMAIN_UPPER}
+hdfs dfs -mkdir -p /tmp
+hdfs dfs -chmod 1777 /tmp
+"
+
+docker exec -it ${HIVE_SERVER_CONTAINER_NAME} beeline -u "jdbc:hive2://localhost:10000/default;principal=hive/${HIVE_SERVER_HOSTNAME}@${KERBEROS_LOGIC_DOMAIN_UPPER}" -e "
+drop table if exists hive_example;
+create table hive_example(a string, b int) partitioned by(c int);
+alter table hive_example add partition(c=1);
+insert into hive_example partition(c=1) values('a', 1), ('a', 2),('b',3);
+select * from hive_example;
+drop table hive_example;
+"
+```
+
+### 6.6.2 Hive with Tez on Yarn
+
+#### 6.6.2.1 Use built-in Derby
 
 ```sh
 SHARED_NS=liuyehcf.org
@@ -3445,6 +4098,7 @@ done
 
 ```sh
 docker exec -it ${HIVE_SERVER_CONTAINER_NAME} beeline -u "jdbc:hive2://localhost:10000/default;principal=hive/${HIVE_SERVER_HOSTNAME}@${KERBEROS_LOGIC_DOMAIN_UPPER}" -e "
+drop table if exists hive_example;
 create table hive_example(a string, b int) partitioned by(c int);
 alter table hive_example add partition(c=1);
 insert into hive_example partition(c=1) values('a', 1), ('a', 2),('b',3);
@@ -3453,7 +4107,7 @@ drop table hive_example;
 "
 ```
 
-### 6.6.2 Use External Postgres
+#### 6.6.2.2 Use External Postgres
 
 ```sh
 SHARED_NS=liuyehcf.org
@@ -3472,13 +4126,13 @@ HIVE_SERVER_CONTAINER_NAME=hive-server-with-kerberos
 HIVE_METASTORE_HOSTNAME=${HIVE_METASTORE_CONTAINER_NAME}.${REAL_DOMAIN}
 HIVE_SERVER_HOSTNAME=${HIVE_SERVER_CONTAINER_NAME}.${REAL_DOMAIN}
 HIVE_DIR_NAME=hive-with-postgres
+IS_RESUME="false"
 
 POSTGRES_CONTAINER_NAME=postgres
-POSTGRES_HOSTNAME=${POSTGRES_CONTAINER_NAME}.${SHARED_NS}
+POSTGRES_HOSTNAME=${POSTGRES_CONTAINER_NAME}.${REAL_DOMAIN}
 POSTGRES_USER="hive_postgres"
 POSTGRES_PASSWORD="Abcd1234"
 POSTGRES_DB="hive-metastore"
-IS_RESUME="false"
 
 docker rm -f ${HIVE_METASTORE_CONTAINER_NAME} > /dev/null 2>&1
 docker rm -f ${HIVE_SERVER_CONTAINER_NAME} > /dev/null 2>&1
@@ -3807,6 +4461,7 @@ done
 
 ```sh
 docker exec -it ${HIVE_SERVER_CONTAINER_NAME} beeline -u "jdbc:hive2://localhost:10000/default;principal=hive/${HIVE_SERVER_HOSTNAME}@${KERBEROS_LOGIC_DOMAIN_UPPER}" -e "
+drop table if exists hive_example;
 create table hive_example(a string, b int) partitioned by(c int);
 alter table hive_example add partition(c=1);
 insert into hive_example partition(c=1) values('a', 1), ('a', 2),('b',3);
