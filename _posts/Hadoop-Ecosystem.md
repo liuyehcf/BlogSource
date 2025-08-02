@@ -900,7 +900,7 @@ docker build -t apache/hive:4.0.0_with_tools /tmp/hive_with_tools
 
 ### 4.2.2 Hive with MapReduce on Yarn(Deprecated)
 
-#### 4.2.2.1 Use built-in Derby (WIP)
+#### 4.2.2.1 Use built-in Derby
 
 ```sh
 SHARED_NS=hadoop-ns
@@ -929,6 +929,7 @@ cat > /tmp/hive-site.xml << EOF
         <name>metastore.metastore.event.db.notification.api.auth</name>
         <value>false</value>
     </property>
+
     <property>
         <name>hive.execution.engine</name>
         <value>mr</value>
@@ -953,7 +954,7 @@ docker cp ${NN_CONTAINER_NAME}:/opt/hadoop/etc/hadoop/core-site.xml /tmp/core-si
 docker cp ${NN_CONTAINER_NAME}:/opt/hadoop/etc/hadoop/hdfs-site.xml /tmp/hdfs-site.xml
 docker cp ${NN_CONTAINER_NAME}:/opt/hadoop/etc/hadoop/yarn-site.xml /tmp/yarn-site.xml
 
-# Customized entrypoint remains unchanged
+# Use customized entrypoint
 cat > /tmp/updated_entrypoint.sh << 'EOF'
 #!/bin/bash
 
@@ -976,7 +977,7 @@ fi
 EOF
 chmod a+x /tmp/updated_entrypoint.sh
 
-# Start standalone metastore container
+# Start standalone metastore
 docker create \
     --name ${HIVE_METASTORE_CONTAINER_NAME} \
     --hostname ${HIVE_METASTORE_HOSTNAME} \
@@ -994,7 +995,7 @@ docker cp /tmp/updated_entrypoint.sh ${HIVE_METASTORE_CONTAINER_NAME}:/updated_e
 
 docker start ${HIVE_METASTORE_CONTAINER_NAME}
 
-# Start standalone hiveserver2 container
+# Start standalone hiveserver2
 docker create \
     --name ${HIVE_SERVER_CONTAINER_NAME} \
     --hostname ${HIVE_SERVER_HOSTNAME} \
@@ -1008,6 +1009,199 @@ docker cp /tmp/hive-site.xml ${HIVE_SERVER_CONTAINER_NAME}:/opt/hive/conf/hive-s
 docker cp /tmp/core-site.xml ${HIVE_SERVER_CONTAINER_NAME}:/opt/hadoop/etc/hadoop/core-site.xml
 docker cp /tmp/hdfs-site.xml ${HIVE_SERVER_CONTAINER_NAME}:/opt/hadoop/etc/hadoop/hdfs-site.xml
 docker cp /tmp/yarn-site.xml ${HIVE_SERVER_CONTAINER_NAME}:/opt/hadoop/etc/hadoop/yarn-site.xml
+
+# Wait for hivemetastore to start up
+docker exec ${HIVE_METASTORE_CONTAINER_NAME} bash -c '
+while true
+do
+    if nc -vz 127.0.0.1 9083; then
+        break
+    fi
+    sleep 1
+done
+'
+
+docker start ${HIVE_SERVER_CONTAINER_NAME}
+
+# Wait for hiveserver to start up
+docker exec ${HIVE_SERVER_CONTAINER_NAME} bash -c '
+while true
+do
+    if nc -vz 127.0.0.1 10000; then
+        break
+    fi
+    sleep 1
+done
+'
+```
+
+Test:
+
+```sh
+docker exec -it ${HIVE_SERVER_CONTAINER_NAME} beeline -u 'jdbc:hive2://localhost:10000/' -e "
+create table hive_example(a string, b int) partitioned by(c int);
+alter table hive_example add partition(c=1);
+insert into hive_example partition(c=1) values('a', 1), ('a', 2),('b',3);
+select * from hive_example;
+drop table hive_example;
+"
+```
+
+#### 4.2.2.2 Use External Postgres
+
+```sh
+SHARED_NS=hadoop-ns
+NN_CONTAINER_NAME=namenode
+NN_HOSTNAME=${NN_CONTAINER_NAME}.${SHARED_NS}
+HIVE_METASTORE_CONTAINER_NAME=hive-metastore
+HIVE_SERVER_CONTAINER_NAME=hive-server
+HIVE_METASTORE_HOSTNAME=${HIVE_METASTORE_CONTAINER_NAME}.${SHARED_NS}
+HIVE_SERVER_HOSTNAME=${HIVE_SERVER_CONTAINER_NAME}.${SHARED_NS}
+HIVE_DIR_NAME=hive-with-postgres
+IS_RESUME="false"
+
+POSTGRES_CONTAINER_NAME=postgres
+POSTGRES_HOSTNAME=${POSTGRES_CONTAINER_NAME}.${SHARED_NS}
+POSTGRES_USER="hive_postgres"
+POSTGRES_PASSWORD="Abcd1234"
+POSTGRES_DB="hive-metastore"
+
+docker rm -f ${HIVE_METASTORE_CONTAINER_NAME} > /dev/null 2>&1
+docker rm -f ${HIVE_SERVER_CONTAINER_NAME} > /dev/null 2>&1
+docker rm -f ${POSTGRES_CONTAINER_NAME} > /dev/null 2>&1
+
+# How to use sql:
+# 1. docker exec -it ${POSTGRES_CONTAINER_NAME} bash
+# 2. psql -U ${POSTGRES_USER} -d ${POSTGRES_DB}
+docker run -dit \
+    --name ${POSTGRES_CONTAINER_NAME} \
+    --hostname ${POSTGRES_HOSTNAME} \
+    --network ${SHARED_NS} \
+    -e POSTGRES_USER="${POSTGRES_USER}" \
+    -e POSTGRES_PASSWORD="${POSTGRES_PASSWORD}" \
+    -e POSTGRES_DB="${POSTGRES_DB}" \
+    postgres:17.0
+
+cat > /tmp/hive-site.xml << EOF
+<configuration>
+    <property>
+        <name>javax.jdo.option.ConnectionURL</name>
+        <value>jdbc:postgresql://${POSTGRES_HOSTNAME}/${POSTGRES_DB}</value>
+    </property>
+    <property>
+        <name>javax.jdo.option.ConnectionDriverName</name>
+        <value>org.postgresql.Driver</value>
+    </property>
+    <property>
+        <name>javax.jdo.option.ConnectionUserName</name>
+        <value>${POSTGRES_USER}</value>
+    </property>
+    <property>
+        <name>javax.jdo.option.ConnectionPassword</name>
+        <value>${POSTGRES_PASSWORD}</value>
+    </property>
+    <property>
+        <name>hive.metastore.uris</name>
+        <value>thrift://${HIVE_METASTORE_HOSTNAME}:9083</value>
+    </property>
+    <property>
+        <name>metastore.warehouse.dir</name>
+        <value>hdfs://${NN_CONTAINER_NAME}:8020/opt/${HIVE_DIR_NAME}/data/warehouse</value>
+    </property>
+    <property>
+        <name>metastore.metastore.event.db.notification.api.auth</name>
+        <value>false</value>
+    </property>
+
+    <property>
+        <name>hive.execution.engine</name>
+        <value>mr</value>
+    </property>
+    <property>
+        <name>hive.exec.scratchdir</name>
+        <value>hdfs://${NN_CONTAINER_NAME}:8020/opt/${HIVE_DIR_NAME}/scratch_dir</value>
+    </property>
+    <property>
+        <name>hive.user.install.directory</name>
+        <value>hdfs://${NN_CONTAINER_NAME}:8020/opt/${HIVE_DIR_NAME}/install_dir</value>
+    </property>
+    <property>
+        <name>hive.server2.enable.doAs</name>
+        <value>false</value>
+    </property>
+</configuration>
+EOF
+
+# Copy hadoop config file to hive container
+docker cp ${NN_CONTAINER_NAME}:/opt/hadoop/etc/hadoop/core-site.xml /tmp/core-site.xml
+docker cp ${NN_CONTAINER_NAME}:/opt/hadoop/etc/hadoop/hdfs-site.xml /tmp/hdfs-site.xml
+docker cp ${NN_CONTAINER_NAME}:/opt/hadoop/etc/hadoop/yarn-site.xml /tmp/yarn-site.xml
+
+# Prepare jdbc driver
+if [ ! -e /tmp/postgresql-42.7.4.jar ]; then
+    wget -O /tmp/postgresql-42.7.4.jar 'https://jdbc.postgresql.org/download/postgresql-42.7.4.jar'
+fi
+
+# Use customized entrypoint
+cat > /tmp/updated_entrypoint.sh << 'EOF'
+#!/bin/bash
+
+echo "IS_RESUME=${IS_RESUME}"
+FLAG_FILE=/opt/hive/already_init_schema
+
+if [ -z "${IS_RESUME}" ] || [ "${IS_RESUME}" = "false" ]; then
+    if [ -f ${FLAG_FILE} ]; then
+        echo "Skip init schema when restart."
+        IS_RESUME=true /entrypoint.sh
+    else
+        echo "Try to init schema for the first time."
+        touch ${FLAG_FILE}
+        IS_RESUME=false /entrypoint.sh
+    fi
+else
+    echo "Skip init schema for every time."
+    IS_RESUME=true /entrypoint.sh
+fi
+EOF
+chmod a+x /tmp/updated_entrypoint.sh
+
+# Start standalone metastore
+docker create \
+    --name ${HIVE_METASTORE_CONTAINER_NAME} \
+    --hostname ${HIVE_METASTORE_HOSTNAME} \
+    --network ${SHARED_NS} \
+    -p 127.0.0.1:9083:9083 \
+    -e SERVICE_NAME=metastore \
+    -e DB_DRIVER=postgres \
+    -e IS_RESUME=${IS_RESUME} \
+    --entrypoint /updated_entrypoint.sh \
+    apache/hive:4.0.0_with_tools
+
+docker cp /tmp/hive-site.xml ${HIVE_METASTORE_CONTAINER_NAME}:/opt/hive/conf/hive-site.xml
+docker cp /tmp/core-site.xml ${HIVE_METASTORE_CONTAINER_NAME}:/opt/hadoop/etc/hadoop/core-site.xml
+docker cp /tmp/hdfs-site.xml ${HIVE_METASTORE_CONTAINER_NAME}:/opt/hadoop/etc/hadoop/hdfs-site.xml
+docker cp /tmp/yarn-site.xml ${HIVE_METASTORE_CONTAINER_NAME}:/opt/hadoop/etc/hadoop/yarn-site.xml
+docker cp /tmp/updated_entrypoint.sh ${HIVE_METASTORE_CONTAINER_NAME}:/updated_entrypoint.sh
+docker cp /tmp/postgresql-42.7.4.jar ${HIVE_METASTORE_CONTAINER_NAME}:/opt/hive/lib/postgresql-42.7.4.jar
+
+docker start ${HIVE_METASTORE_CONTAINER_NAME}
+
+# Start standalone hiveserver2
+docker create \
+    --name ${HIVE_SERVER_CONTAINER_NAME} \
+    --hostname ${HIVE_SERVER_HOSTNAME} \
+    --network ${SHARED_NS} \
+    -p 127.0.0.1:10000:10000 \
+    -e SERVICE_NAME=hiveserver2 \
+    -e DB_DRIVER=postgres \
+    -e IS_RESUME=true \
+    apache/hive:4.0.0_with_tools
+
+docker cp /tmp/hive-site.xml ${HIVE_SERVER_CONTAINER_NAME}:/opt/hive/conf/hive-site.xml
+docker cp /tmp/core-site.xml ${HIVE_SERVER_CONTAINER_NAME}:/opt/hadoop/etc/hadoop/core-site.xml
+docker cp /tmp/hdfs-site.xml ${HIVE_SERVER_CONTAINER_NAME}:/opt/hadoop/etc/hadoop/hdfs-site.xml
+docker cp /tmp/yarn-site.xml ${HIVE_SERVER_CONTAINER_NAME}:/opt/hadoop/etc/hadoop/yarn-site.xml
+docker cp /tmp/postgresql-42.7.4.jar ${HIVE_SERVER_CONTAINER_NAME}:/opt/hive/lib/postgresql-42.7.4.jar
 
 # Wait for hivemetastore to start up
 docker exec ${HIVE_METASTORE_CONTAINER_NAME} bash -c '
