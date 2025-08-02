@@ -444,7 +444,7 @@ git reflog
 ## 3.7 Patch
 
 ```sh
-git diff <commit1> <commit2> > /tmp/patch.diff
+git --no-pager diff <commit1> <commit2> > /tmp/patch.diff
 git apply --stat ~/tmp/patch.txt
 git apply ~/tmp/patch.txt
 ```

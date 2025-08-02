@@ -227,6 +227,10 @@ cat > /tmp/yarn-site.xml << EOF
         <value>mapreduce_shuffle</value>
     </property>
     <property>
+        <name>yarn.resourcemanager.scheduler.class</name>
+        <value>org.apache.hadoop.yarn.server.resourcemanager.scheduler.fair.FairScheduler</value>
+    </property>
+    <property>
     <name>yarn.nodemanager.resource.memory-mb</name>
         <value>8192</value>
     </property>
@@ -375,11 +379,24 @@ cat > /tmp/core-site.xml << EOF
 </configuration>
 EOF
 
+cat > /tmp/hdfs-site-for-non-datanode.xml << EOF
+<configuration>
+    <property>
+        <name>dfs.replication</name>
+        <value>2</value>
+    </property>
+    <property>
+        <name>dfs.permissions.enabled</name>
+        <value>false</value>
+    </property>
+</configuration>
+EOF
+
 cat > /tmp/hdfs-site-for-datanode-1.xml << EOF
 <configuration>
     <property>
         <name>dfs.replication</name>
-        <value>1</value>
+        <value>2</value>
     </property>
     <property>
         <name>dfs.permissions.enabled</name>
@@ -412,7 +429,7 @@ cat > /tmp/hdfs-site-for-datanode-2.xml << EOF
 <configuration>
     <property>
         <name>dfs.replication</name>
-        <value>1</value>
+        <value>2</value>
     </property>
     <property>
         <name>dfs.permissions.enabled</name>
@@ -450,6 +467,10 @@ cat > /tmp/yarn-site.xml << EOF
     <property>
         <name>yarn.nodemanager.aux-services</name>
         <value>mapreduce_shuffle</value>
+    </property>
+    <property>
+        <name>yarn.resourcemanager.scheduler.class</name>
+        <value>org.apache.hadoop.yarn.server.resourcemanager.scheduler.fair.FairScheduler</value>
     </property>
     <property>
     <name>yarn.nodemanager.resource.memory-mb</name>
@@ -498,6 +519,7 @@ EOF
 for container in "${NN_CONTAINER_NAME}" "${DN_1_CONTAINER_NAME}" "${DN_2_CONTAINER_NAME}"
 do
     docker cp /tmp/core-site.xml ${container}:/opt/hadoop/etc/hadoop/core-site.xml
+    docker cp /tmp/hdfs-site-for-non-datanode.xml ${container}:/opt/hadoop/etc/hadoop/hdfs-site.xml
     docker cp /tmp/yarn-site.xml ${container}:/opt/hadoop/etc/hadoop/yarn-site.xml
     docker cp /tmp/mapred-site.xml ${container}:/opt/hadoop/etc/hadoop/mapred-site.xml
 done
@@ -2072,23 +2094,33 @@ docker build -t apache/hive:4.0.0_with_kerberos /tmp/hive_with_kerberos
 
 ```sh
 SHARED_NS=liuyehcf.org
+# Kerberos
+REAL_DOMAIN=${SHARED_NS}
 KERBEROS_CONTAINER_NAME=kerberos
+KERBEROS_HOSTNAME=${KERBEROS_CONTAINER_NAME}.${REAL_DOMAIN}
+KERBEROS_LOGIC_DOMAIN=example.com
+KERBEROS_LOGIC_DOMAIN_UPPER=$(echo ${KERBEROS_LOGIC_DOMAIN} | tr "[:lower:]" "[:upper:]")
+# Hadoop, One Container per Component Architecture
 NN_CONTAINER_NAME=namenode-with-kerberos
 DN_CONTAINER_NAME=datanode-with-kerberos
 NM_CONTAINER_NAME=nodemanager-with-kerberos
 RM_CONTAINER_NAME=resourcemanager-with-kerberos
-HIVE_METASTORE_CONTAINER_NAME=hive-metastore-with-kerberos
-HIVE_SERVER_CONTAINER_NAME=hive-server-with-kerberos
-REAL_DOMAIN=${SHARED_NS}
-KERBEROS_HOSTNAME=${KERBEROS_CONTAINER_NAME}.${REAL_DOMAIN}
 NN_HOSTNAME=${NN_CONTAINER_NAME}.${REAL_DOMAIN}
 DN_HOSTNAME=${DN_CONTAINER_NAME}.${REAL_DOMAIN}
 NM_HOSTNAME=${NM_CONTAINER_NAME}.${REAL_DOMAIN}
 RM_HOSTNAME=${RM_CONTAINER_NAME}.${REAL_DOMAIN}
+# Hadoop, Multi-Component Shared Container Model
+NN_CONTAINER_NAME=namenode-with-kerberos
+DN_1_CONTAINER_NAME=datanode-1-with-kerberos
+DN_2_CONTAINER_NAME=datanode-2-with-kerberos
+NN_HOSTNAME=${NN_CONTAINER_NAME}.${REAL_DOMAIN}
+DN_1_HOSTNAME=${DN_1_CONTAINER_NAME}.${REAL_DOMAIN}
+DN_2_HOSTNAME=${DN_2_CONTAINER_NAME}.${REAL_DOMAIN}
+# Hive
+HIVE_METASTORE_CONTAINER_NAME=hive-metastore-with-kerberos
+HIVE_SERVER_CONTAINER_NAME=hive-server-with-kerberos
 HIVE_METASTORE_HOSTNAME=${HIVE_METASTORE_CONTAINER_NAME}.${REAL_DOMAIN}
 HIVE_SERVER_HOSTNAME=${HIVE_SERVER_CONTAINER_NAME}.${REAL_DOMAIN}
-KERBEROS_LOGIC_DOMAIN=example.com
-KERBEROS_LOGIC_DOMAIN_UPPER=$(echo ${KERBEROS_LOGIC_DOMAIN} | tr "[:lower:]" "[:upper:]")
 
 # Must explicit mapping for udp, otherwise ICMP package from host machine cannot work with kerberos inside container.
 docker run -dit \
@@ -2157,13 +2189,19 @@ addprinc -randkey nn/${NN_HOSTNAME}@${KERBEROS_LOGIC_DOMAIN_UPPER}
 addprinc -randkey dn/${DN_HOSTNAME}@${KERBEROS_LOGIC_DOMAIN_UPPER}
 addprinc -randkey nm/${NM_HOSTNAME}@${KERBEROS_LOGIC_DOMAIN_UPPER}
 addprinc -randkey rm/${RM_HOSTNAME}@${KERBEROS_LOGIC_DOMAIN_UPPER}
+
+addprinc -randkey dn_1/${DN_1_HOSTNAME}@${KERBEROS_LOGIC_DOMAIN_UPPER}
+addprinc -randkey dn_2/${DN_2_HOSTNAME}@${KERBEROS_LOGIC_DOMAIN_UPPER}
 listprincs
 
 ktadd -k /etc/security/keytabs/hadoop.service.keytab \
     nn/${NN_HOSTNAME}@${KERBEROS_LOGIC_DOMAIN_UPPER} \
     dn/${DN_HOSTNAME}@${KERBEROS_LOGIC_DOMAIN_UPPER} \
     nm/${NM_HOSTNAME}@${KERBEROS_LOGIC_DOMAIN_UPPER} \
-    rm/${RM_HOSTNAME}@${KERBEROS_LOGIC_DOMAIN_UPPER}
+    rm/${RM_HOSTNAME}@${KERBEROS_LOGIC_DOMAIN_UPPER} \
+    \
+    dn_1/${DN_1_HOSTNAME}@${KERBEROS_LOGIC_DOMAIN_UPPER} \
+    dn_2/${DN_2_HOSTNAME}@${KERBEROS_LOGIC_DOMAIN_UPPER}
 
 quit
 EOF"
@@ -2244,25 +2282,25 @@ EOF"
 * Remember kinit before execute any hadoop commands, like `hdfs`, `yarn`.
 * When use `<principal>` to submit mapreduce task, the node manager must has the Linux account with the same name as `<principal>` for writing data/logs locally. (Other node, like namenode, datanode, resourcemanager are not required to have the Linux account)
 
+### 6.5.1 One Container per Component Architecture
+
 ```sh
 SHARED_NS=liuyehcf.org
+# Kerberos
+REAL_DOMAIN=${SHARED_NS}
 KERBEROS_CONTAINER_NAME=kerberos
+KERBEROS_HOSTNAME=${KERBEROS_CONTAINER_NAME}.${REAL_DOMAIN}
+KERBEROS_LOGIC_DOMAIN=example.com
+KERBEROS_LOGIC_DOMAIN_UPPER=$(echo ${KERBEROS_LOGIC_DOMAIN} | tr "[:lower:]" "[:upper:]")
+# Hadoop, One Container per Component Architecture
 NN_CONTAINER_NAME=namenode-with-kerberos
 DN_CONTAINER_NAME=datanode-with-kerberos
 NM_CONTAINER_NAME=nodemanager-with-kerberos
 RM_CONTAINER_NAME=resourcemanager-with-kerberos
-HIVE_METASTORE_CONTAINER_NAME=hive-metastore-with-kerberos
-HIVE_SERVER_CONTAINER_NAME=hive-server-with-kerberos
-REAL_DOMAIN=${SHARED_NS}
-KERBEROS_HOSTNAME=${KERBEROS_CONTAINER_NAME}.${REAL_DOMAIN}
 NN_HOSTNAME=${NN_CONTAINER_NAME}.${REAL_DOMAIN}
 DN_HOSTNAME=${DN_CONTAINER_NAME}.${REAL_DOMAIN}
 NM_HOSTNAME=${NM_CONTAINER_NAME}.${REAL_DOMAIN}
 RM_HOSTNAME=${RM_CONTAINER_NAME}.${REAL_DOMAIN}
-HIVE_METASTORE_HOSTNAME=${HIVE_METASTORE_CONTAINER_NAME}.${REAL_DOMAIN}
-HIVE_SERVER_HOSTNAME=${HIVE_SERVER_CONTAINER_NAME}.${REAL_DOMAIN}
-KERBEROS_LOGIC_DOMAIN=example.com
-KERBEROS_LOGIC_DOMAIN_UPPER=$(echo ${KERBEROS_LOGIC_DOMAIN} | tr "[:lower:]" "[:upper:]")
 
 docker rm -f ${NN_CONTAINER_NAME} > /dev/null 2>&1
 docker rm -f ${DN_CONTAINER_NAME} > /dev/null 2>&1
@@ -2440,6 +2478,10 @@ cat > /tmp/yarn-site.xml << EOF
         <value>${RM_HOSTNAME}:8031</value>
     </property>
     <property>
+        <name>yarn.resourcemanager.scheduler.class</name>
+        <value>org.apache.hadoop.yarn.server.resourcemanager.scheduler.fair.FairScheduler</value>
+    </property>
+    <property>
         <name>yarn.nodemanager.aux-services</name>
         <value>mapreduce_shuffle</value>
     </property>
@@ -2612,6 +2654,478 @@ docker exec ${NN_CONTAINER_NAME} bash -c 'hadoop jar /opt/hadoop/share/hadoop/ma
 docker exec ${NN_CONTAINER_NAME} bash -c 'yarn application -list -appStates ALL'
 ```
 
+### 6.5.2 Multi-Component Shared Container Model
+
+```sh
+SHARED_NS=liuyehcf.org
+# Kerberos
+REAL_DOMAIN=${SHARED_NS}
+KERBEROS_CONTAINER_NAME=kerberos
+KERBEROS_HOSTNAME=${KERBEROS_CONTAINER_NAME}.${REAL_DOMAIN}
+KERBEROS_LOGIC_DOMAIN=example.com
+KERBEROS_LOGIC_DOMAIN_UPPER=$(echo ${KERBEROS_LOGIC_DOMAIN} | tr "[:lower:]" "[:upper:]")
+# Hadoop, One Container per Component Architecture
+NN_CONTAINER_NAME=namenode-with-kerberos
+DN_1_CONTAINER_NAME=datanode-1-with-kerberos
+DN_2_CONTAINER_NAME=datanode-2-with-kerberos
+NN_HOSTNAME=${NN_CONTAINER_NAME}.${REAL_DOMAIN}
+DN_1_HOSTNAME=${DN_1_CONTAINER_NAME}.${REAL_DOMAIN}
+DN_2_HOSTNAME=${DN_2_CONTAINER_NAME}.${REAL_DOMAIN}
+
+docker rm -f ${NN_CONTAINER_NAME} > /dev/null 2>&1
+docker rm -f ${DN_1_CONTAINER_NAME} > /dev/null 2>&1
+docker rm -f ${DN_2_CONTAINER_NAME} > /dev/null 2>&1
+
+# Hadoop container is not stable in MacOS, always exited right after started without any logs, so start them in loop here.
+while true; do
+    # namenode and resourcemanager
+    if ! docker inspect ${NN_CONTAINER_NAME} > /dev/null 2>&1; then
+        docker run -dit \
+            --name ${NN_CONTAINER_NAME} \
+            --hostname ${NN_HOSTNAME} \
+            --network ${SHARED_NS} --privileged \
+            apache/hadoop:3.3.6_with_libs bash
+    fi
+
+    # datanode 1 and nodemanager 1
+    if ! docker inspect ${DN_1_CONTAINER_NAME} > /dev/null 2>&1; then
+        docker run -dit \
+            --name ${DN_1_CONTAINER_NAME} \
+            --hostname ${DN_1_HOSTNAME} \
+            --network ${SHARED_NS} --privileged \
+            apache/hadoop:3.3.6_with_libs bash
+    fi
+
+    # datanode 2 and nodemanager 2
+    if ! docker inspect ${DN_2_CONTAINER_NAME} > /dev/null 2>&1; then
+        docker run -dit \
+            --name ${DN_2_CONTAINER_NAME} \
+            --hostname ${DN_2_HOSTNAME} \
+            --network ${SHARED_NS} --privileged \
+            apache/hadoop:3.3.6_with_libs bash
+    fi
+
+    sleep 5
+    cnt=0;
+    for container in "${NN_CONTAINER_NAME}" "${DN_1_CONTAINER_NAME}" "${DN_2_CONTAINER_NAME}"
+    do
+        if [ "$(docker inspect -f '{{.State.Status}}' ${container})" = "running" ]; then
+            ((cnt++))
+        else
+            echo "${container} is not running"
+            docker rm -f ${container}
+        fi
+    done
+    if [ ${cnt} -eq 3 ]; then
+        break
+    fi
+done
+
+# Generate configs
+cat > /tmp/core-site.xml << EOF
+<configuration>
+    <property>
+        <name>fs.defaultFS</name>
+        <value>hdfs://${NN_HOSTNAME}:8020</value>
+    </property>
+    <property>
+      <name>hadoop.security.authentication</name>
+      <value>kerberos</value>
+    </property>
+    <property>
+      <name>hadoop.security.authorization</name>
+      <value>true</value>
+    </property>
+
+    <property>
+        <name>hadoop.proxyuser.hadoop.hosts</name>
+        <value>*</value>
+    </property>
+    <property>
+        <name>hadoop.proxyuser.hadoop.groups</name>
+        <value>*</value>
+    </property>
+    <property>
+        <name>hadoop.proxyuser.hive.hosts</name>
+        <value>*</value>
+    </property>
+    <property>
+        <name>hadoop.proxyuser.hive.groups</name>
+        <value>*</value>
+    </property>
+</configuration>
+EOF
+
+cat > /tmp/hdfs-site-for-non-datanode.xml << EOF
+<configuration>
+    <property>
+        <name>dfs.replication</name>
+        <value>2</value>
+    </property>
+    <property>
+        <name>dfs.permissions.enabled</name>
+        <value>false</value>
+    </property>
+        <property>
+        <name>dfs.namenode.kerberos.principal</name>
+        <value>nn/${NN_HOSTNAME}@${KERBEROS_LOGIC_DOMAIN_UPPER}</value>
+    </property>
+    <property>
+        <name>dfs.namenode.keytab.file</name>
+        <value>/etc/security/keytabs/hadoop.service.keytab</value>
+    </property>
+    <property>
+        <name>dfs.block.access.token.enable</name>
+        <value>true</value>
+    </property>
+    <property>
+        <name>dfs.block.access.token.master.key.num</name>
+        <value>2</value>
+    </property>
+    <property>
+        <name>dfs.block.access.token.lifetime</name>
+        <value>600</value>
+    </property>
+    <property>
+        <name>ignore.secure.ports.for.testing</name>
+        <value>true</value>
+    </property>
+</configuration>
+EOF
+
+cat > /tmp/hdfs-site-for-datanode-1.xml << EOF
+<configuration>
+    <property>
+        <name>dfs.replication</name>
+        <value>2</value>
+    </property>
+    <property>
+        <name>dfs.permissions.enabled</name>
+        <value>false</value>
+    </property>
+    <property>
+        <name>dfs.datanode.data.dir</name>
+        <value>/opt/hadoop/data</value>
+    </property>
+    <property>
+        <name>dfs.datanode.address</name>
+        <value>${DN_1_HOSTNAME}:9866</value>
+    </property>
+    <property>
+        <name>dfs.datanode.http.address</name>
+        <value>${DN_1_HOSTNAME}:9864</value>
+    </property>
+    <property>
+        <name>dfs.datanode.ipc.address</name>
+        <value>${DN_1_HOSTNAME}:9867</value>
+    </property>
+    <property>
+        <name>dfs.datanode.hostname</name>
+        <value>${DN_1_HOSTNAME}</value>
+    </property>
+    <property>
+        <name>dfs.datanode.kerberos.principal</name>
+        <value>dn_1/${DN_1_HOSTNAME}@${KERBEROS_LOGIC_DOMAIN_UPPER}</value>
+    </property>
+    <property>
+        <name>dfs.datanode.keytab.file</name>
+        <value>/etc/security/keytabs/hadoop.service.keytab</value>
+    </property>
+    <property>
+        <name>dfs.block.access.token.enable</name>
+        <value>true</value>
+    </property>
+    <property>
+        <name>dfs.block.access.token.master.key.num</name>
+        <value>2</value>
+    </property>
+    <property>
+        <name>dfs.block.access.token.lifetime</name>
+        <value>600</value>
+    </property>
+    <property>
+        <name>ignore.secure.ports.for.testing</name>
+        <value>true</value>
+    </property>
+</configuration>
+EOF
+
+cat > /tmp/hdfs-site-for-datanode-2.xml << EOF
+<configuration>
+    <property>
+        <name>dfs.replication</name>
+        <value>2</value>
+    </property>
+    <property>
+        <name>dfs.permissions.enabled</name>
+        <value>false</value>
+    </property>
+    <property>
+        <name>dfs.datanode.data.dir</name>
+        <value>/opt/hadoop/data</value>
+    </property>
+    <property>
+        <name>dfs.datanode.address</name>
+        <value>${DN_2_HOSTNAME}:9866</value>
+    </property>
+    <property>
+        <name>dfs.datanode.http.address</name>
+        <value>${DN_2_HOSTNAME}:9864</value>
+    </property>
+    <property>
+        <name>dfs.datanode.ipc.address</name>
+        <value>${DN_2_HOSTNAME}:9867</value>
+    </property>
+    <property>
+        <name>dfs.datanode.hostname</name>
+        <value>${DN_2_HOSTNAME}</value>
+    </property>
+    <property>
+        <name>dfs.datanode.kerberos.principal</name>
+        <value>dn_2/${DN_2_HOSTNAME}@${KERBEROS_LOGIC_DOMAIN_UPPER}</value>
+    </property>
+    <property>
+        <name>dfs.datanode.keytab.file</name>
+        <value>/etc/security/keytabs/hadoop.service.keytab</value>
+    </property>
+    <property>
+        <name>dfs.block.access.token.enable</name>
+        <value>true</value>
+    </property>
+    <property>
+        <name>dfs.block.access.token.master.key.num</name>
+        <value>2</value>
+    </property>
+    <property>
+        <name>dfs.block.access.token.lifetime</name>
+        <value>600</value>
+    </property>
+    <property>
+        <name>ignore.secure.ports.for.testing</name>
+        <value>true</value>
+    </property>
+</configuration>
+EOF
+
+YARN_SITE_CONFIG_COMMON=$(cat << EOF
+    <property>
+        <name>yarn.resourcemanager.hostname</name>
+        <value>${NN_HOSTNAME}</value>
+    </property>
+    <property>
+        <name>yarn.resourcemanager.resource-tracker.address</name>
+        <value>${NN_HOSTNAME}:8031</value>
+    </property>
+    <property>
+        <name>yarn.resourcemanager.scheduler.class</name>
+        <value>org.apache.hadoop.yarn.server.resourcemanager.scheduler.fair.FairScheduler</value>
+    </property>
+    <property>
+        <name>yarn.nodemanager.aux-services</name>
+        <value>mapreduce_shuffle</value>
+    </property>
+    <property>
+    <name>yarn.nodemanager.resource.memory-mb</name>
+        <value>8192</value>
+    </property>
+    <property>
+        <name>yarn.nodemanager.resource.cpu-vcores</name>
+        <value>4</value>
+    </property>
+    <property>
+        <name>yarn.scheduler.minimum-allocation-mb</name>
+        <value>1024</value>
+    </property>
+    <property>
+        <name>yarn.scheduler.maximum-allocation-mb</name>
+        <value>8192</value>
+    </property>
+
+    <property>
+        <name>yarn.resourcemanager.principal</name>
+        <value>nn/${NN_HOSTNAME}@${KERBEROS_LOGIC_DOMAIN_UPPER}</value>
+    </property>
+    <property>
+        <name>yarn.resourcemanager.keytab</name>
+        <value>/etc/security/keytabs/hadoop.service.keytab</value>
+    </property>
+    <property>
+        <name>yarn.nodemanager.keytab</name>
+        <value>/etc/security/keytabs/hadoop.service.keytab</value>
+    </property>
+
+    <property>
+        <name>yarn.acl.enable</name>
+        <value>true</value>
+    </property>
+    <property>
+        <name>yarn.nodemanager.container-executor.class</name>
+        <value>org.apache.hadoop.yarn.server.nodemanager.LinuxContainerExecutor</value>
+    </property>
+EOF
+)
+
+cat > /tmp/yarn-site-for-non-datanode.xml << EOF
+<configuration>
+    ${YARN_SITE_CONFIG_COMMON}
+</configuration>
+EOF
+
+cat > /tmp/yarn-site-for-datanode-1.xml << EOF
+<configuration>
+    ${YARN_SITE_CONFIG_COMMON}
+    <property>
+        <name>yarn.nodemanager.principal</name>
+        <value>dn_1/${DN_1_HOSTNAME}@${KERBEROS_LOGIC_DOMAIN_UPPER}</value>
+    </property>
+</configuration>
+EOF
+
+cat > /tmp/yarn-site-for-datanode-2.xml << EOF
+<configuration>
+    ${YARN_SITE_CONFIG_COMMON}
+    <property>
+        <name>yarn.nodemanager.principal</name>
+        <value>dn_2/${DN_2_HOSTNAME}@${KERBEROS_LOGIC_DOMAIN_UPPER}</value>
+    </property>
+</configuration>
+EOF
+
+cat > /tmp/mapred-site.xml << EOF
+<configuration>
+    <property>
+        <name>mapreduce.framework.name</name>
+        <value>yarn</value>
+    </property>
+    <property>
+        <name>yarn.app.mapreduce.am.env</name>
+        <value>HADOOP_MAPRED_HOME=/opt/hadoop</value>
+    </property>
+    <property>
+        <name>mapreduce.map.env</name>
+        <value>HADOOP_MAPRED_HOME=/opt/hadoop</value>
+    </property>
+    <property>
+        <name>mapreduce.reduce.env</name>
+        <value>HADOOP_MAPRED_HOME=/opt/hadoop</value>
+    </property>
+    <property>
+        <name>mapreduce.application.classpath</name>
+        <value>/opt/hadoop/share/hadoop/mapreduce/*,/opt/hadoop/share/hadoop/mapreduce/lib/*</value>
+    </property>
+</configuration>
+EOF
+
+# Set yarn.nodemanager.container-executor.class to org.apache.hadoop.yarn.server.nodemanager.LinuxContainerExecutor will use /opt/hadoop/bin/container-executor as executor
+# Config for /opt/hadoop/bin/container-executor(users is group which account hadoop belongs to)
+cat > /tmp/container-executor.cfg << EOF
+yarn.nodemanager.local-dirs=/opt/hadoop/data
+yarn.nodemanager.log-dirs=/opt/hadoop/logs
+min.user.id=1000
+allowed.system.users=hadoop
+yarn.nodemanager.linux-container-executor.group=users
+banned.users=root
+EOF
+
+# Generate kerberos config
+cat > /tmp/krb5.conf << EOF
+[libdefaults]
+    default_realm = ${KERBEROS_LOGIC_DOMAIN_UPPER}
+    dns_lookup_realm = false
+    dns_lookup_kdc = false
+    ticket_lifetime = 24h
+    renew_lifetime = 7d
+    forwardable = true
+
+[realms]
+    ${KERBEROS_LOGIC_DOMAIN_UPPER} = {
+        kdc = ${KERBEROS_HOSTNAME}
+        admin_server = ${KERBEROS_HOSTNAME}
+    }
+
+[domain_realm]
+    ${REAL_DOMAIN} = ${KERBEROS_LOGIC_DOMAIN_UPPER}
+    .${REAL_DOMAIN} = ${KERBEROS_LOGIC_DOMAIN_UPPER}
+EOF
+
+docker cp ${KERBEROS_CONTAINER_NAME}:/etc/security/keytabs/hadoop.service.keytab /tmp/hadoop.service.keytab
+
+for container in "${NN_CONTAINER_NAME}" "${DN_1_CONTAINER_NAME}" "${DN_2_CONTAINER_NAME}"
+do
+    docker cp /tmp/core-site.xml ${container}:/opt/hadoop/etc/hadoop/core-site.xml
+    docker cp /tmp/hdfs-site-for-non-datanode.xml ${container}:/opt/hadoop/etc/hadoop/hdfs-site.xml
+    docker cp /tmp/yarn-site-for-non-datanode.xml ${container}:/opt/hadoop/etc/hadoop/yarn-site.xml
+    docker cp /tmp/mapred-site.xml ${container}:/opt/hadoop/etc/hadoop/mapred-site.xml
+    docker cp /tmp/krb5.conf ${container}:/etc/krb5.conf
+
+    # Copy keytab
+    docker cp /tmp/hadoop.service.keytab ${container}:/etc/security/keytabs/hadoop.service.keytab
+    docker exec ${container} bash -c 'sudo chmod 644 /etc/security/keytabs/hadoop.service.keytab'
+done
+docker cp /tmp/hdfs-site-for-datanode-1.xml ${DN_1_CONTAINER_NAME}:/opt/hadoop/etc/hadoop/hdfs-site.xml
+docker cp /tmp/yarn-site-for-datanode-1.xml ${DN_1_CONTAINER_NAME}:/opt/hadoop/etc/hadoop/yarn-site.xml
+docker cp /tmp/hdfs-site-for-datanode-2.xml ${DN_2_CONTAINER_NAME}:/opt/hadoop/etc/hadoop/hdfs-site.xml
+docker cp /tmp/yarn-site-for-datanode-2.xml ${DN_2_CONTAINER_NAME}:/opt/hadoop/etc/hadoop/yarn-site.xml
+
+# Linux Container Executor permissions(users is group which account hadoop belongs to) and create Linux account user_with_password
+for container in "${DN_1_CONTAINER_NAME}" "${DN_2_CONTAINER_NAME}"
+do
+    docker cp /tmp/container-executor.cfg ${container}:/opt/hadoop/etc/hadoop/container-executor.cfg
+    docker exec ${container} bash -c '
+sudo chown -R root:users /opt
+sudo chmod 0400 /opt/hadoop/etc/hadoop/container-executor.cfg
+sudo chmod 6050 /opt/hadoop/bin/container-executor
+sudo useradd -m user_with_password
+sudo usermod -a -G hadoop user_with_password
+'
+done
+
+# Format
+docker exec ${NN_CONTAINER_NAME} bash -c 'hdfs namenode -format'
+docker exec ${DN_1_CONTAINER_NAME} bash -c 'sudo mkdir -p /opt/hadoop/data && sudo chown -R hadoop:users /opt/hadoop/data'
+docker exec ${DN_2_CONTAINER_NAME} bash -c 'sudo mkdir -p /opt/hadoop/data && sudo chown -R hadoop:users /opt/hadoop/data'
+
+# Retart all daemons
+docker exec ${NN_CONTAINER_NAME} bash -c 'hdfs --daemon stop namenode; hdfs --daemon start namenode'
+docker exec ${NN_CONTAINER_NAME} bash -c 'yarn --daemon stop resourcemanager; yarn --daemon start resourcemanager'
+
+docker exec ${DN_1_CONTAINER_NAME} bash -c 'hdfs --daemon stop datanode; hdfs --daemon start datanode'
+docker exec ${DN_1_CONTAINER_NAME} bash -c 'yarn --daemon stop nodemanager; yarn --daemon start nodemanager'
+docker exec ${DN_2_CONTAINER_NAME} bash -c 'hdfs --daemon stop datanode; hdfs --daemon start datanode'
+docker exec ${DN_2_CONTAINER_NAME} bash -c 'yarn --daemon stop nodemanager; yarn --daemon start nodemanager'
+
+# Report status
+docker exec ${NN_CONTAINER_NAME} bash -c "kinit user_with_password <<EOF
+123456
+EOF"
+docker exec ${NN_CONTAINER_NAME} bash -c 'hdfs dfsadmin -report'
+docker exec ${NN_CONTAINER_NAME} bash -c 'yarn node -list -showDetails'
+```
+
+**Verify**
+
+```sh
+for container in "${NN_HOSTNAME}" "${DN_1_HOSTNAME}" "${DN_2_HOSTNAME}"
+do
+    forward_lookup=$(docker exec ${KERBEROS_CONTAINER_NAME} bash -c "getent hosts ${container}")
+    ip=$(echo ${forward_lookup} | cut -d " " -f1)
+    reverse_lookup=$(docker exec ${KERBEROS_CONTAINER_NAME} bash -c "getent hosts ${ip}")
+
+    if [ "${forward_lookup}" = "${reverse_lookup}" ]; then
+        echo "DNS check for container host '${container}'" is successful.
+    else
+        echo "DNS check for container host '${container}'" is failed.
+    fi
+done
+```
+
+**Test:**
+
+```sh
+docker exec ${NN_CONTAINER_NAME} bash -c 'hadoop jar /opt/hadoop/share/hadoop/mapreduce/hadoop-mapreduce-examples-*.jar pi 10 100'
+docker exec ${NN_CONTAINER_NAME} bash -c 'yarn application -list -appStates ALL'
+```
+
 ## 6.6 Deploy Hive
 
 **Key points:**
@@ -2627,23 +3141,20 @@ docker exec ${NN_CONTAINER_NAME} bash -c 'yarn application -list -appStates ALL'
 
 ```sh
 SHARED_NS=liuyehcf.org
-KERBEROS_CONTAINER_NAME=kerberos
-NN_CONTAINER_NAME=namenode-with-kerberos
-DN_CONTAINER_NAME=datanode-with-kerberos
-NM_CONTAINER_NAME=nodemanager-with-kerberos
-RM_CONTAINER_NAME=resourcemanager-with-kerberos
-HIVE_METASTORE_CONTAINER_NAME=hive-metastore-with-kerberos
-HIVE_SERVER_CONTAINER_NAME=hive-server-with-kerberos
+# Kerberos
 REAL_DOMAIN=${SHARED_NS}
+KERBEROS_CONTAINER_NAME=kerberos
 KERBEROS_HOSTNAME=${KERBEROS_CONTAINER_NAME}.${REAL_DOMAIN}
-NN_HOSTNAME=${NN_CONTAINER_NAME}.${REAL_DOMAIN}
-DN_HOSTNAME=${DN_CONTAINER_NAME}.${REAL_DOMAIN}
-NM_HOSTNAME=${NM_CONTAINER_NAME}.${REAL_DOMAIN}
-RM_HOSTNAME=${RM_CONTAINER_NAME}.${REAL_DOMAIN}
-HIVE_METASTORE_HOSTNAME=${HIVE_METASTORE_CONTAINER_NAME}.${REAL_DOMAIN}
-HIVE_SERVER_HOSTNAME=${HIVE_SERVER_CONTAINER_NAME}.${REAL_DOMAIN}
 KERBEROS_LOGIC_DOMAIN=example.com
 KERBEROS_LOGIC_DOMAIN_UPPER=$(echo ${KERBEROS_LOGIC_DOMAIN} | tr "[:lower:]" "[:upper:]")
+# Hadoop
+NN_CONTAINER_NAME=namenode-with-kerberos
+NN_HOSTNAME=${NN_CONTAINER_NAME}.${REAL_DOMAIN}
+# Hive
+HIVE_METASTORE_CONTAINER_NAME=hive-metastore-with-kerberos
+HIVE_SERVER_CONTAINER_NAME=hive-server-with-kerberos
+HIVE_METASTORE_HOSTNAME=${HIVE_METASTORE_CONTAINER_NAME}.${REAL_DOMAIN}
+HIVE_SERVER_HOSTNAME=${HIVE_SERVER_CONTAINER_NAME}.${REAL_DOMAIN}
 HIVE_DIR_NAME=hive-with-derby
 
 docker rm -f ${HIVE_METASTORE_CONTAINER_NAME} > /dev/null 2>&1
@@ -2946,23 +3457,20 @@ drop table hive_example;
 
 ```sh
 SHARED_NS=liuyehcf.org
-KERBEROS_CONTAINER_NAME=kerberos
-NN_CONTAINER_NAME=namenode-with-kerberos
-DN_CONTAINER_NAME=datanode-with-kerberos
-NM_CONTAINER_NAME=nodemanager-with-kerberos
-RM_CONTAINER_NAME=resourcemanager-with-kerberos
-HIVE_METASTORE_CONTAINER_NAME=hive-metastore-with-kerberos
-HIVE_SERVER_CONTAINER_NAME=hive-server-with-kerberos
+# Kerberos
 REAL_DOMAIN=${SHARED_NS}
+KERBEROS_CONTAINER_NAME=kerberos
 KERBEROS_HOSTNAME=${KERBEROS_CONTAINER_NAME}.${REAL_DOMAIN}
-NN_HOSTNAME=${NN_CONTAINER_NAME}.${REAL_DOMAIN}
-DN_HOSTNAME=${DN_CONTAINER_NAME}.${REAL_DOMAIN}
-NM_HOSTNAME=${NM_CONTAINER_NAME}.${REAL_DOMAIN}
-RM_HOSTNAME=${RM_CONTAINER_NAME}.${REAL_DOMAIN}
-HIVE_METASTORE_HOSTNAME=${HIVE_METASTORE_CONTAINER_NAME}.${REAL_DOMAIN}
-HIVE_SERVER_HOSTNAME=${HIVE_SERVER_CONTAINER_NAME}.${REAL_DOMAIN}
 KERBEROS_LOGIC_DOMAIN=example.com
 KERBEROS_LOGIC_DOMAIN_UPPER=$(echo ${KERBEROS_LOGIC_DOMAIN} | tr "[:lower:]" "[:upper:]")
+# Hadoop
+NN_CONTAINER_NAME=namenode-with-kerberos
+NN_HOSTNAME=${NN_CONTAINER_NAME}.${REAL_DOMAIN}
+# Hive
+HIVE_METASTORE_CONTAINER_NAME=hive-metastore-with-kerberos
+HIVE_SERVER_CONTAINER_NAME=hive-server-with-kerberos
+HIVE_METASTORE_HOSTNAME=${HIVE_METASTORE_CONTAINER_NAME}.${REAL_DOMAIN}
+HIVE_SERVER_HOSTNAME=${HIVE_SERVER_CONTAINER_NAME}.${REAL_DOMAIN}
 HIVE_DIR_NAME=hive-with-postgres
 
 POSTGRES_CONTAINER_NAME=postgres
