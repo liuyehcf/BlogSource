@@ -26,7 +26,7 @@ Below are the Hadoop components, that together form a Hadoop ecosystem:
 * `Zookeeper` -> Managing Cluster
 * `Oozie` -> Job Scheduling
 * `Flume` -> Data Ingesting Services
-* `Solr & Lucene` -> Searching & Indexing 
+* `Solr & Lucene` -> Searching & Indexing
 * `Ambari` -> Provision, Monitor and Maintain cluster
 
 ![HADOOP-ECOSYSTEM-Edureka](/images/Hadoop-Ecosystem/HADOOP-ECOSYSTEM-Edureka.png)
@@ -146,7 +146,7 @@ while true; do
             -p 127.0.0.1:8042:8042 \
             apache/hadoop:3.3.6 bash
     fi
-    
+
     # resourcemanager
     if ! docker inspect ${RM_CONTAINER_NAME} > /dev/null 2>&1; then
         docker run -dit \
@@ -863,6 +863,8 @@ The Hive Metastore (HMS) is a central repository of metadata for Hive tables and
 
 ## 4.2 Deployment via Docker
 
+[Apache Hive - Quickstart](https://hive.apache.org/developement/quickstart/)
+
 Here is a summary of the compatible versions of Apache Hive and Hadoop (refer to [Apache Hive Download](https://hive.apache.org/general/downloads/) for details):
 
 * `Hive 4.0.0`: Works with `Hadoop 3.3.6`, `Tez 0.10.3`
@@ -896,11 +898,9 @@ EOF
 docker build -t apache/hive:4.0.0_with_tools /tmp/hive_with_tools
 ```
 
-### 4.2.2 Use built-in Derby
+### 4.2.2 Hive with MapReduce on Yarn(Deprecated)
 
-[Apache Hive - Quickstart](https://hive.apache.org/developement/quickstart/)
-
-Start a hive container joining the shared network.
+#### 4.2.2.1 Use built-in Derby (WIP)
 
 ```sh
 SHARED_NS=hadoop-ns
@@ -910,13 +910,195 @@ HIVE_METASTORE_CONTAINER_NAME=hive-metastore
 HIVE_SERVER_CONTAINER_NAME=hive-server
 HIVE_METASTORE_HOSTNAME=${HIVE_METASTORE_CONTAINER_NAME}.${SHARED_NS}
 HIVE_SERVER_HOSTNAME=${HIVE_SERVER_CONTAINER_NAME}.${SHARED_NS}
+HIVE_DIR_NAME=hive-with-derby
+
+docker rm -f ${HIVE_METASTORE_CONTAINER_NAME} > /dev/null 2>&1
+docker rm -f ${HIVE_SERVER_CONTAINER_NAME} > /dev/null 2>&1
+
+cat > /tmp/hive-site.xml << EOF
+<configuration>
+    <property>
+        <name>hive.metastore.uris</name>
+        <value>thrift://${HIVE_METASTORE_HOSTNAME}:9083</value>
+    </property>
+    <property>
+        <name>metastore.warehouse.dir</name>
+        <value>hdfs://${NN_CONTAINER_NAME}:8020/opt/${HIVE_DIR_NAME}/data/warehouse</value>
+    </property>
+    <property>
+        <name>metastore.metastore.event.db.notification.api.auth</name>
+        <value>false</value>
+    </property>
+    <property>
+        <name>hive.execution.engine</name>
+        <value>mr</value>
+    </property>
+    <property>
+        <name>hive.exec.scratchdir</name>
+        <value>hdfs://${NN_CONTAINER_NAME}:8020/opt/${HIVE_DIR_NAME}/scratch_dir</value>
+    </property>
+    <property>
+        <name>hive.user.install.directory</name>
+        <value>hdfs://${NN_CONTAINER_NAME}:8020/opt/${HIVE_DIR_NAME}/install_dir</value>
+    </property>
+    <property>
+        <name>hive.server2.enable.doAs</name>
+        <value>false</value>
+    </property>
+</configuration>
+EOF
+
+# Copy hadoop config file to hive container
+docker cp ${NN_CONTAINER_NAME}:/opt/hadoop/etc/hadoop/core-site.xml /tmp/core-site.xml
+docker cp ${NN_CONTAINER_NAME}:/opt/hadoop/etc/hadoop/hdfs-site.xml /tmp/hdfs-site.xml
+docker cp ${NN_CONTAINER_NAME}:/opt/hadoop/etc/hadoop/yarn-site.xml /tmp/yarn-site.xml
+
+# Customized entrypoint remains unchanged
+cat > /tmp/updated_entrypoint.sh << 'EOF'
+#!/bin/bash
+
+echo "IS_RESUME=${IS_RESUME}"
+FLAG_FILE=/opt/hive/already_init_schema
+
+if [ -z "${IS_RESUME}" ] || [ "${IS_RESUME}" = "false" ]; then
+    if [ -f ${FLAG_FILE} ]; then
+        echo "Skip init schema when restart."
+        IS_RESUME=true /entrypoint.sh
+    else
+        echo "Try to init schema for the first time."
+        touch ${FLAG_FILE}
+        IS_RESUME=false /entrypoint.sh
+    fi
+else
+    echo "Skip init schema for every time."
+    IS_RESUME=true /entrypoint.sh
+fi
+EOF
+chmod a+x /tmp/updated_entrypoint.sh
+
+# Start standalone metastore container
+docker create \
+    --name ${HIVE_METASTORE_CONTAINER_NAME} \
+    --hostname ${HIVE_METASTORE_HOSTNAME} \
+    --network ${SHARED_NS} \
+    -p 127.0.0.1:9083:9083 \
+    -e SERVICE_NAME=metastore \
+    --entrypoint /updated_entrypoint.sh \
+    apache/hive:4.0.0_with_tools
+
+docker cp /tmp/hive-site.xml ${HIVE_METASTORE_CONTAINER_NAME}:/opt/hive/conf/hive-site.xml
+docker cp /tmp/core-site.xml ${HIVE_METASTORE_CONTAINER_NAME}:/opt/hadoop/etc/hadoop/core-site.xml
+docker cp /tmp/hdfs-site.xml ${HIVE_METASTORE_CONTAINER_NAME}:/opt/hadoop/etc/hadoop/hdfs-site.xml
+docker cp /tmp/yarn-site.xml ${HIVE_METASTORE_CONTAINER_NAME}:/opt/hadoop/etc/hadoop/yarn-site.xml
+docker cp /tmp/updated_entrypoint.sh ${HIVE_METASTORE_CONTAINER_NAME}:/updated_entrypoint.sh
+
+docker start ${HIVE_METASTORE_CONTAINER_NAME}
+
+# Start standalone hiveserver2 container
+docker create \
+    --name ${HIVE_SERVER_CONTAINER_NAME} \
+    --hostname ${HIVE_SERVER_HOSTNAME} \
+    --network ${SHARED_NS} \
+    -p 127.0.0.1:10000:10000 \
+    -e SERVICE_NAME=hiveserver2 \
+    -e IS_RESUME=true \
+    apache/hive:4.0.0_with_tools
+
+docker cp /tmp/hive-site.xml ${HIVE_SERVER_CONTAINER_NAME}:/opt/hive/conf/hive-site.xml
+docker cp /tmp/core-site.xml ${HIVE_SERVER_CONTAINER_NAME}:/opt/hadoop/etc/hadoop/core-site.xml
+docker cp /tmp/hdfs-site.xml ${HIVE_SERVER_CONTAINER_NAME}:/opt/hadoop/etc/hadoop/hdfs-site.xml
+docker cp /tmp/yarn-site.xml ${HIVE_SERVER_CONTAINER_NAME}:/opt/hadoop/etc/hadoop/yarn-site.xml
+
+# Wait for hivemetastore to start up
+docker exec ${HIVE_METASTORE_CONTAINER_NAME} bash -c '
+while true
+do
+    if nc -vz 127.0.0.1 9083; then
+        break
+    fi
+    sleep 1
+done
+'
+
+docker start ${HIVE_SERVER_CONTAINER_NAME}
+
+# Wait for hiveserver to start up
+docker exec ${HIVE_SERVER_CONTAINER_NAME} bash -c '
+while true
+do
+    if nc -vz 127.0.0.1 10000; then
+        break
+    fi
+    sleep 1
+done
+'
+```
+
+Test:
+
+```sh
+docker exec -it ${HIVE_SERVER_CONTAINER_NAME} beeline -u 'jdbc:hive2://localhost:10000/' -e "
+create table hive_example(a string, b int) partitioned by(c int);
+alter table hive_example add partition(c=1);
+insert into hive_example partition(c=1) values('a', 1), ('a', 2),('b',3);
+select * from hive_example;
+drop table hive_example;
+"
+```
+
+### 4.2.3 Hive with Tez on Yarn
+
+```plantuml
+title Hive with Tez on YARN Execution Flow
+
+actor User
+participant "Hive CLI / Beeline" as Client
+participant "HiveServer2" as HS2
+participant "HiveCompiler" as Compiler
+participant "Tez DAG Generator" as DAGGen
+participant "YARN ResourceManager" as RM
+participant "NodeManager(s)" as NM
+participant "Tez AM (ApplicationMaster)" as TezAM
+
+User -> Client: Submit SQL query
+Client -> HS2: Send query
+HS2 -> Compiler: Compile query
+Compiler -> DAGGen: Convert to Tez DAG
+HS2 -> RM: Request YARN resources for Tez AM
+RM -> NM: Allocate container for Tez AM
+NM -> TezAM: Launch Tez AM
+TezAM -> RM: Register ApplicationMaster
+HS2 -> TezAM: Submit DAG
+TezAM -> RM: Request containers for tasks
+
+loop For each task
+    RM -> NM: Allocate container for task
+    TezAM -> NM: Launch task container
+    NM -> TezAM: Run Tez task (mapper/reducer)
+end
+
+TezAM -> HS2: Report DAG completion
+HS2 -> Client: Return results
+```
+
+#### 4.2.3.1 Use built-in Derby
+
+```sh
+SHARED_NS=hadoop-ns
+NN_CONTAINER_NAME=namenode
+NN_HOSTNAME=${NN_CONTAINER_NAME}.${SHARED_NS}
+HIVE_METASTORE_CONTAINER_NAME=hive-metastore
+HIVE_SERVER_CONTAINER_NAME=hive-server
+HIVE_METASTORE_HOSTNAME=${HIVE_METASTORE_CONTAINER_NAME}.${SHARED_NS}
+HIVE_SERVER_HOSTNAME=${HIVE_SERVER_CONTAINER_NAME}.${SHARED_NS}
+HIVE_DIR_NAME=hive-with-derby
 
 docker rm -f ${HIVE_METASTORE_CONTAINER_NAME} > /dev/null 2>&1
 docker rm -f ${HIVE_SERVER_CONTAINER_NAME} > /dev/null 2>&1
 
 # Download tez resources and put to hdfs
 if [ ! -e /tmp/apache-tez-0.10.3-bin.tar.gz ]; then
-    wget -O /tmp/apache-tez-0.10.3-bin.tar.gz  https://downloads.apache.org/tez/0.10.3/apache-tez-0.10.3-bin.tar.gz
+    wget -O /tmp/apache-tez-0.10.3-bin.tar.gz 'https://downloads.apache.org/tez/0.10.3/apache-tez-0.10.3-bin.tar.gz'
 fi
 docker exec ${NN_CONTAINER_NAME} bash -c 'mkdir -p /opt/tez'
 docker cp /tmp/apache-tez-0.10.3-bin.tar.gz ${NN_CONTAINER_NAME}:/opt/tez
@@ -929,22 +1111,36 @@ if ! hdfs dfs -ls /opt/tez/tez.tar.gz > /dev/null 2>&1; then
 fi
 '
 
-HIVE_SITE_CONFIG_COMMON=$(cat << EOF
+cat > /tmp/hive-site.xml << EOF
+<configuration>
     <property>
-        <name>hive.server2.enable.doAs</name>
+        <name>hive.metastore.uris</name>
+        <value>thrift://${HIVE_METASTORE_HOSTNAME}:9083</value>
+    </property>
+    <property>
+        <name>metastore.warehouse.dir</name>
+        <value>hdfs://${NN_CONTAINER_NAME}:8020/opt/${HIVE_DIR_NAME}/data/warehouse</value>
+    </property>
+    <property>
+        <name>metastore.metastore.event.db.notification.api.auth</name>
+        <value>false</value>
+    </property>
+
+    <property>
+        <name>hive.execution.engine</name>
+        <value>tez</value>
+    </property>
+    <property>
+        <name>tez.lib.uris</name>
+        <value>hdfs://${NN_CONTAINER_NAME}:8020/opt/tez/tez.tar.gz</value>
+    </property>
+    <property>
+        <name>tez.local.mode</name>
         <value>false</value>
     </property>
     <property>
         <name>hive.tez.exec.inplace.progress</name>
         <value>false</value>
-    </property>
-    <property>
-        <name>hive.exec.scratchdir</name>
-        <value>/opt/hive-with-derby/scratch_dir</value>
-    </property>
-    <property>
-        <name>hive.user.install.directory</name>
-        <value>/opt/hive-with-derby/install_dir</value>
     </property>
     <property>
         <name>tez.runtime.optimize.local.fetch</name>
@@ -959,41 +1155,17 @@ HIVE_SITE_CONFIG_COMMON=$(cat << EOF
         <value>yarn</value>
     </property>
     <property>
-        <name>tez.local.mode</name>
+        <name>hive.exec.scratchdir</name>
+        <value>hdfs://${NN_CONTAINER_NAME}:8020/opt/${HIVE_DIR_NAME}/scratch_dir</value>
+    </property>
+    <property>
+        <name>hive.user.install.directory</name>
+        <value>hdfs://${NN_CONTAINER_NAME}:8020/opt/${HIVE_DIR_NAME}/install_dir</value>
+    </property>
+    <property>
+        <name>hive.server2.enable.doAs</name>
         <value>false</value>
     </property>
-    <property>
-        <name>tez.lib.uris</name>
-        <value>/opt/tez/tez.tar.gz</value>
-    </property>
-    <property>
-        <name>hive.execution.engine</name>
-        <value>tez</value>
-    </property>
-    <property>
-        <name>metastore.warehouse.dir</name>
-        <value>/opt/hive-with-derby/data/warehouse</value>
-    </property>
-    <property>
-        <name>metastore.metastore.event.db.notification.api.auth</name>
-        <value>false</value>
-    </property>
-EOF
-)
-
-cat > /tmp/hive-site-for-metastore.xml << EOF
-<configuration>
-    ${HIVE_SITE_CONFIG_COMMON}
-</configuration>
-EOF
-
-cat > /tmp/hive-site-for-hiveserver2.xml << EOF
-<configuration>
-    <property>
-        <name>hive.metastore.uris</name>
-        <value>thrift://${HIVE_METASTORE_HOSTNAME}:9083</value>
-    </property>
-    ${HIVE_SITE_CONFIG_COMMON}
 </configuration>
 EOF
 
@@ -1021,7 +1193,7 @@ if [ -z "${IS_RESUME}" ] || [ "${IS_RESUME}" = "false" ]; then
 else
     echo "Skip init schema for every time."
     IS_RESUME=true /entrypoint.sh
-fi 
+fi
 EOF
 chmod a+x /tmp/updated_entrypoint.sh
 
@@ -1035,7 +1207,7 @@ docker create \
     --entrypoint /updated_entrypoint.sh \
     apache/hive:4.0.0_with_tools
 
-docker cp /tmp/hive-site-for-metastore.xml ${HIVE_METASTORE_CONTAINER_NAME}:/opt/hive/conf/hive-site.xml
+docker cp /tmp/hive-site.xml ${HIVE_METASTORE_CONTAINER_NAME}:/opt/hive/conf/hive-site.xml
 docker cp /tmp/core-site.xml ${HIVE_METASTORE_CONTAINER_NAME}:/opt/hadoop/etc/hadoop/core-site.xml
 docker cp /tmp/hdfs-site.xml ${HIVE_METASTORE_CONTAINER_NAME}:/opt/hadoop/etc/hadoop/hdfs-site.xml
 docker cp /tmp/yarn-site.xml ${HIVE_METASTORE_CONTAINER_NAME}:/opt/hadoop/etc/hadoop/yarn-site.xml
@@ -1053,12 +1225,34 @@ docker create \
     -e IS_RESUME=true \
     apache/hive:4.0.0_with_tools
 
-docker cp /tmp/hive-site-for-hiveserver2.xml ${HIVE_SERVER_CONTAINER_NAME}:/opt/hive/conf/hive-site.xml
+docker cp /tmp/hive-site.xml ${HIVE_SERVER_CONTAINER_NAME}:/opt/hive/conf/hive-site.xml
 docker cp /tmp/core-site.xml ${HIVE_SERVER_CONTAINER_NAME}:/opt/hadoop/etc/hadoop/core-site.xml
 docker cp /tmp/hdfs-site.xml ${HIVE_SERVER_CONTAINER_NAME}:/opt/hadoop/etc/hadoop/hdfs-site.xml
 docker cp /tmp/yarn-site.xml ${HIVE_SERVER_CONTAINER_NAME}:/opt/hadoop/etc/hadoop/yarn-site.xml
 
+# Wait for hivemetastore to start up
+docker exec ${HIVE_METASTORE_CONTAINER_NAME} bash -c '
+while true
+do
+    if nc -vz 127.0.0.1 9083; then
+        break
+    fi
+    sleep 1
+done
+'
+
 docker start ${HIVE_SERVER_CONTAINER_NAME}
+
+# Wait for hiveserver to start up
+docker exec ${HIVE_SERVER_CONTAINER_NAME} bash -c '
+while true
+do
+    if nc -vz 127.0.0.1 10000; then
+        break
+    fi
+    sleep 1
+done
+'
 ```
 
 Test:
@@ -1073,7 +1267,7 @@ drop table hive_example;
 "
 ```
 
-### 4.2.3 Use External Postgres
+#### 4.2.3.2 Use External Postgres
 
 ```sh
 SHARED_NS=hadoop-ns
@@ -1083,6 +1277,7 @@ HIVE_METASTORE_CONTAINER_NAME=hive-metastore
 HIVE_SERVER_CONTAINER_NAME=hive-server
 HIVE_METASTORE_HOSTNAME=${HIVE_METASTORE_CONTAINER_NAME}.${SHARED_NS}
 HIVE_SERVER_HOSTNAME=${HIVE_SERVER_CONTAINER_NAME}.${SHARED_NS}
+HIVE_DIR_NAME=hive-with-postgres
 IS_RESUME="false"
 
 POSTGRES_CONTAINER_NAME=postgres
@@ -1109,7 +1304,7 @@ docker run -dit \
 
 # Download tez resources and put to hdfs
 if [ ! -e /tmp/apache-tez-0.10.3-bin.tar.gz ]; then
-    wget -O /tmp/apache-tez-0.10.3-bin.tar.gz  https://downloads.apache.org/tez/0.10.3/apache-tez-0.10.3-bin.tar.gz
+    wget -O /tmp/apache-tez-0.10.3-bin.tar.gz 'https://downloads.apache.org/tez/0.10.3/apache-tez-0.10.3-bin.tar.gz'
 fi
 docker exec ${NN_CONTAINER_NAME} bash -c 'mkdir -p /opt/tez'
 docker cp /tmp/apache-tez-0.10.3-bin.tar.gz ${NN_CONTAINER_NAME}:/opt/tez
@@ -1122,59 +1317,7 @@ if ! hdfs dfs -ls /opt/tez/tez.tar.gz > /dev/null 2>&1; then
 fi
 '
 
-HIVE_SITE_CONFIG_COMMON=$(cat << EOF
-    <property>
-        <name>hive.server2.enable.doAs</name>
-        <value>false</value>
-    </property>
-    <property>
-        <name>hive.tez.exec.inplace.progress</name>
-        <value>false</value>
-    </property>
-    <property>
-        <name>hive.exec.scratchdir</name>
-        <value>/opt/hive-with-postgres/scratch_dir</value>
-    </property>
-    <property>
-        <name>hive.user.install.directory</name>
-        <value>/opt/hive-with-postgres/install_dir</value>
-    </property>
-    <property>
-        <name>tez.runtime.optimize.local.fetch</name>
-        <value>true</value>
-    </property>
-    <property>
-        <name>hive.exec.submit.local.task.via.child</name>
-        <value>false</value>
-    </property>
-    <property>
-        <name>mapreduce.framework.name</name>
-        <value>yarn</value>
-    </property>
-    <property>
-        <name>tez.local.mode</name>
-        <value>false</value>
-    </property>
-    <property>
-        <name>tez.lib.uris</name>
-        <value>/opt/tez/tez.tar.gz</value>
-    </property>
-    <property>
-        <name>hive.execution.engine</name>
-        <value>tez</value>
-    </property>
-    <property>
-        <name>metastore.warehouse.dir</name>
-        <value>/opt/hive-with-postgres/data/warehouse</value>
-    </property>
-    <property>
-        <name>metastore.metastore.event.db.notification.api.auth</name>
-        <value>false</value>
-    </property>
-EOF
-)
-
-cat > /tmp/hive-site-for-metastore.xml << EOF
+cat > /tmp/hive-site.xml << EOF
 <configuration>
     <property>
         <name>javax.jdo.option.ConnectionURL</name>
@@ -1192,17 +1335,59 @@ cat > /tmp/hive-site-for-metastore.xml << EOF
         <name>javax.jdo.option.ConnectionPassword</name>
         <value>${POSTGRES_PASSWORD}</value>
     </property>
-    ${HIVE_SITE_CONFIG_COMMON}
-</configuration>
-EOF
-
-cat > /tmp/hive-site-for-hiveserver2.xml << EOF
-<configuration>
     <property>
         <name>hive.metastore.uris</name>
         <value>thrift://${HIVE_METASTORE_HOSTNAME}:9083</value>
     </property>
-    ${HIVE_SITE_CONFIG_COMMON}
+    <property>
+        <name>metastore.warehouse.dir</name>
+        <value>hdfs://${NN_CONTAINER_NAME}:8020/opt/${HIVE_DIR_NAME}/data/warehouse</value>
+    </property>
+    <property>
+        <name>metastore.metastore.event.db.notification.api.auth</name>
+        <value>false</value>
+    </property>
+
+    <property>
+        <name>hive.execution.engine</name>
+        <value>tez</value>
+    </property>
+    <property>
+        <name>tez.lib.uris</name>
+        <value>hdfs://${NN_CONTAINER_NAME}:8020/opt/tez/tez.tar.gz</value>
+    </property>
+    <property>
+        <name>tez.local.mode</name>
+        <value>false</value>
+    </property>
+    <property>
+        <name>hive.tez.exec.inplace.progress</name>
+        <value>false</value>
+    </property>
+    <property>
+        <name>tez.runtime.optimize.local.fetch</name>
+        <value>true</value>
+    </property>
+    <property>
+        <name>hive.exec.submit.local.task.via.child</name>
+        <value>false</value>
+    </property>
+    <property>
+        <name>mapreduce.framework.name</name>
+        <value>yarn</value>
+    </property>
+    <property>
+        <name>hive.exec.scratchdir</name>
+        <value>hdfs://${NN_CONTAINER_NAME}:8020/opt/${HIVE_DIR_NAME}/scratch_dir</value>
+    </property>
+    <property>
+        <name>hive.user.install.directory</name>
+        <value>hdfs://${NN_CONTAINER_NAME}:8020/opt/${HIVE_DIR_NAME}/install_dir</value>
+    </property>
+    <property>
+        <name>hive.server2.enable.doAs</name>
+        <value>false</value>
+    </property>
 </configuration>
 EOF
 
@@ -1213,7 +1398,7 @@ docker cp ${NN_CONTAINER_NAME}:/opt/hadoop/etc/hadoop/yarn-site.xml /tmp/yarn-si
 
 # Prepare jdbc driver
 if [ ! -e /tmp/postgresql-42.7.4.jar ]; then
-    wget -O /tmp/postgresql-42.7.4.jar  https://jdbc.postgresql.org/download/postgresql-42.7.4.jar
+    wget -O /tmp/postgresql-42.7.4.jar 'https://jdbc.postgresql.org/download/postgresql-42.7.4.jar'
 fi
 
 # Use customized entrypoint
@@ -1235,7 +1420,7 @@ if [ -z "${IS_RESUME}" ] || [ "${IS_RESUME}" = "false" ]; then
 else
     echo "Skip init schema for every time."
     IS_RESUME=true /entrypoint.sh
-fi 
+fi
 EOF
 chmod a+x /tmp/updated_entrypoint.sh
 
@@ -1251,7 +1436,7 @@ docker create \
     --entrypoint /updated_entrypoint.sh \
     apache/hive:4.0.0_with_tools
 
-docker cp /tmp/hive-site-for-metastore.xml ${HIVE_METASTORE_CONTAINER_NAME}:/opt/hive/conf/hive-site.xml
+docker cp /tmp/hive-site.xml ${HIVE_METASTORE_CONTAINER_NAME}:/opt/hive/conf/hive-site.xml
 docker cp /tmp/core-site.xml ${HIVE_METASTORE_CONTAINER_NAME}:/opt/hadoop/etc/hadoop/core-site.xml
 docker cp /tmp/hdfs-site.xml ${HIVE_METASTORE_CONTAINER_NAME}:/opt/hadoop/etc/hadoop/hdfs-site.xml
 docker cp /tmp/yarn-site.xml ${HIVE_METASTORE_CONTAINER_NAME}:/opt/hadoop/etc/hadoop/yarn-site.xml
@@ -1271,13 +1456,35 @@ docker create \
     -e IS_RESUME=true \
     apache/hive:4.0.0_with_tools
 
-docker cp /tmp/hive-site-for-hiveserver2.xml ${HIVE_SERVER_CONTAINER_NAME}:/opt/hive/conf/hive-site.xml
+docker cp /tmp/hive-site.xml ${HIVE_SERVER_CONTAINER_NAME}:/opt/hive/conf/hive-site.xml
 docker cp /tmp/core-site.xml ${HIVE_SERVER_CONTAINER_NAME}:/opt/hadoop/etc/hadoop/core-site.xml
 docker cp /tmp/hdfs-site.xml ${HIVE_SERVER_CONTAINER_NAME}:/opt/hadoop/etc/hadoop/hdfs-site.xml
 docker cp /tmp/yarn-site.xml ${HIVE_SERVER_CONTAINER_NAME}:/opt/hadoop/etc/hadoop/yarn-site.xml
 docker cp /tmp/postgresql-42.7.4.jar ${HIVE_SERVER_CONTAINER_NAME}:/opt/hive/lib/postgresql-42.7.4.jar
 
+# Wait for hivemetastore to start up
+docker exec ${HIVE_METASTORE_CONTAINER_NAME} bash -c '
+while true
+do
+    if nc -vz 127.0.0.1 9083; then
+        break
+    fi
+    sleep 1
+done
+'
+
 docker start ${HIVE_SERVER_CONTAINER_NAME}
+
+# Wait for hiveserver to start up
+docker exec ${HIVE_SERVER_CONTAINER_NAME} bash -c '
+while true
+do
+    if nc -vz 127.0.0.1 10000; then
+        break
+    fi
+    sleep 1
+done
+'
 ```
 
 Test:
@@ -1899,7 +2106,7 @@ while true; do
             -p 127.0.0.1:8042:8042 \
             apache/hadoop:3.3.6_with_libs bash
     fi
-    
+
     # resourcemanager
     if ! docker inspect ${RM_CONTAINER_NAME} > /dev/null 2>&1; then
         docker run -dit \
@@ -2216,7 +2423,7 @@ docker exec ${NN_CONTAINER_NAME} bash -c 'yarn application -list -appStates ALL'
 **Key points:**
 
 * First part of principal must be `hive`, equals to the user of the container. Also need to add `hadoop.proxyuser.hive.hosts` and `hadoop.proxyuser.hive.groups` to `core-site.xml`, which allows user hive to impersonate any actual users.
-* Both the Hive Metastore and HiveServer must include Kerberos-related configuration properties for each other, as specified in `HIVE_SITE_CONFIG_KERBEROS`.
+* Both the Hive Metastore and HiveServer must include Kerberos-related configuration properties for each other.
 * Check if kerberos authentication successfully: `grep -rni 'keytab' /tmp/hive`.
 * When a client accesses the Hive Metastore, whether from within the container network or from outside. It must use a domain name that exactly matches the second part of the Kerberos principal. Otherwise, errors such as 'principal not found' may occur.
     * Outside of container network: You need to setup `<container_ip> <hostname>` in `/etc/hosts` manually, including both hadoop's containers and hive's containers.
@@ -2243,13 +2450,14 @@ HIVE_METASTORE_HOSTNAME=${HIVE_METASTORE_CONTAINER_NAME}.${REAL_DOMAIN}
 HIVE_SERVER_HOSTNAME=${HIVE_SERVER_CONTAINER_NAME}.${REAL_DOMAIN}
 KERBEROS_LOGIC_DOMAIN=example.com
 KERBEROS_LOGIC_DOMAIN_UPPER=$(echo ${KERBEROS_LOGIC_DOMAIN} | tr "[:lower:]" "[:upper:]")
+HIVE_DIR_NAME=hive-with-derby
 
 docker rm -f ${HIVE_METASTORE_CONTAINER_NAME} > /dev/null 2>&1
 docker rm -f ${HIVE_SERVER_CONTAINER_NAME} > /dev/null 2>&1
 
 # Download tez resources and put to hdfs
 if [ ! -e /tmp/apache-tez-0.10.3-bin.tar.gz ]; then
-    wget -O /tmp/apache-tez-0.10.3-bin.tar.gz  https://downloads.apache.org/tez/0.10.3/apache-tez-0.10.3-bin.tar.gz
+    wget -O /tmp/apache-tez-0.10.3-bin.tar.gz 'https://downloads.apache.org/tez/0.10.3/apache-tez-0.10.3-bin.tar.gz'
 fi
 docker exec ${NN_CONTAINER_NAME} bash -c 'mkdir -p /opt/tez'
 docker cp /tmp/apache-tez-0.10.3-bin.tar.gz ${NN_CONTAINER_NAME}:/opt/tez
@@ -2262,18 +2470,36 @@ if ! hdfs dfs -ls /opt/tez/tez.tar.gz > /dev/null 2>&1; then
 fi
 '
 
-HIVE_SITE_CONFIG_COMMON=$(cat << EOF
+cat > /tmp/hive-site.xml << EOF
+<configuration>
     <property>
-        <name>hive.tez.exec.inplace.progress</name>
+        <name>hive.metastore.uris</name>
+        <value>thrift://${HIVE_METASTORE_HOSTNAME}:9083</value>
+    </property>
+    <property>
+        <name>metastore.warehouse.dir</name>
+        <value>hdfs://${NN_CONTAINER_NAME}:8020/opt/${HIVE_DIR_NAME}/data/warehouse</value>
+    </property>
+    <property>
+        <name>metastore.metastore.event.db.notification.api.auth</name>
+        <value>false</value>
+    </property>
+
+    <property>
+        <name>hive.execution.engine</name>
+        <value>tez</value>
+    </property>
+    <property>
+        <name>tez.lib.uris</name>
+        <value>hdfs://${NN_CONTAINER_NAME}:8020/opt/tez/tez.tar.gz</value>
+    </property>
+    <property>
+        <name>tez.local.mode</name>
         <value>false</value>
     </property>
     <property>
-        <name>hive.exec.scratchdir</name>
-        <value>/opt/hive-with-derby/scratch_dir</value>
-    </property>
-    <property>
-        <name>hive.user.install.directory</name>
-        <value>/opt/hive-with-derby/install_dir</value>
+        <name>hive.tez.exec.inplace.progress</name>
+        <value>false</value>
     </property>
     <property>
         <name>tez.runtime.optimize.local.fetch</name>
@@ -2288,29 +2514,14 @@ HIVE_SITE_CONFIG_COMMON=$(cat << EOF
         <value>yarn</value>
     </property>
     <property>
-        <name>tez.local.mode</name>
-        <value>false</value>
+        <name>hive.exec.scratchdir</name>
+        <value>hdfs://${NN_CONTAINER_NAME}:8020/opt/${HIVE_DIR_NAME}/scratch_dir</value>
     </property>
     <property>
-        <name>tez.lib.uris</name>
-        <value>/opt/tez/tez.tar.gz</value>
+        <name>hive.user.install.directory</name>
+        <value>hdfs://${NN_CONTAINER_NAME}:8020/opt/${HIVE_DIR_NAME}/install_dir</value>
     </property>
-    <property>
-        <name>hive.execution.engine</name>
-        <value>tez</value>
-    </property>
-    <property>
-        <name>metastore.warehouse.dir</name>
-        <value>/opt/hive-with-derby/data/warehouse</value>
-    </property>
-    <property>
-        <name>metastore.metastore.event.db.notification.api.auth</name>
-        <value>false</value>
-    </property>
-EOF
-)
 
-HIVE_SITE_CONFIG_KERBEROS=$(cat << EOF
     <property>
         <name>hive.metastore.sasl.enabled</name>
         <value>true</value>
@@ -2343,24 +2554,6 @@ HIVE_SITE_CONFIG_KERBEROS=$(cat << EOF
         <name>hive.server2.proxy.user</name>
         <value>*</value>
     </property>
-EOF
-)
-
-cat > /tmp/hive-site-for-metastore.xml << EOF
-<configuration>
-    ${HIVE_SITE_CONFIG_COMMON}
-    ${HIVE_SITE_CONFIG_KERBEROS}
-</configuration>
-EOF
-
-cat > /tmp/hive-site-for-hiveserver2.xml << EOF
-<configuration>
-    <property>
-        <name>hive.metastore.uris</name>
-        <value>thrift://${HIVE_METASTORE_HOSTNAME}:9083</value>
-    </property>
-    ${HIVE_SITE_CONFIG_COMMON}
-    ${HIVE_SITE_CONFIG_KERBEROS}
 </configuration>
 EOF
 
@@ -2396,7 +2589,7 @@ if [ -z "${IS_RESUME}" ] || [ "${IS_RESUME}" = "false" ]; then
 else
     echo "Skip init schema for every time."
     IS_RESUME=true /entrypoint.sh
-fi 
+fi
 EOF
 chmod a+x /tmp/hivemetastore_entrypoint.sh
 
@@ -2417,7 +2610,7 @@ docker create \
     --entrypoint /hivemetastore_entrypoint.sh \
     apache/hive:4.0.0_with_kerberos
 
-docker cp /tmp/hive-site-for-metastore.xml ${HIVE_METASTORE_CONTAINER_NAME}:/opt/hive/conf/hive-site.xml
+docker cp /tmp/hive-site.xml ${HIVE_METASTORE_CONTAINER_NAME}:/opt/hive/conf/hive-site.xml
 docker cp /tmp/core-site.xml ${HIVE_METASTORE_CONTAINER_NAME}:/opt/hadoop/etc/hadoop/core-site.xml
 docker cp /tmp/hdfs-site.xml ${HIVE_METASTORE_CONTAINER_NAME}:/opt/hadoop/etc/hadoop/hdfs-site.xml
 docker cp /tmp/yarn-site.xml ${HIVE_METASTORE_CONTAINER_NAME}:/opt/hadoop/etc/hadoop/yarn-site.xml
@@ -2463,7 +2656,7 @@ docker create \
     --entrypoint /hiveserver_entrypoint.sh \
     apache/hive:4.0.0_with_kerberos
 
-docker cp /tmp/hive-site-for-hiveserver2.xml ${HIVE_SERVER_CONTAINER_NAME}:/opt/hive/conf/hive-site.xml
+docker cp /tmp/hive-site.xml ${HIVE_SERVER_CONTAINER_NAME}:/opt/hive/conf/hive-site.xml
 docker cp /tmp/core-site.xml ${HIVE_SERVER_CONTAINER_NAME}:/opt/hadoop/etc/hadoop/core-site.xml
 docker cp /tmp/hdfs-site.xml ${HIVE_SERVER_CONTAINER_NAME}:/opt/hadoop/etc/hadoop/hdfs-site.xml
 docker cp /tmp/yarn-site.xml ${HIVE_SERVER_CONTAINER_NAME}:/opt/hadoop/etc/hadoop/yarn-site.xml
@@ -2496,7 +2689,30 @@ docker cp /tmp/hive.service.keytab ${HIVE_SERVER_CONTAINER_NAME}:/etc/security/k
 docker exec ${HIVE_SERVER_CONTAINER_NAME} bash -c 'sudo chmod 644 /etc/security/keytabs/hive.service.keytab'
 
 docker cp /tmp/hiveserver_entrypoint.sh ${HIVE_SERVER_CONTAINER_NAME}:/hiveserver_entrypoint.sh
+
+# Wait for hivemetastore to start up
+docker exec ${HIVE_METASTORE_CONTAINER_NAME} bash -c '
+while true
+do
+    if nc -vz 127.0.0.1 9083; then
+        break
+    fi
+    sleep 1
+done
+'
+
 docker restart ${HIVE_SERVER_CONTAINER_NAME}
+
+# Wait for hiveserver to start up
+docker exec ${HIVE_SERVER_CONTAINER_NAME} bash -c '
+while true
+do
+    if nc -vz 127.0.0.1 10000; then
+        break
+    fi
+    sleep 1
+done
+'
 
 docker exec ${HIVE_SERVER_CONTAINER_NAME} bash -c "kinit user_with_password <<EOF
 123456
@@ -2553,6 +2769,7 @@ HIVE_METASTORE_HOSTNAME=${HIVE_METASTORE_CONTAINER_NAME}.${REAL_DOMAIN}
 HIVE_SERVER_HOSTNAME=${HIVE_SERVER_CONTAINER_NAME}.${REAL_DOMAIN}
 KERBEROS_LOGIC_DOMAIN=example.com
 KERBEROS_LOGIC_DOMAIN_UPPER=$(echo ${KERBEROS_LOGIC_DOMAIN} | tr "[:lower:]" "[:upper:]")
+HIVE_DIR_NAME=hive-with-postgres
 
 POSTGRES_CONTAINER_NAME=postgres
 POSTGRES_HOSTNAME=${POSTGRES_CONTAINER_NAME}.${SHARED_NS}
@@ -2579,7 +2796,7 @@ docker run -dit \
 
 # Download tez resources and put to hdfs
 if [ ! -e /tmp/apache-tez-0.10.3-bin.tar.gz ]; then
-    wget -O /tmp/apache-tez-0.10.3-bin.tar.gz  https://downloads.apache.org/tez/0.10.3/apache-tez-0.10.3-bin.tar.gz
+    wget -O /tmp/apache-tez-0.10.3-bin.tar.gz 'https://downloads.apache.org/tez/0.10.3/apache-tez-0.10.3-bin.tar.gz'
 fi
 docker exec ${NN_CONTAINER_NAME} bash -c 'mkdir -p /opt/tez'
 docker cp /tmp/apache-tez-0.10.3-bin.tar.gz ${NN_CONTAINER_NAME}:/opt/tez
@@ -2592,18 +2809,52 @@ if ! hdfs dfs -ls /opt/tez/tez.tar.gz > /dev/null 2>&1; then
 fi
 '
 
-HIVE_SITE_CONFIG_COMMON=$(cat << EOF
+cat > /tmp/hive-site.xml << EOF
+<configuration>
     <property>
-        <name>hive.tez.exec.inplace.progress</name>
+        <name>javax.jdo.option.ConnectionURL</name>
+        <value>jdbc:postgresql://${POSTGRES_HOSTNAME}/${POSTGRES_DB}</value>
+    </property>
+    <property>
+        <name>javax.jdo.option.ConnectionDriverName</name>
+        <value>org.postgresql.Driver</value>
+    </property>
+    <property>
+        <name>javax.jdo.option.ConnectionUserName</name>
+        <value>${POSTGRES_USER}</value>
+    </property>
+    <property>
+        <name>javax.jdo.option.ConnectionPassword</name>
+        <value>${POSTGRES_PASSWORD}</value>
+    </property>
+    <property>
+        <name>hive.metastore.uris</name>
+        <value>thrift://${HIVE_METASTORE_HOSTNAME}:9083</value>
+    </property>
+    <property>
+        <name>metastore.warehouse.dir</name>
+        <value>hdfs://${NN_CONTAINER_NAME}:8020/opt/${HIVE_DIR_NAME}/data/warehouse</value>
+    </property>
+    <property>
+        <name>metastore.metastore.event.db.notification.api.auth</name>
+        <value>false</value>
+    </property>
+
+    <property>
+        <name>hive.execution.engine</name>
+        <value>tez</value>
+    </property>
+    <property>
+        <name>tez.lib.uris</name>
+        <value>hdfs://${NN_CONTAINER_NAME}:8020/opt/tez/tez.tar.gz</value>
+    </property>
+    <property>
+        <name>tez.local.mode</name>
         <value>false</value>
     </property>
     <property>
-        <name>hive.exec.scratchdir</name>
-        <value>/opt/hive-with-postgres/scratch_dir</value>
-    </property>
-    <property>
-        <name>hive.user.install.directory</name>
-        <value>/opt/hive-with-postgres/install_dir</value>
+        <name>hive.tez.exec.inplace.progress</name>
+        <value>false</value>
     </property>
     <property>
         <name>tez.runtime.optimize.local.fetch</name>
@@ -2618,29 +2869,14 @@ HIVE_SITE_CONFIG_COMMON=$(cat << EOF
         <value>yarn</value>
     </property>
     <property>
-        <name>tez.local.mode</name>
-        <value>false</value>
+        <name>hive.exec.scratchdir</name>
+        <value>hdfs://${NN_CONTAINER_NAME}:8020/opt/${HIVE_DIR_NAME}/scratch_dir</value>
     </property>
     <property>
-        <name>tez.lib.uris</name>
-        <value>/opt/tez/tez.tar.gz</value>
+        <name>hive.user.install.directory</name>
+        <value>hdfs://${NN_CONTAINER_NAME}:8020/opt/${HIVE_DIR_NAME}/install_dir</value>
     </property>
-    <property>
-        <name>hive.execution.engine</name>
-        <value>tez</value>
-    </property>
-    <property>
-        <name>metastore.warehouse.dir</name>
-        <value>/opt/hive-with-postgres/data/warehouse</value>
-    </property>
-    <property>
-        <name>metastore.metastore.event.db.notification.api.auth</name>
-        <value>false</value>
-    </property>
-EOF
-)
 
-HIVE_SITE_CONFIG_KERBEROS=$(cat << EOF
     <property>
         <name>hive.metastore.sasl.enabled</name>
         <value>true</value>
@@ -2673,40 +2909,6 @@ HIVE_SITE_CONFIG_KERBEROS=$(cat << EOF
         <name>hive.server2.proxy.user</name>
         <value>*</value>
     </property>
-EOF
-)
-
-cat > /tmp/hive-site-for-metastore.xml << EOF
-<configuration>
-    <property>
-        <name>javax.jdo.option.ConnectionURL</name>
-        <value>jdbc:postgresql://${POSTGRES_HOSTNAME}/${POSTGRES_DB}</value>
-    </property>
-    <property>
-        <name>javax.jdo.option.ConnectionDriverName</name>
-        <value>org.postgresql.Driver</value>
-    </property>
-    <property>
-        <name>javax.jdo.option.ConnectionUserName</name>
-        <value>${POSTGRES_USER}</value>
-    </property>
-    <property>
-        <name>javax.jdo.option.ConnectionPassword</name>
-        <value>${POSTGRES_PASSWORD}</value>
-    </property>
-    ${HIVE_SITE_CONFIG_COMMON}
-    ${HIVE_SITE_CONFIG_KERBEROS}
-</configuration>
-EOF
-
-cat > /tmp/hive-site-for-hiveserver2.xml << EOF
-<configuration>
-    <property>
-        <name>hive.metastore.uris</name>
-        <value>thrift://${HIVE_METASTORE_HOSTNAME}:9083</value>
-    </property>
-    ${HIVE_SITE_CONFIG_COMMON}
-    ${HIVE_SITE_CONFIG_KERBEROS}
 </configuration>
 EOF
 
@@ -2717,7 +2919,7 @@ docker cp ${NN_CONTAINER_NAME}:/opt/hadoop/etc/hadoop/yarn-site.xml /tmp/yarn-si
 
 # Prepare jdbc driver
 if [ ! -e /tmp/postgresql-42.7.4.jar ]; then
-    wget -O /tmp/postgresql-42.7.4.jar  https://jdbc.postgresql.org/download/postgresql-42.7.4.jar
+    wget -O /tmp/postgresql-42.7.4.jar 'https://jdbc.postgresql.org/download/postgresql-42.7.4.jar'
 fi
 
 # Temporary entrypoint
@@ -2747,7 +2949,7 @@ if [ -z "${IS_RESUME}" ] || [ "${IS_RESUME}" = "false" ]; then
 else
     echo "Skip init schema for every time."
     IS_RESUME=true /entrypoint.sh
-fi 
+fi
 EOF
 chmod a+x /tmp/hivemetastore_entrypoint.sh
 
@@ -2770,7 +2972,7 @@ docker create \
     --entrypoint /hivemetastore_entrypoint.sh \
     apache/hive:4.0.0_with_kerberos
 
-docker cp /tmp/hive-site-for-metastore.xml ${HIVE_METASTORE_CONTAINER_NAME}:/opt/hive/conf/hive-site.xml
+docker cp /tmp/hive-site.xml ${HIVE_METASTORE_CONTAINER_NAME}:/opt/hive/conf/hive-site.xml
 docker cp /tmp/core-site.xml ${HIVE_METASTORE_CONTAINER_NAME}:/opt/hadoop/etc/hadoop/core-site.xml
 docker cp /tmp/hdfs-site.xml ${HIVE_METASTORE_CONTAINER_NAME}:/opt/hadoop/etc/hadoop/hdfs-site.xml
 docker cp /tmp/yarn-site.xml ${HIVE_METASTORE_CONTAINER_NAME}:/opt/hadoop/etc/hadoop/yarn-site.xml
@@ -2818,7 +3020,7 @@ docker create \
     --entrypoint /hiveserver_entrypoint.sh \
     apache/hive:4.0.0_with_kerberos
 
-docker cp /tmp/hive-site-for-hiveserver2.xml ${HIVE_SERVER_CONTAINER_NAME}:/opt/hive/conf/hive-site.xml
+docker cp /tmp/hive-site.xml ${HIVE_SERVER_CONTAINER_NAME}:/opt/hive/conf/hive-site.xml
 docker cp /tmp/core-site.xml ${HIVE_SERVER_CONTAINER_NAME}:/opt/hadoop/etc/hadoop/core-site.xml
 docker cp /tmp/hdfs-site.xml ${HIVE_SERVER_CONTAINER_NAME}:/opt/hadoop/etc/hadoop/hdfs-site.xml
 docker cp /tmp/yarn-site.xml ${HIVE_SERVER_CONTAINER_NAME}:/opt/hadoop/etc/hadoop/yarn-site.xml
@@ -2852,7 +3054,30 @@ docker cp /tmp/hive.service.keytab ${HIVE_SERVER_CONTAINER_NAME}:/etc/security/k
 docker exec ${HIVE_SERVER_CONTAINER_NAME} bash -c 'sudo chmod 644 /etc/security/keytabs/hive.service.keytab'
 
 docker cp /tmp/hiveserver_entrypoint.sh ${HIVE_SERVER_CONTAINER_NAME}:/hiveserver_entrypoint.sh
+
+# Wait for hivemetastore to start up
+docker exec ${HIVE_METASTORE_CONTAINER_NAME} bash -c '
+while true
+do
+    if nc -vz 127.0.0.1 9083; then
+        break
+    fi
+    sleep 1
+done
+'
+
 docker restart ${HIVE_SERVER_CONTAINER_NAME}
+
+# Wait for hiveserver to start up
+docker exec ${HIVE_SERVER_CONTAINER_NAME} bash -c '
+while true
+do
+    if nc -vz 127.0.0.1 10000; then
+        break
+    fi
+    sleep 1
+done
+'
 
 docker exec ${HIVE_SERVER_CONTAINER_NAME} bash -c "kinit user_with_password <<EOF
 123456
