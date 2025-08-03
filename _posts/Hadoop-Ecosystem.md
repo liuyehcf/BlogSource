@@ -1046,11 +1046,11 @@ set -x
 echo "IS_RESUME=${IS_RESUME}"
 echo "BLOCK_FOR_FIRST_ENTRY=${BLOCK_FOR_FIRST_ENTRY}"
 INIT_FLAG_FILE=/opt/hive/already_init_schema
-BLOK_FLAG_FILE=/opt/hive/already_block
+BLOCK_FLAG_FILE=/opt/hive/already_block
 
 if [ -n "${BLOCK_FOR_FIRST_ENTRY}" ]; then
-    if [ ! -f ${BLOK_FLAG_FILE} ]; then
-        touch ${BLOK_FLAG_FILE}
+    if [ ! -f ${BLOCK_FLAG_FILE} ]; then
+        touch ${BLOCK_FLAG_FILE}
         tail -f /dev/null
     fi
 fi
@@ -1259,11 +1259,11 @@ set -x
 echo "IS_RESUME=${IS_RESUME}"
 echo "BLOCK_FOR_FIRST_ENTRY=${BLOCK_FOR_FIRST_ENTRY}"
 INIT_FLAG_FILE=/opt/hive/already_init_schema
-BLOK_FLAG_FILE=/opt/hive/already_block
+BLOCK_FLAG_FILE=/opt/hive/already_block
 
 if [ -n "${BLOCK_FOR_FIRST_ENTRY}" ]; then
-    if [ ! -f ${BLOK_FLAG_FILE} ]; then
-        touch ${BLOK_FLAG_FILE}
+    if [ ! -f ${BLOCK_FLAG_FILE} ]; then
+        touch ${BLOCK_FLAG_FILE}
         tail -f /dev/null
     fi
 fi
@@ -1506,11 +1506,11 @@ set -x
 echo "IS_RESUME=${IS_RESUME}"
 echo "BLOCK_FOR_FIRST_ENTRY=${BLOCK_FOR_FIRST_ENTRY}"
 INIT_FLAG_FILE=/opt/hive/already_init_schema
-BLOK_FLAG_FILE=/opt/hive/already_block
+BLOCK_FLAG_FILE=/opt/hive/already_block
 
 if [ -n "${BLOCK_FOR_FIRST_ENTRY}" ]; then
-    if [ ! -f ${BLOK_FLAG_FILE} ]; then
-        touch ${BLOK_FLAG_FILE}
+    if [ ! -f ${BLOCK_FLAG_FILE} ]; then
+        touch ${BLOCK_FLAG_FILE}
         tail -f /dev/null
     fi
 fi
@@ -1752,11 +1752,11 @@ set -x
 echo "IS_RESUME=${IS_RESUME}"
 echo "BLOCK_FOR_FIRST_ENTRY=${BLOCK_FOR_FIRST_ENTRY}"
 INIT_FLAG_FILE=/opt/hive/already_init_schema
-BLOK_FLAG_FILE=/opt/hive/already_block
+BLOCK_FLAG_FILE=/opt/hive/already_block
 
 if [ -n "${BLOCK_FOR_FIRST_ENTRY}" ]; then
-    if [ ! -f ${BLOK_FLAG_FILE} ]; then
-        touch ${BLOK_FLAG_FILE}
+    if [ ! -f ${BLOCK_FLAG_FILE} ]; then
+        touch ${BLOCK_FLAG_FILE}
         tail -f /dev/null
     fi
 fi
@@ -3391,11 +3391,11 @@ set -x
 echo "IS_RESUME=${IS_RESUME}"
 echo "BLOCK_FOR_FIRST_ENTRY=${BLOCK_FOR_FIRST_ENTRY}"
 INIT_FLAG_FILE=/opt/hive/already_init_schema
-BLOK_FLAG_FILE=/opt/hive/already_block
+BLOCK_FLAG_FILE=/opt/hive/already_block
 
 if [ -n "${BLOCK_FOR_FIRST_ENTRY}" ]; then
-    if [ ! -f ${BLOK_FLAG_FILE} ]; then
-        touch ${BLOK_FLAG_FILE}
+    if [ ! -f ${BLOCK_FLAG_FILE} ]; then
+        touch ${BLOCK_FLAG_FILE}
         tail -f /dev/null
     fi
 fi
@@ -3722,11 +3722,11 @@ set -x
 echo "IS_RESUME=${IS_RESUME}"
 echo "BLOCK_FOR_FIRST_ENTRY=${BLOCK_FOR_FIRST_ENTRY}"
 INIT_FLAG_FILE=/opt/hive/already_init_schema
-BLOK_FLAG_FILE=/opt/hive/already_block
+BLOCK_FLAG_FILE=/opt/hive/already_block
 
 if [ -n "${BLOCK_FOR_FIRST_ENTRY}" ]; then
-    if [ ! -f ${BLOK_FLAG_FILE} ]; then
-        touch ${BLOK_FLAG_FILE}
+    if [ ! -f ${BLOCK_FLAG_FILE} ]; then
+        touch ${BLOCK_FLAG_FILE}
         tail -f /dev/null
     fi
 fi
@@ -4054,11 +4054,11 @@ set -x
 echo "IS_RESUME=${IS_RESUME}"
 echo "BLOCK_FOR_FIRST_ENTRY=${BLOCK_FOR_FIRST_ENTRY}"
 INIT_FLAG_FILE=/opt/hive/already_init_schema
-BLOK_FLAG_FILE=/opt/hive/already_block
+BLOCK_FLAG_FILE=/opt/hive/already_block
 
 if [ -n "${BLOCK_FOR_FIRST_ENTRY}" ]; then
-    if [ ! -f ${BLOK_FLAG_FILE} ]; then
-        touch ${BLOK_FLAG_FILE}
+    if [ ! -f ${BLOCK_FLAG_FILE} ]; then
+        touch ${BLOCK_FLAG_FILE}
         tail -f /dev/null
     fi
 fi
@@ -4412,11 +4412,11 @@ set -x
 echo "IS_RESUME=${IS_RESUME}"
 echo "BLOCK_FOR_FIRST_ENTRY=${BLOCK_FOR_FIRST_ENTRY}"
 INIT_FLAG_FILE=/opt/hive/already_init_schema
-BLOK_FLAG_FILE=/opt/hive/already_block
+BLOCK_FLAG_FILE=/opt/hive/already_block
 
 if [ -n "${BLOCK_FOR_FIRST_ENTRY}" ]; then
-    if [ ! -f ${BLOK_FLAG_FILE} ]; then
-        touch ${BLOK_FLAG_FILE}
+    if [ ! -f ${BLOCK_FLAG_FILE} ]; then
+        touch ${BLOCK_FLAG_FILE}
         tail -f /dev/null
     fi
 fi
