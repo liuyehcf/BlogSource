@@ -907,16 +907,58 @@ Add some tools to official image.
 ```sh
 rm -rf /tmp/hive_with_tools
 mkdir -p /tmp/hive_with_tools
+
+cat > /tmp/hive_with_tools/re_entrypoint.sh << 'EOF'
+#!/bin/bash
+set -x
+
+echo "IS_RESUME=${IS_RESUME}"
+echo "BLOCK_FOR_FIRST_ENTRY=${BLOCK_FOR_FIRST_ENTRY}"
+INIT_FLAG_FILE=/opt/hive/already_init_schema
+BLOCK_FLAG_FILE=/opt/hive/already_block
+
+if [ -n "${BLOCK_FOR_FIRST_ENTRY}" ]; then
+    if [ ! -f ${BLOCK_FLAG_FILE} ]; then
+        touch ${BLOCK_FLAG_FILE}
+        tail -f /dev/null
+    fi
+fi
+
+for file in $(find /opt/hive/ -name "*.pid")
+do
+    rm -f ${file}
+done
+
+if [ -z "${IS_RESUME}" ] || [ "${IS_RESUME}" = "false" ]; then
+    if [ -f ${INIT_FLAG_FILE} ]; then
+        echo "Skip init schema when restart."
+        IS_RESUME=true /entrypoint.sh
+    else
+        echo "Try to init schema for the first time."
+        touch ${INIT_FLAG_FILE}
+        IS_RESUME=false /entrypoint.sh
+    fi
+else
+    echo "Skip init schema for every time."
+    IS_RESUME=true /entrypoint.sh
+fi
+EOF
+
 cat > /tmp/hive_with_tools/Dockerfile << 'EOF'
 FROM apache/hive:4.0.0
 USER root
 
 RUN apt-get update && \
-    DEBIAN_FRONTEND=noninteractive apt-get install -y sudo iproute2 iputils-ping netcat vim-tiny less
+    DEBIAN_FRONTEND=noninteractive apt-get install -y sudo iproute2 iputils-ping netcat vim-tiny less wget
 
 RUN mkdir -p /home/hive && chown -R hive:hive /home/hive
 
 RUN echo "hive ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers
+
+COPY re_entrypoint.sh /re_entrypoint.sh
+RUN chmod a+x /re_entrypoint.sh
+
+ENTRYPOINT ["/re_entrypoint.sh"]
 
 USER hive
 EOF
@@ -1036,45 +1078,7 @@ EOF
 docker cp ${NN_CONTAINER_NAME}:/opt/hadoop/etc/hadoop/core-site.xml /tmp/core-site.xml
 docker cp ${NN_CONTAINER_NAME}:/opt/hadoop/etc/hadoop/hdfs-site.xml /tmp/hdfs-site.xml
 docker cp ${NN_CONTAINER_NAME}:/opt/hadoop/etc/hadoop/yarn-site.xml /tmp/yarn-site.xml
-
-# Use customized entrypoint
-cat > /tmp/re_entrypoint.sh << 'EOF'
-#!/bin/bash
-
-set -x
-
-echo "IS_RESUME=${IS_RESUME}"
-echo "BLOCK_FOR_FIRST_ENTRY=${BLOCK_FOR_FIRST_ENTRY}"
-INIT_FLAG_FILE=/opt/hive/already_init_schema
-BLOCK_FLAG_FILE=/opt/hive/already_block
-
-if [ -n "${BLOCK_FOR_FIRST_ENTRY}" ]; then
-    if [ ! -f ${BLOCK_FLAG_FILE} ]; then
-        touch ${BLOCK_FLAG_FILE}
-        tail -f /dev/null
-    fi
-fi
-
-for file in $(find /opt/hive/ -name "*.pid")
-do
-    rm -f ${file}
-done
-
-if [ -z "${IS_RESUME}" ] || [ "${IS_RESUME}" = "false" ]; then
-    if [ -f ${INIT_FLAG_FILE} ]; then
-        echo "Skip init schema when restart."
-        IS_RESUME=true /entrypoint.sh
-    else
-        echo "Try to init schema for the first time."
-        touch ${INIT_FLAG_FILE}
-        IS_RESUME=false /entrypoint.sh
-    fi
-else
-    echo "Skip init schema for every time."
-    IS_RESUME=true /entrypoint.sh
-fi
-EOF
-chmod a+x /tmp/re_entrypoint.sh
+docker cp ${NN_CONTAINER_NAME}:/opt/hadoop/etc/hadoop/mapred-site.xml /tmp/mapred-site.xml
 
 # Start standalone metastore
 docker create \
@@ -1083,7 +1087,6 @@ docker create \
     --network ${SHARED_NS} \
     -p 127.0.0.1:9083:9083 \
     -e SERVICE_NAME=metastore \
-    --entrypoint /re_entrypoint.sh \
     apache/hive:4.0.0_with_tools
 
 docker cp /tmp/hive-site.xml ${HIVE_METASTORE_CONTAINER_NAME}:/opt/hive/conf/hive-site.xml
@@ -1091,7 +1094,6 @@ docker cp /tmp/core-site.xml ${HIVE_METASTORE_CONTAINER_NAME}:/opt/hadoop/etc/ha
 docker cp /tmp/hdfs-site.xml ${HIVE_METASTORE_CONTAINER_NAME}:/opt/hadoop/etc/hadoop/hdfs-site.xml
 docker cp /tmp/yarn-site.xml ${HIVE_METASTORE_CONTAINER_NAME}:/opt/hadoop/etc/hadoop/yarn-site.xml
 docker cp /tmp/mapred-site.xml ${HIVE_METASTORE_CONTAINER_NAME}:/opt/hadoop/etc/hadoop/mapred-site.xml
-docker cp /tmp/re_entrypoint.sh ${HIVE_METASTORE_CONTAINER_NAME}:/re_entrypoint.sh
 
 docker start ${HIVE_METASTORE_CONTAINER_NAME}
 
@@ -1102,7 +1104,6 @@ docker create \
     --network ${SHARED_NS} \
     -p 127.0.0.1:10000:10000 \
     -e SERVICE_NAME=hiveserver2 \
-    --entrypoint /re_entrypoint.sh \
     -e IS_RESUME=true \
     apache/hive:4.0.0_with_tools
 
@@ -1111,7 +1112,6 @@ docker cp /tmp/core-site.xml ${HIVE_SERVER_CONTAINER_NAME}:/opt/hadoop/etc/hadoo
 docker cp /tmp/hdfs-site.xml ${HIVE_SERVER_CONTAINER_NAME}:/opt/hadoop/etc/hadoop/hdfs-site.xml
 docker cp /tmp/yarn-site.xml ${HIVE_SERVER_CONTAINER_NAME}:/opt/hadoop/etc/hadoop/yarn-site.xml
 docker cp /tmp/mapred-site.xml ${HIVE_SERVER_CONTAINER_NAME}:/opt/hadoop/etc/hadoop/mapred-site.xml
-docker cp /tmp/re_entrypoint.sh ${HIVE_SERVER_CONTAINER_NAME}:/re_entrypoint.sh
 
 # Wait for hivemetastore to start up
 docker exec ${HIVE_METASTORE_CONTAINER_NAME} bash -c '
@@ -1244,50 +1244,12 @@ EOF
 docker cp ${NN_CONTAINER_NAME}:/opt/hadoop/etc/hadoop/core-site.xml /tmp/core-site.xml
 docker cp ${NN_CONTAINER_NAME}:/opt/hadoop/etc/hadoop/hdfs-site.xml /tmp/hdfs-site.xml
 docker cp ${NN_CONTAINER_NAME}:/opt/hadoop/etc/hadoop/yarn-site.xml /tmp/yarn-site.xml
+docker cp ${NN_CONTAINER_NAME}:/opt/hadoop/etc/hadoop/mapred-site.xml /tmp/mapred-site.xml
 
 # Prepare jdbc driver
 if [ ! -e /tmp/postgresql-42.7.4.jar ]; then
     wget -O /tmp/postgresql-42.7.4.jar 'https://jdbc.postgresql.org/download/postgresql-42.7.4.jar'
 fi
-
-# Use customized entrypoint
-cat > /tmp/re_entrypoint.sh << 'EOF'
-#!/bin/bash
-
-set -x
-
-echo "IS_RESUME=${IS_RESUME}"
-echo "BLOCK_FOR_FIRST_ENTRY=${BLOCK_FOR_FIRST_ENTRY}"
-INIT_FLAG_FILE=/opt/hive/already_init_schema
-BLOCK_FLAG_FILE=/opt/hive/already_block
-
-if [ -n "${BLOCK_FOR_FIRST_ENTRY}" ]; then
-    if [ ! -f ${BLOCK_FLAG_FILE} ]; then
-        touch ${BLOCK_FLAG_FILE}
-        tail -f /dev/null
-    fi
-fi
-
-for file in $(find /opt/hive/ -name "*.pid")
-do
-    rm -f ${file}
-done
-
-if [ -z "${IS_RESUME}" ] || [ "${IS_RESUME}" = "false" ]; then
-    if [ -f ${INIT_FLAG_FILE} ]; then
-        echo "Skip init schema when restart."
-        IS_RESUME=true /entrypoint.sh
-    else
-        echo "Try to init schema for the first time."
-        touch ${INIT_FLAG_FILE}
-        IS_RESUME=false /entrypoint.sh
-    fi
-else
-    echo "Skip init schema for every time."
-    IS_RESUME=true /entrypoint.sh
-fi
-EOF
-chmod a+x /tmp/re_entrypoint.sh
 
 # Start standalone metastore
 docker create \
@@ -1298,7 +1260,6 @@ docker create \
     -e SERVICE_NAME=metastore \
     -e DB_DRIVER=postgres \
     -e IS_RESUME=${IS_RESUME} \
-    --entrypoint /re_entrypoint.sh \
     apache/hive:4.0.0_with_tools
 
 docker cp /tmp/hive-site.xml ${HIVE_METASTORE_CONTAINER_NAME}:/opt/hive/conf/hive-site.xml
@@ -1306,7 +1267,6 @@ docker cp /tmp/core-site.xml ${HIVE_METASTORE_CONTAINER_NAME}:/opt/hadoop/etc/ha
 docker cp /tmp/hdfs-site.xml ${HIVE_METASTORE_CONTAINER_NAME}:/opt/hadoop/etc/hadoop/hdfs-site.xml
 docker cp /tmp/yarn-site.xml ${HIVE_METASTORE_CONTAINER_NAME}:/opt/hadoop/etc/hadoop/yarn-site.xml
 docker cp /tmp/mapred-site.xml ${HIVE_METASTORE_CONTAINER_NAME}:/opt/hadoop/etc/hadoop/mapred-site.xml
-docker cp /tmp/re_entrypoint.sh ${HIVE_METASTORE_CONTAINER_NAME}:/re_entrypoint.sh
 docker cp /tmp/postgresql-42.7.4.jar ${HIVE_METASTORE_CONTAINER_NAME}:/opt/hive/lib/postgresql-42.7.4.jar
 
 docker start ${HIVE_METASTORE_CONTAINER_NAME}
@@ -1318,7 +1278,6 @@ docker create \
     --network ${SHARED_NS} \
     -p 127.0.0.1:10000:10000 \
     -e SERVICE_NAME=hiveserver2 \
-    --entrypoint /re_entrypoint.sh \
     -e DB_DRIVER=postgres \
     -e IS_RESUME=true \
     apache/hive:4.0.0_with_tools
@@ -1329,7 +1288,6 @@ docker cp /tmp/hdfs-site.xml ${HIVE_SERVER_CONTAINER_NAME}:/opt/hadoop/etc/hadoo
 docker cp /tmp/yarn-site.xml ${HIVE_SERVER_CONTAINER_NAME}:/opt/hadoop/etc/hadoop/yarn-site.xml
 docker cp /tmp/mapred-site.xml ${HIVE_SERVER_CONTAINER_NAME}:/opt/hadoop/etc/hadoop/mapred-site.xml
 docker cp /tmp/postgresql-42.7.4.jar ${HIVE_SERVER_CONTAINER_NAME}:/opt/hive/lib/postgresql-42.7.4.jar
-docker cp /tmp/re_entrypoint.sh ${HIVE_SERVER_CONTAINER_NAME}:/re_entrypoint.sh
 
 # Wait for hivemetastore to start up
 docker exec ${HIVE_METASTORE_CONTAINER_NAME} bash -c '
@@ -1497,45 +1455,6 @@ docker cp ${NN_CONTAINER_NAME}:/opt/hadoop/etc/hadoop/core-site.xml /tmp/core-si
 docker cp ${NN_CONTAINER_NAME}:/opt/hadoop/etc/hadoop/hdfs-site.xml /tmp/hdfs-site.xml
 docker cp ${NN_CONTAINER_NAME}:/opt/hadoop/etc/hadoop/yarn-site.xml /tmp/yarn-site.xml
 
-# Use customized entrypoint
-cat > /tmp/re_entrypoint.sh << 'EOF'
-#!/bin/bash
-
-set -x
-
-echo "IS_RESUME=${IS_RESUME}"
-echo "BLOCK_FOR_FIRST_ENTRY=${BLOCK_FOR_FIRST_ENTRY}"
-INIT_FLAG_FILE=/opt/hive/already_init_schema
-BLOCK_FLAG_FILE=/opt/hive/already_block
-
-if [ -n "${BLOCK_FOR_FIRST_ENTRY}" ]; then
-    if [ ! -f ${BLOCK_FLAG_FILE} ]; then
-        touch ${BLOCK_FLAG_FILE}
-        tail -f /dev/null
-    fi
-fi
-
-for file in $(find /opt/hive/ -name "*.pid")
-do
-    rm -f ${file}
-done
-
-if [ -z "${IS_RESUME}" ] || [ "${IS_RESUME}" = "false" ]; then
-    if [ -f ${INIT_FLAG_FILE} ]; then
-        echo "Skip init schema when restart."
-        IS_RESUME=true /entrypoint.sh
-    else
-        echo "Try to init schema for the first time."
-        touch ${INIT_FLAG_FILE}
-        IS_RESUME=false /entrypoint.sh
-    fi
-else
-    echo "Skip init schema for every time."
-    IS_RESUME=true /entrypoint.sh
-fi
-EOF
-chmod a+x /tmp/re_entrypoint.sh
-
 # Start standalone metastore
 docker create \
     --name ${HIVE_METASTORE_CONTAINER_NAME} \
@@ -1543,14 +1462,12 @@ docker create \
     --network ${SHARED_NS} \
     -p 127.0.0.1:9083:9083 \
     -e SERVICE_NAME=metastore \
-    --entrypoint /re_entrypoint.sh \
     apache/hive:4.0.0_with_tools
 
 docker cp /tmp/hive-site.xml ${HIVE_METASTORE_CONTAINER_NAME}:/opt/hive/conf/hive-site.xml
 docker cp /tmp/core-site.xml ${HIVE_METASTORE_CONTAINER_NAME}:/opt/hadoop/etc/hadoop/core-site.xml
 docker cp /tmp/hdfs-site.xml ${HIVE_METASTORE_CONTAINER_NAME}:/opt/hadoop/etc/hadoop/hdfs-site.xml
 docker cp /tmp/yarn-site.xml ${HIVE_METASTORE_CONTAINER_NAME}:/opt/hadoop/etc/hadoop/yarn-site.xml
-docker cp /tmp/re_entrypoint.sh ${HIVE_METASTORE_CONTAINER_NAME}:/re_entrypoint.sh
 
 docker start ${HIVE_METASTORE_CONTAINER_NAME}
 
@@ -1561,7 +1478,6 @@ docker create \
     --network ${SHARED_NS} \
     -p 127.0.0.1:10000:10000 \
     -e SERVICE_NAME=hiveserver2 \
-    --entrypoint /re_entrypoint.sh \
     -e IS_RESUME=true \
     apache/hive:4.0.0_with_tools
 
@@ -1569,7 +1485,6 @@ docker cp /tmp/hive-site.xml ${HIVE_SERVER_CONTAINER_NAME}:/opt/hive/conf/hive-s
 docker cp /tmp/core-site.xml ${HIVE_SERVER_CONTAINER_NAME}:/opt/hadoop/etc/hadoop/core-site.xml
 docker cp /tmp/hdfs-site.xml ${HIVE_SERVER_CONTAINER_NAME}:/opt/hadoop/etc/hadoop/hdfs-site.xml
 docker cp /tmp/yarn-site.xml ${HIVE_SERVER_CONTAINER_NAME}:/opt/hadoop/etc/hadoop/yarn-site.xml
-docker cp /tmp/re_entrypoint.sh ${HIVE_SERVER_CONTAINER_NAME}:/re_entrypoint.sh
 
 # Wait for hivemetastore to start up
 docker exec ${HIVE_METASTORE_CONTAINER_NAME} bash -c '
@@ -1743,45 +1658,6 @@ if [ ! -e /tmp/postgresql-42.7.4.jar ]; then
     wget -O /tmp/postgresql-42.7.4.jar 'https://jdbc.postgresql.org/download/postgresql-42.7.4.jar'
 fi
 
-# Use customized entrypoint
-cat > /tmp/re_entrypoint.sh << 'EOF'
-#!/bin/bash
-
-set -x
-
-echo "IS_RESUME=${IS_RESUME}"
-echo "BLOCK_FOR_FIRST_ENTRY=${BLOCK_FOR_FIRST_ENTRY}"
-INIT_FLAG_FILE=/opt/hive/already_init_schema
-BLOCK_FLAG_FILE=/opt/hive/already_block
-
-if [ -n "${BLOCK_FOR_FIRST_ENTRY}" ]; then
-    if [ ! -f ${BLOCK_FLAG_FILE} ]; then
-        touch ${BLOCK_FLAG_FILE}
-        tail -f /dev/null
-    fi
-fi
-
-for file in $(find /opt/hive/ -name "*.pid")
-do
-    rm -f ${file}
-done
-
-if [ -z "${IS_RESUME}" ] || [ "${IS_RESUME}" = "false" ]; then
-    if [ -f ${INIT_FLAG_FILE} ]; then
-        echo "Skip init schema when restart."
-        IS_RESUME=true /entrypoint.sh
-    else
-        echo "Try to init schema for the first time."
-        touch ${INIT_FLAG_FILE}
-        IS_RESUME=false /entrypoint.sh
-    fi
-else
-    echo "Skip init schema for every time."
-    IS_RESUME=true /entrypoint.sh
-fi
-EOF
-chmod a+x /tmp/re_entrypoint.sh
-
 # Start standalone metastore
 docker create \
     --name ${HIVE_METASTORE_CONTAINER_NAME} \
@@ -1791,14 +1667,12 @@ docker create \
     -e SERVICE_NAME=metastore \
     -e DB_DRIVER=postgres \
     -e IS_RESUME=${IS_RESUME} \
-    --entrypoint /re_entrypoint.sh \
     apache/hive:4.0.0_with_tools
 
 docker cp /tmp/hive-site.xml ${HIVE_METASTORE_CONTAINER_NAME}:/opt/hive/conf/hive-site.xml
 docker cp /tmp/core-site.xml ${HIVE_METASTORE_CONTAINER_NAME}:/opt/hadoop/etc/hadoop/core-site.xml
 docker cp /tmp/hdfs-site.xml ${HIVE_METASTORE_CONTAINER_NAME}:/opt/hadoop/etc/hadoop/hdfs-site.xml
 docker cp /tmp/yarn-site.xml ${HIVE_METASTORE_CONTAINER_NAME}:/opt/hadoop/etc/hadoop/yarn-site.xml
-docker cp /tmp/re_entrypoint.sh ${HIVE_METASTORE_CONTAINER_NAME}:/re_entrypoint.sh
 docker cp /tmp/postgresql-42.7.4.jar ${HIVE_METASTORE_CONTAINER_NAME}:/opt/hive/lib/postgresql-42.7.4.jar
 
 docker start ${HIVE_METASTORE_CONTAINER_NAME}
@@ -1810,7 +1684,6 @@ docker create \
     --network ${SHARED_NS} \
     -p 127.0.0.1:10000:10000 \
     -e SERVICE_NAME=hiveserver2 \
-    --entrypoint /re_entrypoint.sh \
     -e DB_DRIVER=postgres \
     -e IS_RESUME=true \
     apache/hive:4.0.0_with_tools
@@ -1820,7 +1693,6 @@ docker cp /tmp/core-site.xml ${HIVE_SERVER_CONTAINER_NAME}:/opt/hadoop/etc/hadoo
 docker cp /tmp/hdfs-site.xml ${HIVE_SERVER_CONTAINER_NAME}:/opt/hadoop/etc/hadoop/hdfs-site.xml
 docker cp /tmp/yarn-site.xml ${HIVE_SERVER_CONTAINER_NAME}:/opt/hadoop/etc/hadoop/yarn-site.xml
 docker cp /tmp/postgresql-42.7.4.jar ${HIVE_SERVER_CONTAINER_NAME}:/opt/hive/lib/postgresql-42.7.4.jar
-docker cp /tmp/re_entrypoint.sh ${HIVE_SERVER_CONTAINER_NAME}:/re_entrypoint.sh
 
 # Wait for hivemetastore to start up
 docker exec ${HIVE_METASTORE_CONTAINER_NAME} bash -c '
@@ -2208,19 +2080,61 @@ docker build -t apache/hadoop:3.3.6_with_libs /tmp/hadoop_with_libs
 ```sh
 rm -rf /tmp/hive_with_kerberos
 mkdir -p /tmp/hive_with_kerberos
+
+cat > /tmp/hive_with_kerberos/re_entrypoint.sh << 'EOF'
+#!/bin/bash
+set -x
+
+echo "IS_RESUME=${IS_RESUME}"
+echo "BLOCK_FOR_FIRST_ENTRY=${BLOCK_FOR_FIRST_ENTRY}"
+INIT_FLAG_FILE=/opt/hive/already_init_schema
+BLOCK_FLAG_FILE=/opt/hive/already_block
+
+if [ -n "${BLOCK_FOR_FIRST_ENTRY}" ]; then
+    if [ ! -f ${BLOCK_FLAG_FILE} ]; then
+        touch ${BLOCK_FLAG_FILE}
+        tail -f /dev/null
+    fi
+fi
+
+for file in $(find /opt/hive/ -name "*.pid")
+do
+    rm -f ${file}
+done
+
+if [ -z "${IS_RESUME}" ] || [ "${IS_RESUME}" = "false" ]; then
+    if [ -f ${INIT_FLAG_FILE} ]; then
+        echo "Skip init schema when restart."
+        IS_RESUME=true /entrypoint.sh
+    else
+        echo "Try to init schema for the first time."
+        touch ${INIT_FLAG_FILE}
+        IS_RESUME=false /entrypoint.sh
+    fi
+else
+    echo "Skip init schema for every time."
+    IS_RESUME=true /entrypoint.sh
+fi
+EOF
+
 cat > /tmp/hive_with_kerberos/Dockerfile << 'EOF'
 FROM apache/hive:4.0.0
 USER root
 
 RUN apt-get update && \
     DEBIAN_FRONTEND=noninteractive apt-get install -y krb5-user libkrb5-3 \
-    sudo iproute2 iputils-ping netcat vim-tiny less
+    sudo iproute2 iputils-ping netcat vim-tiny less wget
 
 RUN mkdir -p /home/hive && chown -R hive:hive /home/hive
 
 RUN echo "hive ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers
 
 RUN mkdir -p /etc/security/keytabs && chmod 755 /etc/security/keytabs
+
+COPY re_entrypoint.sh /re_entrypoint.sh
+RUN chmod a+x /re_entrypoint.sh
+
+ENTRYPOINT ["/re_entrypoint.sh"]
 
 USER hive
 EOF
@@ -3381,45 +3295,7 @@ EOF
 docker cp ${NN_CONTAINER_NAME}:/opt/hadoop/etc/hadoop/core-site.xml /tmp/core-site.xml
 docker cp ${NN_CONTAINER_NAME}:/opt/hadoop/etc/hadoop/hdfs-site.xml /tmp/hdfs-site.xml
 docker cp ${NN_CONTAINER_NAME}:/opt/hadoop/etc/hadoop/yarn-site.xml /tmp/yarn-site.xml
-
-# Use customized entrypoint
-cat > /tmp/re_entrypoint.sh << 'EOF'
-#!/bin/bash
-
-set -x
-
-echo "IS_RESUME=${IS_RESUME}"
-echo "BLOCK_FOR_FIRST_ENTRY=${BLOCK_FOR_FIRST_ENTRY}"
-INIT_FLAG_FILE=/opt/hive/already_init_schema
-BLOCK_FLAG_FILE=/opt/hive/already_block
-
-if [ -n "${BLOCK_FOR_FIRST_ENTRY}" ]; then
-    if [ ! -f ${BLOCK_FLAG_FILE} ]; then
-        touch ${BLOCK_FLAG_FILE}
-        tail -f /dev/null
-    fi
-fi
-
-for file in $(find /opt/hive/ -name "*.pid")
-do
-    rm -f ${file}
-done
-
-if [ -z "${IS_RESUME}" ] || [ "${IS_RESUME}" = "false" ]; then
-    if [ -f ${INIT_FLAG_FILE} ]; then
-        echo "Skip init schema when restart."
-        IS_RESUME=true /entrypoint.sh
-    else
-        echo "Try to init schema for the first time."
-        touch ${INIT_FLAG_FILE}
-        IS_RESUME=false /entrypoint.sh
-    fi
-else
-    echo "Skip init schema for every time."
-    IS_RESUME=true /entrypoint.sh
-fi
-EOF
-chmod a+x /tmp/re_entrypoint.sh
+docker cp ${NN_CONTAINER_NAME}:/opt/hadoop/etc/hadoop/mapred-site.xml /tmp/mapred-site.xml
 
 # Start standalone metastore
 docker create \
@@ -3429,7 +3305,6 @@ docker create \
     -p 127.0.0.1:9083:9083 \
     -e SERVICE_NAME=metastore \
     -e BLOCK_FOR_FIRST_ENTRY=true \
-    --entrypoint /re_entrypoint.sh \
     apache/hive:4.0.0_with_kerberos
 
 docker cp /tmp/hive-site.xml ${HIVE_METASTORE_CONTAINER_NAME}:/opt/hive/conf/hive-site.xml
@@ -3437,7 +3312,6 @@ docker cp /tmp/core-site.xml ${HIVE_METASTORE_CONTAINER_NAME}:/opt/hadoop/etc/ha
 docker cp /tmp/hdfs-site.xml ${HIVE_METASTORE_CONTAINER_NAME}:/opt/hadoop/etc/hadoop/hdfs-site.xml
 docker cp /tmp/yarn-site.xml ${HIVE_METASTORE_CONTAINER_NAME}:/opt/hadoop/etc/hadoop/yarn-site.xml
 docker cp /tmp/mapred-site.xml ${HIVE_METASTORE_CONTAINER_NAME}:/opt/hadoop/etc/hadoop/mapred-site.xml
-docker cp /tmp/re_entrypoint.sh ${HIVE_METASTORE_CONTAINER_NAME}:/re_entrypoint.sh
 
 docker start ${HIVE_METASTORE_CONTAINER_NAME}
 
@@ -3476,7 +3350,6 @@ docker create \
     -e SERVICE_NAME=hiveserver2 \
     -e IS_RESUME=true \
     -e BLOCK_FOR_FIRST_ENTRY=true \
-    --entrypoint /re_entrypoint.sh \
     apache/hive:4.0.0_with_kerberos
 
 docker cp /tmp/hive-site.xml ${HIVE_SERVER_CONTAINER_NAME}:/opt/hive/conf/hive-site.xml
@@ -3484,7 +3357,6 @@ docker cp /tmp/core-site.xml ${HIVE_SERVER_CONTAINER_NAME}:/opt/hadoop/etc/hadoo
 docker cp /tmp/hdfs-site.xml ${HIVE_SERVER_CONTAINER_NAME}:/opt/hadoop/etc/hadoop/hdfs-site.xml
 docker cp /tmp/yarn-site.xml ${HIVE_SERVER_CONTAINER_NAME}:/opt/hadoop/etc/hadoop/yarn-site.xml
 docker cp /tmp/mapred-site.xml ${HIVE_SERVER_CONTAINER_NAME}:/opt/hadoop/etc/hadoop/mapred-site.xml
-docker cp /tmp/re_entrypoint.sh ${HIVE_SERVER_CONTAINER_NAME}:/re_entrypoint.sh
 
 docker start ${HIVE_SERVER_CONTAINER_NAME}
 
@@ -3707,50 +3579,12 @@ EOF
 docker cp ${NN_CONTAINER_NAME}:/opt/hadoop/etc/hadoop/core-site.xml /tmp/core-site.xml
 docker cp ${NN_CONTAINER_NAME}:/opt/hadoop/etc/hadoop/hdfs-site.xml /tmp/hdfs-site.xml
 docker cp ${NN_CONTAINER_NAME}:/opt/hadoop/etc/hadoop/yarn-site.xml /tmp/yarn-site.xml
+docker cp ${NN_CONTAINER_NAME}:/opt/hadoop/etc/hadoop/mapred-site.xml /tmp/mapred-site.xml
 
 # Prepare jdbc driver
 if [ ! -e /tmp/postgresql-42.7.4.jar ]; then
     wget -O /tmp/postgresql-42.7.4.jar 'https://jdbc.postgresql.org/download/postgresql-42.7.4.jar'
 fi
-
-# Use customized entrypoint
-cat > /tmp/re_entrypoint.sh << 'EOF'
-#!/bin/bash
-
-set -x
-
-echo "IS_RESUME=${IS_RESUME}"
-echo "BLOCK_FOR_FIRST_ENTRY=${BLOCK_FOR_FIRST_ENTRY}"
-INIT_FLAG_FILE=/opt/hive/already_init_schema
-BLOCK_FLAG_FILE=/opt/hive/already_block
-
-if [ -n "${BLOCK_FOR_FIRST_ENTRY}" ]; then
-    if [ ! -f ${BLOCK_FLAG_FILE} ]; then
-        touch ${BLOCK_FLAG_FILE}
-        tail -f /dev/null
-    fi
-fi
-
-for file in $(find /opt/hive/ -name "*.pid")
-do
-    rm -f ${file}
-done
-
-if [ -z "${IS_RESUME}" ] || [ "${IS_RESUME}" = "false" ]; then
-    if [ -f ${INIT_FLAG_FILE} ]; then
-        echo "Skip init schema when restart."
-        IS_RESUME=true /entrypoint.sh
-    else
-        echo "Try to init schema for the first time."
-        touch ${INIT_FLAG_FILE}
-        IS_RESUME=false /entrypoint.sh
-    fi
-else
-    echo "Skip init schema for every time."
-    IS_RESUME=true /entrypoint.sh
-fi
-EOF
-chmod a+x /tmp/re_entrypoint.sh
 
 # Start standalone metastore
 docker create \
@@ -3762,7 +3596,6 @@ docker create \
     -e DB_DRIVER=postgres \
     -e IS_RESUME=${IS_RESUME} \
     -e BLOCK_FOR_FIRST_ENTRY=true \
-    --entrypoint /re_entrypoint.sh \
     apache/hive:4.0.0_with_kerberos
 
 docker cp /tmp/hive-site.xml ${HIVE_METASTORE_CONTAINER_NAME}:/opt/hive/conf/hive-site.xml
@@ -3770,7 +3603,6 @@ docker cp /tmp/core-site.xml ${HIVE_METASTORE_CONTAINER_NAME}:/opt/hadoop/etc/ha
 docker cp /tmp/hdfs-site.xml ${HIVE_METASTORE_CONTAINER_NAME}:/opt/hadoop/etc/hadoop/hdfs-site.xml
 docker cp /tmp/yarn-site.xml ${HIVE_METASTORE_CONTAINER_NAME}:/opt/hadoop/etc/hadoop/yarn-site.xml
 docker cp /tmp/mapred-site.xml ${HIVE_METASTORE_CONTAINER_NAME}:/opt/hadoop/etc/hadoop/mapred-site.xml
-docker cp /tmp/re_entrypoint.sh ${HIVE_METASTORE_CONTAINER_NAME}:/re_entrypoint.sh
 docker cp /tmp/postgresql-42.7.4.jar ${HIVE_METASTORE_CONTAINER_NAME}:/opt/hive/lib/postgresql-42.7.4.jar
 
 docker start ${HIVE_METASTORE_CONTAINER_NAME}
@@ -3811,7 +3643,6 @@ docker create \
     -e DB_DRIVER=postgres \
     -e IS_RESUME=true \
     -e BLOCK_FOR_FIRST_ENTRY=true \
-    --entrypoint /re_entrypoint.sh \
     apache/hive:4.0.0_with_kerberos
 
 docker cp /tmp/hive-site.xml ${HIVE_SERVER_CONTAINER_NAME}:/opt/hive/conf/hive-site.xml
@@ -3819,7 +3650,6 @@ docker cp /tmp/core-site.xml ${HIVE_SERVER_CONTAINER_NAME}:/opt/hadoop/etc/hadoo
 docker cp /tmp/hdfs-site.xml ${HIVE_SERVER_CONTAINER_NAME}:/opt/hadoop/etc/hadoop/hdfs-site.xml
 docker cp /tmp/yarn-site.xml ${HIVE_SERVER_CONTAINER_NAME}:/opt/hadoop/etc/hadoop/yarn-site.xml
 docker cp /tmp/mapred-site.xml ${HIVE_SERVER_CONTAINER_NAME}:/opt/hadoop/etc/hadoop/mapred-site.xml
-docker cp /tmp/re_entrypoint.sh ${HIVE_SERVER_CONTAINER_NAME}:/re_entrypoint.sh
 docker cp /tmp/postgresql-42.7.4.jar ${HIVE_SERVER_CONTAINER_NAME}:/opt/hive/lib/postgresql-42.7.4.jar
 
 docker start ${HIVE_SERVER_CONTAINER_NAME}
@@ -4045,45 +3875,6 @@ docker cp ${NN_CONTAINER_NAME}:/opt/hadoop/etc/hadoop/core-site.xml /tmp/core-si
 docker cp ${NN_CONTAINER_NAME}:/opt/hadoop/etc/hadoop/hdfs-site.xml /tmp/hdfs-site.xml
 docker cp ${NN_CONTAINER_NAME}:/opt/hadoop/etc/hadoop/yarn-site.xml /tmp/yarn-site.xml
 
-# Use customized entrypoint
-cat > /tmp/re_entrypoint.sh << 'EOF'
-#!/bin/bash
-
-set -x
-
-echo "IS_RESUME=${IS_RESUME}"
-echo "BLOCK_FOR_FIRST_ENTRY=${BLOCK_FOR_FIRST_ENTRY}"
-INIT_FLAG_FILE=/opt/hive/already_init_schema
-BLOCK_FLAG_FILE=/opt/hive/already_block
-
-if [ -n "${BLOCK_FOR_FIRST_ENTRY}" ]; then
-    if [ ! -f ${BLOCK_FLAG_FILE} ]; then
-        touch ${BLOCK_FLAG_FILE}
-        tail -f /dev/null
-    fi
-fi
-
-for file in $(find /opt/hive/ -name "*.pid")
-do
-    rm -f ${file}
-done
-
-if [ -z "${IS_RESUME}" ] || [ "${IS_RESUME}" = "false" ]; then
-    if [ -f ${INIT_FLAG_FILE} ]; then
-        echo "Skip init schema when restart."
-        IS_RESUME=true /entrypoint.sh
-    else
-        echo "Try to init schema for the first time."
-        touch ${INIT_FLAG_FILE}
-        IS_RESUME=false /entrypoint.sh
-    fi
-else
-    echo "Skip init schema for every time."
-    IS_RESUME=true /entrypoint.sh
-fi
-EOF
-chmod a+x /tmp/re_entrypoint.sh
-
 # Start standalone metastore
 docker create \
     --name ${HIVE_METASTORE_CONTAINER_NAME} \
@@ -4092,14 +3883,12 @@ docker create \
     -p 127.0.0.1:9083:9083 \
     -e SERVICE_NAME=metastore \
     -e BLOCK_FOR_FIRST_ENTRY=true \
-    --entrypoint /re_entrypoint.sh \
     apache/hive:4.0.0_with_kerberos
 
 docker cp /tmp/hive-site.xml ${HIVE_METASTORE_CONTAINER_NAME}:/opt/hive/conf/hive-site.xml
 docker cp /tmp/core-site.xml ${HIVE_METASTORE_CONTAINER_NAME}:/opt/hadoop/etc/hadoop/core-site.xml
 docker cp /tmp/hdfs-site.xml ${HIVE_METASTORE_CONTAINER_NAME}:/opt/hadoop/etc/hadoop/hdfs-site.xml
 docker cp /tmp/yarn-site.xml ${HIVE_METASTORE_CONTAINER_NAME}:/opt/hadoop/etc/hadoop/yarn-site.xml
-docker cp /tmp/re_entrypoint.sh ${HIVE_METASTORE_CONTAINER_NAME}:/re_entrypoint.sh
 
 docker start ${HIVE_METASTORE_CONTAINER_NAME}
 
@@ -4138,14 +3927,12 @@ docker create \
     -e SERVICE_NAME=hiveserver2 \
     -e IS_RESUME=true \
     -e BLOCK_FOR_FIRST_ENTRY=true \
-    --entrypoint /re_entrypoint.sh \
     apache/hive:4.0.0_with_kerberos
 
 docker cp /tmp/hive-site.xml ${HIVE_SERVER_CONTAINER_NAME}:/opt/hive/conf/hive-site.xml
 docker cp /tmp/core-site.xml ${HIVE_SERVER_CONTAINER_NAME}:/opt/hadoop/etc/hadoop/core-site.xml
 docker cp /tmp/hdfs-site.xml ${HIVE_SERVER_CONTAINER_NAME}:/opt/hadoop/etc/hadoop/hdfs-site.xml
 docker cp /tmp/yarn-site.xml ${HIVE_SERVER_CONTAINER_NAME}:/opt/hadoop/etc/hadoop/yarn-site.xml
-docker cp /tmp/re_entrypoint.sh ${HIVE_SERVER_CONTAINER_NAME}:/re_entrypoint.sh
 
 docker start ${HIVE_SERVER_CONTAINER_NAME}
 
@@ -4403,45 +4190,6 @@ if [ ! -e /tmp/postgresql-42.7.4.jar ]; then
     wget -O /tmp/postgresql-42.7.4.jar 'https://jdbc.postgresql.org/download/postgresql-42.7.4.jar'
 fi
 
-# Use customized entrypoint
-cat > /tmp/re_entrypoint.sh << 'EOF'
-#!/bin/bash
-
-set -x
-
-echo "IS_RESUME=${IS_RESUME}"
-echo "BLOCK_FOR_FIRST_ENTRY=${BLOCK_FOR_FIRST_ENTRY}"
-INIT_FLAG_FILE=/opt/hive/already_init_schema
-BLOCK_FLAG_FILE=/opt/hive/already_block
-
-if [ -n "${BLOCK_FOR_FIRST_ENTRY}" ]; then
-    if [ ! -f ${BLOCK_FLAG_FILE} ]; then
-        touch ${BLOCK_FLAG_FILE}
-        tail -f /dev/null
-    fi
-fi
-
-for file in $(find /opt/hive/ -name "*.pid")
-do
-    rm -f ${file}
-done
-
-if [ -z "${IS_RESUME}" ] || [ "${IS_RESUME}" = "false" ]; then
-    if [ -f ${INIT_FLAG_FILE} ]; then
-        echo "Skip init schema when restart."
-        IS_RESUME=true /entrypoint.sh
-    else
-        echo "Try to init schema for the first time."
-        touch ${INIT_FLAG_FILE}
-        IS_RESUME=false /entrypoint.sh
-    fi
-else
-    echo "Skip init schema for every time."
-    IS_RESUME=true /entrypoint.sh
-fi
-EOF
-chmod a+x /tmp/re_entrypoint.sh
-
 # Start standalone metastore
 docker create \
     --name ${HIVE_METASTORE_CONTAINER_NAME} \
@@ -4452,14 +4200,12 @@ docker create \
     -e DB_DRIVER=postgres \
     -e IS_RESUME=${IS_RESUME} \
     -e BLOCK_FOR_FIRST_ENTRY=true \
-    --entrypoint /re_entrypoint.sh \
     apache/hive:4.0.0_with_kerberos
 
 docker cp /tmp/hive-site.xml ${HIVE_METASTORE_CONTAINER_NAME}:/opt/hive/conf/hive-site.xml
 docker cp /tmp/core-site.xml ${HIVE_METASTORE_CONTAINER_NAME}:/opt/hadoop/etc/hadoop/core-site.xml
 docker cp /tmp/hdfs-site.xml ${HIVE_METASTORE_CONTAINER_NAME}:/opt/hadoop/etc/hadoop/hdfs-site.xml
 docker cp /tmp/yarn-site.xml ${HIVE_METASTORE_CONTAINER_NAME}:/opt/hadoop/etc/hadoop/yarn-site.xml
-docker cp /tmp/re_entrypoint.sh ${HIVE_METASTORE_CONTAINER_NAME}:/re_entrypoint.sh
 docker cp /tmp/postgresql-42.7.4.jar ${HIVE_METASTORE_CONTAINER_NAME}:/opt/hive/lib/postgresql-42.7.4.jar
 
 docker start ${HIVE_METASTORE_CONTAINER_NAME}
@@ -4500,14 +4246,12 @@ docker create \
     -e DB_DRIVER=postgres \
     -e IS_RESUME=true \
     -e BLOCK_FOR_FIRST_ENTRY=true \
-    --entrypoint /re_entrypoint.sh \
     apache/hive:4.0.0_with_kerberos
 
 docker cp /tmp/hive-site.xml ${HIVE_SERVER_CONTAINER_NAME}:/opt/hive/conf/hive-site.xml
 docker cp /tmp/core-site.xml ${HIVE_SERVER_CONTAINER_NAME}:/opt/hadoop/etc/hadoop/core-site.xml
 docker cp /tmp/hdfs-site.xml ${HIVE_SERVER_CONTAINER_NAME}:/opt/hadoop/etc/hadoop/hdfs-site.xml
 docker cp /tmp/yarn-site.xml ${HIVE_SERVER_CONTAINER_NAME}:/opt/hadoop/etc/hadoop/yarn-site.xml
-docker cp /tmp/re_entrypoint.sh ${HIVE_SERVER_CONTAINER_NAME}:/re_entrypoint.sh
 docker cp /tmp/postgresql-42.7.4.jar ${HIVE_SERVER_CONTAINER_NAME}:/opt/hive/lib/postgresql-42.7.4.jar
 
 docker start ${HIVE_SERVER_CONTAINER_NAME}
