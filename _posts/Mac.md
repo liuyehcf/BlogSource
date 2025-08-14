@@ -539,6 +539,13 @@ plugins=(<原有插件> zsh-autosuggestions)
     1. `Notification Center Alters`：取消勾选
     1. `Show bell icon in tabs`：取消勾选
 
+## 4.5 Paste Bracketing
+
+在`tmux`版本`2.4`之前（由于不支持`Paste Bracketing`），修改window名称的时候，前后会出现`200~`以及`201~`这样的内容，这就是`Paste Bracketing`，可以通过如下方式禁用：
+
+1. `Preferences` -> `Profiles` -> `Terminal`
+    1. Terminal may enable paste bracketing：取消勾选
+
 # 5 Karabiner-elements
 
 外接如`Filco`的键盘，需要将`win`以及`alt`这两个键位进行交换。其中`win`对应`command`键，`alt`对应`option`键

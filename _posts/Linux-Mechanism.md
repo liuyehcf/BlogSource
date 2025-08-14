@@ -1546,6 +1546,9 @@ ln -s '/usr/lib/systemd/system/demo-service.service' '/etc/systemd/system/multi-
     * `journalctl -u xxx.service -f`
 * `journalctl --vacuum-time=2d`: Removes archived journal files older than the specified timespan. Accepts the usual `s` (default), `m`, `h`, `days`, `months`, `weeks` and `years` suffixes.
 * `journalctl --vacuum-size=500M`: Removes the oldest archived journal files until the disk space they use falls below the specified size. Accepts the usual `K`, `M`, `G` and `T` suffixes (to the base of `1024`).
+* `journalctl _COMM=systemctl`: Display logs by command.
+* `journalctl _PID=1`: Display logs by pid.
+* If `/var/log/journal` is not existed, then journal may not work.
 
 ## 3.5 User Service Manager
 

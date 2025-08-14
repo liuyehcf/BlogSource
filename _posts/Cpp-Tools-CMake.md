@@ -1531,6 +1531,10 @@ set(CMAKE_FIND_LIBRARY_SUFFIXES ".so;.a")
 
 ### 6.6.1 How to make custom command as part of build?
 
+**Key Observations:**
+
+* If a `custom_command` or `custom_target` generates files that are later used as source files in targets like `add_executable` or `add_library`, it's necessary to specify these files using the `OUTPUT` keyword. Otherwise, CMake will report that it cannot find the source files, because at the configuration stage, these custom commands have not yet been executed. This is due to the separation between the configuration and build phases in CMake.
+
 There are three ways:
 
 * Use `add_custom_target` with auto build (The keyword `ALL`):

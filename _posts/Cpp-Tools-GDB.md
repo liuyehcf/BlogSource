@@ -698,6 +698,12 @@ For environment variables set up before starting program, we can check them by `
 (gdb) call (char *)getenv("TERM")
 ```
 
+## 4.5 How to catch all exceptions
+
+```
+(gdb) catch throw
+```
+
 # 5 gdb-dashboard
 
 [gdb-dashboard](https://github.com/cyrus-and/gdb-dashboard)在`gdb`的基础之上，提供了一个更加友好的格式化界面
@@ -714,8 +720,9 @@ LLDB is similar to GDB in most operations, but there are some differences (`help
 
 1. There is no `start` command
 1. `frame select <id>`/`f <id>`: select a frame
-1. `lldb -c <core> <binary>`: Analyze core file
+1. `breakpoint set -E c++`: tells LLDB to break on C++ exceptions
 1. `list -<count>`: Print previous `<count>` lines
+1. `lldb -c <core> <binary>`: Analyze core file
 1. `lldb <binary> -- <args>`
 
 # 7 Reference

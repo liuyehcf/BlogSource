@@ -402,6 +402,11 @@ public class KerberosDemo {
 }
 ```
 
+## 7.2 Compact Timeing
+
+1. `BatchTableWrite::prepareCommit`
+1. `StreamTableWrite::prepareCommit`
+
 # 8 Issue
 
 ## 8.1 Timeout waiting for connection from pool

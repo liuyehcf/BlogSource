@@ -367,6 +367,14 @@ Examine the codes sent by the keyboard
 
 * `showkey -a`
 
+## 1.33 ethtool
+
+`ethtool` is a command-line utility on Linux used to query and control network interface card (NIC) settings. It's particularly useful for Ethernet devices.
+
+**Examples:**
+
+* `ethtool eth0`
+
 # 2 Common Processing Tools
 
 ## 2.1 ls
@@ -1759,6 +1767,7 @@ This command is used to list information about all available block devices
 
 * `lsblk -fp`
 * `lsblk -o name,mountpoint,label,size,uuid`
+* `lsblk -d -o name,rota`
 
 ## 3.10 lsusb
 
@@ -3697,6 +3706,7 @@ yum install -y sysstat
 
 * `cpu`: Search for `CPU Utilization Report` in man page
 * `device`: Search for `Device Utilization Report` in man page
+* **`%util`**: Percentage of elapsed time during which I/O requests were issued to the device (bandwidth utilization for the device)
 
 **Examples:**
 
@@ -4358,6 +4368,7 @@ CONFIG_KVM_MMU_AUDIT=y
 * `auditctl -r 0`
 * `auditctl -s`
 * `auditctl -l`
+* `auditctl -D`
 
 ### 9.2.2 File System Rules
 
@@ -4387,22 +4398,34 @@ CONFIG_KVM_MMU_AUDIT=y
 
 **Options:**
 
-* `-a`: Followed by `action` and `filter`
-    * `action`: Determines whether to record audit events matching the `filter`, options include
-        * `always`: record
-        * `never`: do not record
-    * `filter`: audit event filter, options include
-        * `task`: matches audit events generated when processes are created (`fork` or `clone`)
-        * **`exit`: matches audit events generated at the end of system calls**
-        * `user`: matches audit events from user space
-        * `exclude`: used to mask unwanted audit events
+* `-a`: Followed by `action` and `filter`.
+    * `action`: Determines whether to record audit events matching the `filter`, options include:
+        * `always`: record.
+        * `never`: do not record.
+    * `filter`: audit event filter, options include:
+        * `task`: matches audit events generated when processes are created (`fork` or `clone`).
+        * **`exit`: matches audit events generated at the end of system calls.**
+        * `user`: matches audit events from user space.
+        * `exclude`: used to mask unwanted audit events.
+* `-d`: Same as `-a`, but delete the specific rule.
 * `-S`: Followed by system call names; the list of system calls can be found in `/usr/include/asm/unistd_64.h`. To specify multiple system calls, use multiple `-S` options, each specifying one system call.
-* `-F`: Extended option, key-value pair
-* `-k`: Followed by a string, can be arbitrarily specified, used for searching
+* `-F`: Extended option, key-value pair.
+* `-k`: Followed by a string, can be arbitrarily specified, used for searching.
 
 **Examples:**
 
+* Listen all kill signals:
+    ```sh
+    # setup rules
+    auditctl -a always,exit -F arch=b64 -S kill,tkill,tgkill,pidfd_send_signal -F key=all_termination
+    auditctl -a always,exit -F arch=b32 -S kill,tkill,tgkill,pidfd_send_signal -F key=all_termination
+
+    # check audit logs
+    ausearch -i -k all_termination
+    ```
+
 * `auditctl -a always,exit -F arch=b64 -S adjtimex -S settimeofday -k time_change`
+* `auditctl -a always,exit -F arch=b64 -S kill -k signal-kill`: This command adds an audit rule to always log `kill` system calls made by 64-bit processes, tagging them with the key `signal-kill`.
 
 ## 9.3 ausearch
 
@@ -4412,9 +4435,11 @@ CONFIG_KVM_MMU_AUDIT=y
 * `-m`: Specify the type
 * `-sc`: Specify the system call name
 * `-sv`: Whether the system call was successful
+* `-k`: Search based on key field
 
 **Examples:**
 
+* `ausearch -i -k signal-kill`: Searche the audit logs for all events tagged with the key `signal-kill`.
 * `ausearch -i`: Search all events
 * `ausearch --message USER_LOGIN --success no --interpret`: Search for events related to failed logins
 * `ausearch -m ADD_USER -m DEL_USER -m ADD_GROUP -m USER_CHAUTHTOK -m DEL_GROUP -m CHGRP_ID -m ROLE_ASSIGN -m ROLE_REMOVE -i`: Search for all events related to account, group, and role changes
@@ -4549,6 +4574,16 @@ apt install clang-format-X.Y
 * `stat <file_path>`
 * `find <path> -inum <inode_number>`
 * `tune2fs -l /dev/sda1 | grep -i 'inode'`
+
+#### 11.1.2.3 Get Disk Type
+
+* `lsblk -d -o name,rota`
+
+### 11.1.3 Network
+
+#### 11.1.3.1 How to get bandwidth of network card
+
+* `ethtool eth0 | grep Speed`
 
 ## 11.2 System Monitoring
 

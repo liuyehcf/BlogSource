@@ -2479,7 +2479,7 @@ SerializerCmp.kryo_size_100     avgt    5  48886.075 ± 13722.655  ns/op
 
 # 12 httpclient
 
-* RetryConfig: `new DefaultHttpRequestRetryHandler(3, true)`, this can retry for different IP addresses(maybe including both IPv4/IPv6) which DNS server returns
+* RetryConfig: `new DefaultHttpRequestRetryHandler(3, true)`, this supports dual stack by attempting connections over both IPv4 and IPv6 addresses.
 
 ```java
 package org.byconity.common;

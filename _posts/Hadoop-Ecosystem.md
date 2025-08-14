@@ -845,6 +845,15 @@ docker exec -it ${SPARK_MASTER_CONTAINER_NAME} \
     /opt/spark/bin/spark-submit /opt/spark/examples/src/main/python/pi.py 10
 ```
 
+**How to connect Hive:**
+
+```sh
+# Copy hive-site.xml into ${SPARK_HOME}/conf dir, first.
+docker exec -it ${SPARK_MASTER_CONTAINER_NAME} \
+    /opt/spark/bin/spark-sql \
+    --conf spark.sql.catalogImplementation=hive
+```
+
 ## 3.3 Tips
 
 ### 3.3.1 Spark-Sql
@@ -1738,13 +1747,13 @@ drop table hive_example;
 
 ## 4.3 Hive Metastore Demo
 
-[hive_metastore.thrift](https://github.com/apache/hive/blob/master/standalone-metastore/metastore-common/src/main/thrift/hive_metastore.thrift)
+[hive_metastore.thrift](https://github.com/apache/hive/blob/branch-4.0/standalone-metastore/metastore-common/src/main/thrift/hive_metastore.thrift)
 
 ```sh
 mkdir hive_metastore_demo
 cd hive_metastore_demo
 
-wget https://raw.githubusercontent.com/apache/hive/master/standalone-metastore/metastore-common/src/main/thrift/hive_metastore.thrift
+wget https://raw.githubusercontent.com/apache/hive/branch-4.0/standalone-metastore/metastore-common/src/main/thrift/hive_metastore.thrift
 ```
 
 Modify `hive_metastore.thrift`, remove `fb` parts:
@@ -1822,8 +1831,12 @@ int main(int argc, char* argv[]) {
         }
 
         // Fetch and print the details of a specific table
-        Apache::Hadoop::Hive::Table table;
-        client.get_table(table, db_name, table_name);
+        Apache::Hadoop::Hive::GetTableResult get_table_res;
+        Apache::Hadoop::Hive::GetTableRequest get_table_req;
+        get_table_req.dbName = db_name;
+        get_table_req.tblName = table_name;
+        client.get_table_req(get_table_res, get_table_req);
+        Apache::Hadoop::Hive::Table table = get_table_res.table;
         std::cout << "Table details for '" << table_name << "':" << std::endl;
         std::cout << "    Table name: " << table.tableName << std::endl;
         std::cout << "    Database name: " << table.dbName << std::endl;
@@ -1843,6 +1856,10 @@ EOF
 gcc -o build/main main.cpp -O3 -Lbuild -lhms -lstdc++ -std=gnu++17 -lthrift -lm
 build/main <ip> 9083 default hive_test_table
 ```
+
+### 4.3.1 With Kerberos
+
+Refer to [thrift/hive_metastore_demo](https://github.com/liuyehcf/cpp-demo-projects/tree/main/thrift/hive_metastore_demo) for details.
 
 ## 4.4 Syntax
 

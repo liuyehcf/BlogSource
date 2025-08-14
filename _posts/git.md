@@ -120,6 +120,12 @@ git config --global icdiff.options '--highlight --line-numbers'
 * `git icdiff HEAD`
 * `git icdiff -- <file>`
 
+## 2.4 UTF-8/Support Chinese
+
+```sh
+git config --global core.quotepath false
+```
+
 # 3 Git Operations
 
 ## 3.1 Adding/Deleting Files

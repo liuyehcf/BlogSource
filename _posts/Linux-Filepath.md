@@ -289,9 +289,10 @@ You can view the documentation through `man proc`.
 
 # 4 /var Directory
 
-1. `/var/crash`：内核crash日志
-1. `/var/log`：日志
-    * `/var/log/audit`：审计日志
+1. `/var/crash`: is the directory where Linux systems store crash dump files and related reports generated when programs or the kernel crash, useful for post-mortem debugging and analysis.
+1. `/var/log`
+    * `/var/log/audit`: is the directory where the Linux Audit framework stores logs (typically via auditd), recording detailed security-related events such as system calls, file access, permission changes, and user actions for auditing and compliance purposes.
+    * `/var/log/syslog`: a general-purpose system log file that records messages from the kernel, system services, and user-space applications for troubleshooting and monitoring.
 
 ## 4.1 Reference
 

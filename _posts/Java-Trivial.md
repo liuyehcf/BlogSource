@@ -1059,6 +1059,10 @@ function search() {
 * `SuppressWarnings("fallthrough")`
 * `SuppressWarnings("ResultOfMethodCallIgnored")`
 
+## 7.9 Dual Stack
+
+Just use `-Djava.net.preferIPv4Stack=false -Djava.net.preferIPv6Addresses=true` can enable dual stack, it will try ipv6 first and downgrade to ipv4 if ipv6 failed.
+
 # 8 参考
 
 * [JVM性能调优监控工具jps、jstack、jmap、jhat、jstat、hprof使用详解](https://my.oschina.net/feichexia/blog/196575)

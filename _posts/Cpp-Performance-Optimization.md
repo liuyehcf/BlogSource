@@ -4015,13 +4015,124 @@ MapFixture/traverseByOrderedKeys    228485643 ns    228458249 ns            3
 * [程序的分支消除](https://leetcode.cn/circle/article/GSJ5XS/)
 * [只会写 if 的菜炸了，手动分支消除，带你装〇带你飞！](https://www.bilibili.com/video/BV1L7411f7g3?t=2&p=2)
 
-# 5 Tools
+# 5 OLAP
 
-## 5.1 Test Cache Performance
+## 5.1 build/probe relation
+
+```cpp
+#include <benchmark/benchmark.h>
+
+#include <algorithm>
+#include <iostream>
+#include <random>
+#include <tuple>
+#include <unordered_map>
+#include <unordered_set>
+
+void init_data(std::vector<std::tuple<int64_t, std::string>>& data_small,
+               std::vector<std::tuple<int64_t, std::string>>& data_large, size_t small_size, size_t large_size) {
+    std::default_random_engine e(0);
+    std::uniform_int_distribution<int64_t> u(0, 100000000);
+
+    std::unordered_set<int64_t> distinct_keys;
+
+    for (size_t i = 0; i < small_size; ++i) {
+        int64_t key = u(e);
+        distinct_keys.insert(key);
+        build_map[key].emplace_back(const_cast<std::string*>(&std::get<1>(entry)));
+    }
+
+    for (const auto& entry : probe_side) {
+        int64_t key = std::get<0>(entry);
+        auto it = build_map.find(key);
+        if (it != build_map.end()) {
+            for (const auto& value_ptr : it->second) {
+                std::string concat = std::get<1>(entry) + " | " + *value_ptr;
+                out.emplace_back(key, concat);
+            }
+        }
+    }
+}
+
+static void BM_large_probe_small_build(benchmark::State& state) {
+    std::vector<std::tuple<int64_t, std::string>> data_small;
+    std::vector<std::tuple<int64_t, std::string>> data_large;
+    size_t small_size = state.range(0);
+    size_t large_size = state.range(1);
+    init_data(data_small, data_large, small_size, large_size);
+
+    for (auto _ : state) {
+        std::vector<std::tuple<int64_t, std::string>> out;
+        join(data_large, data_small, out);
+        benchmark::DoNotOptimize(out);
+    }
+}
+
+static void BM_small_probe_large_build(benchmark::State& state) {
+    std::vector<std::tuple<int64_t, std::string>> data_small;
+    std::vector<std::tuple<int64_t, std::string>> data_large;
+    size_t small_size = state.range(0);
+    size_t large_size = state.range(1);
+    init_data(data_small, data_large, small_size, large_size);
+
+    for (auto _ : state) {
+        std::vector<std::tuple<int64_t, std::string>> out;
+        join(data_small, data_large, out);
+        benchmark::DoNotOptimize(out);
+    }
+}
+
+BENCHMARK(BM_large_probe_small_build)
+        ->Args({100, 1000000})
+        ->Args({1000, 1000000})
+        ->Args({10000, 1000000})
+        ->Args({100000, 1000000});
+BENCHMARK(BM_small_probe_large_build)
+        ->Args({100, 1000000})
+        ->Args({1000, 1000000})
+        ->Args({10000, 1000000})
+        ->Args({100000, 1000000});
+
+BENCHMARK_MAIN();
+```
+
+**Output:**
+
+```
+Run on (256 X 3241.97 MHz CPU s)
+CPU Caches:
+  L1 Data 32 KiB (x128)
+  L1 Instruction 32 KiB (x128)
+  L2 Unified 512 KiB (x128)
+  L3 Unified 32768 KiB (x16)
+Load Average: 17.68, 16.61, 18.27
+------------------------------------------------------------------------------------
+Benchmark                                          Time             CPU   Iterations
+------------------------------------------------------------------------------------
+BM_large_probe_small_build/100/1000000     122676240 ns    122661116 ns            6
+BM_large_probe_small_build/1000/1000000    124042445 ns    124023439 ns            6
+BM_large_probe_small_build/10000/1000000   156457584 ns    156442177 ns            5
+BM_large_probe_small_build/100000/1000000  216785298 ns    216767162 ns            4
+BM_small_probe_large_build/100/1000000     195905857 ns    195901410 ns            4
+BM_small_probe_large_build/1000/1000000    201670152 ns    201644894 ns            4
+BM_small_probe_large_build/10000/1000000   229649600 ns    229645242 ns            3
+BM_small_probe_large_build/100000/1000000  323437192 ns    323408412 ns            2
+```
+
+| Probe Size | Build Size | large_probe_small_build (ns) | small_probe_large_build (ns) | Difference (ns) | Speedup (×) |
+|---|---|---|---|---|---|
+| 100| 1,000,000| 122,676,240 | 195,905,857 | 73,229,617 | 1.60|
+| 1,000| 1,000,000| 124,042,445 | 201,670,152 | 77,627,707 | 1.62|
+| 10,000 | 1,000,000| 156,457,584 | 229,649,600 | 73,192,016 | 1.47|
+| 100,000| 1,000,000| 216,785,298 | 323,437,192 | 106,651,894| 1.49|
+
+# 6 Tools
+
+## 6.1 Test Cache Performance
 
 Please refer to [cache miss](#41-cache-miss)
 
-## 5.2 Test Cpu Performance
+## 6.2 Test Cpu Performance
 
 ```cpp
 #include <pthread.h>
@@ -4070,6 +4181,6 @@ int main(int argc, char* argv[]) {
 }
 ```
 
-# 6 Others
+# 7 Others
 
 1. [slide window frame, vectorization agg & removable cumulative agg](https://quick-bench.com/q/y7oHsGuG9CTk-Kq5edcWtsLMjpE)
