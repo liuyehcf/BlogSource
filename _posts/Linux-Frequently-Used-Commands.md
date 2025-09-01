@@ -4723,6 +4723,13 @@ apt install clang-format-X.Y
 
 * `ss --tcp state CLOSE-WAIT --kill`
 
+#### 11.2.3.5 How to get all tcp connections of a process
+
+* `ss -nap | grep <pid>`: For all sockets.
+* `ss -npl | grep <pid>`: For listening sockets.
+
+Or refer to {% post_link Linux-Filepath %} for scripts that read `/proc/net/tcp` directly
+
 ## 11.3 Assorted
 
 ### 11.3.1 Allow using docker command without sudo

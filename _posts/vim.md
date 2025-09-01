@@ -564,12 +564,12 @@ Record refers to a feature that allows you to record a sequence of keystrokes an
 **Special parameters:**
 
 * `<buffer>`: The mapping applies only to the current buffer.
-* `<nowait>`
-* `<silent>`: Disable showing mapping messages.
-* `<special>`
-* `<script>`
-* `<expr>`
-* `<unique>`
+* `<nowait>`: Tells Vim to not wait for further key input that could form a longer mapping.
+* `<silent>`: Suppresses command echoing in the command line when the mapping executes.
+* `<special>`: Ensures special keys are recognized literally (like `<C-A>` or `<F1>`) even if 'cpoptions' changes.
+* `<script>`: Restricts the mapping to only be triggered by mappings defined in the same script file.
+* `<expr>`: Makes the mapping's right-hand side an expression that Vim evaluates.
+* `<unique>`: Prevents overwriting an existing mapping.
 
 ## 2.17 Key Representation
 
@@ -579,17 +579,17 @@ Record refers to a feature that allows you to record a sequence of keystrokes an
 * **On Mac, there is no `<p-key>` for `[Option]`. Instead, the actual output character produced by pressing `[Option]` plus another key is used as the mapping key, for example:**
     * `[Option] + a`: `å`
 
-## 2.18 Config
+## 2.18 Option
 
-* **`:set <config>?`**: View the value of `<config>`.
-    * `verbose set <config>?`: Shows the source of the configuration.
+* **`:set <option>?`**: View the value of `<option>`.
+    * `verbose set <option>?`: Shows the source of the option.
     * `:set filetype?`: View the file type.
-* **`:echo &<config>`**: Also view the value of `<config>`.
+* **`:echo &<option>`**: Also view the value of `<option>`.
     * `:echo &filetype`: View the file type.
-* **`set <config> += <value>`**: Add to a setting; multiple items can be added separated by commas.
-* **`set <config> -= <value>`**: Remove from a setting; only one item can be removed at a time.
+* **`set <option> += <value>`**: Add to a setting; multiple items can be added separated by commas.
+* **`set <option> -= <value>`**: Remove from a setting; only one item can be removed at a time.
 
-### 2.18.1 Frequently-used Configs
+### 2.18.1 Frequently-used Options
 
 ```vim
 :set nocompatible                   " Set to be incompatible with original vi mode (must be set at the very beginning)
@@ -691,7 +691,25 @@ let t:my_tab_variable = {'key': 'value'}
 :unlet g:my_variable
 ```
 
-## 2.20 Help Doc
+## 2.20 Command
+
+### 2.20.1 Display Information
+
+* `:version`
+* `:echo $VIMRUNTIME`: Show the Vim runtime directory.
+* `:echo &runtimepath`: It contains a comma-separated list of directories that Vim searches for runtime files (plugins, syntax files, ftplugins, colorschemes, etc.).
+* `:set all`: Show all options and their values.
+* `:set <option>?`: Show the current value of a specific option.
+* `:scriptnames`: List all sourced scripts (plugins, vimrc, etc.).
+    * Redirect output to a new buffer
+        ```vim
+        :redir @a | silent scriptnames | redir END
+        :new | put a
+        ```
+
+* `:messages`: Show recent messages
+
+### 2.20.2 Help Doc
 
 * `:help CTRL-W`: View help for `ctrl + w` in normal mode.
 * `:help i_CTRL-V`: View help for `ctrl + v` in insert mode (`i_` means insert mode).
@@ -704,12 +722,11 @@ let t:my_tab_variable = {'key': 'value'}
 
 **`vimtutor`**: Provides a simple tutorial.
 
-## 2.21 Troubleshooting
+### 2.20.3 Troubleshooting
 
 1. `vim -V10logfile.txt`
-1. `echo &runtimepath`
 
-## 2.22 Assorted
+## 2.21 Assorted
 
 * **`echo`**
     * **`:echom xxx`**: The message will be saved in the message history, which can be viewed with `:message`.
@@ -724,7 +741,7 @@ let t:my_tab_variable = {'key': 'value'}
 * **`[Ctrl] + g`**: Show file statistics.
 * **`g + [Ctrl] + g`**: Show byte statistics.
 
-### 2.22.1 Symbol Index
+### 2.21.1 Symbol Index
 
 * **`[Ctrl] + ]`**: Jump to the definition of the symbol under the cursor.
 * **`gf`**: Jump to the header file under the cursor.
@@ -732,14 +749,14 @@ let t:my_tab_variable = {'key': 'value'}
     * Use `set path?` to view the current value of this variable.
 * **`[Ctrl] + ^`**: Switch between the two most recently edited files.
 
-### 2.22.2 Insert Form Feed(tab)
+### 2.21.2 Insert Form Feed(tab)
 
 Referring to [How can I insert a real tab character in Vim?](https://stackoverflow.com/questions/6951672/how-can-i-insert-a-real-tab-character-in-vim), after setting parameters like `tabstop`, `softtabstop`, and `expandtab`, the `tab` key will be replaced by spaces. If you want to insert a literal `\t` character, you can press `[Ctrl] + v + i` in insert mode, where:
 
 * `[Ctrl] + v` means to input the literal character.
 * `i` represents the `\t` character.
 
-### 2.22.3 Multiply-line Editing
+### 2.21.3 Multiply-line Editing
 
 **Example: Insert the same content on multiple lines simultaneously**
 
@@ -762,7 +779,7 @@ Referring to [How can I insert a real tab character in Vim?](https://stackoverfl
 1. Select the columns to delete simultaneously  
 1. Press `d` to delete simultaneously  
 
-### 2.22.4 Chinese Garbled Text
+### 2.21.4 Chinese Garbled Text
 
 **Edit `/etc/vimrc` and append the following content**
 
@@ -772,7 +789,7 @@ set termencoding=utf-8
 set encoding=utf-8
 ```
 
-### 2.22.5 Project Customized Config
+### 2.21.5 Project Customized Config
 
 The same `~/.vimrc` cannot be used for all projects. Different projects may require some specialized configuration options. You can use the following setup method.
 
@@ -1441,6 +1458,8 @@ Plug 'Yggdroot/indentLine'
 let g:indentLine_noConcealCursor = 1
 let g:indentLine_color_term = 239
 let g:indentLine_char = '|'
+" https://github.com/Yggdroot/indentLine/issues/349
+autocmd FileType markdown let g:indentLine_setConceal = 0
 
 call plug#end()
 ```
@@ -2041,9 +2060,13 @@ call plug#begin()
 if has('nvim')
     Plug 'github/copilot.vim'
 
-    " Map trigger snippet expansion to shortcut [Option] + p, which is 「π」
+    " Map display all suggestions to shortcut \cp
+    noremap <leader>cp :Copilot panel<cr>
+    " Map accept current suggestion to shortcut [Option] + p, which is 「π」
     inoremap <script><expr> π copilot#Accept("\<cr>")
     let g:copilot_no_tab_map = v:true
+    " Map dismiss suggestion to shortcut [Option] + d, which is 「∂」
+    inoremap ∂ <Plug>(copilot-dismiss)
     " Map jump to next suggestion to shortcut [Option] + ], which is 「‘」
     inoremap ‘ <Plug>(copilot-next)
     " Map jump to previous suggestion to shortcut [Option] + [, which is 「“」
@@ -2316,6 +2339,8 @@ Home: [vim-codefmt](https://github.com/google/vim-codefmt)
 * `HTML`: `js-beautify`
 * `Go`: `gofmt`
 * `Java`: `google-java-format`/`clang-format`
+* `Rust`: `rustfmt`
+    * `~/.rustfmt.toml`
 * `Python`: `Autopep8`/`Black`/`YAPF`
     * Combine `isort` to reorder imports.
     * `pip install autopep8 isort`
@@ -2525,6 +2550,8 @@ Plug 'Yggdroot/indentLine'
 let g:indentLine_noConcealCursor = 1
 let g:indentLine_color_term = 239
 let g:indentLine_char = '|'
+" https://github.com/Yggdroot/indentLine/issues/349
+autocmd FileType markdown let g:indentLine_setConceal = 0
 
 " <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -2610,9 +2637,13 @@ nmap <space>e <cmd>CocCommand explorer<cr>
 if has('nvim')
     Plug 'github/copilot.vim'
 
-    " Map trigger snippet expansion to shortcut [Option] + p, which is 「π」
+    " Map display all suggestions to shortcut \cp
+    noremap <leader>cp :Copilot panel<cr>
+    " Map accept current suggestion to shortcut [Option] + p, which is 「π」
     inoremap <script><expr> π copilot#Accept("\<cr>")
     let g:copilot_no_tab_map = v:true
+    " Map dismiss suggestion to shortcut [Option] + d, which is 「∂」
+    inoremap ∂ <Plug>(copilot-dismiss)
     " Map jump to next suggestion to shortcut [Option] + ], which is 「‘」
     inoremap ‘ <Plug>(copilot-next)
     " Map jump to previous suggestion to shortcut [Option] + [, which is 「“」
@@ -3798,6 +3829,12 @@ let g:gutentags_dont_load = 1
 
 " Disable
 :set nolist
+```
+
+## 7.9 How to show original content of markdown file
+
+```vim
+:set conceallevel=0
 ```
 
 # 8 Reference

@@ -308,7 +308,39 @@ env | grep FOO
     * `LC_TIME`: Specifies the format used for date and time representation.
 * `TMPDIR`：自定义tmp目录
 
-## 1.6 Conditional Expressions
+## 1.6 Script/Function Args
+
+```sh
+function test_function() {
+    local arg_1=$1
+    local arg_2=$2
+    local arg_other_1=( ${@:3} )
+    local arg_other_2=( "${@:3}" )
+
+    echo "arg_1: '${arg_1}'"
+    echo "arg_2: '${arg_2}'"
+    for arg in ${arg_other_1[@]}
+    do
+        echo "(1) other arg: '${arg}'"
+    done
+    for arg in "${arg_other_1[@]}"
+    do
+        echo "(2) other arg: '${arg}'"
+    done
+    for arg in ${arg_other_2[@]}
+    do
+        echo "(3) other arg: '${arg}'"
+    done
+    for arg in "${arg_other_2[@]}"
+    do
+        echo "(4) other arg: '${arg}'"
+    done
+}
+
+test_function "arg 1" "arg 2" "arg 3" "arg 4" "arg 5"
+```
+
+## 1.7 Conditional Expressions
 
 **`man bash` for details (Search `CONDITIONAL EXPRESSIONS`):**
 
@@ -1146,10 +1178,10 @@ done
 
 #### 3.3.4.1 Array Delimiter
 
-**如果数组中的内容包含空白，`foreach`默认会以空格作为分隔符，这就有可能破坏数组元素原有的结构，例如**
+**If the contents of the array contain whitespace, `foreach` will by default use spaces as the delimiter, which can potentially break the original structure of the array elements, for example**
 
 ```sh
-array=("Hello Foo" "I'm Bar!")
+array=( "Hello Foo" "I'm Bar!" )
 for v in ${array[@]}
 do
     echo ${v}
@@ -1161,9 +1193,15 @@ do
     v=${array[@]:i:1}
     echo ${v}
 done
+
+# this one works fine either
+for v in "${array[@]}"
+do
+    echo ${v}
+done
 ```
 
-**我们可以通过修改`IFS`来修改`foreach`的默认行为**
+**We can modify the default behavior of `foreach` by changing the `IFS`**
 
 ```sh
 array=("Hello Foo！" "I'm Bar!")

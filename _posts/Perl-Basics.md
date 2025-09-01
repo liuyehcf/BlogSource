@@ -4338,7 +4338,23 @@ map/sort(100000000/50000000/0.5) = 4.068
 map/sort(100000000/100000000/1) = 5.020
 ```
 
-# 19 参考
+# 19 Tips
+
+## 19.1 Read whole file at once
+
+Use `-0777`:
+
+```sh
+cat > /tmp/config.xml << 'EOF'
+<user>dba</user>
+<password>Abcd1234</password>
+EOF
+
+read USER PASSWORD < <(perl -0777 -ne 'if (/<user>([^<]+)<\/user>.*?<password>([^<]+)<\/password>/s) { print "$1 $2\n"; exit }' /tmp/config.xml)
+echo "USER: '${USER}', PASSWORD: '${PASSWORD}'"
+```
+
+# 20 参考
 
 * [w3cschool-perl](https://www.w3cschool.cn/perl/)
 * [perl仓库-cpan](https://www.cpan.org/)

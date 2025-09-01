@@ -180,6 +180,61 @@ You can view the documentation through `man proc`.
         * `9 -> TCP_LAST_ACL`
         * `10 -> TCP_LISTEN`
         * `11 -> TCP_CLOSING`
+        ```sh
+        cat /proc/net/tcp | awk 'BEGIN {
+            split("ESTABLISHED SYN_SENT SYN_RECV FIN_WAIT1 FIN_WAIT2 TIME_WAIT CLOSE CLOSE_WAIT LAST_ACK LISTEN CLOSING", s, " ")
+            for(i=1;i<=11;i++) state[sprintf("%02X", i)] = s[i]
+        }
+        {
+            split($2, la, ":"); split($3, ra, ":")
+            li=sprintf("%d.%d.%d.%d", strtonum("0x" substr(la[1],7,2)), strtonum("0x" substr(la[1],5,2)), strtonum("0x" substr(la[1],3,2)), strtonum("0x" substr(la[1],1,2)))
+            lp=strtonum("0x" la[2])
+            ri=sprintf("%d.%d.%d.%d", strtonum("0x" substr(ra[1],7,2)), strtonum("0x" substr(ra[1],5,2)), strtonum("0x" substr(ra[1],3,2)), strtonum("0x" substr(ra[1],1,2)))
+            rp=strtonum("0x" ra[2])
+            st=state[$4]
+            txq=strtonum("0x" substr($5,1,8))
+            rxq=strtonum("0x" substr($5,10,8))
+            tr=strtonum("0x" $6)
+            tm_when=strtonum("0x" $7)
+            retrnsmt=strtonum("0x" $8)
+            uid=$8
+            inode=$10
+            printf "%s:%d -> %s:%d State:%s TX:%d RX:%d TR:%d TM:%d RETR:%d UID:%s Inode:%s\n", li,lp,ri,rp,st,txq,rxq,tr,tm_when,retrnsmt,uid,inode
+        }'
+        ```
+
+    * `/proc/net/tcp6`
+        ```sh
+        cat /proc/net/tcp6 | awk 'BEGIN {
+            split("ESTABLISHED SYN_SENT SYN_RECV FIN_WAIT1 FIN_WAIT2 TIME_WAIT CLOSE CLOSE_WAIT LAST_ACK LISTEN CLOSING", s, " ")
+            for(i=1;i<=11;i++) state[sprintf("%02X", i)] = s[i]
+        }
+        function hex_to_ipv6(hex) {
+            addr = ""
+            for(i=0;i<32;i+=4) {
+                addr = addr sprintf("%s%s", addr==""?"":"", substr(hex,i+1,4))
+                if(i<28) addr = addr ":"
+            }
+            return addr
+        }
+        {
+            split($2, la, ":"); split($3, ra, ":")
+            li = hex_to_ipv6(la[1])
+            lp = strtonum("0x" la[2])
+            ri = hex_to_ipv6(ra[1])
+            rp = strtonum("0x" ra[2])
+            st = state[$4]
+            txq = strtonum("0x" substr($5,1,8))
+            rxq = strtonum("0x" substr($5,10,8))
+            tr = strtonum("0x" $6)
+            tm_when = strtonum("0x" $7)
+            retrnsmt = strtonum("0x" $8)
+            uid = $8
+            inode = $10
+            printf "%s:%d -> %s:%d State:%s TX:%d RX:%d TR:%d TM:%d RETR:%d UID:%s Inode:%s\n", li,lp,ri,rp,st,txq,rxq,tr,tm_when,retrnsmt,uid,inode
+        }'
+        ```
+
 1. `/proc/<pid>`: The directory contains information about each running process on the system.
     * `/proc/<pid>/status`: The file contains detailed information about a specific process's status. It provides a snapshot of the process's attributes, including memory usage, CPU utilization, and process state. The data is presented in a human-readable format, making it useful for system monitoring and debugging.
         * `VmPeak`: Peak Virtual Memory Size.
@@ -216,60 +271,126 @@ You can view the documentation through `man proc`.
 
     * **`/proc/<pid>/net`: Does not only list network information related to that process, but all the network information in the network namespace which that process belongs to.**
         * `/proc/pid>/net/tcp`
-            ```
-            pid=${pid:-1}
-            while IFS= read -r inode; do
-            cat /proc/net/tcp | awk -v inode="$inode" '$10 == inode && $4 == "0A" {
-                # Split local address into IP and port
-                split($2, arr, ":");
-                ip_hex = arr[1];
-                port_hex = arr[2];
+            * Display all listening addresses for a given pid:
+                ```sh
+                pid=${pid:-1}
+                while IFS= read -r inode; do
+                    # begin brace must be placed at one line with condition expression
+                    cat /proc/net/tcp | awk -v inode="$inode" '$10 == inode && $4 == "0A" {
+                        # Split local address into IP and port
+                        split($2, arr, ":");
+                        ip_hex = arr[1];
+                        port_hex = arr[2];
 
-                # Convert IP from hex to dotted decimal format
-                ipv4 = sprintf("%d.%d.%d.%d",
-                    strtonum("0x" substr(ip_hex, 7, 2)),
-                    strtonum("0x" substr(ip_hex, 5, 2)),
-                    strtonum("0x" substr(ip_hex, 3, 2)),
-                    strtonum("0x" substr(ip_hex, 1, 2)));
+                        # Convert IP from hex to dotted decimal format
+                        ipv4 = sprintf("%d.%d.%d.%d",
+                            strtonum("0x" substr(ip_hex, 7, 2)),
+                            strtonum("0x" substr(ip_hex, 5, 2)),
+                            strtonum("0x" substr(ip_hex, 3, 2)),
+                            strtonum("0x" substr(ip_hex, 1, 2)));
 
-                # Convert port from hex to decimal
-                port = strtonum("0x" port_hex);
+                        # Convert port from hex to decimal
+                        port = strtonum("0x" port_hex);
 
-                # Print IP:port
-                print ipv4 ":" port;
-            }'
-            done < <(ls -l /proc/${pid}/fd | grep 'socket:' | awk -F'[][]' '{print $2}')
-            ```
+                        # Print IP:port
+                        print ipv4 ":" port;
+                    }'
+                done < <(ls -l /proc/${pid}/fd | grep 'socket:' | awk -F'[][]' '{print $2}')
+                ```
+
+            * Disply all tcp connections of a given pid:
+                ```sh
+                pid=${pid:-1}
+                while IFS= read -r inode; do
+                    cat /proc/net/tcp | awk -v inode="$inode" 'BEGIN {
+                        split("ESTABLISHED SYN_SENT SYN_RECV FIN_WAIT1 FIN_WAIT2 TIME_WAIT CLOSE CLOSE_WAIT LAST_ACK LISTEN CLOSING", s, " ")
+                        for(i=1;i<=11;i++) state[sprintf("%02X", i)] = s[i]
+                    }
+                    # begin brace must be placed at one line with condition expression
+                    $10 == inode {
+                        split($2, la, ":"); split($3, ra, ":")
+                        li=sprintf("%d.%d.%d.%d", strtonum("0x" substr(la[1],7,2)), strtonum("0x" substr(la[1],5,2)), strtonum("0x" substr(la[1],3,2)), strtonum("0x" substr(la[1],1,2)))
+                        lp=strtonum("0x" la[2])
+                        ri=sprintf("%d.%d.%d.%d", strtonum("0x" substr(ra[1],7,2)), strtonum("0x" substr(ra[1],5,2)), strtonum("0x" substr(ra[1],3,2)), strtonum("0x" substr(ra[1],1,2)))
+                        rp=strtonum("0x" ra[2])
+                        st=state[$4]
+                        txq=strtonum("0x" substr($5,1,8))
+                        rxq=strtonum("0x" substr($5,10,8))
+                        tr=strtonum("0x" $6)
+                        tm_when=strtonum("0x" $7)
+                        retrnsmt=strtonum("0x" $8)
+                        uid=$8
+                        printf "%s:%d -> %s:%d State:%s TX:%d RX:%d TR:%d TM:%d RETR:%d UID:%s Inode:%s\n", li,lp,ri,rp,st,txq,rxq,tr,tm_when,retrnsmt,uid,inode
+                    }'
+                done < <(ls -l /proc/${pid}/fd | grep 'socket:' | awk -F'[][]' '{print $2}')
+                ```
 
         * `/proc/pid>/net/tcp6`
-            ```
-            pid=${pid:-1}
-            while IFS= read -r inode; do
-            cat /proc/net/tcp6 | awk -v inode="$inode" '$10 == inode && $4 == "0A" {
-                # Split local address into IP and port
-                split($2, arr, ":");
-                ip_hex = arr[1];
-                port_hex = arr[2];
+            * Display all listening addresses for a given pid:
+                ```sh
+                pid=${pid:-1}
+                while IFS= read -r inode; do
+                    # begin brace must be placed at one line with condition expression
+                    cat /proc/net/tcp6 | awk -v inode="$inode" '$10 == inode && $4 == "0A" {
+                        # Split local address into IP and port
+                        split($2, arr, ":");
+                        ip_hex = arr[1];
+                        port_hex = arr[2];
 
-                # Convert IP from hex to dotted decimal format
-                ipv6 = sprintf("%x:%x:%x:%x:%x:%x:%x:%x",
-                    strtonum("0x" substr(ip_hex, 1, 4)),
-                    strtonum("0x" substr(ip_hex, 5, 4)),
-                    strtonum("0x" substr(ip_hex, 9, 4)),
-                    strtonum("0x" substr(ip_hex, 13, 4)),
-                    strtonum("0x" substr(ip_hex, 17, 4)),
-                    strtonum("0x" substr(ip_hex, 21, 4)),
-                    strtonum("0x" substr(ip_hex, 25, 4)),
-                    strtonum("0x" substr(ip_hex, 29, 4)));
+                        # Convert IP from hex to dotted decimal format
+                        ipv6 = sprintf("%x:%x:%x:%x:%x:%x:%x:%x",
+                            strtonum("0x" substr(ip_hex, 1, 4)),
+                            strtonum("0x" substr(ip_hex, 5, 4)),
+                            strtonum("0x" substr(ip_hex, 9, 4)),
+                            strtonum("0x" substr(ip_hex, 13, 4)),
+                            strtonum("0x" substr(ip_hex, 17, 4)),
+                            strtonum("0x" substr(ip_hex, 21, 4)),
+                            strtonum("0x" substr(ip_hex, 25, 4)),
+                            strtonum("0x" substr(ip_hex, 29, 4)));
 
-                # Convert port from hex to decimal
-                port = strtonum("0x" port_hex);
+                        # Convert port from hex to decimal
+                        port = strtonum("0x" port_hex);
 
-                # Print IP:port
-                print ipv6 ":" port;
-            }'
-            done < <(ls -l /proc/${pid}/fd | grep 'socket:' | awk -F'[][]' '{print $2}')
-            ```
+                        # Print IP:port
+                        print ipv6 ":" port;
+                    }'
+                done < <(ls -l /proc/${pid}/fd | grep 'socket:' | awk -F'[][]' '{print $2}')
+                ```
+
+            * Disply all tcp connections of a given pid:
+                ```sh
+                pid=${pid:-1}
+                while IFS= read -r inode; do
+                    cat /proc/net/tcp | awk -v inode="$inode" 'BEGIN {
+                        split("ESTABLISHED SYN_SENT SYN_RECV FIN_WAIT1 FIN_WAIT2 TIME_WAIT CLOSE CLOSE_WAIT LAST_ACK LISTEN CLOSING", s, " ")
+                        for(i=1;i<=11;i++) state[sprintf("%02X", i)] = s[i]
+                    }
+                    function hex_to_ipv6(hex) {
+                        addr = ""
+                        for(i=0;i<32;i+=4) {
+                            addr = addr sprintf("%s%s", addr==""?"":"", substr(hex,i+1,4))
+                            if(i<28) addr = addr ":"
+                        }
+                        return addr
+                    }
+                    # begin brace must be placed at one line with condition expression
+                    $10 == inode {
+                        split($2, la, ":"); split($3, ra, ":")
+                        li = hex_to_ipv6(la[1])
+                        lp = strtonum("0x" la[2])
+                        ri = hex_to_ipv6(ra[1])
+                        rp = strtonum("0x" ra[2])
+                        st = state[$4]
+                        txq = strtonum("0x" substr($5,1,8))
+                        rxq = strtonum("0x" substr($5,10,8))
+                        tr = strtonum("0x" $6)
+                        tm_when = strtonum("0x" $7)
+                        retrnsmt = strtonum("0x" $8)
+                        uid = $8
+                        printf "%s:%d -> %s:%d State:%s TX:%d RX:%d TR:%d TM:%d RETR:%d UID:%s Inode:%s\n", li,lp,ri,rp,st,txq,rxq,tr,tm_when,retrnsmt,uid,inode
+                    }'
+                done < <(ls -l /proc/${pid}/fd | grep 'socket:' | awk -F'[][]' '{print $2}')
+                ```
 
     * `/proc/<pid>/maps`: The file provides a detailed view of the memory regions used by a specific process (`<pid>`).
     * `/proc/<pid>/smaps`: The file provides a more detailed breakdown of the memory usage for each memory region of a specific process (`<pid>`). It extends the information found in `/proc/<pid>/maps` with detailed statistics about the memory consumption and attributes of each region, making it valuable for in-depth memory analysis.

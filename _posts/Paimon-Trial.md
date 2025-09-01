@@ -407,6 +407,10 @@ public class KerberosDemo {
 1. `BatchTableWrite::prepareCommit`
 1. `StreamTableWrite::prepareCommit`
 
+## 7.3 Changelog
+
+1. `FollowUpScanner`
+
 # 8 Issue
 
 ## 8.1 Timeout waiting for connection from pool
