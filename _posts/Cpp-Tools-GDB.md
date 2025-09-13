@@ -106,15 +106,14 @@ When you generate a core dump file (usually named "core") on one machine (Machin
 
 ## 3.1 Run Program
 
-当我们通过`gdb <binary>`这种方式进入`gdb shell`后，程序不会立即执行，需要通过`run`或者`start`命令触发程序的执行
+When we enter the `gdb shell` using the command `gdb <binary>`, the program will not run immediately. We need to trigger its execution with either the `run` or `start` command.
 
-* `run`：开始执行程序，直到碰到第一个断点或者程序结束
-* `start`：开始执行程序，在main函数第一行停下来
+* `run`: Starts executing the program until it hits the first breakpoint or the program finishes.
+* `start`: Starts executing the program and stops at the first line of the main function.
 
-如果程序有异常（比如包含段错误），那么我们将会得到一些有用的信息，包括：程序出错的行号，函数的参数等等信息
+If the program encounters an exception (such as a segmentation fault), we will get some useful information, including the line number where the error occurred, the function’s parameters, and more.
 
 ```sh
-# c++源文件
 cat > segment_fault.cpp << 'EOF'
 int main() {
     int *num = nullptr;
@@ -123,14 +122,10 @@ int main() {
 }
 EOF
 
-# 编译（可以试下不加-g参数）
 g++ -o segment_fault segment_fault.cpp -std=gnu++11 -g
 
-# 进入gdb shell
 gdb segment_fault
 
-# 执行程序，程序会出现段错误而退出，并输出相关的错误信息
-# 如果编译时没有加-g参数，输出的信息就会少很多（比如行号和具体的代码就没有了）
 (gdb) run
 
 Starting program: xxx/segment_fault
@@ -138,10 +133,17 @@ Starting program: xxx/segment_fault
 Program received signal SIGSEGV, Segmentation fault.
 0x000000000040051d in main () at segment_fault.cpp:3
 3	    *num = 100;
-
 ```
 
-### 3.1.1 set args
+### 3.1.1 Run with args
+
+```sh
+gdb ls
+
+(gdb) run -al
+```
+
+### 3.1.2 set args
 
 The `set args` command in GDB allows you to specify or change the command-line arguments for the program you are debugging during an active GDB session. This can be particularly useful if you want to test your program with different arguments without restarting GDB.
 
@@ -151,10 +153,14 @@ set args [arguments]
 
 **Examples:**
 
-* `set args -l a -C abc`
-* `set args --gtest_filter=TestXxx.caseX`
+```sh
+gdb ls
 
-### 3.1.2 --args
+(gdb) set args -al -h -r -t
+(gdb) run
+```
+
+### 3.1.3 --args
 
 **The `--args` option in GDB allows you to specify the program and its arguments directly from the command line when starting GDB. This can be very convenient for debugging programs that require command-line arguments.**
 

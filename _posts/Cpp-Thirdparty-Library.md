@@ -1832,9 +1832,19 @@ gcc -o arrow_parquet_demo arrow_parquet_demo.cpp -lstdc++ -std=gnu++17 -larrow -
 
 ### 6.1.2 ABI
 
-[abi.h](https://github.com/apache/arrow/blob/main/cpp/src/arrow/c/abi.h)
+Arrow ABI stands for Apache Arrow Application Binary Interface. It's a low-level, language-independent memory format and set of C-compatible data structures that allow Arrow arrays, schemas, and record batches to be shared across different programming languages and runtimes without copying. Instead of serializing/deserializing data between languages (like Java/Rust <-> C++), Arrow ABI defines a common in-memory layout and pointer-based interface that everyone can agree on.
 
-[arrow_abi_demo](https://github.com/liuyehcf/cpp-demo-projects/tree/main/arrow/arrow_abi_demo)
+**Key Compoments([abi.h](https://github.com/apache/arrow/blob/main/cpp/src/arrow/c/abi.h)/[bridge.h](https://github.com/apache/arrow/blob/main/cpp/src/arrow/c/bridge.h)):** 
+
+* `ArrowSchema`
+* `ArrowArrayStream`
+* `ImportSchema`/`ExportSchema`
+* `ExportRecordBatch`/`ImportRecordBatch`
+
+**Demo:**
+
+* [arrow_abi_demo](https://github.com/liuyehcf/cpp-demo-projects/tree/main/arrow/arrow_abi_demo)
+* [lance_rust_ffi_demo](https://github.com/liuyehcf/cpp-demo-projects/tree/main/lance/lance_rust_ffi_demo)
 
 ## 6.2 thrift
 

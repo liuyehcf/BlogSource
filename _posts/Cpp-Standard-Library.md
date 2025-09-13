@@ -132,7 +132,7 @@ int main() {
 
 ### 1.1.3 std::remove_if
 
-用于将容器中满足条件的元素挪到最后，并返回指向这部分元素的起始迭代器，一般配合`erase`一起用
+Used to move the elements in the container that meet the condition to the end, and return an iterator pointing to the beginning of these elements, usually used together with `erase`.
 
 ```cpp
 #include <algorithm>
@@ -164,7 +164,7 @@ int main() {
 
 ### 1.2.1 std::sort
 
-**注意：`comparator`要返回的是`bool`，而非整型**
+**Note: `comparator` should return `bool`, not an integer**
 
 ```cpp
 #include <algorithm>
@@ -514,11 +514,11 @@ int main() {
 
 # 2 any
 
-**`std::any`用于持有任意类型的对象，类似于Java中的`java.lang.Object`**
+**`std::any` is used to hold objects of any type, similar to `java.lang.Object` in Java**
 
-* `std::any_cast`用于将`any`对象转换成对应的类型。若类型错误则会抛出`std::bad_any_cast`
+* `std::any_cast` is used to convert an `any` object to the corresponding type. If the type is incorrect, it will throw `std::bad_any_cast`
 
-**其实现方式也很直观，在堆上分配内存，用该分配的内存存储拷贝后的对象**
+**Its implementation is also straightforward: it allocates memory on the heap and stores the copied object in that allocated memory**
 
 ```cpp
 #include <any>
@@ -552,10 +552,10 @@ int main() {
 
 # 3 atomic
 
-`compare_exchange_strong(T& expected_value, T new_value)`方法的第一个参数是个左值
+The first parameter of the `compare_exchange_strong(T& expected_value, T new_value)` method is an lvalue
 
-* 当前值与期望值`expected_value`相等时，修改当前值为设定值`new_value`，返回true
-* 当前值与期望值`expected_value`不等时，将期望值修改为当前值，返回false（这样更加方便循环，否则还得手动再读一次）
+* When the current value is equal to the expected value `expected_value`, it sets the current value to `new_value` and returns true
+* When the current value is not equal to the expected value `expected_value`, it updates the expected value to the current value and returns false (this makes looping more convenient, otherwise you would have to read it again manually)
 
 ```c++
 std::atomic_bool flag = false;
@@ -572,11 +572,11 @@ result: 1, flag: 1, expected: 0
 result: 0, flag: 1, expected: 1
 ```
 
-**`compare_exchange_weak(T& expected_value, T new_value)`方法与`strong`版本基本相同，唯一的区别是`weak`版本允许偶然出乎意料的返回（相等时却返回了false），在大部分场景中，这种意外是可以接受的，通常比`strong`版本有更高的性能**
+**The `compare_exchange_weak(T& expected_value, T new_value)` method is basically the same as the `strong` version, with the only difference being that the `weak` version allows occasional spurious failures (returning false even when they are equal). In most cases, such failures are acceptable and the `weak` version usually has better performance than the `strong` version.**
 
 ## 3.1 std::memory_order
 
-这是个枚举类型，包含6个枚举值
+This is an enum type that contains 6 enumerators.
 
 * `memory_order_relaxed`
 * `memory_order_consume`
@@ -587,35 +587,35 @@ result: 0, flag: 1, expected: 1
 
 ### 3.1.1 Sequential Consistency Ordering
 
-`memory_order_seq_cst`属于这种内存模型
+`memory_order_seq_cst` belongs to this memory model.
 
-`SC`作为默认的内存序，是因为它意味着将程序看做是一个简单的序列。如果对于一个原子变量的操作都是顺序一致的，那么多线程程序的行为就像是这些操作都以一种特定顺序被单线程程序执行
+`SC` is the default memory order because it treats the program as a simple sequence. If operations on an atomic variable are sequentially consistent, then the behavior of a multithreaded program appears as if these operations were executed in a specific order by a single-threaded program.
 
-**该原子操作前后的读写（包括非原子的读写操作）不能跨过该操作乱序；该原子操作之前的写操作（包括非原子的写操作）都能被所有线程观察到**
+**Reads and writes before and after this atomic operation (including non-atomic reads and writes) cannot be reordered across this operation; all write operations before this atomic operation (including non-atomic writes) can be observed by all threads.**
 
 ### 3.1.2 Relaxed Ordering
 
-`memory_order_relaxed`属于这种内存模型
+`memory_order_relaxed` belongs to this memory model.
 
-* 不满足`atomic-write happens-before atomic-read`的规则
-* 同一个线程内，同一个原子变量的多个操作不可重排
-* 同一个线程内，不同原子变量之间的操作可以重排（x86不允许这么做）
-* 同一个线程内，`normal write`和`atomic write`允许重排（x86不允许这么做）
-* 同一个线程内，`normal read`和`atomic read`允许重排（x86不允许这么做）
-* **唯一能保证的是，不同线程看到的该变量的修改顺序是一致的**
+* Does not satisfy the `atomic-write happens-before atomic-read` rule
+* Multiple operations on the same atomic variable within the same thread cannot be reordered
+* Operations on different atomic variables within the same thread can be reordered (x86 does not allow this)
+* `Normal write` and `atomic write` within the same thread can be reordered (x86 does not allow this)
+* `Normal read` and `atomic read` within the same thread can be reordered (x86 does not allow this)
+* **The only guarantee is that different threads see modifications to the variable in the same order**
 
 ### 3.1.3 Acquire-Release Ordering
 
-`memory_order_release`、`memory_order_acquire`、`memory_order_acq_rel`属于这种内存模型
+`memory_order_release`, `memory_order_acquire`, and `memory_order_acq_rel` belong to this memory model.
 
-`memory_order_release`用于写操作`store`，`memory_order_acquire`用于读操作`load`
+`memory_order_release` is used for write operations (`store`), and `memory_order_acquire` is used for read operations (`load`).
 
-* `memory_order_release`「原子操作之前的读写（包括非原子的读写）」不能往后乱序；并且之前的写操作（包括非原子的写操作），会被使用`acquire/consume`的线程观察到，这里要注意它和`seq_cst`不同的是只有相关的线程才能观察到写变化，所谓相关线程就是使用`acquire`或`consume`模式加载同一个共享变量的线程；而`seq_cst`是所有线程都观察到了
-* `memory_order_acquire`「原子操作之后的读写」不能往前乱序；它能看到`release`线程在调用`load`之前的那些写操作
-* `memory_order_acq_rel`是`memory_order_release`与`memory_order_acquire`的合并，前后的读写都是不能跨过这个原子操作，但仅相关的线程能看到前面写的变化
-* `memory_order_consume`和`memory_order_acquire`比较接近，也是和`memory_order_release`一起使用的；和`memory_order_acquire`不一样的地方是加了一个限定条件：依赖于该读操作的后续读写不能往前乱序；它可以看到release线程在调用load之前那些依赖的写操作，依赖于的意思是和该共享变量有关的写操作
+* `memory_order_release` ensures that "reads and writes before the atomic operation (including non-atomic reads and writes)" cannot be reordered after it; and previous writes (including non-atomic writes) can be observed by threads using `acquire/consume`. Note that unlike `seq_cst`, only related threads can observe these write changes. Related threads are those that load the same shared variable using `acquire` or `consume`; `seq_cst` is observed by all threads.
+* `memory_order_acquire` ensures that "reads and writes after the atomic operation" cannot be reordered before it; it can see the write operations performed by the releasing thread before calling `load`.
+* `memory_order_acq_rel` combines `memory_order_release` and `memory_order_acquire`; reads and writes before and after this atomic operation cannot cross it, but only related threads can see the previous writes.
+* `memory_order_consume` is similar to `memory_order_acquire` and is used with `memory_order_release`; the difference is that it imposes a restriction: subsequent reads and writes that depend on this read cannot be reordered before it. It can see dependent writes performed by the releasing thread before the `load`, where "dependent" means writes related to the shared variable.
 
-看个例子：
+Here's an example:
 
 ```
 -Thread 1-
@@ -634,18 +634,18 @@ result: 0, flag: 1, expected: 1
     assert(m == 1);
 ```
 
-* 线程2的断言会成功，因为线程1对`n`和`m`在store之前修改；线程2在`load`之后，可以观察到`m`的修改
-* 但线程3的断言不一定会成功，因为`m`是和`load/store`操作不相关的变量，线程3不一定能观察看到
+* The assertion in thread 2 will succeed because thread 1 modified `n` and `m` before the store; after the `load`, thread 2 can observe the modification of `m`.
+* However, the assertion in thread 3 may not succeed because `m` is a variable unrelated to the `load/store` operation, so thread 3 may not observe it.
 
 # 4 chrono
 
 ## 4.1 clock
 
-**三种时钟：**
+**Three types of clocks:**
 
-1. `steady_clock`：是单调的时钟。其绝对值无意义，只会增长，适合用于记录程序耗时。
-1. `system_clock`：是系统的时钟，且系统的时钟可以修改，甚至可以网络对时。所以用系统时间计算时间差可能不准
-1. `high_resolution_clock`：是当前系统能够提供的最高精度的时钟。它也是不可以修改的。相当于`steady_clock`的高精度版本
+1. `steady_clock`: A monotonic clock. Its absolute value is meaningless; it only increases, making it suitable for measuring program duration.
+1. `system_clock`: The system clock, which can be modified and synchronized over the network. Therefore, calculating time differences using system time may be inaccurate.
+1. `high_resolution_clock`: The highest precision clock that the system can provide. It is also not modifiable and is essentially a high-precision version of `steady_clock`.
 
 ```cpp
 auto start = std::chrono::steady_clock::now();
@@ -769,8 +769,8 @@ int main() {
 
 # 7 functional
 
-1. `std::less`, `std::greater`, `std::less_equal`, `std::greater_equal`: Comparator
-1. `std::function`：其功能类似于函数指针，在需要函数指针的地方，可以传入`std::function`类型的对象（不是指针）
+1. `std::less`, `std::greater`, `std::less_equal`, `std::greater_equal`: Comparators
+1. `std::function`: Functions similarly to a function pointer; in places where a function pointer is needed, you can pass an object of type `std::function` (not a pointer)
 1. `std::bind`
 1. `std::hash`: Function object, use it like this `std::hash<int>()(5)`
 1. `std::mem_fn`
@@ -940,44 +940,44 @@ Value at position 3 from the end: 4
 
 ## 13.1 std::shared_ptr
 
-**类型转换**
+**Type case:**
 
 * `std::static_pointer_cast`
 * `std::dynamic_pointer_cast`
 * `std::const_pointer_cast`
 * `std::reinterpret_pointer_cast`
 
-**只在函数使用指针，但并不保存对象内容**
+**Only use the pointer within the function without storing the object content**
 
-假如我们只需要在函数中，用这个对象处理一些事情，但不打算涉及其生命周期的管理，也不打算通过函数传参延长`shared_ptr `的生命周期。对于这种情况，可以使用`raw pointer`或者`const shared_ptr&`
+If we only need to use the object within the function for some operations, but do not intend to manage its lifetime or extend the `shared_ptr` lifetime through function parameters, we can use a `raw pointer` or a `const shared_ptr&` in this case.
 
 ```c++
 void func(Widget*);
-// 不发生拷贝，引用计数未增加
+// No copy occurs, reference count is not increased
 void func(const shared_ptr<Widget>&)
 ```
 
-**在函数中保存智能指针**
+**Storing a smart pointer in a function**
 
-假如我们需要在函数中把这个智能指针保存起来，这个时候建议直接传值
+If we need to store the smart pointer within the function, it is recommended to pass it by value.
 
 ```c++
-// 传参时发生拷贝，引用计数增加
+// A copy occurs when passing the argument, and the reference count increases
 void func(std::shared_ptr<Widget> ptr);
 ```
 
-这样的话，外部传过来值的时候，可以选择`move`或者赋值。函数内部直接把这个对象通过`move`的方式保存起来
+In this case, when a value is passed from outside, you can choose to `move` it or assign it. Inside the function, you can directly store this object using `move`.
 
 ## 13.2 std::enable_shared_from_this
 
-**`std::enable_shared_from_this`能让一个由`std::shared_ptr`管理的对象，安全地生成其他额外的`std::shared_ptr`实例，原实例和新生成的示例共享所有权**
+**`std::enable_shared_from_this` allows an object managed by a `std::shared_ptr` to safely create additional `std::shared_ptr` instances, sharing ownership with the original instance**
 
-* 只能通过`std::make_shared`来创建实例（不能用`new`），否则会报错
-* 普通对象（非只能指针管理）调用`std::enable_shared_from_this::shared_from_this`方法，也会报错
+* Instances must be created via `std::make_shared` (cannot use `new`), otherwise an error occurs
+* Calling `std::enable_shared_from_this::shared_from_this` on a regular object (not managed by a smart pointer) will also result in an error
 
-**有什么用途？当你持有的是某个对象的裸指针时（该对象的生命周期由智能指针管理），但此时你又想获取该对象的智能指针，此时就需要依赖`std::enable_shared_from_this`**
+**Use case:** When you hold a raw pointer to an object (whose lifetime is managed by a smart pointer) but want to obtain a `shared_ptr` to that object, you need to rely on `std::enable_shared_from_this`
 
-* 不能将`this`直接放入某个`std::shared_ptr`中，这样会导致`delete`野指针
+* You cannot directly put `this` into a `std::shared_ptr`, as this would lead to a dangling pointer on deletion
 
 ```cpp
 class Demo : public std::enable_shared_from_this<Demo> {
@@ -994,7 +994,7 @@ int main() {
 
 ## 13.3 std::unique_ptr
 
-* `release`是指让出控制权，不再管理生命周期，而不是释放。要释放的话可以用`reset`方法，或者直接赋值成`nullptr`
+* `release` means relinquishing control and no longer managing the object's lifetime, not deleting it. To actually release the object, you can use the `reset` method or directly assign `nullptr`.
 
 ```cpp
 #include <iostream>
@@ -1028,7 +1028,7 @@ int main(void) {
 
 ## 13.4 std::weak_ptr
 
-用于指向由`std::shared_ptr`管理的对象，但不负责管理改对象的生命周期。也就是说，它指向的对象可能已经被析构了
+Used to point to an object managed by `std::shared_ptr` but does not manage the object's lifetime. In other words, the object it points to may have already been destroyed.
 
 ```cpp
 #include <iostream>
@@ -1100,10 +1100,10 @@ int main() {
 
 # 15 mutex
 
-1. `std::mutex`：不可重入的互斥量
-1. `std::recursive_mutex`：可重入的互斥量
+1. `std::mutex`: Non-reentrant mutex
+1. `std::recursive_mutex`: Reentrant mutex
 1. `std::lock_guard`
-    * 直接使用`std::mutex`，如下面的例子。如果`getVar`方法抛出异常了，那么就会导致`m.unlock()`方法无法执行，可能会造成死锁
+    * Directly used with `std::mutex`, as in the example below. If the `getVar` method throws an exception, `m.unlock()` will not be executed, which may lead to a deadlock.
     ```c++
     mutex m;
     m.lock();
@@ -1111,7 +1111,7 @@ int main() {
     m.unlock();
     ```
 
-    * 一种优雅的方式是使用`std::lock_guard`，该对象的析构方法中会进行锁的释放，需要将串行部分放到一个`{}`中，当退出该作用域时，`std::lock_guard`对象会析构，并释放锁，在任何正常或异常情况下都能够释放锁
+    * An elegant way is to use `std::lock_guard`, whose destructor releases the lock. You need to enclose the critical section within `{}`. When exiting this scope, the `std::lock_guard` object will be destructed and release the lock, ensuring the lock is released in both normal and exceptional cases.
 
     ```c++
     {
@@ -1121,11 +1121,11 @@ int main() {
     }
     ```
 
-1. `std::unique_lock`：比`std::lock_guard`提供更多的操作，允许手动加锁解锁
+1. `std::unique_lock`: Provides more operations than `std::lock_guard`, allowing manual lock and unlock.
 1. `std::condition_variable`
-    * 需要链接`libpthread`库，否则`wait`方法会立即唤醒，且编译不会报错
-    * 调用`wait`方法时，必须获取监视器。而调用`notify`方法时，无需获取监视器
-    * `wait`方法被唤醒后，仍然处于获取监视器的状态
+    * Requires linking with the `libpthread` library; otherwise, the `wait` method will wake up immediately, and compilation will not report an error.
+    * When calling the `wait` method, the monitor must be acquired. When calling `notify`, acquiring the monitor is not required.
+    * After being awakened by `wait`, the thread still holds the monitor.
     ```cpp
     std::mutex m;
     std::condition_variable cv;
@@ -1181,7 +1181,7 @@ int main() {
     }
     ```
 
-1. `std::iota`：给指定区间以递增的方式赋值
+1. `std::iota`: Assigns values to a specified range in an increasing order.
     ```cpp
     #include <algorithm>
     #include <iostream>
@@ -1281,11 +1281,11 @@ int main() {
 # 19 random
 
 1. `std::default_random_engine`
-1. `std::uniform_int_distribution`：左闭右闭区间
+1. `std::uniform_int_distribution`: closed interval [inclusive on both ends]
 
 # 20 ranges
 
-`ranges`可以看做是对于`algorithm`中算法的封装，可以省去`begin()`、`end()`等调用，如下
+`ranges` can be seen as a wrapper around the algorithms in `algorithm`, eliminating the need to call `begin()`, `end()`, etc., as shown below:
 
 ```cpp
 #include <stdint.h>
@@ -1482,8 +1482,8 @@ Matching member functions:
 
 ## 26.1 How to set thread name
 
-1. `pthread_setname_np/pthread_getname_np`，需要引入头文件`<pthread.h>`，`np`表示`non-portable`，即平台相关
-1. `prctl(PR_GET_NAME, name)/prctl(PR_SET_NAME, name)`，需要引入头文件`<sys/prctl.h>`
+1. `pthread_setname_np/pthread_getname_np`: Requires including the `<pthread.h>` header. `np` stands for `non-portable`, meaning platform-specific.
+1. `prctl(PR_GET_NAME, name)/prctl(PR_SET_NAME, name)`: Requires including the `<sys/prctl.h>` header.
 
 ```cpp
 #include <pthread.h>
@@ -1549,13 +1549,13 @@ int main() {
 
 ## 26.2 How to set thread affinity
 
-下面示例代码用于测试各个CPU的性能
+The example code below is used to test the performance of each CPU.
 
-* `CPU_ZERO`：初始化
-* `CPU_SET`：添加与某个CPU的亲和性，可以多次设置不同的CPU
-* `CPU_ISSET`：判断是否与某个CPU存在亲和性
-* `pthread_setaffinity_np`：设置某个线程的CPU亲和性
-* `pthread_getaffinity_np`：获取某个线程的CPU亲和性
+* `CPU_ZERO`: Initialize
+* `CPU_SET`: Add affinity to a specific CPU; can be called multiple times for different CPUs
+* `CPU_ISSET`: Check if there is affinity to a specific CPU
+* `pthread_setaffinity_np`: Set the CPU affinity of a thread
+* `pthread_getaffinity_np`: Get the CPU affinity of a thread
 
 ```cpp
 #include <pthread.h>
@@ -1593,7 +1593,7 @@ int main(int argc, char* argv[]) {
 # 27 tuple
 
 1. `std::tuple`
-1. `std::apply`：触发方法调用，其中，参数被分装在一个`tuple`中
+1. `std::apply`: Invokes a function where the arguments are packaged in a `tuple`
     ```cpp
     #include <iostream>
     #include <tuple>
@@ -1752,7 +1752,7 @@ int main(int argc, char* argv[]) {
 
 ## 28.14 Alias
 
-`using template`，用于简化上述模板。例如`std::enable_if_t`等价于`typename enable_if<b,T>::type`
+`using template`: Used to simplify the above templates. For example, `std::enable_if_t` is equivalent to `typename enable_if<b, T>::type`
 
 1. `std::enable_if_t`
 1. `std::conditional_t`
@@ -1825,7 +1825,7 @@ int main() {
 
 ## 28.16 std::forward
 
-`std::forward`主要用于实现模板的完美转发：因为对于一个变量而言，无论该变量的类型是左值引用还是右值引用，变量本身都是左值，如果直接将变量传递到下一个方法中，那么一定是按照左值来匹配重载函数的，而`std::forward`就是为了解决这个问题。请看下面这个例子：
+`std::forward` is mainly used to implement perfect forwarding: For a variable, regardless of whether its type is an lvalue reference or rvalue reference, the variable itself is an lvalue. If the variable is passed directly to another function, it will always match the overload as an lvalue. `std::forward` is used to solve this problem. See the example below:
 
 ```cpp
 #include <iostream>
@@ -1888,7 +1888,7 @@ int main() {
 }
 ```
 
-**输出如下：**
+**Output:**
 
 ```
 dispatch_without_forward(value) -> left reference version
@@ -1916,16 +1916,16 @@ func(std::forward<int>(1)) -> right reference version
 func(std::forward<int&&>(1)) -> right reference version
 ```
 
-**在使用`std::forward`时，模板实参都是需要显式指定的，而不是推断出来的**
+**When using `std::forward`, the template arguments must be explicitly specified, not deduced.**
 
-**`std::forward`标准库的实现如下：**
+**The standard library implementation of `std::forward` is as follows:**
 
-* 如果模板实参是左值、左值引用或右值引用，那么匹配第一个方法
-    * 左值：`_Tp&&`得到的是个右值（很奇怪吧，因为一般都不是这么用的）
-    * **左值引用：`_Tp&&`得到的是个左值引用（完美转发会用到）**
-    * **右值应用：`_Tp&&`得到的是个右值引用（完美转发会用到）**
-* 如果模板实参是左值或右值，那么匹配的是第二个方法
-    * 右值：`_Tp&&`得到的是个右值
+* If the template argument is an lvalue, lvalue reference, or rvalue reference, it matches the first overload:
+    * Lvalue: `_Tp&&` results in an rvalue (strange, because this is generally not how it's used)
+    * **Lvalue reference: `_Tp&&` results in an lvalue reference (used in perfect forwarding)**
+    * **Rvalue reference: `_Tp&&` results in an rvalue reference (used in perfect forwarding)**
+* If the template argument is an lvalue or rvalue, it matches the second overload:
+    * Rvalue: `_Tp&&` results in an rvalue
 ```cpp
   template<typename _Tp>
     constexpr _Tp&&
@@ -1944,10 +1944,10 @@ func(std::forward<int&&>(1)) -> right reference version
 
 ### 28.16.1 forwarding reference
 
-**当且仅当`T`是函数模板的模板类型形参时，`T&&`才能称为`forwarding reference`，而其他任何形式，都不是`forwarding reference`。例如如下示例代码：**
+**A `T&&` is called a forwarding reference if and only if `T` is a template type parameter of a function template; any other form is not a forwarding reference. For example:**
 
-* **`std::vector<T>&&`就不是`forwarding reference`，而只是一个`r-value reference`**
-* **`C(T&& t)`中的`T&&`也不是`forwarding reference`，因为类型`T`在实例化`C`时，已经可以确定了，无需推导**
+* **`std::vector<T>&&` is not a forwarding reference, but just an rvalue reference**
+* **`T&&` in `C(T&& t)` is also not a forwarding reference, because the type `T` is already determined when `C` is instantiated, no deduction is needed**
 
 ```cpp
 #include <type_traits>
@@ -1985,7 +1985,7 @@ struct C {
 };
 ```
 
-**上述程序正确的写法是：**
+**The correct way to write the above program is:**
 
 ```cpp
 #include <type_traits>
@@ -2117,10 +2117,10 @@ int main() {
     }
     ```
 
-1. `std::pair`：本质上，它是`std::tuple`的一个特例
-1. `std::declval`：用来配合`decltype`进行类型推导，其实现原理如下：
-    * `__declval`是一个用于返回指定类型的方法（只有定义无实现，因为只用于类型推导）
-    * `_Tp __declval(long);`版本用于`void`这种类型，因为`void`没有引用类型
+1. `std::pair`: Essentially, it is a special case of `std::tuple`
+1. `std::declval`: Used with `decltype` for type deduction. Its implementation principle is as follows:
+    * `__declval` is a method used to return a specified type (only defined without implementation, as it is only used for type deduction)
+    * The `_Tp __declval(long);` version is used for types like `void`, because `void` has no reference type
     ```cpp
     /// @cond undocumented
     template <typename _Tp, typename _Up = _Tp&&>
@@ -2134,7 +2134,7 @@ int main() {
     auto declval() noexcept -> decltype(__declval<_Tp>(0));
     ```
 
-    * 示例如下：
+    * Demo:
     ```cpp
     #include <iostream>
     #include <type_traits>
@@ -2170,7 +2170,7 @@ int main() {
 
 ## 31.1 How to return pair containing reference type
 
-示例如下：
+Demo:
 
 ```cpp
 #include <algorithm>
@@ -2213,8 +2213,8 @@ int main() {
 }
 ```
 
-* 首先，我们先看一下`std::make_pair`的源码，如下：
-    * `__decay_and_strip`：对于`std::reference_wrapper`，会除去`std::reference_wrapper`的封装，并返回引用类型；对于其他类型，则返回非引用类型
+* First, let's look at the source code of `std::make_pair`:
+    * `__decay_and_strip`: For `std::reference_wrapper`, it removes the wrapper and returns a reference type; for other types, it returns a non-reference type
     ```cpp
     template<typename _T1, typename _T2>
     constexpr pair<typename __decay_and_strip<_T1>::__type,
@@ -2228,17 +2228,17 @@ int main() {
     }
     ```
 
-* `get_data_1`：错误方式。因为`std::make_pair`会创建类型为`std::pair<std::vector<int>, int>`的对象，然后再转型成`std::pair<const std::vector<int>&, int>`，于是引用会错误初始化（绑定到了临时对象），导致后续错误
-* `get_data_2`：正确方式。由于`std::ref`（返回类型是`std::reference_wrapper`）的存在，`std::make_pair`会创建类型为`std::pair<const std::vector<int>&, int>`的对象，此时引用会正确初始化
-* `get_data_3`：正确方式，不用`std::make_pair`，引用会正确初始化
+* `get_data_1`: Incorrect approach. `std::make_pair` creates an object of type `std::pair<std::vector<int>, int>`, which is then cast to `std::pair<const std::vector<int>&, int>`. The reference is incorrectly initialized (bound to a temporary), causing subsequent errors.
+* `get_data_2`: Correct approach. With `std::ref` (which returns a `std::reference_wrapper`), `std::make_pair` creates an object of type `std::pair<const std::vector<int>&, int>`, and the reference is correctly initialized.
+* `get_data_3`: Correct approach. Without using `std::make_pair`, the reference is correctly initialized.
 
 # 32 variant
 
 1. `std::visit`
-1. `std::variant`：类型安全的union。只允许以正确的类型进行访问
-    * `std::get<{type}>`：通过指定类型访问
-    * `std::get<{index}>`：通过指定序号访问
-    * `std::variant::index()`：记录了当前存类型的下标
+1. `std::variant`: A type-safe union that only allows access with the correct type
+    * `std::get<{type}>`: Access by specifying the type
+    * `std::get<{index}>`: Access by specifying the index
+    * `std::variant::index()`: Records the index of the currently stored type
 
 ```cpp
 #include <iostream>
@@ -2262,7 +2262,7 @@ int main() {
 
 ## 32.1 Dynamic Binding
 
-`std::variant`结合`std::visit`可以实现动态分派，示例代码如下：
+`std::variant` combined with `std::visit` can achieve dynamic dispatch. Example code is as follows:
 
 ```cpp
 #include <iostream>
@@ -2291,19 +2291,19 @@ int main() {
 }
 ```
 
-**大致实现原理如下：**
+**The general implementation principle is as follows:**
 
-* 赋值时，会维护`std::variant::index`属性
-* 每个`Visitor,variant`对会生成一个`vtable`，里面记录了所有的函数指针，并按照`std::variant`各个类型声明的顺序排序
-* 在用`std::visit`进行访问时，会用`std::variant::index`找到`vtable`中的函数指针，并进行调用
+* During assignment, the `std::variant::index` property is maintained.
+* Each `Visitor, variant` pair generates a `vtable` that stores all function pointers, ordered according to the declaration order of types in the `std::variant`.
+* When accessing with `std::visit`, the function pointer in the `vtable` is located using `std::variant::index` and then invoked.
 
 # 33 Containers
 
-1. `<vector>`：其内部就是一个数组。当进行扩容缩容时，会进行数据的拷贝或移动，因此要求对应的类型至少拥有拷贝构造函数和移动构造函数中的一个。例如，`std::vector<std::atomic_bool>`是无法调用`push_back`或者`emplace_back`来增加元素的
+1. `<vector>`: Internally, it is an array. When resizing or shrinking, data is copied or moved, so the element type must have at least a copy constructor or a move constructor. For example, `std::vector<std::atomic_bool>` cannot use `push_back` or `emplace_back` to add elements.
 1. `<array>`
 1. `<list>`
 1. `<queue>`
-1. `<deque>`：通过二级数组实现，第一级数组用于存放数据，第二级数组用于存放第一级数组的信息（首地址等）。当需要扩容时，会增加一个新的一级数组，而原有数据是不需要移动的
+1. `<deque>`: Implemented using a two-level array. The first-level array stores the data, and the second-level array stores information about the first-level array (such as starting addresses). When expansion is needed, a new first-level array is added, and the existing data does not need to be moved.
 1. `<map>`
 1. `<unordered_map>`
 1. `<set>`
@@ -2311,10 +2311,10 @@ int main() {
 
 ## 33.1 Tips
 
-1. `std::map`或者`std::set`用下标访问后，即便访问前元素不存在，也会插入一个默认值。因此下标访问是非`const`的
-1. 容器在扩容时，调用的是元素的拷贝构造函数
-1. `std::vector<T> v(n)`会生成`n`个对应元素的默认值，而不是起到预留`n`个元素的空间的作用
-1. 不要将`end`方法返回的迭代器传入`erase`方法
+1. Accessing `std::map` or `std::set` with an index will insert a default value if the element does not exist, so index access is non-`const`.
+1. When a container expands, the element's copy constructor is called.
+1. `std::vector<T> v(n)` creates `n` default-initialized elements, rather than reserving space for `n` elements.
+1. Do not pass the iterator returned by the `end` method to the `erase` method.
 
 # 34 SIMD
 
@@ -2329,10 +2329,10 @@ int main() {
 1. `<nmmintrin.h>`：SSE4.2
 1. `<ammintrin.h>`：SSE4A
 1. `<wmmintrin.h>`：AES
-1. **`<immintrin.h>`**：AVX, AVX2, FMA
-    * 一般用这个即可，包含上述其他的头文件
+1. **`<immintrin.h>`**: AVX, AVX2, FMA
+    * Generally, this is sufficient as it includes the other headers mentioned above.
 
-**注意，`gcc`、`clang`默认禁止使用向量化相关的类型以及操作，在使用上述头文件时，需要指定对应的编译参数：**
+**Note:** `gcc` and `clang` by default prohibit the use of vectorized types and operations. When using the above headers, the corresponding compilation flags need to be specified:
 
 * `-mmmx`
 * `-msse`
@@ -2406,13 +2406,13 @@ Since `C++` is a superset of `C`, the standard library of `C` has also been adde
 
 ## 35.1 csignal
 
-各种信号都定义在`signum.h`这个头文件中
+All signals are defined in the `signum.h` header file.
 
-下面的示例代码用于捕获`OOM`并输出当时的进程状态信息
+The following example code is used to catch `OOM` and output the process status at that time:
 
-* 化级别用`O0`，否则`v.reserve`会被优化掉
-* `ulimit -v 1000000`：设置进程最大内存
-* `./main <size>`：不断增大`size`，可以发现`VmPeak`和`VmSize`不断增大。继续增大`size`，当触发`OOM`时，`VmPeak`和`VmSize`这两个值都很小，不会包含那个造成`OOM`的对象的内存
+* Use optimization level `O0`, otherwise `v.reserve` may be optimized away
+* `ulimit -v 1000000`: Sets the maximum memory for the process
+* `./main <size>`: Continuously increase `size`, and you can observe that `VmPeak` and `VmSize` keep increasing. When `OOM` is triggered, both `VmPeak` and `VmSize` are small and do not include the memory of the object that caused the `OOM`.
 
 ```cpp
 #include <csignal>
@@ -2457,7 +2457,15 @@ int main(int argc, char* argv[]) {
 }
 ```
 
-## 35.2 Execute Command
+## 35.2 cstring
+
+* `std::strcmp`
+* `std::strcpy`
+* `std::memcmp`
+* `std::memcpy`
+* `std::memmove`
+
+## 35.3 Execute Command
 
 ```cpp
 #include <cstdlib>

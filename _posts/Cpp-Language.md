@@ -2438,6 +2438,49 @@ void *buf = // 在这里为buf分配内存
 Class *pc = new (buf) Class();  
 ```
 
+## 3.13 enum
+
+In C++, both `enum` and `enum class` are used to define enumerations, but they differ in scope, type safety, and implicit conversions.
+
+Key characteristics of `enum`:
+
+* **Unscoped**: The enumerator names (Red, Green, Blue) are injected into the surrounding scope.
+* **Implicit conversions**: Enumerator values can implicitly convert to int (or their underlying type).
+* **Possible name clashes**: Because they go into the outer scope, different enums can't reuse the same names safely.
+
+Example of `enum`:
+
+```cpp
+enum Color {
+    Red = 0, // 0
+    Green,   // 1
+    Blue     // 2
+};
+
+Color c = Red; // OK
+int x = Green; // OK (implicitly converts to int)
+```
+
+**Key characteristics of `enum class`**:
+
+* **Scoped**: Enumerator names are placed inside the enum’s scope (Color::Red), so no name clashes.
+* **Strongly typed**: They do not implicitly convert to int.
+* **Type-safe**: Can't be mixed with other enums or integers without an explicit cast.
+
+Example of `enum class`:
+
+```cpp
+enum class Color {
+    Red = 0, // 0
+    Green,   // 1
+    Blue     // 2
+};
+
+Color c = Color::Red;                   // Must qualify the name
+int x = c;                              // ❌ Error — no implicit conversion to int
+int y = static_cast<int>(Color::Green); // ✅ explicit cast
+```
+
 # 4 Syntax
 
 ## 4.1 Initialization
@@ -6433,7 +6476,105 @@ Widget()
 Widget(Widget&&)
 ```
 
-## 7.5 Implicit Type Conversions
+## 7.5 Type Erasure
+
+Type erasure is a programming technique that lets you hide ("erase") concrete types behind a single abstract interface while preserving value semantics and often runtime polymorphism. It combines templates (compile-time flexibility) with a small amount of runtime indirection (virtual dispatch or function pointers) to provide a uniform API for many different types.
+
+**Usages in std libraries:**
+
+* `std::function`: Type erases callable objects.
+* `std::any`: Type erases any type.
+* `std::shared_ptr<void>`/`std::unique_ptr<void, Deleter>`: Smart pointers can erase the exact type being managed, but still know how to delete it.
+* `std::thread`: The constructor takes any callable, then type erases it for execution.
+
+**Common Ways to Achieve Type Erasure:**
+
+* Using Templates + Virtual Functions (Classic OOP Polymorphism)
+    ```cpp
+    #include <iostream>
+    #include <memory>
+    #include <vector>
+
+    class Drawable {
+    public:
+        // public interface
+        void draw() const { ptr_->draw(); }
+
+        // constructors from any type that has draw() const
+        template <typename T>
+        Drawable(T x) : ptr_(std::make_unique<Wrapper<T>>(std::move(x))) {}
+
+    private:
+        struct Interface {
+            virtual ~Interface() = default;
+            virtual void draw() const = 0;
+        };
+
+        template <typename T>
+        struct Wrapper : Interface {
+            T data;
+            Wrapper(T x) : data(std::move(x)) {}
+            void draw() const override { data.draw(); }
+        };
+
+        std::unique_ptr<Interface> ptr_;
+    };
+
+    struct Circle {
+        void draw() const { std::cout << "Circle\n"; }
+    };
+    struct Sprite {
+        void draw() const { std::cout << "Sprite\n"; }
+    };
+
+    int main() {
+        std::vector<Drawable> items;
+        items.emplace_back(Circle{});
+        items.emplace_back(Sprite{});
+
+        for (const auto& d : items) d.draw();
+    }
+    ```
+
+* Using Function Pointers (like `std::function`)
+    ```cpp
+    #include <iostream>
+    #include <memory>
+    #include <utility>
+
+    class AnyCallable {
+        struct Concept {
+            void* object;
+            void (*invoke)(void*);
+            void (*destroy)(void*);
+        };
+
+        Concept c;
+
+    public:
+        template <typename F>
+        AnyCallable(F f) {
+            using Fn = std::decay_t<F>;
+            Fn* fn = new Fn(std::move(f));
+            c.object = fn;
+            c.invoke = [](void* obj) { (*static_cast<Fn*>(obj))(); };
+            c.destroy = [](void* obj) { delete static_cast<Fn*>(obj); };
+        }
+
+        void operator()() { c.invoke(c.object); }
+
+        ~AnyCallable() { c.destroy(c.object); }
+    };
+
+    int main() {
+        AnyCallable f1 = [] { std::cout << "Hello\n"; };
+        AnyCallable f2 = [] { std::cout << "World\n"; };
+        f1(); // Hello
+        f2(); // World
+    }
+    ```
+
+## 7.6 Implicit Type Conversions
 
 **Implicit conversion sequence consists of the following, in this order:**
 

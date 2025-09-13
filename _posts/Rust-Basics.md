@@ -139,6 +139,23 @@ fn only_on_linux() {
 
 Marks a test function.
 
+```rust
+pub fn add(left: u64, right: u64) -> u64 {
+    left + right
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn it_works() {
+        let result = add(2, 2);
+        assert_eq!(result, 4);
+    }
+}
+```
+
 #### 1.4.1.6 Linkage & FFI (Interfacing with C): no_mangle, repr
 
 * `#[no_mangle]`: Prevents Rust from renaming a function.
@@ -224,6 +241,32 @@ In Rust, the prelude is a small set of commonly used types, traits, and macros f
 fn main() {
     let b = Box::new(5);
     println!("b = {b}");
+}
+```
+
+## 2.2 std::sync::Arc
+
+Arc means Atomic Reference Counted.
+
+```rust
+use std::sync::Arc;
+use std::thread;
+
+fn main() {
+    let data = Arc::new(vec![1, 2, 3]);
+
+    let mut handles = vec![];
+    for i in 0..3 {
+        let data_ref = Arc::clone(&data); // increase refcount atomically
+        let handle = thread::spawn(move || {
+            println!("Thread {} sees: {:?}", i, data_ref);
+        });
+        handles.push(handle);
+    }
+
+    for handle in handles {
+        handle.join().unwrap();
+    }
 }
 ```
 

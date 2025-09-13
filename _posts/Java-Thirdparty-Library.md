@@ -139,7 +139,9 @@ categories:
 #### 2.1.3.1 Command-Line Options
 
 * Specify configuration path: `-Dlog4j.configurationFile=path/to/log4j2.xml`
-* Enable debug mode (refers to debug mode of `log4j2` itself)：`-Dlog4j.debug=true`
+* Explicitly sets the level of the internal StatusLogger: `-Dorg.apache.logging.log4j.simplelog.StatusLogger.level=TRACE`
+* Enable debug mode (refers to debug mode of `log4j2` itself): `-Dlog4j.debug=true`
+    * A shortcut for turning on status logging at DEBUG, useful for quick troubleshooting.
 
 #### 2.1.3.2 Logger Name Pattern
 

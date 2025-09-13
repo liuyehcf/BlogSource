@@ -2239,6 +2239,7 @@ This command is used to allow authorized users to execute programs as another us
         * `<prefix> <c-o>`: Swaps that pane with the active pane.
         * `<prefix> E`: Spread panes out evenly.
         * `<prefix> Spac`: Select next layout.
+        * `<prefix> x`: Kill the active pane.
     * **Window:**
         * `<prefix> <num>`: Change to window `<num>`.
         * `<prefix> '`: Prompt for a window index and changes to that window.
