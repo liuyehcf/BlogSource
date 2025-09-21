@@ -1386,13 +1386,17 @@ The same principles apply to querying Parquet files, as we describe below:
 
 ## 3.2 Parquet Python Utils
 
+**read_parquet.py:**
+
 ```py
 import argparse
 import os
+from urllib.parse import urlparse
 
 import pandas as pd
 import pyarrow as pa
 import pyarrow.parquet as pq
+from pyarrow import fs
 
 def parse_arguments():
     parser = argparse.ArgumentParser(description="Parquet reader using pyarrow")
@@ -1407,6 +1411,32 @@ def parse_arguments():
     )
     parser.add_argument("--summary", action="store_true", help="Print summary statistics")
     return parser.parse_args()
+
+def read_parquet_file(file_path):
+    try:
+        if file_path.startswith('hdfs://'):
+            print(f"Attempting to read file: {file_path} from hdfs filesystem")
+            parsed_url = urlparse(file_path)
+            host = parsed_url.netloc.split(':')[0] if ':' in parsed_url.netloc else parsed_url.netloc
+            port = int(parsed_url.netloc.split(':')[1]) if ':' in parsed_url.netloc else 8020
+            path = parsed_url.path
+
+            hdfs_filesystem = fs.HadoopFileSystem(
+                host=host,
+                port=port,
+                user=None,
+                kerb_ticket=None
+            )
+
+            table = pq.read_table(path, filesystem=hdfs_filesystem)
+            table = table.combine_chunks()
+            return table, hdfs_filesystem
+        else:
+            print(f"Attempting to read file: {file_path} from local filesystem")
+            table = pq.read_table(file_path)
+            return table, None
+    except Exception as e:
+        raise Exception(f"Error reading file {file_path}: {str(e)}")
 
 def show_rows(table: pa.Table, show_arg):
     try:
@@ -1438,7 +1468,7 @@ def show_rows(table: pa.Table, show_arg):
     df.index = range(start, start + length)
     print(df)
 
-def summarize(table: pa.Table, file_path: str):
+def summarize(table: pa.Table, file_path: str, hdfs_filesystem=None):
     print("Summary:")
     print(f"- File: {file_path}")
     print(f"- Total rows: {table.num_rows}")
@@ -1455,16 +1485,40 @@ def summarize(table: pa.Table, file_path: str):
         null_count = col.null_count
         print(f"  - {name}: {null_count} nulls")
 
-    print(f"- File size: {os.path.getsize(file_path)} bytes")
+    if file_path.startswith('hdfs://'):
+        if hdfs_filesystem is None:
+            hdfs_filesystem, path_in_hdfs = fs.FileSystem.from_uri(file_path)
+        else:
+            _, path_in_hdfs = fs.FileSystem.from_uri(file_path)
 
-    parquet_file = pq.ParquetFile(file_path)
-    num_row_groups = parquet_file.num_row_groups
-    print(f"- Number of row groups: {num_row_groups}")
-    prev_end = 0
-    for i in range(num_row_groups):
-        rg_meta = parquet_file.metadata.row_group(i)
-        print(f"  - Row group {i}: {rg_meta.num_rows} rows, range: [{prev_end}, {prev_end + rg_meta.num_rows})")
-        prev_end += rg_meta.num_rows
+        try:
+            file_info = hdfs_filesystem.get_file_info(path_in_hdfs)
+            file_size = file_info.size
+            print(f"- File size: {file_size} bytes")
+        except Exception as e:
+            print(f"- File size: Could not determine ({str(e)})")
+
+        try:
+            parquet_file = pq.ParquetFile(path_in_hdfs, filesystem=hdfs_filesystem)
+            num_row_groups = parquet_file.num_row_groups
+            print(f"- Number of row groups: {num_row_groups}")
+            prev_end = 0
+            for i in range(num_row_groups):
+                rg_meta = parquet_file.metadata.row_group(i)
+                print(f"  - Row group {i}: {rg_meta.num_rows} rows, range: [{prev_end}, {prev_end + rg_meta.num_rows})]")
+                prev_end += rg_meta.num_rows
+        except Exception as e:
+            print(f"- Number of row groups: Could not determine ({str(e)})")
+    else:
+        print(f"- File size: {os.path.getsize(file_path)} bytes")
+        parquet_file = pq.ParquetFile(file_path)
+        num_row_groups = parquet_file.num_row_groups
+        print(f"- Number of row groups: {num_row_groups}")
+        prev_end = 0
+        for i in range(num_row_groups):
+            rg_meta = parquet_file.metadata.row_group(i)
+            print(f"  - Row group {i}: {rg_meta.num_rows} rows, range: [{prev_end}, {prev_end + rg_meta.num_rows})]")
+            prev_end += rg_meta.num_rows
 
 if __name__ == "__main__":
     args = parse_arguments()
@@ -1474,14 +1528,28 @@ if __name__ == "__main__":
     pd.set_option("display.width", None)
     pd.set_option("display.max_colwidth", None)
 
-    table = pq.read_table(args.file)
+    hdfs_filesystem = None
+    table = None
 
-    if args.show:
-        show_rows(table, args.show)
+    try:
+        table, hdfs_filesystem = read_parquet_file(args.file)
 
-    if args.summary:
-        summarize(table, args.file)
+        if args.show:
+            show_rows(table, args.show)
+
+        if args.summary:
+            summarize(table, args.file, hdfs_filesystem)
+    finally:
+        if hdfs_filesystem is not None:
+            del hdfs_filesystem
 ```
+
+**Usage:**
+
+* `python3 read_parquet.py -f xxx.parquet --summary`
+* `python3 read_parquet.py -f xxx.parquet --show`
+* `CLASSPATH=$(${HADOOP_HOME}/bin/hadoop classpath) python3 read_parquet.py -f hdfs://192.168.0.1:8020/xxx.parquet --summary`
+* `CLASSPATH=$(${HADOOP_HOME}/bin/hadoop classpath) python3 read_parquet.py -f hdfs://192.168.0.1:8020/xxx.parquet --show`
 
 # 4 Reference
 

@@ -111,15 +111,19 @@ public class OrcDemo {
 
 # 2 Tools
 
-## 2.1 Parquet ORC Utils
+## 2.1 ORC Python Utils
+
+**read_orc.py:**
 
 ```py
 import argparse
 import os
+from urllib.parse import urlparse
 
 import pandas as pd
 import pyarrow as pa
 import pyarrow.orc as orc
+from pyarrow import fs
 
 def parse_arguments():
     parser = argparse.ArgumentParser(description="ORC reader using pyarrow")
@@ -134,6 +138,35 @@ def parse_arguments():
     )
     parser.add_argument("--summary", action="store_true", help="Print summary statistics")
     return parser.parse_args()
+
+def read_orc_file(file_path):
+    try:
+        if file_path.startswith('hdfs://'):
+            print(f"Attempting to read file: {file_path} from hdfs filesystem")
+            parsed_url = urlparse(file_path)
+            host = parsed_url.netloc.split(':')[0] if ':' in parsed_url.netloc else parsed_url.netloc
+            port = int(parsed_url.netloc.split(':')[1]) if ':' in parsed_url.netloc else 8020
+            path = parsed_url.path
+
+            hdfs_filesystem = fs.HadoopFileSystem(
+                host=host,
+                port=port,
+                user=None,
+                kerb_ticket=None
+            )
+            with hdfs_filesystem.open_input_file(path) as f:
+                reader = orc.ORCFile(f)
+                table = reader.read()
+                table = table.combine_chunks()
+            return table, hdfs_filesystem
+        else:
+            print(f"Attempting to read file: {file_path} from local filesystem")
+            with open(file_path, "rb") as f:
+                reader = orc.ORCFile(f)
+                table = reader.read()
+            return table, None
+    except Exception as e:
+        raise Exception(f"Error reading file {file_path}: {str(e)}")
 
 def show_rows(table: pa.Table, show_arg):
     try:
@@ -165,7 +198,7 @@ def show_rows(table: pa.Table, show_arg):
     df.index = range(start, start + length)
     print(df)
 
-def summarize(table: pa.Table, file_path: str):
+def summarize(table: pa.Table, file_path: str, hdfs_filesystem=None):
     print("Summary:")
     print(f"- File: {file_path}")
     print(f"- Total rows: {table.num_rows}")
@@ -182,18 +215,45 @@ def summarize(table: pa.Table, file_path: str):
         null_count = col.null_count
         print(f"  - {name}: {null_count} nulls")
 
-    print(f"- File size: {os.path.getsize(file_path)} bytes")
+    if file_path.startswith('hdfs://'):
+        if hdfs_filesystem is None:
+            hdfs_filesystem, path_in_hdfs = fs.FileSystem.from_uri(file_path)
+        else:
+            _, path_in_hdfs = fs.FileSystem.from_uri(file_path)
 
-    print("- Stripes:")
-    with open(file_path, "rb") as f:
-        reader = orc.ORCFile(f)
-        n = reader.nstripes
-        print(f"  - Total stripes: {n}")
-        prev_end = 0
-        for i in range(n):
-            stripe = reader.read_stripe(i)
-            print(f"    - Stripe {i}: {stripe.num_rows} rows, range: [{prev_end}, {prev_end + stripe.num_rows})")
-            prev_end += stripe.num_rows
+        try:
+            file_info = hdfs_filesystem.get_file_info(path_in_hdfs)
+            file_size = file_info.size
+            print(f"- File size: {file_size} bytes")
+        except Exception as e:
+            print(f"- File size: Could not determine ({str(e)})")
+
+        try:
+            with hdfs_filesystem.open_input_file(path_in_hdfs) as f:
+                reader = orc.ORCFile(f)
+                n = reader.nstripes
+                print(f"- Stripes:")
+                print(f"  - Total stripes: {n}")
+                prev_end = 0
+                for i in range(n):
+                    stripe = reader.read_stripe(i)
+                    print(f"    - Stripe {i}: {stripe.num_rows} rows, range: [{prev_end}, {prev_end + stripe.num_rows})]")
+                    prev_end += stripe.num_rows
+        except Exception as e:
+            print(f"- Stripes: Could not determine ({str(e)})")
+    else:
+        print(f"- File size: {os.path.getsize(file_path)} bytes")
+
+        print("- Stripes:")
+        with open(file_path, "rb") as f:
+            reader = orc.ORCFile(f)
+            n = reader.nstripes
+            print(f"  - Total stripes: {n}")
+            prev_end = 0
+            for i in range(n):
+                stripe = reader.read_stripe(i)
+                print(f"    - Stripe {i}: {stripe.num_rows} rows, range: [{prev_end}, {prev_end + stripe.num_rows})]")
+                prev_end += stripe.num_rows
 
 if __name__ == "__main__":
     args = parse_arguments()
@@ -203,16 +263,29 @@ if __name__ == "__main__":
     pd.set_option("display.width", None)
     pd.set_option("display.max_colwidth", None)
 
-    with open(args.file, "rb") as f:
-        reader = orc.ORCFile(f)
-        table = reader.read()
+    hdfs_filesystem = None
+    table = None
+
+    try:
+        table, hdfs_filesystem = read_orc_file(args.file)
 
         if args.show:
             show_rows(table, args.show)
 
         if args.summary:
-            summarize(table, args.file)
+            summarize(table, args.file, hdfs_filesystem)
+    finally:
+        if hdfs_filesystem is not None:
+            del hdfs_filesystem
+
 ```
+
+**Usage:**
+
+* `python3 read_orc.py -f xxx.orc --summary`
+* `python3 read_orc.py -f xxx.orc --show`
+* `CLASSPATH=$(${HADOOP_HOME}/bin/hadoop classpath) python3 read_orc.py -f hdfs://192.168.0.1:8020/xxx.orc --summary`
+* `CLASSPATH=$(${HADOOP_HOME}/bin/hadoop classpath) python3 read_orc.py -f hdfs://192.168.0.1:8020/xxx.orc --show`
 
 # 3 Tips
 

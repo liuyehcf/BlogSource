@@ -4015,9 +4015,313 @@ MapFixture/traverseByOrderedKeys    228485643 ns    228458249 ns            3
 * [程序的分支消除](https://leetcode.cn/circle/article/GSJ5XS/)
 * [只会写 if 的菜炸了，手动分支消除，带你装〇带你飞！](https://www.bilibili.com/video/BV1L7411f7g3?t=2&p=2)
 
-# 5 OLAP
+# 5 IO
 
-## 5.1 build/probe relation
+## 5.1 IO Coalesce
+
+```cpp
+#include <benchmark/benchmark.h>
+#include <fcntl.h>
+#include <unistd.h>
+
+#include <algorithm>
+#include <cerrno>
+#include <cstring>
+#include <filesystem>
+#include <map>
+#include <mutex>
+#include <random>
+#include <string>
+#include <system_error>
+#include <vector>
+
+namespace {
+
+constexpr std::size_t FILE_SIZE_BYTES = 64 * 1024 * 1024; // 64 MiB backing file.
+constexpr std::size_t BLOCK_SIZE_BYTES = 4 * 1024;        // 4 KiB logical requests.
+constexpr std::size_t MAX_COALESCE_GAP_BYTES = 8 * BLOCK_SIZE_BYTES;
+constexpr std::uint32_t SEED = 1337u;
+
+struct IORequest {
+    off_t offset;
+    std::size_t length;
+};
+
+struct Workload {
+    std::vector<IORequest> random_requests;
+    std::vector<IORequest> coalesced_requests;
+    std::size_t random_bytes = 0;
+    std::size_t coalesced_bytes = 0;
+    std::size_t random_io_calls = 0;
+    std::size_t coalesced_io_calls = 0;
+    std::size_t max_random_length = 0;
+    std::size_t max_coalesced_length = 0;
+};
+
+struct SharedFile {
+    int fd = -1;
+    std::filesystem::path path;
+
+    ~SharedFile() {
+        if (fd >= 0) {
+            close(fd);
+        }
+        if (!path.empty()) {
+            std::error_code ec;
+            std::filesystem::remove(path, ec);
+        }
+    }
+};
+
+[[nodiscard]] SharedFile create_shared_file() {
+    SharedFile file;
+    const std::filesystem::path tmp_dir = std::filesystem::temp_directory_path();
+    std::string pattern = (tmp_dir / "io_coalesce_benchXXXXXX").string();
+
+    std::vector<char> path_buffer(pattern.begin(), pattern.end());
+    path_buffer.push_back('\0');
+
+    const int write_fd = mkstemp(path_buffer.data());
+    if (write_fd == -1) {
+        throw std::system_error(errno, std::generic_category(), "mkstemp failed");
+    }
+
+    int fallocate_rc = posix_fallocate(write_fd, 0, static_cast<off_t>(FILE_SIZE_BYTES));
+    if (fallocate_rc != 0) {
+        close(write_fd);
+        unlink(path_buffer.data());
+        throw std::system_error(fallocate_rc, std::generic_category(), "posix_fallocate failed");
+    }
+
+    close(write_fd);
+
+    int read_fd = open(path_buffer.data(), O_RDONLY | O_CLOEXEC);
+    if (read_fd == -1) {
+        unlink(path_buffer.data());
+        throw std::system_error(errno, std::generic_category(), "open backing file failed");
+    }
+
+    file.fd = read_fd;
+    file.path = std::filesystem::path(path_buffer.data());
+    return file;
+}
+
+SharedFile& get_shared_file() {
+    static SharedFile file = create_shared_file();
+    return file;
+}
+
+std::vector<IORequest> gen_random_requests(std::size_t num_requests, std::size_t block_size, std::size_t file_size,
+                                           std::mt19937_64& rng) {
+    std::uniform_int_distribution<std::size_t> offset_dist(0, file_size - block_size);
+    std::vector<IORequest> requests;
+    requests.reserve(num_requests);
+    for (std::size_t i = 0; i < num_requests; ++i) {
+        const std::size_t offset = offset_dist(rng);
+        requests.push_back(IORequest{static_cast<off_t>(offset), block_size});
+    }
+    return requests;
+}
+
+std::vector<IORequest> build_coalesced_requests(const std::vector<IORequest>& requests, std::size_t max_gap) {
+    if (requests.empty()) {
+        return {};
+    }
+
+    std::vector<IORequest> sorted = requests;
+    std::sort(sorted.begin(), sorted.end(),
+              [](const IORequest& lhs, const IORequest& rhs) { return lhs.offset < rhs.offset; });
+
+    std::vector<IORequest> coalesced;
+    coalesced.reserve(sorted.size());
+
+    off_t current_start = sorted.front().offset;
+    off_t current_end = sorted.front().offset + static_cast<off_t>(sorted.front().length);
+
+    const off_t gap_limit = static_cast<off_t>(max_gap);
+
+    for (std::size_t i = 1; i < sorted.size(); ++i) {
+        const off_t next_start = sorted[i].offset;
+        const off_t next_end = sorted[i].offset + static_cast<off_t>(sorted[i].length);
+
+        if (next_start <= current_end) {
+            // Overlapping region; extend to cover it.
+            if (next_end > current_end) {
+                current_end = next_end;
+            }
+            continue;
+        }
+
+        if (next_start - current_end <= gap_limit) {
+            // Gap small enough to coalesce; read across the gap.
+            current_end = next_end;
+            continue;
+        }
+
+        coalesced.push_back(IORequest{current_start, static_cast<std::size_t>(current_end - current_start)});
+        current_start = next_start;
+        current_end = next_end;
+    }
+
+    coalesced.push_back(IORequest{current_start, static_cast<std::size_t>(current_end - current_start)});
+    return coalesced;
+}
+
+Workload build_workload(std::size_t num_requests) {
+    Workload workload;
+    std::mt19937_64 rng(SEED);
+    rng.discard(num_requests); // Derive a unique subsequence per workload size.
+
+    workload.random_requests = gen_random_requests(num_requests, BLOCK_SIZE_BYTES, FILE_SIZE_BYTES, rng);
+    workload.random_bytes = workload.random_requests.size() * BLOCK_SIZE_BYTES;
+    workload.random_io_calls = workload.random_requests.size();
+    workload.max_random_length = BLOCK_SIZE_BYTES;
+
+    workload.coalesced_requests = build_coalesced_requests(workload.random_requests, MAX_COALESCE_GAP_BYTES);
+    workload.coalesced_io_calls = workload.coalesced_requests.size();
+    workload.coalesced_bytes = 0;
+    workload.max_coalesced_length = 0;
+    for (const auto& req : workload.coalesced_requests) {
+        workload.coalesced_bytes += req.length;
+        if (req.length > workload.max_coalesced_length) {
+            workload.max_coalesced_length = req.length;
+        }
+    }
+
+    if (workload.max_coalesced_length == 0) {
+        workload.max_coalesced_length = BLOCK_SIZE_BYTES;
+    }
+
+    return workload;
+}
+
+const Workload& get_workload(std::size_t num_requests) {
+    static std::mutex mutex;
+    static std::map<std::size_t, Workload> workloads;
+
+    std::lock_guard<std::mutex> lock(mutex);
+    auto it = workloads.find(num_requests);
+    if (it == workloads.end()) {
+        it = workloads.emplace(num_requests, build_workload(num_requests)).first;
+    }
+    return it->second;
+}
+
+bool perform_io_requests(int fd, const std::vector<IORequest>& requests, std::vector<char>& buffer,
+                         std::size_t& bytes_read, std::size_t& io_calls, benchmark::State& state) {
+    for (const IORequest& request : requests) {
+        if (buffer.size() < request.length) {
+            buffer.resize(request.length);
+        }
+
+        std::size_t completed = 0;
+        while (completed < request.length) {
+            const std::size_t to_read = request.length - completed;
+            const ssize_t result = pread(fd, buffer.data() + completed, to_read, request.offset + completed);
+            if (result < 0) {
+                state.SkipWithError(std::strerror(errno));
+                return false;
+            }
+            if (result == 0) {
+                state.SkipWithError("Unexpected EOF during pread");
+                return false;
+            }
+
+            completed += static_cast<std::size_t>(result);
+            bytes_read += static_cast<std::size_t>(result);
+            ++io_calls;
+        }
+    }
+
+    benchmark::DoNotOptimize(buffer.data());
+    return true;
+}
+
+void random_io_benchmark(benchmark::State& state) {
+    const std::size_t num_requests = static_cast<std::size_t>(state.range(0));
+    const Workload& workload = get_workload(num_requests);
+    SharedFile& file = get_shared_file();
+
+    std::vector<char> buffer(workload.max_random_length);
+    std::size_t total_bytes = 0;
+    std::size_t total_calls = 0;
+
+    for (auto _ : state) {
+        std::size_t iteration_bytes = 0;
+        std::size_t iteration_calls = 0;
+        if (!perform_io_requests(file.fd, workload.random_requests, buffer, iteration_bytes, iteration_calls, state)) {
+            return;
+        }
+        total_bytes += iteration_bytes;
+        total_calls += iteration_calls;
+    }
+
+    state.SetBytesProcessed(static_cast<int64_t>(total_bytes));
+    state.counters["io_calls"] =
+            benchmark::Counter(static_cast<double>(total_calls), benchmark::Counter::kIsIterationInvariantRate);
+    state.counters["bytes_per_call"] = benchmark::Counter(
+            total_calls > 0 ? static_cast<double>(total_bytes) / static_cast<double>(total_calls) : 0.0,
+            benchmark::Counter::kIsIterationInvariantRate);
+    state.counters["coalesced"] = 0;
+}
+
+void coalesced_io_benchmark(benchmark::State& state) {
+    const std::size_t num_requests = static_cast<std::size_t>(state.range(0));
+    const Workload& workload = get_workload(num_requests);
+    SharedFile& file = get_shared_file();
+
+    std::vector<char> buffer(workload.max_coalesced_length);
+    std::size_t total_bytes = 0;
+    std::size_t total_calls = 0;
+
+    for (auto _ : state) {
+        std::size_t iteration_bytes = 0;
+        std::size_t iteration_calls = 0;
+        if (!perform_io_requests(file.fd, workload.coalesced_requests, buffer, iteration_bytes, iteration_calls,
+                                 state)) {
+            return;
+        }
+        total_bytes += iteration_bytes;
+        total_calls += iteration_calls;
+    }
+
+    state.SetBytesProcessed(static_cast<int64_t>(total_bytes));
+    state.counters["io_calls"] =
+            benchmark::Counter(static_cast<double>(total_calls), benchmark::Counter::kIsIterationInvariantRate);
+    state.counters["bytes_per_call"] = benchmark::Counter(
+            total_calls > 0 ? static_cast<double>(total_bytes) / static_cast<double>(total_calls) : 0.0,
+            benchmark::Counter::kIsIterationInvariantRate);
+    state.counters["coalesced"] = 1;
+}
+
+} // namespace
+
+BENCHMARK(random_io_benchmark)->Name("RandomIO")->Arg(512)->Arg(2048)->UseRealTime();
+BENCHMARK(coalesced_io_benchmark)->Name("CoalescedIO")->Arg(512)->Arg(2048)->UseRealTime();
+
+BENCHMARK_MAIN();
+```
+
+```sh
+gcc -o io_coalesce_benchmark -std=c++17 -O3 io_coalesce_benchmark.cpp -lbenchmark -lpthread -lm -lstdc++
+./io_coalesce_benchmark --benchmark_report_aggregates_only=true
+```
+
+Output:
+
+```
+-------------------------------------------------------------------------------------
+Benchmark                           Time             CPU   Iterations UserCounters...
+-------------------------------------------------------------------------------------
+RandomIO/512/real_time         237012 ns       237007 ns         2940 bytes_per_call=17.2818M/s bytes_per_second=8.24061Gi/s coalesced=0 io_calls=6.35107G/s
+RandomIO/2048/real_time        987442 ns       987440 ns          707 bytes_per_call=4.14809M/s bytes_per_second=7.91186Gi/s coalesced=0 io_calls=1.46635G/s
+CoalescedIO/512/real_time      280989 ns       280980 ns         2484 bytes_per_call=32.4526M/s bytes_per_second=11.878Gi/s coalesced=1 io_calls=3.4742G/s
+CoalescedIO/2048/real_time    1861798 ns      1861711 ns          376 bytes_per_call=18.2299M/s bytes_per_second=11.4261Gi/s coalesced=1 io_calls=135.916M/s
+```
+
+# 6 OLAP
+
+## 6.1 build/probe relation
 
 ```cpp
 #include <benchmark/benchmark.h>
@@ -4126,13 +4430,13 @@ BM_small_probe_large_build/100000/1000000  323437192 ns    323408412 ns         
 | 10,000 | 1,000,000| 156,457,584 | 229,649,600 | 73,192,016 | 1.47|
 | 100,000| 1,000,000| 216,785,298 | 323,437,192 | 106,651,894| 1.49|
 
-# 6 Tools
+# 7 Tools
 
-## 6.1 Test Cache Performance
+## 7.1 Test Cache Performance
 
 Please refer to [cache miss](#41-cache-miss)
 
-## 6.2 Test Cpu Performance
+## 7.2 Test Cpu Performance
 
 ```cpp
 #include <pthread.h>
@@ -4181,6 +4485,6 @@ int main(int argc, char* argv[]) {
 }
 ```
 
-# 7 Others
+# 8 Others
 
 1. [slide window frame, vectorization agg & removable cumulative agg](https://quick-bench.com/q/y7oHsGuG9CTk-Kq5edcWtsLMjpE)
