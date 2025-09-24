@@ -47,61 +47,61 @@ flowchart TD
 
 ## 2.1 Header File Search Order
 
-**头文件`#include "xxx.h"`的搜索顺序**
+**Search order for header file `#include "xxx.h"`**
 
-1. 先搜索当前目录
-1. 然后搜索`-I`参数指定的目录
-1. 再搜索gcc的环境变量`CPLUS_INCLUDE_PATH`（C程序使用的是`C_INCLUDE_PATH`）
-1. 最后搜索gcc的内定目录，包括：
+1. Search the current directory first
+1. Then search the directories specified by the `-I` parameter
+1. Next, search the gcc environment variable `CPLUS_INCLUDE_PATH` (for C programs, it is `C_INCLUDE_PATH`)
+1. Finally, search gcc's built-in directories, including:
     * `/usr/include`
     * `/usr/local/include`
-    * `/usr/lib/gcc/x86_64-redhat-linux/<gcc version>/include`（C头文件）或者`/usr/include/c++/<gcc version>`（C++头文件）
+    * `/usr/lib/gcc/x86_64-redhat-linux/<gcc version>/include` (C headers) or `/usr/include/c++/<gcc version>` (C++ headers)
 
-**头文件`#include <xxx.h>`的搜索顺序**
+**Search order for header file `#include <xxx.h>`**
 
-1. 先搜索`-I`参数指定的目录
-1. 再搜索gcc的环境变量`CPLUS_INCLUDE_PATH`（C程序使用的是`C_INCLUDE_PATH`）
-1. 最后搜索gcc的内定目录，包括：
+1. First, search the directories specified by the `-I` parameter
+1. Next, search the gcc environment variable `CPLUS_INCLUDE_PATH` (for C programs, it is `C_INCLUDE_PATH`)
+1. Finally, search gcc's built-in directories, including:
     * `/usr/include`
     * `/usr/local/include`
-    * `/usr/lib/gcc/x86_64-redhat-linux/<gcc version>/include`（C头文件）或者`/usr/include/c++/<gcc version>`（C++头文件）
+    * `/usr/lib/gcc/x86_64-redhat-linux/<gcc version>/include` (C headers) or `/usr/include/c++/<gcc version>` (C++ headers)
 
-**可以在编译的时候加上`-v`参数，就可以看到最准确的搜索路径**
+**You can add the `-v` parameter during compilation to see the most accurate search paths**
 
-* 每个版本的编译器都有自己的头文件，这个路径应该是在构建编译器的时候写到二进制里面去的
+* Each compiler version has its own header files, and this path is written into the binary when the compiler is built
 * `gcc -v -c -xc++ /dev/null`
 * `clang -v -c -xc++ /dev/null`
 
 ## 2.2 Static Library
 
-**后缀：`*.a`**
+**Suffix: `*.a`**
 
-**编译时如何链接静态链接库：**
+**How to link a static library during compilation:**
 
-* `-L`：指定静态链接库的搜索路径
-* `-l <static_lib_name>`：
-    * 假设静态链接库的名称是`libgflags.a`，那么`<static_lib_name>`既不需要`lib`前缀，也不需要`.a`后缀，即`gflags`
+* `-L`: Specify the search path for static libraries
+* `-l <static_lib_name>`:
+    * Suppose the static library is named `libgflags.a`. Then `<static_lib_name>` requires neither the `lib` prefix nor the `.a` suffix, i.e., just `gflags`.
 
-**如何查看二进制的静态链接库：由于链接器在链接时，就会丢弃静态库的名字信息，因此，一般是看不到的**
+**How to view the static libraries of a binary: Since the linker discards the static library name information during linking, it is generally not visible**
 
-* `-Xlinker -Map=a.map`：将链接时的信息记录到`a.map`中
-* `nm/objdump/readelf/strings`或许可以找到一些静态库相关的`hint`
+* `-Xlinker -Map=a.map`: Record linking information into `a.map`.
+* `nm/objdump/readelf/strings` may provide some `hints` related to static libraries.
 
 ## 2.3 Dynamic Library
 
-**后缀：`*.so`**
+**Suffix: `*.so`**
 
-**如何查看二进制的动态链接库：`ldd` (list dynamic dependencies)**
+**How to view the dynamic libraries of a binary: `ldd` (list dynamic dependencies)**
 
-**查看动态链接库绑定信息：`ldconfig -v`、`ldconfig -p`**
+**View dynamic library binding information: `ldconfig -v`, `ldconfig -p`**
 
-* 安装新的库后，需要`sudo ldconfig`更新缓存，否则运行时可能会找不到对应的`so`文件
+* After installing a new library, you need to run `sudo ldconfig` to update the cache, otherwise the corresponding `so` file may not be found at runtime
 
 ### 2.3.1 Linux's so version mechanism
 
 **本小节转载摘录自[一文读懂Linux下动态链接库版本管理及查找加载方式](https://blog.ideawand.com/2020/02/15/how-does-linux-shared-library-versioning-works/)**
 
-在`/lib64`、`/usr/lib64`、`/usr/local/lib64`目录下，会看到很多具有下列特征的软连接，其中`x`、`y`、`z`为数字, 那么这些软连接和他们后面的数字有什么用途呢？
+In the `/lib64`, `/usr/lib64`, and `/usr/local/lib64` directories, you will see many symbolic links with the following characteristics, where `x`, `y`, and `z` are numbers. What is the purpose of these symbolic links and the numbers that follow them?
 
 ```
 libfoo.so    ->  libfoo.so.x
@@ -109,58 +109,63 @@ libfoo.so.x  ->  libfoo.so.x.y.z
 libbar.so.x  ->  libbar.so.x.y
 ```
 
-这里的`x`、`y`、`z`分别代表的是这个`so`的主版本号（`MAJOR`），次版本号（`MINOR`），以及发行版本号（`RELEASE`），对于这三个数字各自的含义，以及什么时候会进行增长，不同的文献上有不同的解释，不同的组织遵循的规定可能也有细微的差别，但有一个可以肯定的事情是：主版本号（`MAJOR`）不同的两个`so`库，所暴露出的`API`接口是不兼容的。而对于次版本号，和发行版本号，则有着不同定义，其中一种定义是：次要版本号表示`API`接口的定义发生了改变（比如参数的含义发生了变化），但是保持向前兼容；而发行版本号则是函数内部的一些功能调整、优化、BUG修复，不涉及`API`接口定义的修改
+Here, `x`, `y`, and `z` represent the `MAJOR` (major version), `MINOR` (minor version), and `RELEASE` (release version) of the `.so` library, respectively. The exact meaning of these three numbers and when they are incremented can vary across different references, and different organizations may follow slightly different conventions. However, one thing is certain: two `.so` libraries with different `MAJOR` versions expose incompatible `API` interfaces.
+
+As for the `MINOR` and `RELEASE` versions, their definitions differ. One common definition is: the `MINOR` version indicates changes to the `API` interface definition (for example, changes in parameter semantics) but remains backward compatible; the `RELEASE` version refers to internal function adjustments, optimizations, or bug fixes that do not involve changes to the `API` interface definition.
 
 #### 2.3.1.1 so Related Names
 
-**介绍一下在`so`查找过程中的几个名字**
+**Introduction to several names in the `.so` lookup process**
 
-* **`SONAME`：一组具有兼容`API`的`so`库所共有的名字，其命名特征是`lib<库名>.so.<数字>`这种形式的**
-* **`real name`：是真实具有`so`库可执行代码的那个文件，之所以叫`real`是相对于`SONAME`和`linker name`而言的，因为另外两种名字一般都是一个软连接，这些软连接最终指向的文件都是具有`real name`命名形式的文件。`real name`的命名格式中，可能有`2`个数字尾缀，也可能有`3`个数字尾缀，但这不重要。你只要记住，真实的那个，不是以软连接形式存在的，就是一个`real name`**
-* **`linker name`：这个名字只是给编译工具链中的连接器使用的名字，和程序运行并没有什么关系，仅仅在链接得到可执行文件的过程中才会用到。它的命名特征是以`lib`开头，以`.so`结尾，不带任何数字后缀的格式**
+* **`SONAME`**: A name shared by a group of `.so` libraries with compatible `API`s. Its naming pattern is in the form of `lib<library_name>.so.<number>`.
+* **`real name`**: The actual file containing the executable code of the `.so` library. It is called "real" relative to `SONAME` and `linker name`, because the latter two are generally symbolic links, which eventually point to the file with the `real name`. The naming format of the `real name` may have two numeric suffixes, or sometimes three, but that is not important. Just remember: the actual one, not existing as a symbolic link, is the `real name`.
+* **`linker name`**: This name is used only by the linker in the toolchain, and has nothing to do with program execution. It is used only in the process of linking to produce the executable file. Its naming pattern starts with `lib` and ends with `.so`, without any numeric suffix.
 
 #### 2.3.1.2 SONAME
 
-假设在你的Linux系统中有3个不同版本的`bar`共享库，他们在磁盘上保存的文件名如下：
+Suppose in your Linux system there are three different versions of the `bar` shared library, with the following filenames stored on disk:
 
 * `/usr/lib64/libbar.so.1.3`
 * `/usr/lib64/libbar.so.1.5`
 * `/usr/lib64/libbar.so.2.1`
 
-假设以上三个文件，都是真实的`so`库文件，而不是软连接，也就是说，上面列出的名字都是`real name`
+Assume the above three files are all real `.so` library files, not symbolic links — in other words, the names listed above are all `real name`s.
 
-根据我们之前对版本号的定义，我们可以知道：
+Based on our earlier definition of version numbers, we know that:
 
-* `libbar.so.1.3`和`libbar.so.1.5`之间是互相兼容的
-* `libbar.so.2.1`和上述两个库之间互相不兼容
+* `libbar.so.1.3` and `libbar.so.1.5` are mutually compatible
+* `libbar.so.2.1` is not compatible with the two libraries above
 
-**引入软连接的好处是什么呢？假设有一天，`libbar.so.2.1`库进行了升级，但`API`接口仍然保持兼容，升级后的库文件为`libbar.so.2.2`，这时候，我们只要将之前的软连接重新指向升级后的文件，然后重新启动B程序，B程序就可以使用全新版本的`so`库了，我们并不需要去重新编译链接来更新B程序**
+**What is the benefit of introducing symbolic links?**
 
-**总结一下上面的逻辑：**
+> Suppose one day, the `libbar.so.2.1` library is upgraded, but its `API` interface remains compatible. The upgraded library file is named `libbar.so.2.2`. In this case, we only need to update the symbolic link to point to the upgraded file. After restarting program B, it can immediately use the new version of the `.so` library. We do not need to recompile or relink program B to update it.
 
-* 通常`SONAME`是一个指向`real name`的软连接
-* 应用程序中存储自己所依赖的`so`库的`SONAME`，也就是仅保证主版本号能匹配就行
-* 通过修改软连接的指向，可以让应用程序在互相兼容的`so`库中方便切换使用哪一个
-* 通常情况下，大家使用最新版本即可，除非是为了在特定版本下做一些调试、开发工作
+**To summarize the logic above:**
+
+* Typically, the `SONAME` is a symbolic link pointing to the `real name`.
+* Applications store in themselves the `SONAME` of the `.so` libraries they depend on, meaning that only the major version number needs to match.
+* By modifying the target of the symbolic link, applications can easily switch between mutually compatible `.so` libraries.
+* In most cases, it is best to use the latest version, unless debugging or developing against a specific version.
 
 #### 2.3.1.3 linker name
 
-上一节中我们提到，可执行文件里会存储精确到主版本号的`SONAME`，但是在编译生成可执行文件的过程中，编译器怎么知道应该用哪个主版本号呢？为了回答这个问题，我们从编译链接的过程来梳理一下
+In the previous section, we mentioned that the executable file stores the `SONAME` accurate to the major version number. But during the compilation process, how does the compiler know which major version number to use? To answer this, let's walk through the compilation and linking process.
 
-假设我们使用`gcc`编译生成一个依赖`foo`库的可执行文件`A`：`gcc A.c -lfoo -o A`
+Suppose we use `gcc` to compile and generate an executable file `A` that depends on the `foo` library:
+`gcc A.c -lfoo -o A`
 
-熟悉`gcc`编译的读者们肯定知道，上述的`-l`标记后跟随了`foo`参数，表示我们告诉`gcc`在编译的过程中需要用到一个外部的名为`foo`的库，但这里有一个问题，我们并没有说使用哪一个主版本，我们只给出了一个名字。为了解决这个问题，软链接再次发挥作用，具体流程如下：
+Readers familiar with `gcc` compilation will know that the `-l` flag is followed by the argument `foo`, which tells `gcc` that we need to use an external library named `foo` during compilation. But here's the issue: we did not specify which major version to use — we only gave the name. To resolve this, symbolic links come into play again. The process works as follows:
 
-**根据linux下动态链接库的命名规范，`gcc`会根据`-lfoo`这个标识拼接出`libfoo.so`这个文件名，这个文件名就是`linker name`，然后去尝试读取这个文件，并将这个库链接到生成的可执行文件`A`中。在执行编译前，我们可以通过软链接的形式，将`libfoo.so`指向一个具体`so`库，也就是指向一个`real name`，在编译过程中，`gcc`会从这个真实的库中读取出`SONAME`并将它写入到生成的可执行文件`A`中。例如，若`libfoo.so`指向`libfoo.so.1.5`,则生成的可执行文件A使用主版本号为`1`的`SONAME`，即`libfoo.so.1`**
+**According to Linux dynamic library naming conventions, `gcc` will derive the filename `libfoo.so` from the `-lfoo` flag. This filename is the `linker name`. It then attempts to read this file and link it into the generated executable file `A`. Before compilation, we can create a symbolic link from `libfoo.so` to a specific `.so` library — that is, a `real name`. During compilation, `gcc` will read the `SONAME` from this real library and embed it into the generated executable `A`. For example, if `libfoo.so` points to `libfoo.so.1.5`, then the resulting executable `A` will use the `SONAME` with major version `1`, i.e., `libfoo.so.1`.**
 
-在上述编译过程完成之后，`SONAME`已经被写入可执行文件`A`中了，因此可以看到`linker name`仅仅在编译的过程中，可以起到指定连接那个库版本的作用，除此之外，再无其他作用
+Once the compilation is complete, the `SONAME` has already been written into the executable file `A`. Therefore, the `linker name` only serves its role during compilation — it determines which library version to link against. Beyond that, it has no further function.
 
-**总结一下上面的逻辑：**
+**To summarize the logic above:**
 
-* 通常`linker name`是一个指向`real name`的软连接
-* 通过修改软连接的指向，可以指定编译生成的可执行文件使用那个主版本号`so`库
-* 编译器从软链接指向的文件里找到其`SONAME`，并将`SONAME`写入到生成的可执行文件中
-* 通过改变`linker name`软连接的指向，可以将不同主版本号的`SONAME`写入到生成的可执行文件中
+* Typically, the `linker name` is a symbolic link pointing to a `real name`
+* By modifying the symbolic link, we can control which major version of the `.so` library is used when compiling an executable
+* The compiler reads the `SONAME` from the file that the symbolic link points to and writes that `SONAME` into the generated executable
+* By changing the target of the `linker name` symbolic link, we can embed different major-version `SONAME`s into the executable file
 
 ## 2.4 Search Order
 
@@ -289,6 +294,53 @@ g++ a.cpp -L. -lb -ld # right order
 
 In dynamic linking, the order of linking libraries is typically less critical. Libraries are not combined into a single executable at compile time; instead, references to these libraries are resolved at runtime. The dynamic linker/loader handles the process of loading the necessary libraries into memory when the program is executed and resolves symbols on the fly. This means that the system can usually manage dependencies more flexibly, and the specific order in which libraries are listed is not as crucial.
 
+#### 2.5.2.1 libdl
+
+The `libdl` library plays a crucial role in the Linux environment as it provides dynamic linking capabilities. Here's a breakdown of its primary functions:
+
+* **Loading of Shared Libraries**: `libdl` enables the dynamic loading of shared libraries into memory during the runtime of an application. This is done without these libraries being statically linked to the executable, allowing for a more flexible and modular approach to application development and deployment.
+* **Symbol Resolution**: Once a shared library is loaded, `libdl` provides functions to look up symbols (functions and variables) within these libraries. This allows an application to call functions whose addresses are only known at runtime, facilitating the use of plugins or modules that can extend the application's capabilities without needing to recompile the application.
+* **Dynamic Unloading**: It also supports the unloading of shared libraries from memory. This is useful for applications that need to load and unload modules dynamically based on runtime conditions, optimizing memory usage and functionality on the fly.
+
+**The primary functions provided by `libdl` include:**
+
+* `dlopen()`: Opens a shared library and prepares it for use. The following flags control the loading mode:
+    * `RTLD_LAZY`: lazy symbol resolution.
+    * `RTLD_NOW`: immediate symbol resolution.
+    * `RTLD_DEEPBIND`
+    * `RTLD_GLOBAL`: The library's exported symbols are placed in the global symbol table.
+    * `RTLD_LOCAL`: (The opposite of `RTLD_GLOBAL`, and also the default)The library's symbols are not made available for resolving symbols in later-loaded libraries.
+* `dlsym()`: Searches for the address of a symbol in the opened libraries.
+* `dlclose()`: Closes a shared library, releasing resources associated with it.
+* `dlerror()`: Provides string descriptions of errors caused by any of the above functions.
+
+**Supplemental Insights:**
+
+* [dlopen in libc and libdl](https://stackoverflow.com/questions/31155824/dlopen-in-libc-and-libdl): `libdl` is only exposing the **private** dl functions that already exist in libc as well as some wrappers to make the use of the libraries a bit easier. You can see some of this behaviour by looking at the symbol table of `libdl`.
+    * Check private methods: `readelf -s /lib64/ld-linux-x86-64.so.2 | grep PRIVATE`
+
+#### 2.5.2.2 DSO boundary
+
+A DSO is just another term for a shared library (e.g., `.so` file on Linux, `.dll` on Windows, `.dylib` on macOS). It contains code and data that can be loaded at runtime and linked dynamically.
+
+**When people talk about a DSO boundary, they mean the interface between:**
+
+* Code inside the shared library (DSO)
+* Code outside the shared library (the main program or other DSOs)
+
+**This boundary is important because:**
+
+* **Symbol visibility**: Only symbols (functions, classes, variables) marked as exported cross the DSO boundary. Hidden symbols remain internal.
+* **ABI stability**: Anything exposed across the DSO boundary must follow a stable Application Binary Interface (ABI), otherwise different compilers or versions may fail.
+* **Exception safety**: C++ exceptions thrown across a DSO boundary may cause undefined behavior if the runtimes are incompatible.
+* **RTTI/typeinfo**: Dynamic casts or typeid may fail if the same type is defined in multiple DSOs without proper visibility control.
+
+**Practical issues:**
+
+* If you compile a library and an application separately, you must ensure exported APIs are declared with something like `__attribute__((visibility("default")))` (GCC/Clang) or `__declspec(dllexport)` (MSVC).
+* Passing STL containers (like `std::string`, `std::vector`) across a DSO boundary is often discouraged unless you can guarantee both sides use the same standard library version and ABI.
+* That's why many libraries expose only C-style APIs across DSO boundaries (plain functions, opaque pointers).
+
 ## 2.6 Environment Variables
 
 Please refer to `man ld.so` for details:
@@ -313,7 +365,7 @@ int main(void) {
 EOF
 gcc -o sample sample.c
 
-./sample 
+./sample
 #-------------------------↓↓↓↓↓↓-------------------------
 Calling the fopen() function...
 fopen() returned NULL
@@ -419,23 +471,23 @@ gcc -o main main.cpp -O3 -L . -Wl,-rpath=`pwd` -lfoo -lstdc++
 
 ## 2.8 ABI
 
-`ABI`全称是`Application Binary Interface`，它是两个二进制模块间的接口，二进制模块可以是`lib`，可以是操作系统的基础设施，或者一个正在运行的用户程序
+`ABI` stands for `Application Binary Interface`. It is the interface between two binary modules. A binary module can be a `lib`, an operating system infrastructure, or a running user program.
 
 > An ABI defines how data structures or computational routines are accessed in machine code, which is a low-level, hardware-dependent format
 
 ![abi](/images/Cpp-Trivial/abi.png)
 
-具体来说，`ABI`定义了如下内容：
+Specifically, `ABI` defines the following:
 
-1. 指令集、寄存器、栈组织结构，内存访问类型等等
-1. 基本数据类型的`size`、`layout`、`alignment`
-1. 调用约定，比如参数如何传递、结果如何传递
-    * 参数传递到栈中，还是传递到寄存器中
-    * 如果传递到寄存器中的话，哪个入参对应哪个寄存器
-    * 如果传递到栈中的话，第一个入参是先压栈还是后压栈
-    * 返回值使用哪个寄存器
-1. 如何发起系统调用
-1. `lib`、`object file`等的文件格式
+1. Instruction set, registers, stack organization, memory access types, etc.
+1. `size`, `layout`, and `alignment` of basic data types
+1. Calling conventions, such as how parameters and results are passed
+    * Whether parameters are passed on the stack or in registers
+    * If passed in registers, which parameter corresponds to which register
+    * If passed on the stack, whether the first parameter is pushed first or last
+    * Which register is used for the return value
+1. How to initiate system calls
+1. File formats such as `lib` and `object file`
 
 ### 2.8.1 cxxabi.h
 
@@ -466,12 +518,12 @@ Some commonly used functions for handling C++ ABI (Application Binary Interface)
 
 > In the GCC 5.1 release libstdc++ introduced a new library ABI that includes new implementations of std::string and std::list. These changes were necessary to conform to the 2011 C++ standard which forbids Copy-On-Write strings and requires lists to keep track of their size.
 
-宏`_GLIBCXX_USE_CXX11_ABI`用于控制使用新版本还是老版本
+The macro `_GLIBCXX_USE_CXX11_ABI` is used to control whether the new version or the old version is used.
 
-* `_GLIBCXX_USE_CXX11_ABI = 0`：老版本
-* `_GLIBCXX_USE_CXX11_ABI = 1`：新版本
+* `_GLIBCXX_USE_CXX11_ABI = 0`: Old version
+* `_GLIBCXX_USE_CXX11_ABI = 1`: New version
 
-其他参考：
+Other references:
 
 * [ABI Policy and Guidelines](https://gcc.gnu.org/onlinedocs/libstdc++/manual/abi.html)
 * [C/C++ ABI兼容那些事儿](https://zhuanlan.zhihu.com/p/556726543)
@@ -578,48 +630,191 @@ The errors you're encountering at runtime indicate that your application (`main`
 
 **You can refer to `man libc/glibc` for details**
 
-* `libc`实现了C的标准库函数，例如`strcpy()`，以及`POSIX`函数，例如系统调用`getpid()`。此外，不是所有的C标准库函数都包含在`libc`中，比如大多数`math`相关的库函数都封装在`libm`中，大多数压缩相关的库函数都封装在`libz`中
-    * 系统调用有别于普通函数，它无法被链接器解析。实现系统调用必须引入平台相关的汇编指令。我们可以通过手动实现这些汇编指令来完成系统调用，或者直接使用`libc`（它已经为我们封装好了）
-* **`glibc, GNU C Library`可以看做是`libc`的另一种实现，它不仅包含`libc`的所有功能还包含`libm`以及其他核心库，比如`libpthread`**
-    * **`glibc`对应的动态库的名字是`libc.so`**
-    * **Linux主流的发行版用的都是这个**
+* `libc` implements C standard library functions such as `strcpy()`, as well as `POSIX` functions such as the system call `getpid()`. In addition, not all C standard library functions are included in `libc`. For example, most `math`-related library functions are wrapped in `libm`, and most compression-related library functions are wrapped in `libz`.
+    * System calls differ from ordinary functions; they cannot be resolved by the linker. Implementing a system call requires introducing platform-specific assembly instructions. We can either manually implement these assembly instructions to perform the system call, or simply use `libc` (which has already wrapped them for us).
+* **`glibc, GNU C Library` can be considered another implementation of `libc`. It not only includes all the functionality of `libc` but also `libm` and other core libraries, such as `libpthread`.**
+    * **The dynamic library name corresponding to `glibc` is `libc.so`.**
+    * **Mainstream Linux distributions all use this.**
     * [The GNU C Library (glibc)](https://www.gnu.org/software/libc/sources.html)
-* `glib`是Linux下C的一些工具库，和`glibc`没有关系
+* `glib` is a utility library for C on Linux, and it has nothing to do with `glibc`.
 
-**查看`glibc`的版本**
+**Check the version of `glibc`**
 
-* `ldd --version`：`ldd`隶属于`glibc`，因此`ldd`的版本就是`glibc`的版本
+* `ldd --version`: `ldd` belongs to `glibc`, so the version of `ldd` is the version of `glibc`.
 * `getconf GNU_LIBC_VERSION`
 * `gcc -print-file-name=libc.so`
-* `strings /lib64/libc.so.6 | grep GLIBC`：查看`glibc`的API的版本
+* `strings /lib64/libc.so.6 | grep GLIBC`: Check the version of `glibc` APIs
 
-### 2.9.2 libdl
-
-The `libdl` library plays a crucial role in the Linux environment as it provides dynamic linking capabilities. Here's a breakdown of its primary functions:
-
-* **Loading of Shared Libraries**: `libdl` enables the dynamic loading of shared libraries into memory during the runtime of an application. This is done without these libraries being statically linked to the executable, allowing for a more flexible and modular approach to application development and deployment.
-* **Symbol Resolution**: Once a shared library is loaded, `libdl` provides functions to look up symbols (functions and variables) within these libraries. This allows an application to call functions whose addresses are only known at runtime, facilitating the use of plugins or modules that can extend the application's capabilities without needing to recompile the application.
-* **Dynamic Unloading**: It also supports the unloading of shared libraries from memory. This is useful for applications that need to load and unload modules dynamically based on runtime conditions, optimizing memory usage and functionality on the fly.
-
-**The primary functions provided by `libdl` include:**
-
-* `dlopen()`: Opens a shared library and prepares it for use.
-* `dlsym()`: Searches for the address of a symbol in the opened libraries.
-* `dlclose()`: Closes a shared library, releasing resources associated with it.
-* `dlerror()`: Provides string descriptions of errors caused by any of the above functions.
-
-**Supplemental Insights:**
-
-* [dlopen in libc and libdl](https://stackoverflow.com/questions/31155824/dlopen-in-libc-and-libdl): `libdl` is only exposing the **private** dl functions that already exist in libc as well as some wrappers to make the use of the libraries a bit easier. You can see some of this behaviour by looking at the symbol table of `libdl`.
-    * Check private methods: `readelf -s /lib64/ld-linux-x86-64.so.2 | grep PRIVATE`
-
-### 2.9.3 Others
+### 2.9.2 Others
 
 1. `libm`：c math library
 1. `libz`：compression/decompression library
 1. `libpthread`：POSIX threads library
 
-## 2.10 Reference
+## 2.10 Assorted
+
+### 2.10.1 Catch exceptions from dynamic library
+
+**Conditions for exceptions to propagate correctly**
+
+* **Same C++ ABI and runtime**
+    * Both the `.so` and the executable must be compiled with the same compiler version and the same ABI (e.g. GCC's `-D_GLIBCXX_USE_CXX11_ABI=1` vs `0`).
+    * If they don't match, the runtime type information (RTTI) and exception tables won't line up → the exception may not be caught and will call std::terminate.
+* **Exceptions enabled everywhere**
+    * Both the `.so` and the executable must be compiled with exceptions enabled (not `-fno-exceptions`).
+    * Otherwise exceptions won't unwind correctly across the boundary.
+* **Matching types**
+    * The exception type must be exactly the same in both places:
+        * If the `.so` throws `std::runtime_error`, the executable must link against the same `libstdc++/libc++`.
+        * If it throws a custom class, it must be defined identically (same header, same compilation options), i.e. One Definition Rule, ODR.
+    * If there are two separate definitions that "look the same" but are from different builds, the catch will fail (they're considered different types).
+* **Do not throw across extern "C" or C API boundaries**
+    * If the `.so` exports a function with `extern "C"` (C linkage) and it lets an exception escape, that's undefined behavior.
+    * The correct patterns are:
+        * Either keep the function as a C++ API (so exceptions can flow naturally), or
+        * Catch exceptions inside the `.so` and translate them into error codes or status objects before returning.
+* **Link against the same standard library**
+    * Both must use the same `libstdc++` (for GCC/Clang) or the same `libc++` (for Clang/LLVM).
+    * Mixing them is unsafe; exceptions won't propagate correctly.
+
+**Demo1: strip exception_table**
+
+```sh
+cat > lib.h << 'EOF'
+#pragma once
+
+void throw_from_library();
+EOF
+
+cat > lib.cpp << 'EOF'
+#include "lib.h"
+
+#include <stdexcept>
+
+void throw_from_library() {
+    throw std::runtime_error{"boom from .so"};
+}
+EOF
+
+cat > main.cpp << 'EOF'
+#include <iostream>
+
+#include "lib.h"
+
+int main() {
+    try {
+        throw_from_library();
+    } catch (...) {
+        std::cout << "caught in main" << std::endl;
+        return 0;
+    }
+
+    std::cout << "no exception raised" << std::endl;
+    return 0;
+}
+EOF
+
+gcc -o libthrow.so lib.cpp -fPIC -shared -std=gnu++17 -lstdc++
+gcc -o catch_normal main.cpp -L. -lthrow -Wl,-rpath,. -std=gnu++17 -lstdc++
+./catch_normal
+
+cp libthrow.so libthrow_stripped.so
+objcopy --remove-section=.eh_frame --remove-section=.gcc_except_table libthrow_stripped.so
+gcc -o catch_abnormal main.cpp -L. -lthrow_stripped -Wl,-rpath,. -std=gnu++17 -lstdc++
+./catch_abnormal
+```
+
+**Demo1: different RTTI**
+
+```sh
+cat > lib.h << 'EOF'
+#pragma once
+
+#include <typeinfo>
+
+// Mark those two symbol visible when specify -fvisibility=hidden
+__attribute__((visibility("default"))) void throw_from_library();
+__attribute__((visibility("default"))) const std::type_info& lib_type_info();
+EOF
+
+cat > lib.cpp << 'EOF'
+#include "lib.h"
+
+struct MyException {
+    virtual ~MyException() = default;
+};
+
+void throw_from_library() {
+    throw MyException();
+}
+
+const std::type_info& lib_type_info() {
+    return typeid(MyException);
+}
+EOF
+
+cat > dl_main.cpp << 'EOF'
+#include <dlfcn.h>
+
+#include <exception>
+#include <iostream>
+#include <typeinfo>
+
+struct MyException {
+    virtual ~MyException() = default;
+};
+
+int main() {
+    std::cout << "typeid in main: " << &typeid(MyException) << std::endl;
+
+    void* handle = dlopen("./libthrow_static.so", RTLD_NOW | RTLD_LOCAL | RTLD_DEEPBIND);
+    if (!handle) {
+        std::cerr << "dlopen failed: " << dlerror() << std::endl;
+        return 1;
+    }
+
+    using ThrowFn = void (*)();
+    using TypeInfoFn = const std::type_info& (*)();
+
+    auto throw_fn = reinterpret_cast<ThrowFn>(dlsym(handle, "_Z18throw_from_libraryv"));
+    if (!throw_fn) {
+        std::cerr << "dlsym throw_from_library failed: " << dlerror() << std::endl;
+        return 1;
+    }
+
+    auto typeinfo_fn = reinterpret_cast<TypeInfoFn>(dlsym(handle, "_Z13lib_type_infov"));
+    if (!typeinfo_fn) {
+        std::cerr << "dlsym lib_type_info failed: " << dlerror() << std::endl;
+        return 1;
+    }
+
+    std::cout << "typeid from lib: " << &typeinfo_fn() << std::endl;
+
+    std::set_terminate([] {
+        std::cerr << "terminate called (exception not caught)" << std::endl;
+        std::_Exit(1);
+    });
+
+    try {
+        throw_fn();
+    } catch (const MyException& e) {
+        std::cout << "caught MyException throw by lib at " << &typeid(e) << std::endl;
+    } catch (...) {
+        std::cout << "caught something else" << std::endl;
+    }
+
+    dlclose(handle);
+    return 0;
+}
+EOF
+
+# Disables the GNU extension that makes typeinfo and some other inline-emitted objects “linkonce-ODR” with STB_GNU_UNIQUE binding. With the default (-fgnu-unique), identical RTTI emitted in multiple DSOs is marked as STB_GNU_UNIQUE, so the dynamic loader canonicalises them to a single instance.
+gcc -o libthrow_static.so lib.cpp -fPIC -shared -fvisibility=hidden -fno-gnu-unique -std=gnu++17 -Wl,-Bstatic -lstdc++ -Wl,-Bdynamic -static-libgcc
+gcc -o catch_abnormal dl_main.cpp -fno-gnu-unique -ldl -lstdc++
+./catch_abnormal
+```
+
+## 2.11 Reference
 
 * [Program Library HOWTO](https://tldp.org/HOWTO/Program-Library-HOWTO/shared-libraries.html)
 * [Shared Libraries: Understanding Dynamic Loading](https://amir.rachum.com/blog/2016/09/17/shared-libraries/)
@@ -642,15 +837,15 @@ memory management libraries run in user mode and typically use low-level system 
 
 ![tcmalloc](/images/Cpp-Trivial/tcmalloc.png)
 
-**特点：**
+**Features:**
 
 * `Small object allocation`
-    * 每个线程都会有个`ThreadCache`，用于为当前线程分配小对象
-    * 当其容量不足时，会从`CentralCache`获取额外的存储空间
+    * Each thread has a `ThreadCache` used to allocate small objects for the current thread
+    * When its capacity is insufficient, it obtains additional storage space from the `CentralCache`
 * `CentralCache allocation management`
-    * 用于分配大对象，大对象通常指`>32K`
-    * 当内存空间用完后，用`sbrk/mmap`从操作系统中分配内存
-    * 在多线程高并发的场景中，`CentralCache`中的锁竞争很容易成为瓶颈
+    * Used to allocate large objects, typically those `>32K`
+    * When memory space runs out, it uses `sbrk/mmap` to allocate memory from the operating system
+    * In high-concurrency multithreaded scenarios, lock contention in the `CentralCache` can easily become a bottleneck
 * `Recycle`
 
 **Install:**
@@ -699,22 +894,22 @@ int main(void) {
 }
 ```
 
-**编译：**
+**Compile:**
 
 ```sh
 gcc -o main main.cpp -Wall -O3 -lstdc++ -ltcmalloc -std=gnu++17
 ```
 
-**运行：**
+**Run:**
 
 ```sh
-# 开启 heap profile 功能
+# Enable heap profile
 export HEAPPROFILE=/tmp/test-profile
 
 ./main
 ```
 
-**输出如下：**
+**Output:**
 
 ```
 Starting tracking the heap
@@ -726,14 +921,12 @@ Dumping heap profile to /tmp/test-profile.0004.heap (4096 MB allocated cumulativ
 Dumping heap profile to /tmp/test-profile.0005.heap (Exiting, 0 bytes in use)
 ```
 
-**使用`pprof`分析内存：**
+**Use `pprof` to analyze memory:**
 
 ```sh
-# 文本格式
 pprof --text ./main /tmp/test-profile.0001.heap | head -30
 
-# 图片格式
-pprof --svg ./main /tmp/test-profile.0001.heap > heap.svg 
+pprof --svg ./main /tmp/test-profile.0001.heap > heap.svg
 ```
 
 ## 3.2 jemalloc
@@ -742,12 +935,12 @@ pprof --svg ./main /tmp/test-profile.0001.heap > heap.svg
 
 ![jemalloc](/images/Cpp-Trivial/jemalloc.png)
 
-**特点：**
+**Features:**
 
-* 在多核、多线程场景下，跨线程分配/释放的性能比较好
-* 大量分配小对象时，所占空间会比`tcmalloc`稍多一些
-* 对于大对象分配，所造成的的内存碎片会比`tcmalloc`少一些
-* 内存分类粒度更细，锁比`tcmalloc`更少
+* In multi-core, multi-threaded scenarios, performance for cross-thread allocation/release is relatively good
+* When allocating a large number of small objects, the space usage is slightly higher than `tcmalloc`
+* For large object allocation, the memory fragmentation is less than `tcmalloc`
+* Finer granularity of memory categorization, with fewer locks compared to `tcmalloc`
 
 ### 3.2.1 Memory Stats
 
@@ -848,20 +1041,21 @@ int main() {
 }
 ```
 
-**编译执行：**
+**Compile:**
 
 ```sh
 gcc -o main main.cpp -O0 -lstdc++ -std=gnu++17 -L`jemalloc-config --libdir` -Wl,-rpath,`jemalloc-config --libdir` -ljemalloc `jemalloc-config --libs`
 MALLOC_CONF=prof_leak:true,lg_prof_sample:0,prof_final:true ./main
 ```
 
-**查看：`jeprof --text main <heap_file>`**
+**Output of `jeprof --text main <heap_file>`**
 
-* 第一列：函数直接申请的内存大小，单位MB
-* 第二列：第一列占总内存的百分比
-* 第三列：第二列的累积值
-* 第四列：函数以及函数所有调用的函数申请的内存大小，单位MB
-* 第五列：第四列占总内存的百分比
+* First column: Memory size directly requested by the function, in MB.
+* Second column: Percentage of the first column relative to total memory.
+* Third column: Cumulative value of the second column.
+* Fourth column: Memory size requested by the function and all functions it calls, in MB.
+* Fifth column: Percentage of the fourth column relative to total memory.
+
 ```
 Using local file main.
 Using local file jeprof.145931.0.f.heap.
@@ -885,18 +1079,18 @@ Total: 100.1 MB
     0.0   0.0% 100.0%    100.0  99.9% void* fallback_impl
 ```
 
-**生成svg：**
+**Generage svg:**
 
 * `sudo apt install -y graphviz` or `sudo yum install -y graphviz`
 * `jeprof --show_bytes --svg main <heap_file> > <svg_file>`
 
 ### 3.2.4 Work with http
 
-源码如下：
+Source:
 
 * [yhirose/cpp-httplib](https://github.com/yhirose/cpp-httplib)
-* `path`是固定，即`/pprof/heap`以及`/pprof/profile`
-    * `/pprof/profile`的实现估计有问题，拿不到预期的结果
+* `path` is fixed, i.e. `/pprof/heap` and `/pprof/profile`
+    * The implementation of `/pprof/profile` is probably problematic and cannot obtain the expected results.
 
 ```sh
 sudo apt-get install libgoogle-perftools-dev
@@ -1472,11 +1666,11 @@ int main() {
 }
 EOF
 
-# 非asan模式
-gcc test_stack_buffer_underflow.cpp -o test_stack_buffer_underflow -g -lstdc++ 
+# non-asan mode
+gcc test_stack_buffer_underflow.cpp -o test_stack_buffer_underflow -g -lstdc++
 ./test_stack_buffer_underflow
 
-# asan模式
+# asan mode
 gcc test_stack_buffer_underflow.cpp -o test_stack_buffer_underflow -g -lstdc++ -fsanitize=address -static-libasan
 ./test_stack_buffer_underflow
 ```
@@ -2319,34 +2513,34 @@ xdg-open out/index.html
 
 ## 7.4 ld
 
-**种类**
+**Type:**
 
 * `GNU ld`
 * `GNU gold`
 * `LLVM lld`
 * [mold](https://github.com/rui314/mold)
 
-**`gcc`如何指定`linker`**
+**How to specify `linker` in `gcc`**
 
 * `-B/usr/bin`: For GNU ld, setup searching directory
 * `-fuse-ld=gold`: For GNU gold
 * `-fuse-ld=lld`: For LLVM lld
 * `-B/usr/local/bin/gcc-mold`: For mold, setup searching directory
 
-**常用参数说明：**
+**Common parameter explanations:**
 
-* `--verbose`：打印链接时的详细信息，包括链接了哪些动态库
-* `-l <name>`：增加库文件，查找`lib<name>.a`或者`lib<name>.so`，如果都存在，默认使用`so`版本
-* `-L <dir>`：增加库文件搜索路径，其优先级会高于默认的搜索路径。允许指定多个，搜索顺序与其指定的顺序相同
-* `-rpath=<dir>`：增加运行时库文件搜索路径（务必用绝路径，否则二进制一旦换目录就无法运行了）。`-L`参数只在编译、链接期间生效，运行时仍然会找不到动态库文件，需要通过该参数指定。因此，对于位于非默认搜索路径下的动态库文件，`-L`与`-Wl,-rpath=`这两个参数通常是一起使用的
+* `--verbose`: Print detailed information during linking, including which dynamic libraries are linked.
+* `-l <name>`: Add a library file, searching for `lib<name>.a` or `lib<name>.so`. If both exist, the `so` version is used by default.
+* `-L <dir>`: Add a library search path. Its priority is higher than the default search paths. Multiple paths can be specified, and they are searched in the order given.
+* `-rpath=<dir>`: Add a runtime library search path (must use an absolute path, otherwise the binary will not run once moved to another directory). The `-L` parameter is only effective during compilation and linking. At runtime, the dynamic library file may still not be found, so this parameter is required. Therefore, for dynamic libraries located outside the default search path, the `-L` and `-Wl,-rpath=` parameters are usually used together.
     * [What's the difference between `-rpath-link` and `-L`?](https://stackoverflow.com/questions/49138195/whats-the-difference-between-rpath-link-and-l)
     * `readelf -d <binary> | grep 'RPATH\|RUNPATH'`
-* `-Bstatic`：修改默认行为，强制使用静态链接库，只对该参数之后出现的库有效。如果找不到对应的静态库会报错（即便有动态库）
-* `-Bdynamic`：修改默认行为，强制使用动态链接库，只对该参数之后出现的库有效。如果找不到对应的动态库会报错（即便有静态库）
+* `-Bstatic`: Change the default behavior, forcing the use of static libraries. Only applies to libraries specified after this parameter. If the corresponding static library cannot be found, an error is raised (even if a dynamic library exists).
+* `-Bdynamic`: Change the default behavior, forcing the use of dynamic libraries. Only applies to libraries specified after this parameter. If the corresponding dynamic library cannot be found, an error is raised (even if a static library exists).
 * `--wrap=<symbol>`
-    * 任何指向`<symbol>`的未定义的符号都会被解析为`__wrap_<symbol>`
-    * 任何指向`__real_<symbol>`的未定义的符号都会被解析为`<symbol>`
-    * 于是，我们就可以在`__wrap_<symbol>`增加额外的逻辑，并最终调用`__real_<symbol>`来实现代理
+    * Any undefined reference to `<symbol>` will be resolved as `__wrap_<symbol>`.
+    * Any undefined reference to `__real_<symbol>` will be resolved as `<symbol>`.
+    * Thus, we can add extra logic in `__wrap_<symbol>` and eventually call `__real_<symbol>` to implement proxying.
     ```sh
     cat > proxy_malloc.c << 'EOF'
     #include <stddef.h>
@@ -2787,9 +2981,9 @@ xdg-open coverage_html/index.html
 
 ## 8.3 clang-format
 
-**如何使用：在`用户目录`或者`项目根目录`中创建`.clang-format`文件用于指定格式化的方式，下面给一个示例**
+**How to use: Create a `.clang-format` file in the `user directory` or the `project root directory` to specify the formatting style. Below is an example**
 
-* **优先使用项目根目录中的`.clang-format`；如果不存在，则使用用户目录中的`~/.clang-format`**
+* **The `.clang-format` file in the project root directory takes priority; if it does not exist, the one in the user directory `~/.clang-format` will be used**
 
 ```
 ---
@@ -2809,11 +3003,11 @@ SortUsingDeclarations: false
 SpacesBeforeTrailingComments: 1
 ```
 
-**注意：**
+**Notice:**
 
-* 即便`.clang-format`相同，不同版本的`clang-format`格式化的结果也有差异
+* Even if the `.clang-format` file is the same, different versions of `clang-format` may produce different formatting results.
 
-**示例：**
+**Examples:**
 
 * [StarRocks-format](https://github.com/StarRocks/starrocks/blob/main/.clang-format)
 
@@ -2861,8 +3055,8 @@ CompileFlags:
 Diagnostics:
   # Controls the severity of diagnostics reported by Clangd.
   UnusedIncludes: Warning
-  ClangTidy: 
-    Add: 
+  ClangTidy:
+    Add:
       - "-*,cppcoreguidelines-*"
 
 Index:
@@ -2891,7 +3085,7 @@ InlayHints:
   DeducedTypes: Yes
 
 ---
-If: 
+If:
   PathMatch: ".*\\.cpp$"
   CompileFlags:
     Remove: [-Wall]
@@ -3070,9 +3264,9 @@ export CMAKE_CXX_COMPILER_LAUNCHER=ccache
 
 1. [cpp reference](https://en.cppreference.com/w/)
 1. [cppman](https://github.com/aitjcize/cppman/)
-    * 安装：`pip install cppman`
-    * 示例：`cppman vector::begin`
-    * 重建索引：`cppman -r`
+    * Install: `pip install cppman`
+    * Example: `cppman vector::begin`
+    * Rebuild index: `cppman -r`
 
 ## 10.6 manpage
 

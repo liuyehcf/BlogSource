@@ -567,9 +567,7 @@ git archive
 
 # 7 .gitignore
 
-**基础规则**
-
-**Basic Rules**
+**Basic Rules:**
 
 1. Empty lines do not match any files, they are used to enhance readability.
 1. Lines starting with `#` are comments.

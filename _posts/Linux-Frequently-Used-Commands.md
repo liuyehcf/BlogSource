@@ -1504,10 +1504,17 @@ When you're debugging the binary through `gdb`, it will automatically load the c
 
 This command is used to view the symbol table
 
+**Options:**
+
+* `-C`: Decode (demangle) low-level symbol names into user-level names.
+* `-D`: Display the dynamic symbols rather than the normal symbols.
+* `-u`: Display only undefined symbols (those external to each object file).
+
 **Examples:**
 
 * `nm -C main`
 * `nm -D xxx.so`
+* `nm -u xxx.so`
 
 ## 2.37 strings
 
