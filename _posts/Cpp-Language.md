@@ -19,26 +19,27 @@ categories:
 
 ## 2.1 Conditions
 
-预处理器支持有条件地编译源文件的某些部分。这一行为由`#if`、`#else`、`#elif`、`#ifdef`、`#ifndef`与`#endif`指令所控制
+The preprocessor supports conditional compilation of certain parts of the source file.
+This behavior is controlled by the `#if`, `#else`, `#elif`, `#ifdef`, `#ifndef`, and `#endif` directives.
 
 ## 2.2 `#define`
 
-**`ANSI C`标准中有几个标准预定义宏（也是常用的）：**
+**In the `ANSI C` standard, there are several predefined macros (also commonly used):**
 
-* `__LINE__`：在源代码中插入当前源代码行号
-* `__FILE__`：在源文件中插入当前源文件名
-* `__FUNCTION__`：函数名
-* `__PRETTY_FUNCTION__`：函数签名
-* `__DATE__`：在源文件中插入当前的编译日期
-* `__TIME__`：在源文件中插入当前编译时间
-* `__STDC__`：当要求程序严格遵循`ANSI C`标准时该标识被赋值为1
-* `__cplusplus`：当编写`C++`程序时该标识符被定义
+* `__LINE__`: Inserts the current source code line number in the source code
+* `__FILE__`: Inserts the current source file name in the source file
+* `__FUNCTION__`: Function name
+* `__PRETTY_FUNCTION__`: Function signature
+* `__DATE__`: Inserts the current compilation date in the source file
+* `__TIME__`: Inserts the current compilation time in the source file
+* `__STDC__`: This identifier is assigned the value 1 when the program is required to strictly follow the `ANSI C` standard
+* `__cplusplus`: This identifier is defined when writing `C++` programs
 
-**语法：**
+**Syntax:**
 
-* `#`：字符串化操作符
-* `##`：连接操作符
-* `\`：续行操作符
+* `#`: Stringizing operator
+* `##`: Concatenation operator
+* `\`: Line continuation operator
 
 ### 2.2.1 Work with compiler
 
@@ -89,46 +90,46 @@ If you want to change a macro definition at compile time, there are several ways
 
 #### 2.2.2.1 do while(0) in macros
 
-考虑下面的宏定义
+Consider the following macro definition:
 
 ```c++
 #define foo(x) bar(x); baz(x)
 ```
 
-然后我们调用
+Then we call:
 
 ```c++
 foo(wolf);
 ```
 
-会被展开为
+It will be expanded into:
 
 ```c++
 bar(wolf); baz(wolf);
 ```
 
-看起来没有问题，我们接着考虑另一个情况
+It seems fine, let's now consider another situation:
 
 ```c++
-if (condition) 
+if (condition)
     foo(wolf);
 ```
 
-会被展开为
+It will be expanded into:
 
 ```c++
-if (condition) 
+if (condition)
     bar(wolf);
 baz(wolf);
 ```
 
-这并不符合我们的预期，为了避免出现这种问题，需要用一个作用域将宏包围起来，避免语句的作用域发生偏移，于是我们进一步将宏表示为如下形式
+This does not meet our expectations. To avoid such issues, we need to wrap the macro in a scope to prevent statement scope shifting. Thus, we further represent the macro in the following form
 
 ```c++
 #define foo(x) { bar(x); baz(x); }
 ```
 
-然后我们调用
+Then we call:
 
 ```c++
 if (condition)
@@ -137,7 +138,7 @@ else
     bin(wolf);
 ```
 
-会被展开为
+It will be expanded into:
 
 ```c++
 if (condition) {
@@ -148,7 +149,7 @@ else
     bin(wolf);
 ```
 
-最终，我们将宏优化成如下形式
+Finally, we optimize the macro into the following form
 
 ```c++
 #define foo(x) do { bar(x); baz(x); } while (0)
@@ -156,7 +157,7 @@ else
 
 #### 2.2.2.2 Variant
 
-借助宏的嵌套，以及约定命名规则，我们可以实现自动生成`else if`分支，示例代码如下：
+With the help of nested macros and agreed naming conventions, we can automatically generate `else if` branches. The sample code is as follows:
 
 ```cpp
 #include <iostream>
@@ -210,7 +211,7 @@ int main() {
 }
 ```
 
-上述功能完全可以由`std::variant`实现，如下：
+The above functionality can be fully implemented using `std::variant`, as follows:
 
 ```cpp
 #include <iostream>
@@ -257,10 +258,10 @@ int main() {
 
 [pass method with template arguments to a macro](https://stackoverflow.com/questions/4496842/pass-method-with-template-arguments-to-a-macro)
 
-示例如下，我们定义了一个参数的宏`MY_MACRO`：
+For example, we define a macro with one parameter `MY_MACRO`:
 
-* `MY_MACRO(func<flag1, flag2>())`：这个调用会报错，因为逗号会被认为用于分隔两个宏参数
-* `MY_MACRO((func<flag1, flag2>()))`：这个调用正常，因为用`()`将表达式包围后，会被认为是一个宏参数
+* `MY_MACRO(func<flag1, flag2>())`: This call will result in an error because the comma is interpreted as separating two macro parameters
+* `MY_MACRO((func<flag1, flag2>()))`: This call works correctly because enclosing the expression in `()` makes it be treated as a single macro parameter
 
 ```cpp
 #define MY_MACRO(stmt) \
@@ -339,7 +340,7 @@ int main() {
 
 ## 2.3 Variadic Macros
 
-宏也支持可变参数，通过`__VA_ARGS__`引用这些参数
+Macros also support variable arguments, which can be referenced using `__VA_ARGS__`.
 
 ```cpp
 #include <iostream>
@@ -367,21 +368,21 @@ int main() {
 
 ## 2.4 `#pragma`
 
-在`C++`中，`#pragma`是一个预处理器指令（`preprocessor directive`），它用于向编译器发出一些特定的命令或提示，从而控制编译器的行为。`#pragma`通常用于开启或关闭某些编译器的特性、设置编译器选项、指定链接库等
+In `C++`, `#pragma` is a preprocessor directive that is used to send specific commands or hints to the compiler, thereby controlling the compiler's behavior. `#pragma` is often used to enable or disable certain compiler features, set compiler options, or specify link libraries.
 
-`#pragma`指令不是`C++`的标准特性，而是编译器提供的扩展。不同的编译器可能支持不同的`#pragma`指令，而且它们的行为也可能不同。因此在编写可移植的`C++`代码时应尽量避免使用它们
+The `#pragma` directive is not a standard feature of `C++`, but rather an extension provided by the compiler. Different compilers may support different `#pragma` directives, and their behavior may also vary. Therefore, when writing portable `C++` code, it is best to avoid using them.
 
-不同的编译器可能支持不同的`#pragma`指令，以下是一些常用的`#pragma`指令及其作用
+Different compilers may support different `#pragma` directives. Below are some commonly used `#pragma` directives and their purposes:
 
-* `#pragma once`：该指令用于避免头文件被多次包含，以解决头文件重复包含的问题。它告诉编译器只包含一次该头文件
-* `#pragma pack`：该`pragma`族控制后继定义的结构体、联合体、类的最大对齐
-    * `#pragma pack(<arg>)`：设置当前对齐为值`<arg>`
-    * `#pragma pack()`：设置当前对齐为默认值（由命令行选项指定）
-    * `#pragma pack(push)`：推入当前对齐的值到内部栈
-    * `#pragma pack(push, <arg>)`：推入当前对齐的值到内部栈然后设置当前对齐为值`<arg>`
-    * `#pragma pack(pop)`：从内部栈弹出顶条目然后设置（恢复）当前对齐为该值
-    * 其中`<arg>`实参是小的`2`的幂，指定以字节计的新对齐
-* `#pragma message`：该指令用于在编译时输出一条消息
+* `#pragma once`: This directive prevents a header file from being included multiple times, solving the problem of duplicate header inclusion. It tells the compiler to include the header file only once.
+* `#pragma pack`: This family of pragmas controls the maximum alignment of structures, unions, and classes defined thereafter.
+    * `#pragma pack(<arg>)`: Sets the current alignment to `<arg>`.
+    * `#pragma pack()`: Resets the current alignment to the default (as specified by command-line options).
+    * `#pragma pack(push)`: Pushes the current alignment value onto an internal stack.
+    * `#pragma pack(push, <arg>)`: Pushes the current alignment value onto an internal stack, then sets the current alignment to `<arg>`.
+    * `#pragma pack(pop)`: Pops the top entry from the internal stack and restores the current alignment to that value.
+    * Here, the `<arg>` argument must be a small power of `2`, specifying the new alignment in bytes.
+* `#pragma message`: This directive is used to output a message during compilation.
     ```cpp
     #pragma message("Compiling " __FILE__)
 
@@ -390,7 +391,7 @@ int main() {
     }
     ```
 
-* `#pragma GCC diagnostic`：该指令用于控制编译器的警告和错误信息。可以用它来控制特定的警告或错误信息是否应该被忽略或显示
+* `#pragma GCC diagnostic`: This directive is used to control the compiler's warnings and error messages. It can be used to specify whether certain warnings or error messages should be ignored or displayed.
     ```cpp
     [[nodiscard]] int something() {
         return 0;
@@ -404,11 +405,11 @@ int main() {
     }
     ```
 
-* `#pragma omp`：该指令用于`OpenMP`并行编程，用于指定并行执行的方式
+* `#pragma omp`: This directive is used in `OpenMP` parallel programming to specify the manner of parallel execution.
 
 ## 2.5 `#error`
 
-显示给定的错误消息，并终止编译过程
+Displays the given error message and terminates the compilation process.
 
 ## 2.6 Reference
 
@@ -420,26 +421,27 @@ int main() {
 
 ### 3.1.1 const
 
-默认状态下，`const`对象仅在文件内有效。编译器将在编译过程中把用到该变量的地方都替代成对应的值，也就是说，编译器会找到代码中所有用到该`const`变量的地方，然后将其替换成定义的值
+By default, a `const` object is only valid within a single file. During compilation, the compiler replaces every occurrence of the variable with its corresponding value. In other words, the compiler locates all usages of the `const` variable in the code and substitutes them with the defined value.
 
-为了执行上述替换，编译器必须知道变量的初始值，如果程序包含多个文件，则每个用了`const`对象的文件都必须能访问到它的初始值才行。要做到这一点，就必须在每一个用到该变量的文件中都对它有定义（将定义该`const`变量的语句放在头文件中，然后用到该变量的源文件包含头文件即可），为了支持这一用法，同时避免对同一变量的重复定义，默认情况下`const`被设定为尽在文件内有效（`const`的全局变量，其实只是在每个文件中都定义了一边而已）
+To perform this substitution, the compiler must know the initial value of the variable. If a program consists of multiple files, each file that uses the `const` object must have access to its initial value. To achieve this, the variable must be defined in every file that uses it (by placing the definition of the `const` variable in a header file and including that header file in the source files). To support this usage while avoiding duplicate definitions of the same variable, `const` is by default restricted to file scope (a global `const` variable is essentially defined separately in each file).
 
-有时候出现这样的情况：`const`变量的初始值不是一个常量表达式，但又确实有必要在文件间共享。这种情况下，我们不希望编译器为每个文件生成独立的变量，相反，我们想让这类`const`对象像其他对象一样工作。**即：在一个文件中定义`const`，在多个文件中声明并使用它，无论声明还是定 义都添加`extern`关键字**
+Sometimes, however, the initial value of a `const` variable is not a constant expression, yet it still needs to be shared across files. In such cases, we do not want the compiler to generate independent variables for each file. Instead, we want such `const` objects to behave like other objects.
+**That is: define the `const` in one file, declare and use it in multiple files, and add the `extern` keyword both in the declaration and the definition.**
 
-* `.h`文件中：`extern const int a;`
-* `.cpp`文件中：`extern const int a=f();`
+* In the `.h` file: `extern const int a;`
+* In the `.cpp` file: `extern const int a = f();`
 
 #### 3.1.1.1 Top/Bottom Level const
 
-**只有指针和引用才有顶层底层之分**
+**Only pointers and references have the distinction between top-level and low-level `const`**
 
-* 顶层`const`属性表示对象本身不可变
-* 底层`const`属性表示指向的对象不可变
-* 引用的`const`属性只能是底层。因为引用本身不是对象，没法指定顶层的`const`属性
-* 指针的`const`属性既可以是顶层又可以是底层
-    * 注意，只有`const`与`变量名`相邻时（中间不能有`*`），才算顶层`const`。例如下面例子中的`p1`和`p2`都是顶层`const`
-* 指针的底层`const`是可以重新绑定的，例如下面例子中的`p1`和`p2`
-* 引用的底层`const`是无法重新绑定的，这是因为引用本身就不支持重新绑定，而非`const`的限制
+* Top-level `const` means the object itself is immutable.
+* Low-level `const` means the object being pointed to is immutable.
+* For references, `const` can only be low-level, because a reference itself is not an object and thus cannot have a top-level `const`.
+* For pointers, `const` can be either top-level or low-level.
+    * Note: only when `const` is adjacent to the variable name (with no `*` in between) is it considered top-level `const`. For example, in the cases below, both `p1` and `p2` are top-level `const`
+* A pointer with low-level `const` can be rebound, as in the examples with `p1` and `p2`.
+* A reference with low-level `const` cannot be rebound, but this is due to the fact that references themselves do not support rebinding, rather than being a restriction of `const`.
 
 ```cpp
 int main() {
@@ -468,18 +470,18 @@ int main() {
 }
 ```
 
-**`const`遵循如下规则：**
+**`const` follows the rules below:**
 
-* 顶层`const`可以访问`const`和非`const`的成员
-* 底层`const`只能访问`const`的成员
+* Top-level `const` can access both `const` and non-`const` members.
+* Low-level `const` can only access `const` members.
 
-示例如下，可以发现：
+For example, we can observe:
 
-* `const Container* container`以及`const Container& container`都只能访问`const`成员，而无法访问非`const`成员
-* `Container* const container`可以访问`const`成员以及非`const`成员
-* 特别地，`const ContainerPtr& container`可以访问非`const`成员，这是因为`container->push_back(num)`是一个两级调用
-    * 第一级：访问的是`std::shared_ptr::operator->`运算符，该运算符是`const`的，且返回类型为`element_type*`
-    * 第二级：通过返回的`element_type*`访问`std::vector::push_back`，因此与上述结论并不矛盾
+* `const Container* container` and `const Container& container` can only access `const` members and cannot access non-`const` members.
+* `Container* const container` can access both `const` and non-`const` members.
+* Specifically, `const ContainerPtr& container` can access non-`const` members. This is because `container->push_back(num)` involves a two-level call:
+    * First level: It calls `std::shared_ptr::operator->`, which is itself `const`, and its return type is `element_type*`.
+    * Second level: Through the returned `element_type*`, it accesses `std::vector::push_back`. Therefore, this does not contradict the above conclusion.
 
 ```cpp
 #include <stddef.h>
@@ -517,9 +519,9 @@ int main() {
 
 #### 3.1.1.2 const Actual and Formal Parameters
 
-实参初始化形参时会自动忽略掉顶层`const`属性
+When an argument initializes a parameter, the top-level `const` attribute is automatically ignored.
 
-顶层`const`不影响形参的类型，例如下面的代码，编译会失败，错误信息是函数重定义
+Top-level `const` does not affect the type of a parameter. For example, in the following code, compilation will fail with an error indicating function redefinition.
 
 ```cpp
 void func(int value) {}
@@ -534,15 +536,15 @@ int main() {
 
 #### 3.1.1.3 const Member
 
-构造函数中显式初始化：在初始化部分进行初始化，而不能在函数体内初始化；如果没有显式初始化，就调用定义时的初始值进行初始化
+Explicit initialization in a constructor: initialization must be done in the initializer list, not inside the function body.
+If no explicit initialization is provided, the member will be initialized using its default value defined at the point of declaration.
 
 #### 3.1.1.4 const Member Function
 
-**`const`关键字修饰的成员函数，不能修改当前类的任何字段的值，如果字段是对象类型，也不能调用非`const`修饰的成员方法。（有一个特例，就是当持有的是某个类型的指针时，可以通过该指针调用非`const`方法）**
+**A member function modified with the `const` keyword cannot modify the value of any field in the current class. If a field is an object type, it also cannot call member methods that are not marked `const`. (One exception: if the class holds a pointer to a type, it can use that pointer to call non-`const` methods.)**
 
-常量对象以及常量对象的引用或指针都只能调用常量成员函数
-
-常量对象以及常量对象的引用或指针都可以调用常量成员函数以及非常量成员函数
+* Constant objects, as well as references or pointers to constant objects, can only call constant member functions.
+* Constant objects, as well as references or pointers to constant objects, can call both constant and non-constant member functions.
 
 ```cpp
 #include <iostream>
@@ -572,25 +574,25 @@ int main() {
 
 ### 3.1.2 volatile
 
-`volatile`关键字是一种类型修饰符，用它声明的类型变量表示可以被某些编译器未知的因素更改（程序之外的因素），比如：操作系统、硬件等。遇到这个关键字声明的变量，编译器对访问该变量的代码就不再进行优化，从而可以提供对特殊地址的稳定访问
+The `volatile` keyword is a type qualifier. A variable declared with it indicates that its value may be changed by factors unknown to the compiler (outside the program), such as the operating system, hardware, etc. When encountering a variable declared as `volatile`, the compiler will not optimize the code accessing that variable, ensuring stable access to special addresses.
 
-* **仅从`C/C++`标准的角度来说（不考虑平台以及编译器扩展），`volatile`并不保证线程间的可见性**。在实际场景中，例如`x86`平台，在`MESI`协议的支持下，`volatile`是可以保证可见性的，这可以理解为一个巧合，利用了平台相关性，因此不具备平台可移植性
+* **From the perspective of the `C/C++` standard alone (without considering platform or compiler extensions), `volatile` does not guarantee visibility between threads.** In real-world scenarios, for example on the `x86` platform, with the support of the `MESI` protocol, `volatile` can ensure visibility. However, this is merely incidental and relies on platform specifics, thus lacking portability across platforms.
 
-`Java`中也有`volatile`关键字，但作用完全不同，`Java`在语言层面就保证了`volatile`具有线程可见性
+`Java` also has the `volatile` keyword, but its role is entirely different: in `Java`, `volatile` ensures thread visibility at the language level.
 
 * `x86`
-    * 仅依赖`MESI`协议，可能也无法实现可见性。举个例子，当`CPU1`执行写操作时，要等到其他`CPU`将对应的缓存行设置成`I`状态后，写入才能完成，性能较差，于是`CPU`又引入了`Store Buffer`（`MESI`协议不感知`Store Buffer`），`CPU1`只需要将数据写入`Store Buffer`而不用等待其他`CPU`将缓存行设置成`I`状态就可以干其他事了
-    * 为了解决上述问题，`JVM`使用了`lock`前缀的汇编指令，将当前`Store Buffer`中的所有数据（不仅仅是`volatile`修饰的变量）都通过`MESI`写入
-* 其他架构，采用其他方式来保证线程可见性这一承诺
+    * Relying only on the `MESI` protocol may still fail to achieve visibility. For example, when `CPU1` performs a write, it must wait until other CPUs set the corresponding cache line to the `I` state before the write can complete. This is inefficient, so CPUs introduced the `Store Buffer` (which the `MESI` protocol does not account for). `CPU1` can write to the `Store Buffer` and proceed without waiting for other CPUs to invalidate the cache line.
+    * To solve this issue, the `JVM` uses assembly instructions with the `lock` prefix, which flushes all data in the `Store Buffer` (not just variables declared as `volatile`) into memory through the `MESI` protocol.
+* Other architectures use different mechanisms to fulfill the promise of thread visibility.
 
-**参考：**
+**Reference:**
 
 * [Is volatile useful with threads?](https://isocpp.org/blog/2018/06/is-volatile-useful-with-threads-isvolatileusefulwiththreads.com)
     * [isvolatileusefulwiththreads](http://isvolatileusefulwiththreads.com/)
 * [Volatile and cache behaviour](https://stackoverflow.com/questions/18695120/volatile-and-cache-behaviour)
 * [你不认识的cc++ volatile](https://www.hitzhangjie.pro/blog/2019-01-07-%E4%BD%A0%E4%B8%8D%E8%AE%A4%E8%AF%86%E7%9A%84cc++-volatile/)
 
-**示例如下：**
+**Example:**
 
 ```sh
 cat > volatile.cpp << 'EOF'
@@ -637,11 +639,11 @@ gcc -o volatile.o -c volatile.cpp -O3 -lstdc++ -std=gnu++17
 objdump -drwCS volatile.o
 ```
 
-**输出如下：**
+**The output is as follows:**
 
-* `read_from_normal`的三次操作被优化成了一次
-* `write_to_normal`的三次操作被优化成了一次
-* `write_to_atomic`中，`std::memory_order_seq_cst`使用的是[`xchg`指令](https://www.felixcloutier.com/x86/xchg)，当有一个操作数是内存地址时，会自动启用`locking protocol`，确保写操作的串行化
+* The three operations of `read_from_normal` are optimized into one.
+* The three operations of `write_to_normal` are optimized into one.
+* In `write_to_atomic`, `std::memory_order_seq_cst` uses [xchg](https://www.felixcloutier.com/x86/xchg), when one of the operands is a memory address, the `locking protocol` is automatically enabled to ensure serialization of write operations.
 
 ```
 volatile.o:     file format elf64-x86-64
@@ -709,18 +711,18 @@ Disassembly of section .text:
 
 #### 3.1.2.1 Visibility Verification
 
-首先明确一下`visibility`的概念，这里我对它的定义是：当`A`和`B`两个线程，`A`对变量`x`进行写操作，`B`对变量`x`进行读操作，若时间上写操作先发生于读操作时，读操作能够读取到写操作写入的值
+First, let's clarify the concept of `visibility`. Here, I define it as follows: when there are two threads `A` and `B`, if `A` performs a write operation on variable `x` and `B` performs a read operation on variable `x`, then if the write operation happens before the read operation, the read should be able to see the value written by the write operation.
 
-这个问题比较难直接验证，我们打算用一种间接的方式来验证：
+This problem is difficult to verify directly, so we intend to use an indirect method to test it:
 
-* 假设读操作和写操作的性能开销之比为`α`
-* 开两个线程，分别循环执行读操作和写操作，读执行`n`次（期间持续进行写操作）。统计读线程，相邻两次读操作，读取数值不同的次数为`m`，`β=m/n`。
-    * 若`α > 1`，即读比写更高效。如果满足可见性，那么`β`应该大致接近`1/α`
-    * 若`α <= 1`，即读比写更低效。如果满足可见性，那么`β`应该接近1（写的值大概率被看见）
+* Assume the performance overhead ratio of read to write operations is `α`.
+* Start two threads: one continuously performing read operations, the other continuously performing write operations. The read thread executes `n` reads (with write operations ongoing in parallel). Count the number of times `m` that two consecutive read operations return different values. Define `β = m / n`.
+    * If `α > 1`, i.e., reads are more efficient than writes. If visibility is ensured, then `β` should roughly approach `1/α`.
+    * If `α <= 1`, i.e., reads are less efficient than writes. If visibility is ensured, then `β` should roughly approach 1 (since the written value is very likely to be observed).
 
-首先，测试`atomic`与`volatile`的读写性能
+First, test the read/write performance of `atomic` and `volatile`.
 
-* 测试时，会有一个额外的线程对`atomic`或`volatile`变量进行持续的读写操作
+* During testing, an additional thread will continuously read and write to the `atomic` or `volatile` variable
 
 ```cpp
 #include <benchmark/benchmark.h>
@@ -835,17 +837,17 @@ BENCHMARK(volatile_write);
 BENCHMARK_MAIN();
 ```
 
-结果如下：
+Output:
 
-* 对于`atomic<uint64_t>, std::memory_order_seq_cst`
+* `atomic<uint64_t>, std::memory_order_seq_cst`
     * `α = 28.9/1.24 = 23.30 > 1`
-    * `β`的预期值为`1/α = 0.043`
-* 对于`atomic<uint64_t>, std::memory_order_relaxed`
+    * `β` expected to be `1/α = 0.043`
+* `atomic<uint64_t>, std::memory_order_relaxed`
     * `α = 0.391/1.38 = 0.28 < 1`
-    * `β`的预期值为`1`
-* 对于`volatile`
+    * `β` expected to be `1`
+* `volatile`
     * `α = 0.331/1.33 = 0.25 < 1`
-    * `β`的预期值为`1`
+    * `β` expected to be `1`
 
 ```
 ----------------------------------------------------------------------------------
@@ -859,7 +861,7 @@ volatile_read                                 1.33 ns         1.33 ns    5511545
 volatile_write                               0.331 ns        0.331 ns   1000000000
 ```
 
-同一个环境，测试程序如下：
+In the same environment, the test program is as follows:
 
 ```cpp
 #include <atomic>
@@ -941,15 +943,18 @@ int main() {
 }
 ```
 
-结果如下（`volatile`以及`std::memory_order_relaxed`的行为是平台相关的，测试环境是x86，实验结果不具备平台扩展性）：
+The results are as follows (`volatile` and `std::memory_order_relaxed` behavior is platform-dependent; the test environment is x86, so the experimental results are not portable across platforms):
 
-* `std::memory_order_seq_cst`符合预期
-* `std::memory_order_relaxed`、`volatile`都不符合预期。这两者都不具备`visibility`
-* 导致这一现象的原因，我的猜想如下：
-    * x86会用到一种硬件优化，`Store Buffer`用于加速写操作
-    * `std::memory_order_seq_cst`的写操作，会立即将`Store Buffer`刷入内存
-    * `std::memory_order_relaxed`、`volatile`的写操作，会写入`Store Buffer`，当容量满了之后，刷入内存
-    * 将`Store Buffer`填充满所需的时间很短。于是上述代码等价于`std::memory_order_seq_cst`每次写操作写一次内存，`std::memory_order_relaxed`、`volatile`的一批写操作写一次内存。写内存的频率接近。于是这三种情况下，`β`相近
+* `std::memory_order_seq_cst` behaves as expected.
+* `std::memory_order_relaxed` and `volatile` do not behave as expected — neither provides `visibility`.
+* My hypothesis for this phenomenon is as follows:
+    * x86 employs a hardware optimization: the `Store Buffer` is used to accelerate write operations.
+    * Writes with `std::memory_order_seq_cst` immediately flush the `Store Buffer` into memory.
+    * Writes with `std::memory_order_relaxed` and `volatile` go into the `Store Buffer` and are only flushed to memory when the buffer fills.
+    * The time required to fill the `Store Buffer` is very short. Thus, the above code is effectively equivalent to:
+        * `std::memory_order_seq_cst`: each write flushes once to memory.
+        * `std::memory_order_relaxed` / `volatile`: a batch of writes flushes once to memory.
+    * The frequency of memory flushes ends up being similar, so in all three cases, the observed `β` values are close.
 
 ```
 atomic<uint64_t>, std::memory_order_seq_cst, β=0.0283726
@@ -957,18 +962,18 @@ atomic<uint64_t>, std::memory_order_relaxed, β=0.0276697
 volatile, β=0.0271394
 ```
 
-**如果用Java进行上述等价验证，会发现实际结果与预期吻合，这里不再赘述**
+**If the above equivalent verification is performed using Java, the actual results align with the expectations, so it will not be elaborated here.**
 
 #### 3.1.2.2 Atomicity Verification
 
-`std::atomic`可以为其他非原子变量提供`happens-before`关系
+`std::atomic` can provide a `happens-before` relationship for other non-atomic variables
 
-* `normal-write happens-before atomic-write`
-* `atomic-write happens-before atomic-read`
-* `atomic-read happens-before normal-read`
-* 推导出`normal-write happens-before normal-read`
+* `normal-write happens-before atomic-write`.
+* `atomic-write happens-before atomic-read`.
+* `atomic-read happens-before normal-read`.
+* We deduce that `normal-write` happens-before `normal-read`.
 
-此外，由于测试机器是x86的，x86是`TSO`模型，`std::memory_order_relaxed`同样满足`atomic-write happens-before atomic-read`规则，只不过生成的指令更接近`volatile`，因此这里使用`std::memory_order_relaxed`，便于对比两者指令的差异
+In addition, since the test machine is x86 and x86 uses the `TSO` model, `std::memory_order_relaxed` likewise satisfies the `atomic-write happens-before atomic-read` rule. However, the generated instructions are closer to those of `volatile`. Therefore, we use `std::memory_order_relaxed` here to make it easier to compare the differences between the two sets of instructions.
 
 ```cpp
 #include <atomic>
@@ -1061,10 +1066,10 @@ int main() {
 }
 ```
 
-以`-O3`优化级别进行编译，查看其汇编指令，可以发现：
+When compiling with the `-O3` optimization level and examining the assembly instructions, we can observe:
 
-* `volatile_writer`中，`data`的赋值被优化到了循环外，`volatile_data_ready`每次循环都会进行一次赋值（这种优化破坏了程序的本意）
-* `atomic_writer`中，由于内存屏障的存在（`std::atomic`的写操作），`data`的赋值并未被优化到循环外。`data`和`atomic_data_ready`每次循环都会被赋值（符合程序本意）
+* In `volatile_writer`, the assignment to `data` is hoisted outside the loop, while `volatile_data_ready` is assigned once per iteration (this optimization breaks the program's intended semantics).
+* In `atomic_writer`, due to the presence of a memory barrier (the write to `std::atomic`), the assignment to `data` is not hoisted outside the loop. Both `data` and `atomic_data_ready` are assigned on each iteration (which matches the program's intent).
 
 ```
 00000000000013c0 <volatile_writer()>:
@@ -1098,11 +1103,11 @@ int main() {
     143d:	0f 1f 00             	nopl   (%rax)
 ```
 
-如果以`-O0`优化级别进行编译，则上述程序中的断言不会报错
+If the program is compiled with the `-O0` optimization level, the assertions in the above code will not fail.
 
 ### 3.1.3 mutable
 
-容许常量类类型对象修改相应类成员
+Allow constant class-type objects to modify the corresponding class members.
 
 ```cpp
 #include <cstdint>
@@ -1308,7 +1313,7 @@ int main() {
 }
 ```
 
-输出如下：
+Output:
 
 ```
 sizeof(Foo1)=8, alignof(Foo1)=4
@@ -1364,16 +1369,16 @@ alignof(decltype(array2[1]))=64
 
 ### 3.4.1 auto
 
-**`auto`会忽略顶层`const`，保留底层的`const`，但是当设置一个类型为`auto`的引用时，初始值中的顶层常量属性仍然保留**
+**`auto` ignores top-level `const` but retains low-level `const`. However, when setting a reference of type `auto`, the top-level `const` property from the initializer is still preserved.**
 
 ### 3.4.2 decltype
 
-* **`decltype`会保留变量的所有类型信息（包括顶层`const`和引用在内）**
-* 如果表达式的内容是解引用操作，得到的将是引用类型
+* **`decltype` preserves all type information of a variable (including top-level `const` and references).**
+* If the expression involves a dereference operation, the result will be a reference type.
     * `int i = 42;`
     * `int *p = &i;`
-    * `decltype(*p)`得到的是`int&`
-* **`decltype((c))`会得到`c`的引用类型（无论`c`本身是不是引用）**
+    * `decltype(*p)` results in `int&`
+* **`decltype((c))` yields the reference type of `c` (regardless of whether `c` itself is a reference).**
 
 ```cpp
 #include <iostream>
@@ -1420,7 +1425,7 @@ int main() {
 }
 ```
 
-**输出如下：**
+**Output:**
 
 ```
 decltype(0):
@@ -1515,7 +1520,8 @@ decltype(*ptr3):
     is_pointer_v=0
 ```
 
-此外，`decltype`发生在编译期，即它不会产生任何运行时的代码。示例如下，编译执行后，可以发现`say_hello`并未执行
+In addition, `decltype` is evaluated at compile time, meaning it does not generate any runtime code.
+For example, after compiling and running the following code, you will find that `say_hello` is never executed.
 
 ```cpp
 #include <iostream>
@@ -1533,11 +1539,11 @@ int main() {
 
 ### 3.4.3 typeof
 
-**非`C++`标准**
+**Non-`C++` Standard**
 
 ### 3.4.4 typeid
 
-**`typeid`运算符允许在运行时确定对象的类型。若要判断是父类还是子类的话，那么父类必须包含虚函数**
+**The `typeid` operator allows determining the type of an object at runtime. To distinguish between a parent class and a child class, the parent class must contain a virtual function.**
 
 ```cpp
 #define CHECK_TYPE(left, right)                                                            \
@@ -1581,7 +1587,7 @@ int main() {
 }
 ```
 
-输出如下：
+Output:
 
 ```
 typeid(str) == typeid(std::string): true
@@ -1597,7 +1603,7 @@ typeid(*ptr5) == typeid(BaseWithVirtualFunc): false
 typeid(*ptr5) == typeid(DeriveWithVirtualFunc): true
 ```
 
-**此外，还可以使用`dynamic_cast`来判断指针指向子类还是父类**
+**In addition, `dynamic_cast` can be used to determine whether a pointer points to a subclass or a parent class.**
 
 ```cpp
 #define CHECK_TYPE(left, right)                                                                   \
@@ -1628,7 +1634,7 @@ int main() {
 }
 ```
 
-输出如下：
+Output:
 
 ```
 dynamic_cast<Base*>(ptr1) != nullptr: false
@@ -1643,9 +1649,9 @@ dynamic_cast<Derive*>(ptr3) != nullptr: true
 
 ### 3.5.1 static_cast
 
-**用法：`static_cast<type> (expr)`**
+**Usage: `static_cast<type> (expr)`**
 
-`static_cast`运算符执行非动态转换，没有运行时类检查来保证转换的安全性。例如，它可以用来把一个基类指针转换为派生类指针。任何具有明确意义的类型转换，只要不包含底层`const`，都可以使用`static_cast`
+The `static_cast` operator performs non-dynamic conversions, without runtime class checks to ensure conversion safety. For example, it can be used to convert a base class pointer to a derived class pointer. Any type conversion with a clear meaning, as long as it does not involve low-level `const`, can be done using `static_cast`.
 
 ```cpp
 #include <iostream>
@@ -1661,7 +1667,7 @@ int main() {
 }
 ```
 
-**注意，若待转换类型既不是引用类型，也不是指针类型时，会调用该类型的拷贝构造函数**
+**Note: If the target type is neither a reference type nor a pointer type, the copy constructor of that type will be called.**
 
 ```cpp
 #include <iostream>
@@ -1681,9 +1687,10 @@ int main() {
 
 ### 3.5.2 dynamic_cast
 
-**用法：`dynamic_cast<type> (expr)`**
+**Usage: `dynamic_cast<type> (expr)`**
 
-`dynamic_cast`通常用于在继承结构之间进行转换，在运行时执行转换，验证转换的有效性。`type`必须是类的指针、类的引用或者`void*`。若指针转换失败，则得到的是`nullptr`；若引用转换失败，那么会抛出`std::bad_cast`类型的异常
+`dynamic_cast` is typically used for conversions within an inheritance hierarchy. It performs the conversion at runtime and verifies its validity. The `type` must be a class pointer, a class reference, or `void*`.
+If a pointer conversion fails, the result is `nullptr`; if a reference conversion fails, a `std::bad_cast` exception is thrown.
 
 ```cpp
 #include <iostream>
@@ -1723,9 +1730,10 @@ int main() {
 
 ### 3.5.3 const_cast
 
-**用法：`const_cast<type> (expr)`**
+**Usage: `const_cast<type> (expr)`**
 
-这种类型的转换主要是用来操作所传对象的`const`属性，可以加上`const`属性，也可以去掉`const`属性（顶层底层均可）。其中，`type`只能是如下几类（必须是引用或者指针类型）
+This type of cast is mainly used to manipulate the `const` property of the given object. It can either add or remove the `const` qualifier (both top-level and low-level).
+Here, `type` can only be one of the following categories (it must be either a reference or a pointer type).
 
 * `T &`
 * `const T &`
@@ -1760,9 +1768,11 @@ int main() {
 
 ### 3.5.4 reinterpret_cast
 
-**用法：`reinterpret_cast<type> (expr)`**
+**Usage: `reinterpret_cast<type> (expr)`**
 
-`reinterpret_cast`是最危险的类型转换，它能够直接将一种类型的指针转换为另一种类型的指针，应该非常谨慎地使用。在很大程度上，使用`reinterpret_cast`获得的唯一保证是，通常如果你将结果转换回原始类型，您将获得完全相同的值（但如果中间类型小于原始类型，则不会）。也有许多`reinterpret_cast`不能做的转换。它主要用于特别奇怪的转换和位操作，例如将原始数据流转换为实际数据，或将数据存储在指向对齐数据的指针的低位中
+`reinterpret_cast` is the most dangerous type of cast. It can directly convert a pointer of one type to a pointer of another type, and should be used with great caution. In most cases, the only guarantee when using `reinterpret_cast` is that if you convert the result back to the original type, you will usually get the exact same value (but not if the intermediate type is smaller than the original type).
+
+There are also many conversions that `reinterpret_cast` cannot perform. It is mainly used for unusual conversions and bit manipulations, such as converting a raw data stream into actual data, or storing data in the low bits of a pointer that points to aligned data.
 
 ```cpp
 #include <iostream>
@@ -2147,18 +2157,18 @@ int main() {
 
 ### 3.7.2 virtual
 
-`virtual`关键词修饰的就是虚函数，虚函数的分派发生在运行时
+The `virtual` keyword marks a virtual function, and the dispatch of a virtual function occurs at runtime.
 
-1. 有虚函数的每个类，维护一个虚函数表
-1. 有虚函数的类的对象，会包含一个指向该类的虚函数表的指针
+1. Every class that has virtual functions maintains a virtual function table (vtable).
+1. Objects of classes with virtual functions contain a pointer to that class's vtable.
 
 ![virtual-method-table](/images/Cpp-Language/virtual-method-table.jpeg)
 
-* 图片出处：[c++虚指针和虚函数表](https://zhuanlan.zhihu.com/p/110144589)
+* Image comes from [c++虚指针和虚函数表](https://zhuanlan.zhihu.com/p/110144589)
 
 #### 3.7.2.1 virtual destructor
 
-通常，我们需要将有虚函数的类的析构函数定义为`virtual`，否则很容易造成内存泄露，如下：
+Typically, we need to declare the destructor of a class with virtual functions as `virtual`; otherwise, it can easily cause memory leaks, as shown below:
 
 ```cpp
 #include <iostream>
@@ -2184,20 +2194,20 @@ int main() {
 
 ### 3.7.3 final
 
-`final`可以修饰类或者虚函数
+`final` can be used to modify either a class or a virtual function:
 
-* `final`修饰的类不能有子类，该类的所有虚函数不能被覆盖
-* `final`修饰的虚函数，不能被覆盖
-    * 只能在虚函数的声明处进行修饰
+* A class marked with `final` cannot have subclasses, and none of its virtual functions can be overridden.
+* A virtual function marked with `final` cannot be overridden.
+    * It can only be marked at the point of the virtual function's declaration.
 
-当用具体类型的指针或者引用调用`final`修饰的虚函数时，虚函数的调用可以被编译器直接优化掉
+When a `final` virtual function is called through a pointer or reference of the concrete type, the compiler can directly optimize away the virtual function call.
 
 ### 3.7.4 override
 
-`override`可以修饰虚函数，表示对虚函数进行覆盖
+`override` can be used to modify a virtual function, indicating that it overrides a virtual function.
 
-* 只能在虚函数的声明处进行修饰
-* 加不加`override`其实没有影响
+* It can only be applied at the point of the virtual function's declaration.
+* Adding or omitting `override` does not affect functionality.
 
 ## 3.8 constexpr
 
@@ -2290,7 +2300,7 @@ Foo::value2 address: 94496100839432
 
 ### 3.8.2 if constexpr
 
-编译期分支判断，一般用于泛型。如果在分支中使用的是不同类型的不同特性，那么普通的`if`是没法通过编译的，如下：
+Compile-time branch selection is generally used in generics. If different branches use features of different types, a normal `if` statement will fail to compile, as shown below:
 
 ```cpp
 #include <iostream>
@@ -2327,7 +2337,7 @@ int main() {
 
 ## 3.9 static_assert
 
-编译期断言
+Compile time assertion.
 
 ```cpp
 int main() {
@@ -2413,7 +2423,7 @@ int main() {
 
 ## 3.11 throw and error
 
-`throw`关键字可以抛出任何对象，例如可以抛出一个整数
+The `throw` keyword can throw any object; for example, it can throw an integer.
 
 ```c++
     try {
@@ -2423,19 +2433,19 @@ int main() {
     }
 
     try {
-        // 保护代码
+        // Protected code
     } catch (...) {
-        // 能处理任何异常的代码
+        // Handle any exceptions.
     }
 ```
 
 ## 3.12 placement new
 
-`placement new`的功能就是在一个已经分配好的空间上，调用构造函数，创建一个对象
+The purpose of `placement new` is to create an object by invoking its constructor on an already allocated memory space.
 
 ```c++
-void *buf = // 在这里为buf分配内存
-Class *pc = new (buf) Class();  
+void *buf = // alloc memory here
+Class *pc = new (buf) Class();
 ```
 
 ## 3.13 enum
@@ -2463,7 +2473,7 @@ int x = Green; // OK (implicitly converts to int)
 
 **Key characteristics of `enum class`**:
 
-* **Scoped**: Enumerator names are placed inside the enum’s scope (Color::Red), so no name clashes.
+* **Scoped**: Enumerator names are placed inside the enum's scope (Color::Red), so no name clashes.
 * **Strongly typed**: They do not implicitly convert to int.
 * **Type-safe**: Can't be mixed with other enums or integers without an explicit cast.
 
@@ -2802,7 +2812,7 @@ int main() {
 }
 ```
 
-结果：
+Output:
 
 ```
 a=2
@@ -2902,7 +2912,7 @@ int main() {
 }
 ```
 
-输出：
+Output:
 
 ```
 ============(create a)============
@@ -2964,7 +2974,7 @@ int main(int argc, const char* argv[]) {
 }
 ```
 
-输出：
+Output:
 
 ```
 initialized_where_defined
@@ -3263,14 +3273,6 @@ int main() {
 
 ```sh
 g++ -o main main.cpp -std=gnu++11 -L lib -lperson
-
-lib/libperson.a(person.o)：在函数'Person::work()'中：
-person.cpp:(.text+0x0): Person::work() 的多重定义
-/tmp/ccfhnlz4.o:main.cpp:(.text+0x0)：第一次在此定义
-lib/libperson.a(person.o)：在函数'Person::sleep()'中：
-person.cpp:(.text+0x2a): Person::sleep() 的多重定义
-/tmp/ccfhnlz4.o:main.cpp:(.text+0x2a)：第一次在此定义
-collect2: 错误：ld 返回 1
 ```
 
 ## 4.5 Operator Overloading
@@ -3339,7 +3341,7 @@ int main() {
 
 [Variadic arguments](https://en.cppreference.com/w/cpp/language/variadic_arguments)
 
-Allows a function to accept any number of extra arguments. 
+Allows a function to accept any number of extra arguments.
 
 Within the body of a function that uses variadic arguments, the values of these arguments may be accessed using the `<cstdarg>` library facilities:
 
@@ -3605,9 +3607,9 @@ int main() {
 
 ### 4.8.2 Extended Asm
 
-[Extended Asm](https://gcc.gnu.org/onlinedocs/gcc/Extended-Asm.html): GCC设计了一种特有的嵌入方式，它规定了汇编代码嵌入的形式和嵌入汇编代码需要由哪几个部分组成，格式如下：
+[Extended Asm](https://gcc.gnu.org/onlinedocs/gcc/Extended-Asm.html): GCC has designed a unique embedding method that defines the form of embedded assembly code and specifies the components required for embedding assembly. The format is as follows:
 
-* 汇编语句模板是必须的，其余三部分是可选的
+* The assembly instruction template is mandatory, while the other three parts are optional.
 
 ```cpp
 asm asm-qualifiers ( AssemblerTemplate 
@@ -3622,51 +3624,51 @@ asm asm-qualifiers ( AssemblerTemplate
                       : GotoLabels)
 ```
 
-**`Qualifiers`，修饰符：**
+**`Qualifiers`: Modifiers**
 
-* `volatile`：禁止编译器优化
+* `volatile`: Prevents the compiler from optimizing.
 * `inline`
 * `goto`
 
-**`AssemblerTemplate`，汇编语句模板：**
+**`AssemblerTemplate`, assembly instruction template:**
 
-* 汇编语句模板由汇编语句序列组成，语句之间使用`;`、`\n`、`\n\t`分开
-* 指令中的操作数可以使用占位符，占位符可以指向`OutputOperands`、`InputOperands`、`GotoLabels`
-* 指令中使用占位符表示的操作数，总被视为`long`型（4个字节），但对其施加的操作根据指令可以是字或者字节，当把操作数当作字或者字节使用时，默认为低字或者低字节
-* 对字节操作可以显式的指明是低字节还是次字节。方法是在`%`和序号之间插入一个字母
-    * `b`代表低字节
-    * `h`代表高字节
-    * 例如：`%h1`
+* The assembly instruction template consists of a sequence of assembly instructions, separated by `;`, `\n`, or `\n\t`.
+* Operands in instructions can use placeholders, which may refer to `OutputOperands`, `InputOperands`, or `GotoLabels`.
+* Operands represented by placeholders in the instruction are always treated as `long` (4 bytes). However, depending on the instruction, they may be operated on as words or bytes. When treated as a word or byte, the default is the low word or low byte.
+* For byte operations, you can explicitly indicate whether it's the low byte or high byte. This is done by inserting a letter between `%` and the index:
+    * `b` represents the low byte.
+    * `h` represents the high byte.
+    * Example: `%h1`.
 
-**`OutputOperands`，输出操作数：**
+**`OutputOperands`, output operands:**
 
-* 操作数之间用逗号分隔
-* 每个操作数描述符由限定字符串（`Constraints`）和C语言变量或表达式组成
+* Operands are separated by commas.
+* Each operand descriptor consists of a constraint string (`Constraints`) and a C variable or expression.
 
-**`InputOperands`，输入操作数：**
+**`InputOperands`, input operands:**
 
-* 操作数之间用逗号分隔
-* 每个操作数描述符由限定字符串（`Constraints`）和C语言变量或表达式组成
+* Operands are separated by commas.
+* Each operand descriptor consists of a constraint string (`Constraints`) and a C variable or expression.
 
-**`Clobbers`，描述部分：**
+**`Clobbers`, clobber list:**
 
-* 用于通知编译器我们使用了哪些寄存器或内存，由逗号格开的字符串组成
-* 每个字符串描述一种情况，一般是寄存器名；除寄存器外还有`memory`。例如：`%eax`，`%ebx`，`memory`等
+* Used to inform the compiler which registers or memory are used; consists of comma-separated strings.
+* Each string describes a case, usually a register name; besides registers, there is also `memory`. For example: `%eax`, `%ebx`, `memory`, etc.
 
-**`Constraints`，限定字符串（下面仅列出常用的）：**
+**`Constraints`, constraint strings (commonly used ones):**
 
-* `m`：内存
-* `o`：内存，但是其寻址方式是偏移量类型
-* `v`：内存，但寻址方式不是偏移量类型
-* `r`：通用寄存器
-* `i`：整型立即数
-* `g`：任意通用寄存器、内存、立即数
-* `p`：合法指针
-* `=`：write-only
-* `+`：read-write
-* `&`：该输出操作数不能使用过和输入操作数相同的寄存器
+* `m`: Memory
+* `o`: Memory, but addressable via offset
+* `v`: Memory, but not addressable via offset
+* `r`: General-purpose register
+* `i`: Integer immediate value
+* `g`: Any general-purpose register, memory, or immediate value
+* `p`: Valid pointer
+* `=`: Write-only
+* `+`: Read-write
+* `&`: The output operand cannot use the same register as an input operand
 
-**示例1：**
+**Example 1:**
 
 ```cpp
 #include <stddef.h>
@@ -3728,11 +3730,11 @@ int main() {
 }
 ```
 
-**示例2：**
+**Example 2:**
 
-* 这个程序是没法跑的，因为`cli`指令必须在内核态执行
-* `hal_save_flags_cli`：将`eflags`寄存器的值保存到内存中，然后关闭中断
-* `hal_restore_flags_sti`：将`hal_save_flags_cli`保存在内存中的值恢复到`eflags`寄存器中
+* This program cannot run because the `cli` instruction must be executed in kernel mode.
+* `hal_save_flags_cli`: Saves the value of the `eflags` register into memory, then disables interrupts.
+* `hal_restore_flags_sti`: Restores the value saved by `hal_save_flags_cli` from memory back into the `eflags` register.
 
 ```cpp
 #include <stddef.h>
@@ -3744,9 +3746,9 @@ typedef uint32_t cpuflg_t;
 
 static inline void hal_save_flags_cli(cpuflg_t* flags) {
     __asm__ __volatile__(
-            "pushf;" // 把eflags寄存器的值压入当前栈顶
-            "cli;"   // 关闭中断，会改变eflags寄存器的值
-            "pop %0" // 把当前栈顶弹出到eflags为地址的内存中
+            "pushf;" // Push the value of the `eflags` register onto the current stack top.
+            "cli;"   // Disable interrupts, which changes the value of the `eflags` register.
+            "pop %0" // Pop the current stack top into the memory location addressed by `eflags`.
             : "=m"(*flags)
             :
             : "memory");
@@ -3754,8 +3756,8 @@ static inline void hal_save_flags_cli(cpuflg_t* flags) {
 
 static inline void hal_restore_flags_sti(cpuflg_t* flags) {
     __asm__ __volatile__(
-            "push %0;" // 把flags为地址处的值寄存器压入当前栈顶
-            "popf"     // 把当前栈顶弹出到eflags寄存器中
+            "push %0;" // Push the value at the address `flags` onto the current stack top.
+            "popf"     // Pop the current stack top into the `eflags` register.
             :
             : "m"(*flags)
             : "memory");
@@ -3781,7 +3783,7 @@ int main() {
 }
 ```
 
-**示例3：linux内核大量用到了`asm`，具体可以参考[linux-asm](https://github.com/torvalds/linux/blob/master/arch/x86/include/asm)**
+**Example 3: The Linux kernel makes extensive use of `asm`. For details, see[linux-asm](https://github.com/torvalds/linux/blob/master/arch/x86/include/asm)**
 
 ## 4.9 Lambda
 
@@ -3789,16 +3791,16 @@ int main() {
 
 > The lambda expression is a prvalue expression of unique unnamed non-union non-aggregate class type, known as closure type, which is declared (for the purposes of ADL) in the smallest block scope, class scope, or namespace scope that contains the lambda expression. The closure type has the following members, they cannot be explicitly instantiated, explicitly specialized, or (since C++14) named in a friend declaration
 
-* 每个`Lambda`表达式都是独一无二的类型，且无法显式声明
+* Each `Lambda` expression has a unique type, which cannot be explicitly declared.
 
 ### 4.9.1 `std::function` and Lambda
 
-在大多数场景下，`Lambda`和`std::function`可以相互替换使用，但它们之间存在一些差异（[What's the difference between a lambda expression and a function pointer (callback) in C++?](https://www.quora.com/Whats-the-difference-between-a-lambda-expression-and-a-function-pointer-callback-in-C++)）：
+In most cases, `Lambda` and `std::function` can be used interchangeably, but there are some differences between them.（[What's the difference between a lambda expression and a function pointer (callback) in C++?](https://www.quora.com/Whats-the-difference-between-a-lambda-expression-and-a-function-pointer-callback-in-C++)）：
 
-* `Lambda`无法显式声明类型，而`std::function`可以
-* `Lambda`效率更高，参考{% post_link Cpp-Performance-Optimization %}
-    * `std::function`本质上是个函数指针的封装，当传递它时，编译器很难进行内联优化
-    * `Lambda`本质上是传递某个匿名类的实例，有确定的类型信息，编译器可以很容易地进行内联优化
+* A `Lambda` cannot have its type explicitly declared, whereas `std::function` can.
+* `Lambda` is more efficient, see {% post_link Cpp-Performance-Optimization %}.
+    * `std::function` is essentially a wrapper around a function pointer, making it difficult for the compiler to inline during passing.
+    * A `Lambda` is essentially an instance of an anonymous class with concrete type information, which allows the compiler to inline more easily.
 
 ### 4.9.2 How lambda capture itself
 
@@ -3930,7 +3932,7 @@ A coroutine is a generalization of a function that can be exited and later resum
 The `promise_type` for coroutines in C++20 can have several member functions which the coroutine machinery recognizes and calls at specific times or events. Here's a general overview of the structure and potential member functions:
 
 * **Stored Values or State:** These are member variables to hold state, intermediate results, or final values. The nature of these depends on the intended use of your coroutine.
-* **Coroutine Creation:** 
+* **Coroutine Creation:**
     * `auto get_return_object() -> CoroutineReturnObject`: Defines how to obtain the return object of the coroutine (what the caller of the coroutine gets when invoking the coroutine).
 * **Coroutine Lifecycle:**
     * `std::suspend_always/std::suspend_never initial_suspend() noexcept`: Dictates if the coroutine should start executing immediately or be suspended right after its creation.
@@ -4459,9 +4461,9 @@ int main() {
 
 #### 5.4.2.2 constexpr for
 
-有时候，无法通过折叠表达式处理一些复杂的场景，我们希望能通过循环来挨个处理形参，示例如下（参考[Approximating 'constexpr for'](https://artificial-mind.net/blog/2020/10/31/constexpr-for)）：
+Sometimes, fold expressions cannot handle certain complex scenarios. In such cases, we may want to process the parameters one by one using a loop, as shown below (see [Approximating 'constexpr for'](https://artificial-mind.net/blog/2020/10/31/constexpr-for)):
 
-* 由于需要在函数内用迭代变量进行形参包的提取，因此这个变量必须是编译期的常量，这里用`std::integral_constant`进行转换，这样在函数内，就可以用`std::get<i>`来提取第`i`个参数了
+* Since an iteration variable is needed inside the function to extract elements from the parameter pack, this variable must be a compile-time constant. Here, `std::integral_constant` is used for the conversion. This way, inside the function, we can use `std::get<i>` to extract the `i`-th parameter.
 
 ```cpp
 #include <fstream>
@@ -4922,7 +4924,7 @@ class Bar<std::vector<T>, std::conditional_t<std::is_integral_v<T>, int, double>
 
 **For templates, such as `T::value_type`, the compiler similarly cannot determine whether `T::value_type` is a type or not. This is because the class scope resolution operator `::` can access both type members and static members. By default, the compiler assumes that something in the form of `T::value_type` is not a type.**
 
-**Case 1:** 
+**Case 1:**
 
 ```cpp
 // The following will fail to compile:
@@ -5015,7 +5017,8 @@ void bar() {
 
 ## 5.10 Defining a type alias in a template parameter list
 
-语法上，我们是无法在template的参数列表中定义别名的（无法使用`using`）。但是我们可以通过定义有默认值的类型形参来实现类似类型别名的功能，如下：
+Syntactically, we cannot define aliases (using `using`) in the parameter list of a template.
+However, we can achieve a similar effect to type aliases by defining type parameters with default values, as shown below:
 
 ```cpp
 template <typename HashMap, typename KeyType = typename HashMap::key_type,
@@ -5191,7 +5194,7 @@ gcc -o main main.cpp template.cpp -lstdc++ -std=gnu++17 -O3
 
 ## 5.14 [CRTP](https://en.wikipedia.org/wiki/Curiously_recurring_template_pattern)
 
-`CRTP`的全称是`Curious Recurring Template Pattern`
+The full name of `CRTP` is `Curious Recurring Template Pattern`.
 
 ### 5.14.1 Static Polymorphism
 
@@ -5336,8 +5339,8 @@ int main() {
 }
 ```
 
-* `PlainCoutPrinter().print("Hello ")`的返回类型是`PlainPrinter`，丢失了具体的`PlainCoutPrinter`类型信息，于是再调用`SetConsoleColor`就报错了
-* 而使用`CRTP`就可以避免这个问题，基类的方法返回类型永远是具体的子类
+* The return type of `PlainCoutPrinter().print("Hello ")` is `PlainPrinter`, which loses the specific `PlainCoutPrinter` type information. As a result, calling `SetConsoleColor` afterward causes an error.
+* Using `CRTP` avoids this problem, because the return type of methods in the base class is always the concrete derived class.
 
 ### 5.14.4 Polymorphic Copy Construction
 
@@ -5447,7 +5450,7 @@ Cache coherence and memory consistency are two fundamental concepts in parallel 
 * **This concept is primarily concerned with the values of copies of a single memory location that are cached at several caches (typically, in a multiprocessor system)**. When multiple processors with separate caches are in a system, it's possible for those caches to hold copies of the same memory location. **Cache coherence ensures that all processors in the system observe a single, consistent value for the memory location**. It focuses on maintaining a global order in which writes to each individual memory location occur.
 * For example, suppose we have two processors P1 and P2, each with its own cache. If P1 changes the value of a memory location X that's also stored in P2's cache, the cache coherence protocols will ensure that P2 sees the updated value if it tries to read X.
 
-**Memory Consistency**: 
+**Memory Consistency**:
 
 * While cache coherence is concerned with the view of a single memory location, **memory consistency is concerned about the ordering of multiply updates to different memory locations(or single memory location) from different processors. It determines when a write by one processor to a shared memory location becomes visible to all other processors.**
 * A memory consistency model defines the architecturally visible behavior of a memory system. Different consistency models make different guarantees about the order and visibility of memory operations across different threads or processors. For example, sequential consistency, a strict type of memory consistency model, says that all memory operations must appear to execute in some sequential order that's consistent with the program order of each individual processor.
@@ -5529,23 +5532,23 @@ TSO is commonly used in x86 processors, which strikes a balance between the pred
 
 ### 6.4.1 Case-1-happens-before
 
-happens-before在不同`std::memory_order`下的规则
+The rules of happens-before under different `std::memory_order` values:
 
 * `std::memory_order_seq_cst`
-    * normal-write happens-before atomic-write
-    * atomic-read happens-before normal-read
-    * atomic-write happens-before atomic-read
-    * 可以推导出：normal-write happens-before normal-read
+    * `normal-write` happens-before `atomic-write`
+    * `atomic-read` happens-before `normal-read`
+    * `atomic-write` happens-before `atomic-read`
+    * We deduce that `normal-write` happens-before `normal-read`
 * `std::memory_order_relaxed`
-    * normal-write happens-before atomic-write
-    * atomic-read happens-before normal-read
-    * 无法推导出：normal-write happens-before normal-read
+    * `normal-write` happens-before `atomic-write`
+    * `atomic-read` happens-before `normal-read`
+    * We cannot deduce that `normal-write` happens-before `normal-read`
 
-下面的程序：
+In the following program:
 
-* `test_atomic_visibility<std::memory_order_seq_cst>();`可以正确执行
-* `test_atomic_visibility<std::memory_order_relaxed>();`也可以正确执行。因为x86是`TSO`模型，`std::memory_order_relaxed`同样满足`atomic-write happens-before atomic-read`规则
-* `test_volatile_visibility`会报错，因为`volatile`不提供同步语义，对重排没有限制
+* `test_atomic_visibility<std::memory_order_seq_cst>();` executes correctly.
+* `test_atomic_visibility<std::memory_order_relaxed>();` also executes correctly, because x86 uses the `TSO` model, where `std::memory_order_relaxed` still satisfies the `atomic-write happens-before atomic-read` rule.
+* `test_volatile_visibility` throws an error, because `volatile` does not provide synchronization semantics and imposes no restrictions on reordering.
 
 ```cpp
 #include <atomic>
@@ -5645,7 +5648,7 @@ int main() {
 
 ### 6.4.2 Case-2-write-read-reorder
 
-来自[Shared Memory Consistency Models: A Tutorial](/resources/paper/Shared-Memory-Consistency-Models-A-Tutorial.pdf)中的`Figure-5(a)`
+The demo comes from [Shared Memory Consistency Models: A Tutorial](/resources/paper/Shared-Memory-Consistency-Models-A-Tutorial.pdf), `Figure-5(a)`
 
 ```cpp
 #include <atomic>
@@ -5756,7 +5759,7 @@ int main() {
 }
 ```
 
-在`x86`平台（`TSO`），结果如下，只有`memory_order_seq_cst`能保证一致性，而`memory_order_acquire/memory_order_release`仅针对同一变量，不同变量的`Write-Read`仍然可能重排
+On the `x86` platform (`TSO`), the results are as follows: only `memory_order_seq_cst` can guarantee consistency, while `memory_order_acquire`/`memory_order_release` apply only to the same variable — `Write-Read` operations on different variables may still be reordered.
 
 ```
 test std::memory_order_seq_cst, std::memory_order_seq_cst, res=true
@@ -5766,7 +5769,7 @@ test std::memory_order_relaxed, std::memory_order_relaxed, res=false
 
 ### 6.4.3 Case-3-write-write-read-read-reorder
 
-来自[Shared Memory Consistency Models: A Tutorial](/resources/paper/Shared-Memory-Consistency-Models-A-Tutorial.pdf)中的`Figure-5(b)`
+The demo comes from [Shared Memory Consistency Models: A Tutorial](/resources/paper/Shared-Memory-Consistency-Models-A-Tutorial.pdf), `Figure-5(b)`
 
 ```cpp
 #include <atomic>
@@ -5875,7 +5878,7 @@ int main() {
 }
 ```
 
-在`x86`平台（`TSO`），`Relaxed Consistency Model`不允许`Write-Write`以及`Read-Read`重排，结果如下（对于其他具有不同内存模型的硬件平台，由于对`Relaxed`的支持程度不同，可能会有不同的结果）：
+On the `x86` platform (`TSO`), the `Relaxed Consistency Model` does not allow `Write-Write` or `Read-Read` reordering. The results are as follows (for other hardware platforms with different memory models, the results may vary depending on their level of support for `Relaxed`):
 
 ```
 test std::memory_order_seq_cst, std::memory_order_seq_cst, res=true
@@ -5885,7 +5888,7 @@ test std::memory_order_relaxed, std::memory_order_relaxed, res=true
 
 ### 6.4.4 Case-4-write-order-consistency
 
-来自[Shared Memory Consistency Models: A Tutorial](/resources/paper/Shared-Memory-Consistency-Models-A-Tutorial.pdf)中的`Figure-10(b)`
+The demo comes from [Shared Memory Consistency Models: A Tutorial](/resources/paper/Shared-Memory-Consistency-Models-A-Tutorial.pdf), `Figure-10(b)`
 
 ```cpp
 #include <atomic>
@@ -5998,7 +6001,7 @@ int main() {
 }
 ```
 
-在`x86`平台（`TSO`），`Relaxed Consistency Model`要求所有核看到的`Write`顺序是一致的，结果如下（对于其他具有不同内存模型的硬件平台，由于对`Relaxed`的支持程度不同，可能会有不同的结果）：
+On the `x86` platform (`TSO`), the `Relaxed Consistency Model` requires that the order of `Write` operations observed by all cores is consistent. The results are as follows (for other hardware platforms with different memory models, the results may vary depending on their level of support for `Relaxed`):
 
 ```
 test std::memory_order_seq_cst, std::memory_order_seq_cst, res=true
@@ -6008,7 +6011,7 @@ test std::memory_order_relaxed, std::memory_order_relaxed, res=true
 
 ### 6.4.5 Case-5-visibility
 
-进程调度也能保证可见性，我们可以让读写线程绑定到某个核上，那么读写线程会在调度的作用下交替执行
+Process scheduling can also ensure visibility. We can bind the read and write threads to a specific core, so that under the effect of scheduling, the read and write threads will execute alternately.
 
 ```cpp
 #include <pthread.h>
@@ -6067,7 +6070,7 @@ int main() {
 }
 ```
 
-输出如下：
+Output:
 
 ```
 type=int32_t, count=2000000
@@ -6077,9 +6080,9 @@ type=std::atomic<int32_t>, count=2000000
 
 ### 6.4.6 Case-6-eventual-consistency
 
-不同的原子操作，虽然无法保证同步语义，但是可以保证变量的最终一致性
+Different atomic operations, although they cannot guarantee synchronization semantics, can ensure eventual consistency of variables.
 
-* 无原子操作时，`write`线程的写操作无法被`read`线程的读操作看到（`-O3`优化级别）
+* Without atomic operations, the `write` thread's writes cannot be observed by the `read` thread's reads (at the `-O3` optimization level).
     ```cpp
     #include <iostream>
     #include <thread>
@@ -6107,7 +6110,7 @@ type=std::atomic<int32_t>, count=2000000
     }
     ```
 
-* 用不同的`std::mutex`可以保证变量的最终一致性
+* Using different `std::mutex` instances can ensure eventual consistency of variables.
     ```cpp
     #include <iostream>
     #include <mutex>
@@ -6140,7 +6143,7 @@ type=std::atomic<int32_t>, count=2000000
     }
     ```
 
-* 用不同的`std::atomic`可以保证变量的最终一致性
+* Using different `std::atomic` instances can ensure eventual consistency of variables.
     ```cpp
     #include <atomic>
     #include <iostream>
@@ -6175,7 +6178,7 @@ type=std::atomic<int32_t>, count=2000000
 
 ## 6.5 x86 Memory Model
 
-对于`std::memory_order_relaxed`，在不同的硬件平台上，其效果是不同的。x86属于`TSO`
+For `std::memory_order_relaxed`, its effect varies across different hardware platforms. The x86 architecture follows the `TSO` model.
 
 [x86-TSO : 适用于x86体系架构并发编程的内存模型](https://www.cnblogs.com/lqlqlq/p/13693876.html)
 
@@ -6600,9 +6603,9 @@ Type erasure is a programming technique that lets you hide ("erase") concrete ty
 
 ## 8.1 Pointer Stability
 
-**`pointer stability`通常用于描述容器。当我们说一个容器是`pointer stability`时，是指，当某个元素添加到容器之后、从容器删除之前，该元素的内存地址不变，也就是说，该元素的内存地址，不会受到容器的添加删除元素、扩缩容、或者其他操作影响**
+**`pointer stability` is usually used to describe containers. When we say a container has `pointer stability`, it means that once an element is added to the container and before it is removed, its memory address does not change. In other words, the memory address of the element will not be affected by operations such as insertion, deletion, resizing, or other modifications to the container.**
 
-* 引用也会受到这个性质的影响，因为引用就是指针的语法糖
+* References are also affected by this property, since a reference is essentially syntactic sugar for a pointer.
 
 **[absl](https://abseil.io/docs/cpp/guides/container)**
 
@@ -6628,16 +6631,17 @@ Type erasure is a programming technique that lets you hide ("erase") concrete ty
 
 [Wiki-Exception safety](https://en.wikipedia.org/wiki/Exception_safety)
 
-**`exception safety`的几个级别：**
+**Levels of `exception safety`:**
 
-1. `No-throw guarantee`：承诺不会对外抛出任何异常。方法内部可能会抛异常，但都会被正确处理
-1. `Strong exception safety`：可能会抛出异常，但是承诺不会有副作用，所有对象都会恢复到调用方法时的初始状态
-1. `Basic exception safety`：可能会抛出异常，操作失败的部分可能会导致副作用，但所有不变量都会被保留。任何存储的数据都将包含可能与原始值不同的有效值。资源泄漏（包括内存泄漏）通常通过一个声明所有资源都被考虑和管理的不变量来排除
-1. `No exception safety`：不承诺异常安全
+1. `No-throw guarantee`: Guarantees that no exceptions will be thrown outward. Exceptions may occur inside the method but will be properly handled.
+2. `Strong exception safety`: Exceptions may be thrown, but the operation guarantees no side effects — all objects will be restored to their state prior to the call.
+3. `Basic exception safety`: Exceptions may be thrown, and failed operations may cause side effects, but all invariants will be preserved. Any stored data will remain valid, though possibly different from the original. Resource leaks (including memory leaks) are usually excluded through an invariant that all resources are considered and managed.
+4. `No exception safety`: No guarantees of exception safety are provided.
 
 ## 8.3 RAII
 
-`RAII, Resource Acquisition is initialization`，即资源获取即初始化。典型示例包括：`std::lock_guard`、`defer`。简单来说，就是在对象的构造方法中初始化资源，在析构函数中销毁资源。而构造函数与析构函数的调用是由编译器自动插入的，减轻了开发者的心智负担
+`RAII, Resource Acquisition Is Initialization` means "resource acquisition is initialization." Typical examples include `std::lock_guard` and `defer`.
+Simply put, resources are initialized in the constructor of an object and released in its destructor. Since constructor and destructor calls are automatically inserted by the compiler, this reduces the mental burden on developers.
 
 ```cpp
 template <class DeferFunction>
@@ -7071,7 +7075,7 @@ num4: -32
 
 [How does free know how much to free?](https://stackoverflow.com/questions/1518711/how-does-free-know-how-much-to-free)
 
-分配内存时，除了分配指定的内存之外，还会分配一个`header`，用于存储一些信息，例如
+When allocating memory, in addition to the requested memory, a `header` is also allocated to store certain information, such as:
 
 * **`size`**
 * `special marker`
