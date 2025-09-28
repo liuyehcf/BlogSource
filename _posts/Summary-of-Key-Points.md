@@ -1621,12 +1621,15 @@ Key characteristics of an event-driven system include:
         - Synchronous IO
         - Asynchronous IO
         - Direct IO
+            - Bypass the operating system's page cache
+            - Databases often use it so they can manage caching themselves
         - Buffered IO
         - Block IO
         - File IO
         - IO Throttling
     - Optimization
         - Zero-Copy IO
+        - IO Alignment
         - IO Coalescing
         - IO Prefetching
             - Prefetch buffer size usually equals to data buffer size

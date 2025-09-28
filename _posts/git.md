@@ -120,6 +120,12 @@ git config --global icdiff.options '--highlight --line-numbers'
 * `git icdiff HEAD`
 * `git icdiff -- <file>`
 
+### 2.3.3 Force to use default diff
+
+```sh
+git --no-pager diff
+```
+
 ## 2.4 UTF-8/Support Chinese
 
 ```sh

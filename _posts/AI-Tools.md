@@ -9,6 +9,8 @@ categories:
 
 **阅读更多**
 
+<!--more-->
+
 # 1 [claude-code](https://github.com/anthropics/claude-code)
 
 # 2 [codex](https://github.com/openai/codex)

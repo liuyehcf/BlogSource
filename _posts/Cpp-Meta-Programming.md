@@ -965,6 +965,58 @@ Test v2
 ~Foo()
 ```
 
+### 6.1.12 variant overloaded
+
+```cpp
+#include <iostream>
+#include <string>
+#include <variant>
+
+struct IntPrinter {
+    void operator()(int arg) { std::cout << "Int value: " << arg << std::endl; }
+};
+
+struct FloatPrinter {
+    void operator()(float arg) { std::cout << "Float value: " << arg << std::endl; }
+};
+
+struct StringPrinter {
+    void operator()(const std::string& arg) { std::cout << "String value: " << arg << std::endl; }
+};
+
+struct MultiPrinter : public IntPrinter, FloatPrinter, StringPrinter {
+    using IntPrinter::operator();
+    using FloatPrinter::operator();
+    using StringPrinter::operator();
+};
+
+template <class... Ts>
+struct overloaded : Ts... {
+    // exposes operator() from every base
+    using Ts::operator()...;
+};
+
+// C++17 deduction guide, not needed in C++20
+template <class... Ts>
+overloaded(Ts...) -> overloaded<Ts...>;
+
+int main() {
+    MultiPrinter printer;
+    std::variant<int, float, std::string> v = "Hello, Variant!";
+    std::visit(MultiPrinter{}, v);
+    std::visit(overloaded{IntPrinter{}, FloatPrinter{}, StringPrinter{}}, v);
+
+    v = 1;
+    std::visit(MultiPrinter{}, v);
+    std::visit(overloaded{IntPrinter{}, FloatPrinter{}, StringPrinter{}}, v);
+
+    v = 3.14f;
+    std::visit(MultiPrinter{}, v);
+    std::visit(overloaded{IntPrinter{}, FloatPrinter{}, StringPrinter{}}, v);
+    return 0;
+}
+```
+
 ## 6.2 Iterator 
 
 ### 6.2.1 Static Loop

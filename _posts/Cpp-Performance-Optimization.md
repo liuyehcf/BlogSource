@@ -4319,6 +4319,618 @@ CoalescedIO/512/real_time      280989 ns       280980 ns         2484 bytes_per_
 CoalescedIO/2048/real_time    1861798 ns      1861711 ns          376 bytes_per_call=18.2299M/s bytes_per_second=11.4261Gi/s coalesced=1 io_calls=135.916M/s
 ```
 
+## 5.2 IO Alignment
+
+```cpp
+#include <benchmark/benchmark.h>
+#include <fcntl.h>
+#include <sys/stat.h>
+#include <sys/types.h>
+#include <unistd.h>
+
+#include <cerrno>
+#include <cinttypes>
+#include <cstddef>
+#include <cstdint>
+#include <cstdio>
+#include <cstdlib>
+#include <cstring>
+#include <limits>
+#include <memory>
+#include <random>
+#include <stdexcept>
+#include <string>
+#include <string_view>
+
+namespace {
+
+constexpr size_t KiB = 1024;
+constexpr size_t MiB = KiB * KiB;
+constexpr size_t GiB = KiB * MiB;
+
+constexpr int64_t ENABLE_DIRECT = 1;
+constexpr int64_t DISABLE_DIRECT = 0;
+
+int open_file_nocache(const std::string& path, bool use_direct_io) {
+    int flags = O_RDWR | O_CREAT | O_CLOEXEC;
+
+    if (use_direct_io) {
+        flags |= O_DIRECT;
+    }
+
+    int fd = ::open(path.c_str(), flags, 0644);
+    if (fd < 0) {
+        throw std::runtime_error("open failed: " + std::string(std::strerror(errno)));
+    }
+
+    // Advise random/sequential doesn't drop page cache but may help
+    (void)::posix_fadvise(fd, 0, 0, POSIX_FADV_RANDOM);
+
+    return fd;
+}
+
+size_t get_io_alignment() {
+    static size_t DEFAULT = 4096;
+    long page_size = ::sysconf(_SC_PAGESIZE);
+    if (page_size > 0) return static_cast<size_t>(page_size);
+    return DEFAULT;
+}
+
+void* alloc_aligned(size_t alignment, size_t size) {
+    void* p = nullptr;
+    int rc = ::posix_memalign(&p, alignment, size);
+    if (rc != 0) return nullptr;
+    return p;
+}
+
+// Create or ensure file of given size; fill with pseudorandom data in chunks.
+void ensure_file_of_size(const std::string& path, size_t size_bytes) {
+    struct stat st {};
+    if (::stat(path.c_str(), &st) == 0 && static_cast<size_t>(st.st_size) == size_bytes) {
+        return; // Already correct size
+    }
+
+    int fd = ::open(path.c_str(), O_WRONLY | O_CREAT | O_TRUNC | O_CLOEXEC, 0644);
+    if (fd < 0) throw std::runtime_error("create file failed");
+
+    // Fill with deterministic pseudorandom data to avoid sparse/holes optimizations.
+    std::mt19937_64 rng(12345);
+    constexpr size_t chunk = 4 * MiB;
+    std::unique_ptr<unsigned char[]> buf(new unsigned char[chunk]);
+    size_t remaining = size_bytes;
+    while (remaining > 0) {
+        size_t to_write = remaining > chunk ? chunk : remaining;
+        for (size_t i = 0; i < to_write; ++i) buf[i] = static_cast<unsigned char>(rng());
+        size_t written = 0;
+        while (written < to_write) {
+            ssize_t rc = ::write(fd, buf.get() + written, to_write - written);
+            if (rc < 0) {
+                if (errno == EINTR) continue;
+                ::close(fd);
+                throw std::runtime_error("write failed");
+            }
+            written += static_cast<size_t>(rc);
+        }
+        remaining -= to_write;
+    }
+    ::fsync(fd);
+    ::close(fd);
+}
+
+// Consume buffer to avoid optimizing away reads
+inline uint64_t reduce_sum(const unsigned char* p, size_t n) {
+    uint64_t s = 0;
+    for (size_t i = 0; i < n; i += 4096) {
+        s += p[i];
+    }
+    return s;
+}
+
+struct BenchConfig {
+    const std::string path = "benchfile.dat";
+    const size_t file_size = GiB;
+    size_t block_size = 256 * KiB;
+    bool enable_aligned = true;
+    bool enable_direct_io = false;
+};
+
+void run_read_loop(benchmark::State& state, const BenchConfig& cfg, bool& use_direct) {
+    ensure_file_of_size(cfg.path, cfg.file_size);
+    const size_t alignment = get_io_alignment();
+    const size_t block = cfg.block_size;
+
+    // Determine I/O size
+    const size_t size = cfg.enable_aligned ? ((block + alignment - 1) / alignment) * alignment
+                                           : (block | 1); // make odd for misaligned
+
+    // Prepare buffer sized to the I/O size
+    unsigned char* base = nullptr;
+    std::unique_ptr<unsigned char, void (*)(unsigned char*)> buf_holder(
+            nullptr, +[](unsigned char* p) {
+                if (p) std::free(p);
+            });
+    std::unique_ptr<unsigned char[]> misaligned_holder;
+
+    if (cfg.enable_aligned) {
+        void* p = alloc_aligned(alignment, size + alignment);
+        if (!p) {
+            state.SkipWithError("posix_memalign failed");
+            return;
+        }
+        base = static_cast<unsigned char*>(p);
+        buf_holder.reset(base);
+    } else {
+        misaligned_holder.reset(new unsigned char[size + 1]);
+        base = misaligned_holder.get() + 1; // deliberately misalign by +1
+    }
+
+    use_direct = cfg.enable_aligned && cfg.enable_direct_io;
+    int fd = -1;
+    try {
+        fd = open_file_nocache(cfg.path, use_direct);
+    } catch (const std::exception& e) {
+        state.SkipWithError(e.what());
+        return;
+    }
+
+    const off_t start_off = cfg.enable_aligned ? 0 : static_cast<off_t>(alignment / 2);
+
+    if (use_direct) {
+        if ((((uintptr_t)base) % alignment) != 0 || (size % alignment) != 0 || (start_off % alignment) != 0) {
+            ::close(fd);
+            state.SkipWithError("O_DIRECT requires aligned buffer/size/offset");
+            return;
+        }
+    }
+
+    // Warmup read to establish file and page cache state (should be minimized by flags)
+    uint64_t warm = 0;
+    {
+        ssize_t rc = ::pread(fd, base, std::min<size_t>(size, cfg.file_size), start_off);
+        if (rc < 0) { /* ignore warmup failures */
+        }
+        warm += base[0];
+    }
+
+    const size_t total_blocks = cfg.file_size / size;
+    for (auto _ : state) {
+        (void)_;
+        uint64_t checksum = 0;
+        off_t off = start_off;
+        for (size_t i = 0; i < total_blocks; ++i) {
+            size_t done = 0;
+            while (done < size) {
+                ssize_t rc = ::pread(fd, base + done, size - done, off + done);
+                if (rc < 0) {
+                    if (errno == EINTR) continue;
+                    // If direct I/O fails (e.g., FS not supporting), fall back by skipping
+                    state.SkipWithError((std::string("pread failed: ") + std::strerror(errno)).c_str());
+                    ::close(fd);
+                    return;
+                }
+                if (rc == 0) break; // EOF
+                done += static_cast<size_t>(rc);
+            }
+            checksum += reduce_sum(base, done);
+            off += static_cast<off_t>(size);
+            if (off + static_cast<off_t>(size) > static_cast<off_t>(cfg.file_size)) {
+                off = start_off; // wrap
+            }
+        }
+        benchmark::DoNotOptimize(checksum);
+    }
+
+    state.SetBytesProcessed(static_cast<int64_t>(state.iterations()) * static_cast<int64_t>(total_blocks) *
+                            static_cast<int64_t>(size));
+
+    ::close(fd);
+    (void)warm;
+}
+
+} // namespace
+
+static void BM_Read_Aligned(benchmark::State& state) {
+    BenchConfig cfg;
+    cfg.enable_aligned = true;
+    cfg.block_size = static_cast<size_t>(state.range(0));
+    cfg.enable_direct_io = static_cast<bool>(state.range(1));
+    bool is_direct_io;
+    run_read_loop(state, cfg, is_direct_io);
+    state.counters["direct"] = is_direct_io ? 1.0 : 0.0;
+}
+
+static void BM_Read_Misaligned(benchmark::State& state) {
+    BenchConfig cfg;
+    cfg.enable_aligned = false;
+    cfg.block_size = static_cast<size_t>(state.range(0));
+    cfg.enable_direct_io = static_cast<bool>(state.range(1));
+    bool is_direct_io;
+    run_read_loop(state, cfg, is_direct_io);
+    state.counters["direct"] = is_direct_io ? 1.0 : 0.0;
+}
+
+// Register with typical block sizes
+BENCHMARK(BM_Read_Aligned)
+        ->Args({4 * KiB, ENABLE_DIRECT})
+        ->Args({16 * KiB, ENABLE_DIRECT})
+        ->Args({64 * KiB, ENABLE_DIRECT})
+        ->Args({256 * KiB, ENABLE_DIRECT})
+        ->Args({1024 * KiB, ENABLE_DIRECT})
+        ->UseRealTime();
+BENCHMARK(BM_Read_Aligned)
+        ->Args({4 * KiB, DISABLE_DIRECT})
+        ->Args({16 * KiB, DISABLE_DIRECT})
+        ->Args({64 * KiB, DISABLE_DIRECT})
+        ->Args({256 * KiB, DISABLE_DIRECT})
+        ->Args({1024 * KiB, DISABLE_DIRECT})
+        ->UseRealTime();
+BENCHMARK(BM_Read_Misaligned)
+        ->Args({4 * KiB, DISABLE_DIRECT})
+        ->Args({16 * KiB, DISABLE_DIRECT})
+        ->Args({64 * KiB, DISABLE_DIRECT})
+        ->Args({256 * KiB, DISABLE_DIRECT})
+        ->Args({1024 * KiB, DISABLE_DIRECT})
+        ->UseRealTime();
+
+BENCHMARK_MAIN();
+```
+
+```sh
+gcc -o io_alignment_benchmark io_alignment_benchmark.cpp -lstdc++ -std=gnu++20 -O3 -lbenchmark -lm
+./io_alignment_benchmark
+
+Running ./io_alignment_benchmark
+Run on (256 X 3180.34 MHz CPU s)
+CPU Caches:
+  L1 Data 32 KiB (x128)
+  L1 Instruction 32 KiB (x128)
+  L2 Unified 512 KiB (x128)
+  L3 Unified 32768 KiB (x16)
+Load Average: 17.38, 16.95, 16.73
+-------------------------------------------------------------------------------------------------
+Benchmark                                       Time             CPU   Iterations UserCounters...
+-------------------------------------------------------------------------------------------------
+BM_Read_Aligned/4096/1/real_time       1.6812e+10 ns   1108894749 ns            1 bytes_per_second=60.9095Mi/s direct=1
+BM_Read_Aligned/16384/1/real_time      9044673562 ns    311999927 ns            1 bytes_per_second=113.216Mi/s direct=1
+BM_Read_Aligned/65536/1/real_time      8867267177 ns    112411727 ns            1 bytes_per_second=115.481Mi/s direct=1
+BM_Read_Aligned/262144/1/real_time     8191739757 ns     52088725 ns            1 bytes_per_second=125.004Mi/s direct=1
+BM_Read_Aligned/1048576/1/real_time    9521110032 ns     36523941 ns            1 bytes_per_second=107.55Mi/s direct=1
+BM_Read_Aligned/4096/0/real_time        178319990 ns    178319435 ns            4 bytes_per_second=5.6079Gi/s direct=0
+BM_Read_Aligned/16384/0/real_time       129154343 ns    129151341 ns            5 bytes_per_second=7.74267Gi/s direct=0
+BM_Read_Aligned/65536/0/real_time       118097183 ns    118095127 ns            6 bytes_per_second=8.4676Gi/s direct=0
+BM_Read_Aligned/262144/0/real_time      114471647 ns    114471350 ns            6 bytes_per_second=8.73579Gi/s direct=0
+BM_Read_Aligned/1048576/0/real_time     112346413 ns    112339074 ns            6 bytes_per_second=8.90104Gi/s direct=0
+BM_Read_Misaligned/4096/0/real_time     200772439 ns    200769390 ns            4 bytes_per_second=4.98076Gi/s direct=0
+BM_Read_Misaligned/16384/0/real_time    138342095 ns    138339445 ns            5 bytes_per_second=7.22846Gi/s direct=0
+BM_Read_Misaligned/65536/0/real_time    122317769 ns    122317347 ns            6 bytes_per_second=8.17505Gi/s direct=0
+BM_Read_Misaligned/262144/0/real_time   115287423 ns    115272699 ns            6 bytes_per_second=8.67189Gi/s direct=0
+BM_Read_Misaligned/1048576/0/real_time  112332804 ns    112323590 ns            6 bytes_per_second=8.89343Gi/s direct=0
+```
+
+## 5.3 Zero-Copy IO
+
+```cpp
+#include <benchmark/benchmark.h>
+#include <fcntl.h>
+#include <sys/mman.h>
+#include <sys/sendfile.h>
+#include <sys/stat.h>
+#include <sys/types.h>
+#include <unistd.h>
+
+#include <cerrno>
+#include <cstddef>
+#include <cstdint>
+#include <cstdio>
+#include <cstdlib>
+#include <cstring>
+#include <memory>
+#include <random>
+#include <stdexcept>
+#include <string>
+
+namespace {
+
+constexpr size_t KiB = 1024;
+constexpr size_t MiB = KiB * KiB;
+constexpr size_t GiB = KiB * MiB;
+
+void ensure_file_of_size(const std::string& path, size_t size_bytes) {
+    struct stat st {};
+    if (::stat(path.c_str(), &st) == 0 && static_cast<size_t>(st.st_size) == size_bytes) {
+        return;
+    }
+
+    int fd = ::open(path.c_str(), O_WRONLY | O_CREAT | O_TRUNC | O_CLOEXEC, 0644);
+    if (fd < 0) {
+        throw std::runtime_error("Failed to create file: " + std::string(std::strerror(errno)));
+    }
+
+    std::mt19937_64 rng(12345);
+    constexpr size_t chunk = 4 * MiB;
+    std::unique_ptr<unsigned char[]> buf(new unsigned char[chunk]);
+    size_t remaining = size_bytes;
+
+    while (remaining > 0) {
+        size_t to_write = remaining > chunk ? chunk : remaining;
+        for (size_t i = 0; i < to_write; ++i) {
+            buf[i] = static_cast<unsigned char>(rng());
+        }
+
+        size_t written = 0;
+        while (written < to_write) {
+            ssize_t rc = ::write(fd, buf.get() + written, to_write - written);
+            if (rc < 0) {
+                if (errno == EINTR) continue;
+                ::close(fd);
+                throw std::runtime_error("Failed to write file: " + std::string(std::strerror(errno)));
+            }
+            written += static_cast<size_t>(rc);
+        }
+        remaining -= to_write;
+    }
+
+    ::fsync(fd);
+    ::close(fd);
+}
+
+struct BenchConfig {
+    const std::string src_path = "src_benchmark.dat";
+    const std::string dst_path = "dst_benchmark.dat";
+    const size_t file_size = 100 * MiB;
+    size_t block_size = 64 * KiB;
+};
+
+constexpr int METHOD_READ_WRITE = 1;
+constexpr int METHOD_SENDFILE = 2;
+constexpr int METHOD_MMAP = 3;
+
+void BM_ReadWrite_NormalCopy(benchmark::State& state) {
+    BenchConfig cfg;
+    cfg.block_size = static_cast<size_t>(state.range(0));
+
+    ensure_file_of_size(cfg.src_path, cfg.file_size);
+
+    std::unique_ptr<char[]> buffer(new char[cfg.block_size]);
+
+    for (auto _ : state) {
+        int src_fd = ::open(cfg.src_path.c_str(), O_RDONLY | O_CLOEXEC);
+        int dst_fd = ::open(cfg.dst_path.c_str(), O_WRONLY | O_CREAT | O_TRUNC | O_CLOEXEC, 0644);
+
+        if (src_fd < 0 || dst_fd < 0) {
+            state.SkipWithError("Failed to open files");
+            if (src_fd >= 0) ::close(src_fd);
+            if (dst_fd >= 0) ::close(dst_fd);
+            return;
+        }
+
+        size_t bytes_read = 0;
+        while (bytes_read < cfg.file_size) {
+            ssize_t n = ::read(src_fd, buffer.get(), cfg.block_size);
+            if (n <= 0) break;
+
+            ssize_t written = 0;
+            while (written < n) {
+                ssize_t w = ::write(dst_fd, buffer.get() + written, static_cast<size_t>(n) - written);
+                if (w < 0) break;
+                written += w;
+            }
+
+            bytes_read += static_cast<size_t>(n);
+        }
+
+        ::fsync(dst_fd);
+        ::close(src_fd);
+        ::close(dst_fd);
+    }
+
+    state.SetBytesProcessed(static_cast<int64_t>(state.iterations()) * static_cast<int64_t>(cfg.file_size));
+    state.counters["method"] = METHOD_READ_WRITE;
+
+    ::unlink(cfg.dst_path.c_str());
+}
+
+void BM_Sendfile_ZeroCopy(benchmark::State& state) {
+    BenchConfig cfg;
+    cfg.block_size = static_cast<size_t>(state.range(0));
+
+    ensure_file_of_size(cfg.src_path, cfg.file_size);
+
+    for (auto _ : state) {
+        int src_fd = ::open(cfg.src_path.c_str(), O_RDONLY | O_CLOEXEC);
+        int dst_fd = ::open(cfg.dst_path.c_str(), O_WRONLY | O_CREAT | O_TRUNC | O_CLOEXEC, 0644);
+
+        if (src_fd < 0 || dst_fd < 0) {
+            state.SkipWithError("Failed to open files");
+            if (src_fd >= 0) ::close(src_fd);
+            if (dst_fd >= 0) ::close(dst_fd);
+            return;
+        }
+
+        struct stat st;
+        if (::fstat(src_fd, &st) < 0) {
+            state.SkipWithError("Failed to stat source file");
+            ::close(src_fd);
+            ::close(dst_fd);
+            return;
+        }
+
+        off_t offset = 0;
+        size_t total_sent = 0;
+        size_t remaining = cfg.file_size;
+
+        while (remaining > 0) {
+            size_t to_send = remaining > cfg.block_size ? cfg.block_size : remaining;
+            ssize_t sent = ::sendfile(dst_fd, src_fd, &offset, to_send);
+
+            if (sent < 0) {
+                state.SkipWithError("Failed to sendfile: " + std::string(std::strerror(errno)));
+                ::close(src_fd);
+                ::close(dst_fd);
+                return;
+            }
+            if (sent == 0) break;
+
+            remaining -= static_cast<size_t>(sent);
+            total_sent += static_cast<size_t>(sent);
+        }
+
+        ::fsync(dst_fd);
+        ::close(src_fd);
+        ::close(dst_fd);
+    }
+
+    state.SetBytesProcessed(static_cast<int64_t>(state.iterations()) * static_cast<int64_t>(cfg.file_size));
+    state.counters["method"] = METHOD_SENDFILE;
+
+    ::unlink(cfg.dst_path.c_str());
+}
+
+void BM_Mmap_ZeroCopy(benchmark::State& state) {
+    BenchConfig cfg;
+    cfg.block_size = static_cast<size_t>(state.range(0));
+
+    ensure_file_of_size(cfg.src_path, cfg.file_size);
+
+    for (auto _ : state) {
+        int src_fd = ::open(cfg.src_path.c_str(), O_RDONLY | O_CLOEXEC);
+        if (src_fd < 0) {
+            state.SkipWithError("Failed to open source file");
+            return;
+        }
+
+        int dst_fd = ::open(cfg.dst_path.c_str(), O_RDWR | O_CREAT | O_TRUNC | O_CLOEXEC, 0644);
+        if (dst_fd < 0) {
+            state.SkipWithError("Failed to open destination file");
+            ::close(src_fd);
+            return;
+        }
+
+        if (::ftruncate(dst_fd, cfg.file_size) < 0) {
+            state.SkipWithError("Failed to set destination file size");
+            ::close(src_fd);
+            ::close(dst_fd);
+            return;
+        }
+
+        void* src_ptr = ::mmap(nullptr, cfg.file_size, PROT_READ, MAP_PRIVATE, src_fd, 0);
+        void* dst_ptr = ::mmap(nullptr, cfg.file_size, PROT_WRITE, MAP_SHARED, dst_fd, 0);
+
+        if (src_ptr == MAP_FAILED || dst_ptr == MAP_FAILED) {
+            state.SkipWithError("Failed to mmap files");
+            if (src_ptr != MAP_FAILED) ::munmap(src_ptr, cfg.file_size);
+            if (dst_ptr != MAP_FAILED) ::munmap(dst_ptr, cfg.file_size);
+            ::close(src_fd);
+            ::close(dst_fd);
+            return;
+        }
+
+        // Use memcpy for memory-to-memory copy (zero-copy kernel space operation)
+        ::memcpy(dst_ptr, src_ptr, cfg.file_size);
+
+        // Make sure data is written to disk
+        if (::msync(dst_ptr, cfg.file_size, MS_SYNC) < 0) {
+            state.SkipWithError("Failed to msync destination file");
+        }
+
+        ::munmap(src_ptr, cfg.file_size);
+        ::munmap(dst_ptr, cfg.file_size);
+
+        ::close(src_fd);
+        ::close(dst_fd);
+    }
+
+    state.SetBytesProcessed(static_cast<int64_t>(state.iterations()) * static_cast<int64_t>(cfg.file_size));
+    state.counters["method"] = METHOD_MMAP;
+
+    ::unlink(cfg.dst_path.c_str());
+}
+
+BENCHMARK(BM_ReadWrite_NormalCopy)
+        ->Args({4 * KiB})
+        ->Args({8 * KiB})
+        ->Args({16 * KiB})
+        ->Args({32 * KiB})
+        ->Args({64 * KiB})
+        ->Args({128 * KiB})
+        ->Args({256 * KiB})
+        ->Args({512 * KiB})
+        ->Args({1 * MiB})
+        ->UseRealTime();
+
+BENCHMARK(BM_Sendfile_ZeroCopy)
+        ->Args({4 * KiB})
+        ->Args({8 * KiB})
+        ->Args({16 * KiB})
+        ->Args({32 * KiB})
+        ->Args({64 * KiB})
+        ->Args({128 * KiB})
+        ->Args({256 * KiB})
+        ->Args({512 * KiB})
+        ->Args({1 * MiB})
+        ->UseRealTime();
+
+BENCHMARK(BM_Mmap_ZeroCopy)
+        ->Args({4 * KiB})
+        ->Args({8 * KiB})
+        ->Args({16 * KiB})
+        ->Args({32 * KiB})
+        ->Args({64 * KiB})
+        ->Args({128 * KiB})
+        ->Args({256 * KiB})
+        ->Args({512 * KiB})
+        ->Args({1 * MiB})
+        ->UseRealTime();
+
+} // namespace
+
+BENCHMARK_MAIN();
+```
+
+```sh
+g++ -o zero_io_benchmark zero_io_benchmark.cpp -lstdc++ -std=gnu++20 -O3 -lbenchmark -lm
+./zero_io_benchmark
+
+Running ./zero_io_benchmark
+Run on (256 X 3145.31 MHz CPU s)
+CPU Caches:
+  L1 Data 32 KiB (x128)
+  L1 Instruction 32 KiB (x128)
+  L2 Unified 512 KiB (x128)
+  L3 Unified 32768 KiB (x16)
+Load Average: 18.10, 16.99, 16.69
+----------------------------------------------------------------------------------------------------
+Benchmark                                          Time             CPU   Iterations UserCounters...
+----------------------------------------------------------------------------------------------------
+BM_ReadWrite_NormalCopy/4096/real_time    1152977761 ns    214250186 ns            1 bytes_per_second=86.7319Mi/s method=1
+BM_ReadWrite_NormalCopy/8192/real_time     970695242 ns    188712110 ns            1 bytes_per_second=103.019Mi/s method=1
+BM_ReadWrite_NormalCopy/16384/real_time   1507109571 ns    183877644 ns            1 bytes_per_second=66.3522Mi/s method=1
+BM_ReadWrite_NormalCopy/32768/real_time   1292916220 ns    196568728 ns            1 bytes_per_second=77.3445Mi/s method=1
+BM_ReadWrite_NormalCopy/65536/real_time   1157082077 ns    215147027 ns            1 bytes_per_second=86.4243Mi/s method=1
+BM_ReadWrite_NormalCopy/131072/real_time  1483363882 ns    186256359 ns            1 bytes_per_second=67.4143Mi/s method=1
+BM_ReadWrite_NormalCopy/262144/real_time  1370329797 ns    198049065 ns            1 bytes_per_second=72.9751Mi/s method=1
+BM_ReadWrite_NormalCopy/524288/real_time  1308280427 ns    223033716 ns            1 bytes_per_second=76.4362Mi/s method=1
+BM_ReadWrite_NormalCopy/1048576/real_time 1021125570 ns    170299989 ns            1 bytes_per_second=97.9311Mi/s method=1
+BM_Sendfile_ZeroCopy/4096/real_time        886058837 ns    228801687 ns            1 bytes_per_second=112.859Mi/s method=2
+BM_Sendfile_ZeroCopy/8192/real_time       1090488937 ns    252930338 ns            1 bytes_per_second=91.702Mi/s method=2
+BM_Sendfile_ZeroCopy/16384/real_time      1060095515 ns    160529609 ns            1 bytes_per_second=94.3311Mi/s method=2
+BM_Sendfile_ZeroCopy/32768/real_time       831702407 ns    147099845 ns            1 bytes_per_second=120.235Mi/s method=2
+BM_Sendfile_ZeroCopy/65536/real_time      1017893087 ns    199369699 ns            1 bytes_per_second=98.2421Mi/s method=2
+BM_Sendfile_ZeroCopy/131072/real_time      942328647 ns    184045142 ns            1 bytes_per_second=106.12Mi/s method=2
+BM_Sendfile_ZeroCopy/262144/real_time      983345877 ns    196118330 ns            1 bytes_per_second=101.694Mi/s method=2
+BM_Sendfile_ZeroCopy/524288/real_time      804368030 ns    153873119 ns            1 bytes_per_second=124.321Mi/s method=2
+BM_Sendfile_ZeroCopy/1048576/real_time     810999047 ns    139072852 ns            1 bytes_per_second=123.305Mi/s method=2
+BM_Mmap_ZeroCopy/4096/real_time            715186466 ns    135460628 ns            1 bytes_per_second=139.824Mi/s method=3
+BM_Mmap_ZeroCopy/8192/real_time           1072101358 ns    165096145 ns            1 bytes_per_second=93.2748Mi/s method=3
+BM_Mmap_ZeroCopy/16384/real_time          1076942727 ns    169034024 ns            1 bytes_per_second=92.8554Mi/s method=3
+BM_Mmap_ZeroCopy/32768/real_time          1010804094 ns    143905726 ns            1 bytes_per_second=98.9311Mi/s method=3
+BM_Mmap_ZeroCopy/65536/real_time           822401721 ns    169336198 ns            1 bytes_per_second=121.595Mi/s method=3
+BM_Mmap_ZeroCopy/131072/real_time         1040589489 ns    164091575 ns            1 bytes_per_second=96.0994Mi/s method=3
+BM_Mmap_ZeroCopy/262144/real_time          873644095 ns    174962122 ns            1 bytes_per_second=114.463Mi/s method=3
+BM_Mmap_ZeroCopy/524288/real_time         1135331511 ns    171382333 ns            1 bytes_per_second=88.08Mi/s method=3
+BM_Mmap_ZeroCopy/1048576/real_time        1084220242 ns    133879880 ns            1 bytes_per_second=92.2322Mi/s method=3
+```
+
 # 6 OLAP
 
 ## 6.1 build/probe relation
