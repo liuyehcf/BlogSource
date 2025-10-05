@@ -1389,7 +1389,58 @@ Here's a step-by-step breakdown:
 1. When you link `foo.o` into `libfoo.so`, the call to `malloc` inside `foo` is linked. It's resolved to the `malloc` function provided by the C library.
 1. Later, when you link `main.cpp` into an executable, you're using the `-Wl,-wrap=malloc` option, but that only affects calls to `malloc` that are being linked at that time. The call to `malloc` inside `foo` was already linked in step 2, so it's unaffected.
 
-## 3.6 Reference
+## 3.6 How free can know the size of the allocated memory block?
+
+`free()` can determine the size of the allocated memory block because the allocator stores the block's size (and other metadata) in a hidden header located just before the pointer returned by `malloc()`.
+
+```cpp
+#include <cstdlib>
+#include <cstring>
+#include <iostream>
+
+void show_header(size_t length) {
+    void* p = std::malloc(length);
+
+    // In glibc's ptmalloc allocator, each allocated chunk has a hidden header
+    // located just *before* the user-accessible memory region.
+    //
+    // Layout of a typical heap chunk (non-mmapped):
+    //
+    //   +---------------------+---------------------+------------------+
+    //   | prev_size (8 bytes) | size (8 bytes)     | user data ...    |
+    //   +---------------------+---------------------+------------------+
+    //
+    // The 'size' field encodes both the total chunk size and 3 flag bits
+    // in its lowest bits:
+    //
+    //     bit 0 (0x1): PREV_INUSE      -> 1 if the previous chunk is in use
+    //     bit 1 (0x2): IS_MMAPPED      -> 1 if the chunk was allocated via mmap()
+    //     bit 2 (0x4): NON_MAIN_ARENA  -> 1 if the chunk belongs to a non-main arena
+    //
+    // The remaining upper bits (aligned to 8 or 16 bytes) store the actual
+    // chunk size, including the header itself.  So the formula is:
+    //
+    //     raw_size = *header
+    //     real_size = raw_size & ~0x7      // mask out the 3 flag bits, so the size must be 8-byte(at least) aligned
+    //     flags     = raw_size &  0x7      // extract flag bits
+    size_t raw = *reinterpret_cast<size_t*>((char*)p - sizeof(size_t));
+    size_t real_size = raw & ~0x7;
+    size_t flags = raw & 0x7;
+
+    std::cout << "raw=" << raw << " real_size=" << real_size << " flags=" << flags << std::endl;
+
+    std::free(p);
+}
+
+int main() {
+    for (size_t i = 1; i <= 128; ++i) {
+        show_header(i);
+    }
+    return 0;
+}
+```
+
+## 3.7 Reference
 
 * [heapprofile.html](https://gperftools.github.io/gperftools/heapprofile.html)
 * [Apache Doris-调试工具](https://doris.apache.org/developer-guide/debug-tool.html)

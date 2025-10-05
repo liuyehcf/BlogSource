@@ -19,7 +19,7 @@ categories:
 
 This command is used to view distribution information (lsb, Linux Standard Base). Other ways to check the distribution include:
 
-1. `uname -r`: Kernel version number  
+1. `uname -r`: Kernel version number
 1. `/etc/*-release`, including:
     * `/etc/os-release`
     * `/etc/centos-release`
@@ -93,14 +93,14 @@ The kernel stores boot information in the `ring buffer`. If you don't have time 
 
 ## 1.7 man
 
-* `man 1`: Standard Linux commands  
-* `man 2`: System calls  
-* `man 3`: Library functions  
-* `man 4`: Device descriptions  
-* `man 5`: File formats  
-* `man 6`: Games and entertainment  
-* `man 7`: Miscellaneous  
-* `man 8`: System administration commands  
+* `man 1`: Standard Linux commands
+* `man 2`: System calls
+* `man 3`: Library functions
+* `man 4`: Device descriptions
+* `man 5`: File formats
+* `man 6`: Games and entertainment
+* `man 7`: Miscellaneous
+* `man 8`: System administration commands
 * `man 9`: Kernel routines
 
 ## 1.8 last
@@ -180,10 +180,10 @@ The command stat is used to display file or file system status.
 
 **Options:**
 
-* `-g`: Specify the user group  
-* `-G`: Additional user groups  
-* `-d`: Specify the user home directory  
-* `-m`: Automatically create the user home directory  
+* `-g`: Specify the user group
+* `-G`: Additional user groups
+* `-d`: Specify the user home directory
+* `-m`: Automatically create the user home directory
 * `-s`: Specify the shell
 
 **Examples:**
@@ -193,12 +193,12 @@ The command stat is used to display file or file system status.
 
 **`useradd` steps when creating an account**
 
-1. Create the required user group: `/etc/group`  
-1. Synchronize `/etc/group` with `/etc/gshadow`: `grpconv`  
-1. Set various properties for the new account: `/etc/passwd`  
-1. Synchronize `/etc/passwd` with `/etc/shadow`: `pwconv`  
-1. Set the password for the account: `passwd <name>`  
-1. Create the user's home directory: `cp -a /etc/skel /home/<name>`  
+1. Create the required user group: `/etc/group`
+1. Synchronize `/etc/group` with `/etc/gshadow`: `grpconv`
+1. Set various properties for the new account: `/etc/passwd`
+1. Synchronize `/etc/passwd` with `/etc/shadow`: `pwconv`
+1. Set the password for the account: `passwd <name>`
+1. Create the user's home directory: `cp -a /etc/skel /home/<name>`
 1. Change the ownership of the user's home directory: `chown -R <group> /home/<name>`
 
 ### 1.17.1 Migrate User Directory
@@ -231,16 +231,16 @@ usermod -d <new_dir> <username>
 
 **Options:**
 
-* `-d`: Modify the user directory  
-* `-s`: Modify the shell  
+* `-d`: Modify the user directory
+* `-s`: Modify the shell
 
 **Examples:**
 
-* `usermod -s /bin/zsh admin`: Modify the default shell of the specified account  
-* `usermod -d /opt/home/admin admin`: Modify the user directory of the specified account  
-    * Note: Do not add a trailing `/` to the new path. For example, do not write `/opt/home/admin/`, as this can cause `zsh` to fail to replace the user directory with the `~` symbol. This will make the command prompt display the absolute path instead of `~`.  
-* `sudo usermod -aG docker username`: Add the specified user to a user group; the user must log in again for the change to take effect  
-    * `groups username`: View the user groups  
+* `usermod -s /bin/zsh admin`: Modify the default shell of the specified account.
+* `usermod -d /opt/home/admin admin`: Modify the user directory of the specified account.
+    * Note: Do not add a trailing `/` to the new path. For example, do not write `/opt/home/admin/`, as this can cause `zsh` to fail to replace the user directory with the `~` symbol. This will make the command prompt display the absolute path instead of `~`.
+* `sudo usermod -aG docker username`: Add the specified user to a user group; the user must log in again for the change to take effect.
+    * `groups username`: View the user groups.
 
 ## 1.20 chown
 
@@ -267,10 +267,10 @@ This command is used to view user information, including `uid`, `gid`, and more.
 
 **Examples:**
 
-* `id`: View information about the current user  
-* `id <username>`: View information about a specified user  
-* `id -u`: View the current user's uid  
-* `id -nu <uid>`: View the username corresponding to the specified uid  
+* `id`: View information about the current user.
+* `id <username>`: View information about a specified user.
+* `id -u`: View the current user's uid.
+* `id -nu <uid>`: View the username corresponding to the specified uid.
 
 ## 1.24 getconf
 
@@ -404,23 +404,23 @@ Examine the codes sent by the keyboard
 
 **Pattern:**
 
-* `echo [-ne] [string/variable]`  
-* Variables inside `''` are not interpreted, while variables inside `""` are interpreted  
+* `echo [-ne] [string/variable]`.
+* Variables inside `''` are not interpreted, while variables inside `""` are interpreted.
 
 **Options:**
 
-* `-n`: Do not automatically add a newline at the end  
-* `-e`: Enable backslash escape sequences. If the string contains the following characters, they are specially handled rather than output as literal text:  
-    * `\a`: Emit a warning sound  
-    * `\b`: Delete the previous character  
-    * `\c`: Do not add a newline at the end  
-    * `\f`: Newline but cursor stays at the same position  
-    * `\n`: Newline and move cursor to the beginning of the line  
-    * `\r`: Move cursor to the beginning of the line without newline  
-    * `\t`: Insert a tab  
-    * `\v`: Same as `\f`  
-    * `\\`: Insert a `\` character  
-    * `\nnn`: Insert the ASCII character represented by the octal number `nnn`
+* `-n`: Do not automatically add a newline at the end.
+* `-e`: Enable backslash escape sequences. If the string contains the following characters, they are specially handled rather than output as literal text:
+    * `\a`: Emit a warning sound.
+    * `\b`: Delete the previous character.
+    * `\c`: Do not add a newline at the end.
+    * `\f`: Newline but cursor stays at the same position.
+    * `\n`: Newline and move cursor to the beginning of the line.
+    * `\r`: Move cursor to the beginning of the line without newline.
+    * `\t`: Insert a tab.
+    * `\v`: Same as `\f`.
+    * `\\`: Insert a `\` character.
+    * `\nnn`: Insert the ASCII character represented by the octal number `nnn`.
 
 **Examples:**
 
@@ -430,7 +430,7 @@ Examine the codes sent by the keyboard
 
 **Others:**
 
-* **Color control, explanation of control options:**  
+* **Color control, explanation of control options:**
     ```sh
     echo -e "\033[30m Black text \033[0m"
     echo -e "\033[31m Red text \033[0m"
@@ -451,10 +451,10 @@ Examine the codes sent by the keyboard
     echo -e "\033[47;30m White background black text \033[0m"
     ```
 
-* How to output text containing `*`  
-    * [Printing asterisk ("*") in bash shell](https://stackoverflow.com/questions/25277037/printing-asterisk-in-bash-shell)  
-    * `content="*"; echo ${content}`: `*` will be expanded by `sh/bash` (not by `zsh`) to all files and directories in the current path  
-    * `content="*"; echo "${content}"`: With quotes, `*` is output as the literal character  
+* How to output text containing `*`:
+    * [Printing asterisk ("*") in bash shell](https://stackoverflow.com/questions/25277037/printing-asterisk-in-bash-shell).
+    * `content="*"; echo ${content}`: `*` will be expanded by `sh/bash` (not by `zsh`) to all files and directories in the current path.
+    * `content="*"; echo "${content}"`: With quotes, `*` is output as the literal character.
 
 ## 2.3 sed
 
@@ -670,8 +670,8 @@ set -H
 
 **Note**: On macOS, the `-i` option must be followed by an extension suffix to back up the original file. If the extension length is 0, no backup is made.
 
-* `sed -i ".back" "s/a/b/g" example`: Backup file will be `example.back`  
-* `sed -i "" "s/a/b/g" example`: No backup is made  
+* `sed -i ".back" "s/a/b/g" example`: Backup file will be `example.back`.
+* `sed -i "" "s/a/b/g" example`: No backup is made.
 
 ## 2.4 awk
 
@@ -692,9 +692,9 @@ Note that all subsequent actions in `awk` are enclosed in single quotes, and whe
 1. Reads the first line.
     * **If it contains a regular expression match (`[/regex/]`), it skips the line if there is no match. If it matches (any substring), the first line's data is assigned to variables like `$0`, `$1`, etc.**
     * If there is no regex match, the first line's data is assigned to `$0`, `$1`, etc.
-2. Based on the condition type, determines if subsequent actions need to be performed.
-3. Executes all actions and condition types.
-4. If there are more lines, repeats the steps above until all data is processed.
+1. Based on the condition type, determines if subsequent actions need to be performed.
+1. Executes all actions and condition types.
+1. If there are more lines, repeats the steps above until all data is processed.
 
 **`awk` Built-in Variables:**
 
@@ -799,7 +799,7 @@ All of the following examples are in `BEGIN` and are executed only once, without
 **`if` Statement:**
 
 ```sh
-awk 'BEGIN{ 
+awk 'BEGIN{
 test=100;
 if(test>90)
 {
@@ -819,7 +819,7 @@ else
 **`while` Statement:**
 
 ```sh
-awk 'BEGIN{ 
+awk 'BEGIN{
 test=100;
 total=0;
 while(i<=test)
@@ -834,14 +834,14 @@ print total;
 **`for` Statement:**
 
 ```sh
-awk 'BEGIN{ 
+awk 'BEGIN{
 for(k in ENVIRON)
 {
     print k"="ENVIRON[k];
 }
 }'
 
-awk 'BEGIN{ 
+awk 'BEGIN{
 total=0;
 for(i=0;i<=100;i++)
 {
@@ -854,7 +854,7 @@ print total;
 **`do` Statement:**
 
 ```sh
-awk 'BEGIN{ 
+awk 'BEGIN{
 total=0;
 i=0;
 do
@@ -888,21 +888,21 @@ echo "1 2 3 4 5 3 2 1" | tr ' ' '\n' | awk '{count[$1]++} END {for (num in count
 
 **Options:**
 
-* `list`: Range  
-    * `N`: The Nth byte, character, or field counting from the first  
-    * `N-`: From the Nth to the end of the line, all characters, bytes, or fields  
-    * `N-M`: From the Nth to the Mth (inclusive), all characters, bytes, or fields  
-    * `-M`: From the first to the Mth (inclusive), all characters, bytes, or fields  
-* `-b`: Split by bytes. These byte positions ignore multibyte character boundaries unless the `-n` flag is also specified  
-* `-c`: Split by characters  
-* `-d`: Custom delimiter, default is tab  
-* `-f`: Used with `-d`, specify which fields to display  
-* `-n`: Disable splitting multibyte characters. Only used with the `-b` flag. If the last byte of a character falls within the range specified by the `List` parameter of the `-b` flag, the character will be output; otherwise, it will be excluded
+* `list`: Range.
+    * `N`: The Nth byte, character, or field counting from the first.
+    * `N-`: From the Nth to the end of the line, all characters, bytes, or fields.
+    * `N-M`: From the Nth to the Mth (inclusive), all characters, bytes, or fields.
+    * `-M`: From the first to the Mth (inclusive), all characters, bytes, or fields.
+* `-b`: Split by bytes. These byte positions ignore multibyte character boundaries unless the `-n` flag is also specified.
+* `-c`: Split by characters.
+* `-d`: Custom delimiter, default is tab.
+* `-f`: Used with `-d`, specify which fields to display.
+* `-n`: Disable splitting multibyte characters. Only used with the `-b` flag. If the last byte of a character falls within the range specified by the `List` parameter of the `-b` flag, the character will be output; otherwise, it will be excluded.
 
 **Examples:**
 
-* `echo "a:b:c:d:e" | cut -d ":" -f3`: Outputs `c`  
-* `ll | cut -c 1-10`: Displays characters 1 to 10 of the query result  
+* `echo "a:b:c:d:e" | cut -d ":" -f3`: Outputs `c`.
+* `ll | cut -c 1-10`: Displays characters 1 to 10 of the query result.
 
 ## 2.6 grep
 
@@ -953,15 +953,15 @@ grep searches for `PATTERNS` in each `FILE`
 
 **Options:**
 
-* `-c`: Count the number of times the 'search string' is found  
-* `-i`: Ignore case differences  
-* `-l`: Output matching filenames instead of matching content  
-* `-n`: Disable recursion  
-* `-v`: Invert match, i.e., output lines that do NOT contain the 'search string'  
-* `-r`: Recursively search in the specified directory (default behavior)  
-* `-A`: Followed by a number, meaning "after" — output the matched line plus the following n lines  
-* `-B`: Followed by a number, meaning "before" — output the matched line plus the preceding n lines  
-* `-C`: Followed by a number — output the matched line plus n lines before and after  
+* `-c`: Count the number of times the 'search string' is found.
+* `-i`: Ignore case differences.
+* `-l`: Output matching filenames instead of matching content.
+* `-n`: Disable recursion.
+* `-v`: Invert match, i.e., output lines that do NOT contain the 'search string'.
+* `-r`: Recursively search in the specified directory (default behavior).
+* `-A`: Followed by a number, meaning "after" — output the matched line plus the following n lines.
+* `-B`: Followed by a number, meaning "before" — output the matched line plus the preceding n lines.
+* `-C`: Followed by a number — output the matched line plus n lines before and after.
 
 **Examples:**
 
@@ -975,22 +975,22 @@ grep searches for `PATTERNS` in each `FILE`
 
 **Options:**
 
-* `-f`: Ignore case differences  
-* `-b`: Ignore leading spaces  
-* `-M`: Sort by month name, e.g., JAN, DEC  
-* `-n`: Sort numerically (default is lexicographical sort)  
-* `-r`: Reverse sort order  
-* `-u`: Like `uniq`, output only one line for duplicate data  
-* `-t`: Field delimiter, default is Tab  
-* `-k`: Specify which field(s) to sort by  
+* `-f`: Ignore case differences.
+* `-b`: Ignore leading spaces.
+* `-M`: Sort by month name, e.g., JAN, DEC.
+* `-n`: Sort numerically (default is lexicographical sort).
+* `-r`: Reverse sort order.
+* `-u`: Like `uniq`, output only one line for duplicate data.
+* `-t`: Field delimiter, default is Tab.
+* `-k`: Specify which field(s) to sort by.
 
 **Examples:**
 
-* `cat /etc/passwd | sort`  
-* `cat /etc/passwd | sort -t ':' -k 3`  
-* `echo -e "a\nb\nb\na\nb\na\na\nc\na" | sort | uniq -c | sort -nr`  
-    * `sort | uniq -c | sort -nr`: Common way to count occurrences of identical patterns  
-* `echo "1 2 3 4 5 3 2 1" | tr ' ' '\n' | awk '{count[$1]++} END {for (num in count) print count[num], num}' | sort -k1,1nr -k2,2n`: Sort by first column descending, then second column ascending  
+* `cat /etc/passwd | sort`
+* `cat /etc/passwd | sort -t ':' -k 3`
+* `echo -e "a\nb\nb\na\nb\na\na\nc\na" | sort | uniq -c | sort -nr`
+    * `sort | uniq -c | sort -nr`: Common way to count occurrences of identical patterns.
+* `echo "1 2 3 4 5 3 2 1" | tr ' ' '\n' | awk '{count[$1]++} END {for (num in count) print count[num], num}' | sort -k1,1nr -k2,2n`: Sort by first column descending, then second column ascending.
 
 ## 2.9 uniq
 
@@ -1000,10 +1000,10 @@ grep searches for `PATTERNS` in each `FILE`
 
 **Options:**
 
-* `-c`: Count the number of occurrences  
-* `-d`: Only count duplicated entries  
-* `-i`: Ignore case differences  
-* `-u`: Only count entries that appear once  
+* `-c`: Count the number of occurrences.
+* `-d`: Only count duplicated entries.
+* `-i`: Ignore case differences.
+* `-u`: Only count entries that appear once.
 
 **Examples:**
 
@@ -1093,9 +1093,9 @@ grep searches for `PATTERNS` in each `FILE`
 
 **Options:**
 
-* `-r, --no-run-if-empty`: Do not run the command if input is empty  
-* `-I {}`: Replace the placeholder `{}` in the following command with standard input  
-* `-t`: Print the commands to be executed  
+* `-r, --no-run-if-empty`: Do not run the command if input is empty.
+* `-I {}`: Replace the placeholder `{}` in the following command with standard input.
+* `-t`: Print the commands to be executed.
 
 **Examples:**
 
@@ -1115,7 +1115,7 @@ grep searches for `PATTERNS` in each `FILE`
 
 **Options:**
 
-* `-a`: Append data to the file instead of overwriting  
+* `-a`: Append data to the file instead of overwriting.
 
 **Examples:**
 
@@ -1157,8 +1157,8 @@ echo "↑↑↑↑↑↑↑↑↑content↑↑↑↑↑↑↑↑↑"
 
 **Examples:**
 
-* `tail -f xxx.txt`  
-* `tail -n +2 xxx.txt`: Output from the second line to the last line  
+* `tail -f xxx.txt`
+* `tail -n +2 xxx.txt`: Output from the second line to the last line.
 
 ## 2.16 find
 
@@ -1190,7 +1190,7 @@ echo "↑↑↑↑↑↑↑↑↑content↑↑↑↑↑↑↑↑↑"
     * `find ./ -name '*.cfg' -o -name '*.conf'`
     * `find ./ -regex '.*\.cfg\|.*\.conf'`
     * `find ./ -regextype posix-extended -regex '.*\.(cfg|conf)'`
-* `find . -type f -executable`: Find executable binary files  
+* `find . -type f -executable`: Find executable binary files.
 
 ## 2.17 locate
 
@@ -1885,13 +1885,13 @@ Appending `&` at the end of a command means executing the command in the backgro
 
 **Options:**
 
-* `-l`: In addition to listing the job number and command string, also displays the PID number  
-* `-r`: Lists only the jobs currently running in the background  
-* `-s`: Lists only the jobs currently stopped in the background  
-* Meaning of the `+` and `-` symbols in the output:  
-    * `+`: The most recently placed job in the background, representing the default job to be brought to the foreground when just 'fg' is entered  
-    * `-`: The second most recently placed job in the background  
-    * For jobs older than the last two, there will be no `+` or `-` symbols
+* `-l`: In addition to listing the job number and command string, also displays the PID number.
+* `-r`: Lists only the jobs currently running in the background.
+* `-s`: Lists only the jobs currently stopped in the background.
+* Meaning of the `+` and `-` symbols in the output:.
+    * `+`: The most recently placed job in the background, representing the default job to be brought to the foreground when just 'fg' is entered.
+    * `-`: The second most recently placed job in the background.
+    * For jobs older than the last two, there will be no `+` or `-` symbols.
 
 **Examples:**
 
@@ -1904,9 +1904,9 @@ Bring background jobs to the foreground for processing
 
 **Examples:**
 
-* `fg %jobnumber`: Brings the job with the specified `jobnumber` to the foreground. `jobnumber` is the job number (a digit), and the `%` is optional  
-* `fg +`: Brings the job marked with `+` to the foreground  
-* `fg -`: Brings the job marked with `-` to the foreground
+* `fg %jobnumber`: Brings the job with the specified `jobnumber` to the foreground. `jobnumber` is the job number (a digit), and the `%` is optional.
+* `fg +`: Brings the job marked with `+` to the foreground.
+* `fg -`: Brings the job marked with `-` to the foreground.
 
 ## 4.3 bg
 
@@ -1914,10 +1914,10 @@ Resume a job to running state in the background
 
 **Examples:**
 
-* `bg %jobnumber`: Resumes the job with the specified `jobnumber`. `jobnumber` is the job number (a digit), and the `%` is optional  
-* `bg +`: Resumes the job marked with `+`
-* `bg -`: Resumes the job marked with `-`
-* Jobs like vim cannot be resumed to running state in the background—even if this command is used, such jobs will immediately return to a stopped state
+* `bg %jobnumber`: Resumes the job with the specified `jobnumber`. `jobnumber` is the job number (a digit), and the `%` is optional.
+* `bg +`: Resumes the job marked with `+`.
+* `bg -`: Resumes the job marked with `-`.
+* Jobs like vim cannot be resumed to running state in the background—even if this command is used, such jobs will immediately return to a stopped state.
 
 ## 4.4 kill
 
@@ -1931,14 +1931,14 @@ The command is used to terminate processes.
 
 **Options:**
 
-* `-l`: Lists the signals currently available for use with the `kill` command  
-* `-signal`:  
-    * `-1`: Reloads the configuration file, similar to a reload operation  
-    * `-2`: Same as pressing [Ctrl]+C on the keyboard  
-    * `-6`: Triggers a core dump  
-    * `-9`: Immediately and forcibly terminates a job; commonly used for forcefully killing abnormal jobs  
-    * `-15`: Terminates a job gracefully using the normal program procedure. Unlike `-9`, `-15` ends a job through the regular shutdown process and is the default signal  
-* Unlike `bg` and `fg`, when managing jobs with `kill`, the `%` symbol **cannot** be omitted, because `kill` interprets the argument as a PID by default
+* `-l`: Lists the signals currently available for use with the `kill` command.
+* `-signal`:
+    * `-1`: Reloads the configuration file, similar to a reload operation.
+    * `-2`: Same as pressing [Ctrl]+C on the keyboard.
+    * `-6`: Triggers a core dump.
+    * `-9`: Immediately and forcibly terminates a job; commonly used for forcefully killing abnormal jobs.
+    * `-15`: Terminates a job gracefully using the normal program procedure. Unlike `-9`, `-15` ends a job through the regular shutdown process and is the default signal.
+* Unlike `bg` and `fg`, when managing jobs with `kill`, the `%` symbol **cannot** be omitted, because `kill` interprets the argument as a PID by default.
 
 ## 4.5 pkill
 
@@ -1949,13 +1949,13 @@ The command is used to terminate processes.
 
 **Options:**
 
-* `-f`: Matches the full `command line`; by default, only the first 15 characters are matched  
-* `-signal`: Same as in `kill`  
-* `-P ppid,...`: Matches the specified `parent id`  
-* `-s sid,...`: Matches the specified `session id`  
-* `-t term,...`: Matches the specified `terminal`  
-* `-u euid,...`: Matches the specified `effective user id`  
-* `-U uid,...`: Matches the specified `real user id`  
+* `-f`: Matches the full `command line`; by default, only the first 15 characters are matched.
+* `-signal`: Same as in `kill`.
+* `-P ppid,...`: Matches the specified `parent id`.
+* `-s sid,...`: Matches the specified `session id`.
+* `-t term,...`: Matches the specified `terminal`.
+* `-u euid,...`: Matches the specified `effective user id`.
+* `-U uid,...`: Matches the specified `real user id`.
 * **If no matching rule is specified, the default behavior is to match the process name**
 
 **Examples:**
@@ -1967,35 +1967,35 @@ The command is used to terminate processes.
 
 **Options:**
 
-* `a`: All processes not associated with a terminal  
-* `u`: Processes related to the effective user  
-* `x`: Usually used together with `a` to display more complete information  
-* `A/e`: Displays all processes  
-* `-f/-l`: Detailed information; the content differs between the two  
-* `-T/-L`: Thread information; when used with `-f/-l`, the displayed details vary  
-* `-o`: Followed by comma-separated column names to specify which information to display  
-    * `%cpu`  
-    * `%mem`  
-    * `args`  
-    * `uid`  
-    * `pid`  
-    * `ppid`  
-    * `lwp/tid/spid`: Thread `TID`, `lwp` stands for "light weight process", i.e., a thread  
-    * `comm/ucomm/ucmd`: Thread name  
-    * `time`  
-    * `tty`  
-    * `flags`: Process flags  
-        * `1`: Forked but didn't exec  
-        * `4`: Used super-user privileges  
+* `a`: All processes not associated with a terminal.
+* `u`: Processes related to the effective user.
+* `x`: Usually used together with `a` to display more complete information.
+* `A/e`: Displays all processes.
+* `-f/-l`: Detailed information; the content differs between the two.
+* `-T/-L`: Thread information; when used with `-f/-l`, the displayed details vary.
+* `-o`: Followed by comma-separated column names to specify which information to display.
+    * `%cpu`
+    * `%mem`
+    * `args`
+    * `uid`
+    * `pid`
+    * `ppid`
+    * `lwp/tid/spid`: Thread `TID`, `lwp` stands for "light weight process", i.e., a thread.
+    * `comm/ucomm/ucmd`: Thread name.
+    * `time`
+    * `tty`
+    * `flags`: Process flags.
+        * `1`: Forked but didn't exec.
+        * `4`: Used super-user privileges.
     * `stat`: Process status
-        * `D`: uninterruptible sleep (usually IO)
-        * `R`: running or runnable (on run queue)
-        * `S`: interruptible sleep (waiting for an event to complete)
-        * `T`: stopped by job control signal
-        * `t`: stopped by debugger during the tracing
-        * `W`: paging (not valid since the 2.6.xx kernel)
-        * `X`: dead (should never be seen)
-        * `Z`: defunct ("zombie") process, terminated but not reaped by its parent
+        * `D`: uninterruptible sleep (usually IO).
+        * `R`: running or runnable (on run queue).
+        * `S`: interruptible sleep (waiting for an event to complete).
+        * `T`: stopped by job control signal.
+        * `t`: stopped by debugger during the tracing.
+        * `W`: paging (not valid since the 2.6.xx kernel).
+        * `X`: dead (should never be seen).
+        * `Z`: defunct ("zombie") process, terminated but not reaped by its parent.
 * `-w`: Wide output.  Use this option twice for unlimited width.
 
 **Examples:**
@@ -2004,8 +2004,8 @@ The command is used to terminate processes.
 * `ps -ef`
 * `ps -efww`
 * `ps -el`
-* `ps -e -o pid,ppid,stat | grep Z`: Find zombie processes  
-* `ps -T -o tid,ucmd -p 212381`: View all thread IDs and thread names of the specified process
+* `ps -e -o pid,ppid,stat | grep Z`: Find zombie processes.
+* `ps -T -o tid,ucmd -p 212381`: View all thread IDs and thread names of the specified process.
 
 ## 4.7 pgrep
 
@@ -2015,11 +2015,11 @@ The command is used to terminate processes.
 
 **Options:**
 
-* `-a`: Lists the PID and the full program name  
-* `-l`: Lists the PID and the program name  
-* `-f`: Matches the full process name  
-* `-o`: Lists the oldest process  
-* `-n`: Lists the newest process
+* `-a`: Lists the PID and the full program name.
+* `-l`: Lists the PID and the program name.
+* `-f`: Matches the full process name.
+* `-o`: Lists the oldest process.
+* `-n`: Lists the newest process.
 
 **Examples:**
 
@@ -2038,18 +2038,18 @@ The command is used to terminate processes.
 
 **Options:**
 
-* `-a`: Displays the command  
-* `-l`: Does not truncate output  
-* `-A`: Connects process trees using ASCII characters (connection symbols are ASCII characters)  
-* `-U`: Connects process trees using UTF-8 characters, which may cause errors in some terminal interfaces (connection symbols are UTF-8 characters, smoother and more visually appealing)  
-* `-p`: Also lists the PID of each process  
-* `-u`: Also lists the account name each process belongs to  
-* `-s`: Displays the parent process of the specified process
+* `-a`: Displays the command.
+* `-l`: Does not truncate output.
+* `-A`: Connects process trees using ASCII characters (connection symbols are ASCII characters).
+* `-U`: Connects process trees using UTF-8 characters, which may cause errors in some terminal interfaces (connection symbols are UTF-8 characters, smoother and more visually appealing).
+* `-p`: Also lists the PID of each process.
+* `-u`: Also lists the account name each process belongs to.
+* `-s`: Displays the parent process of the specified process.
 
 **Examples:**
 
-* `pstree`: Displays the entire process tree  
-* `pstree -alps <pid>`: Displays the process tree rooted at the specified `<pid>`
+* `pstree`: Displays the entire process tree.
+* `pstree -alps <pid>`: Displays the process tree rooted at the specified `<pid>`.
 
 ## 4.9 pstack
 
@@ -2087,27 +2087,27 @@ This command is used to view or set the CPU affinity of a process
 
 **Options:**
 
-* `-c`: Displays CPU affinity in list format  
-* `-p`: Specifies the PID of the process  
+* `-c`: Displays CPU affinity in list format.
+* `-p`: Specifies the PID of the process.
 
 **Examples:**
 
-* `taskset -p 152694`: View the CPU affinity of the process with PID `152694`, displayed as a mask  
-* `taskset -c -p 152694`: View the CPU affinity of the process with PID `152694`, displayed as a list  
-* `taskset -p f 152694`: Set the CPU affinity of the process with PID `152694` using a mask  
-* `taskset -c -p 0,1,2,3,4,5 152694`: Set the CPU affinity of the process with PID `152694` using a list
+* `taskset -p 152694`: View the CPU affinity of the process with PID `152694`, displayed as a mask.
+* `taskset -c -p 152694`: View the CPU affinity of the process with PID `152694`, displayed as a list.
+* `taskset -p f 152694`: Set the CPU affinity of the process with PID `152694` using a mask.
+* `taskset -c -p 0,1,2,3,4,5 152694`: Set the CPU affinity of the process with PID `152694` using a list.
 
 **What is a CPU affinity mask (hexadecimal)**
 
-* `cpu0 = 1`  
-* `cpu1 = cpu0 * 2 = 2`  
-* `cpu2 = cpu1 * 2 = 4`  
-* `cpu(n) = cpu(n-1) * 2`  
-* `mask = cpu0 + cpu1 + ... + cpu(n)`  
-* Some examples:  
-    * `0 ==> 1 = 0x1`  
-    * `0,1,2,3 ==> 1 + 2 + 4 + 8 = 15 = 0xf`  
-    * `0,1,2,3,4,5 ==> 1 + 2 + 4 + 8 + 16 + 32 = 0x3f`  
+* `cpu0 = 1`
+* `cpu1 = cpu0 * 2 = 2`
+* `cpu2 = cpu1 * 2 = 4`
+* `cpu(n) = cpu(n-1) * 2`
+* `mask = cpu0 + cpu1 + ... + cpu(n)`
+* Some examples:
+    * `0 ==> 1 = 0x1`
+    * `0,1,2,3 ==> 1 + 2 + 4 + 8 = 15 = 0xf`
+    * `0,1,2,3,4,5 ==> 1 + 2 + 4 + 8 + 16 + 32 = 0x3f`
     * `2,3 ==> 4 + 8 = 12 = 0xc`
 
 ## 4.12 su
@@ -2171,9 +2171,9 @@ This command is used to allow authorized users to execute programs as another us
 
 **Options:**
 
-* `command`: The command to execute  
-* `args`: Arguments required by the command  
-* `&`: Run in the background
+* `command`: The command to execute.
+* `args`: Arguments required by the command.
+* `&`: Run in the background.
 
 **Examples:**
 
@@ -2193,11 +2193,11 @@ This command is used to allow authorized users to execute programs as another us
 
 **Options:**
 
-* `cmd`: The command to execute  
-* `args`: Arguments required by the command  
-* `-ls`: Lists details of all `screen` sessions  
-* `-r`: Followed by a `pid`, attaches to the `screen` session with the specified process ID  
-* `-d`: Detaches from the current running session
+* `cmd`: The command to execute.
+* `args`: Arguments required by the command.
+* `-ls`: Lists details of all `screen` sessions.
+* `-r`: Followed by a `pid`, attaches to the `screen` session with the specified process ID.
+* `-d`: Detaches from the current running session.
 
 **Examples:**
 
@@ -2207,14 +2207,14 @@ This command is used to allow authorized users to execute programs as another us
 
 **Session Management:**
 
-1. `Ctrl a + w`: Show the list of all windows  
-2. `Ctrl a + Ctrl a`: Switch to the previously displayed window  
-3. `Ctrl a + c`: Create a new window running a shell and switch to it  
-4. `Ctrl a + n`: Switch to the next window  
-5. `Ctrl a + p`: Switch to the previous window (opposite of `Ctrl a + n`)  
-6. `Ctrl a + 0-9`: Switch to window 0..9  
-7. `Ctrl a + d`: Temporarily detach the screen session  
-8. `Ctrl a + k`: Kill the current window
+1. `Ctrl a + w`: Show the list of all windows.
+1. `Ctrl a + Ctrl a`: Switch to the previously displayed window.
+1. `Ctrl a + c`: Create a new window running a shell and switch to it.
+1. `Ctrl a + n`: Switch to the next window.
+1. `Ctrl a + p`: Switch to the previous window (opposite of `Ctrl a + n`).
+1. `Ctrl a + 0-9`: Switch to window `0..9`.
+1. `Ctrl a + d`: Temporarily detach the screen session.
+1. `Ctrl a + k`: Kill the current window.
 
 ## 4.17 tmux
 
@@ -2278,7 +2278,7 @@ This command is used to allow authorized users to execute programs as another us
 * Change the default shell:
     1. Method 1: `tmux set -g default-shell /usr/bin/zsh`, only effective for the current session.
     1. Method 2: Add the following configuration to `~/.tmux.conf`: `set -g default-shell /usr/bin/zsh`.
-* Support scroll with mouse: 
+* Support scroll with mouse:
     1. Method 1: `tmux set -g mouse on`, only effective for the current session.
     1. Method 2: Add the following configuration to `~/.tmux.conf`: `set -g mouse on`.
 
@@ -2378,51 +2378,51 @@ Note: `reptyr` relies on the `ptrace` system call, which can be enabled by runni
 **Options:**
 
 1. **Routing-related parameters**
-    * `-r`: List the routing table, functions like `route`  
-    * `-n`: Do not use hostnames and service names; use IP addresses and port numbers, similar to `route -n`  
-2. **Network interface-related parameters**
-    * `-a`: List all connection states, including tcp/udp/unix sockets, etc.  
-    * `-t`: List only TCP packet connections  
-    * `-u`: List only UDP packet connections  
-    * `-l`: List only network states of services that are in Listen mode  
-    * `-p`: List PID and program filename  
-    * `-c`: Auto-update display every few seconds, e.g., `-c 5` updates every 5 seconds  
+    * `-r`: List the routing table, functions like `route`.
+    * `-n`: Do not use hostnames and service names; use IP addresses and port numbers, similar to `route -n`.
+1. **Network interface-related parameters**
+    * `-a`: List all connection states, including tcp/udp/unix sockets, etc.
+    * `-t`: List only TCP packet connections.
+    * `-u`: List only UDP packet connections.
+    * `-l`: List only network states of services that are in Listen mode.
+    * `-p`: List PID and program filename.
+    * `-c`: Auto-update display every few seconds, e.g., `-c 5` updates every 5 seconds.
 
 **Explanation of routing-related display fields**
 
-* `Destination`: Means network  
-* `Gateway`: The gateway IP of the interface; if 0.0.0.0, no extra IP is needed  
-* `Genmask`: The netmask; combined with Destination to define a host or network  
-* `Flags`: Various flags indicating the meaning of the route or host  
-    * `U`: Route is usable  
-    * `G`: Network requires forwarding via gateway  
-    * `H`: This route is for a host, not a whole network  
-    * `D`: Route created by redirect message  
-    * `M`: Route modified by redirect message  
-    * `Iface`: Interface  
+* `Destination`: Means network.
+* `Gateway`: The gateway IP of the interface; if 0.0.0.0, no extra IP is needed.
+* `Genmask`: The netmask; combined with Destination to define a host or network.
+* `Flags`: Various flags indicating the meaning of the route or host.
+    * `U`: Route is usable.
+    * `G`: Network requires forwarding via gateway.
+    * `H`: This route is for a host, not a whole network.
+    * `D`: Route created by redirect message.
+    * `M`: Route modified by redirect message.
+    * `Iface`: Interface.
 
 **Explanation of network interface-related display fields:**
 
-* `Proto`: Packet protocol of the connection, mainly TCP/UDP  
-* `Recv-Q`: Total bytes copied from non-user program connections  
-* `Send-Q`: Bytes sent by remote host without ACK flag; also refers to bytes occupied by active connection SYN or other flag packets  
-* `Local Address`: Local endpoint address, can be IP or full hostname, formatted as "IP:port"  
-* `Foreign Address`: Remote host IP and port number  
-* `stat`: Status bar  
-    * `ESTABLISHED`: Connection established  
-    * `SYN_SENT`: Sent an active connection (SYN flag) packet  
-    * `SYN_RECV`: Received an active connection request packet  
-    * `FIN_WAIT1`: Socket service interrupted, connection is closing  
-    * `FIN_WAIT2`: Connection closed, waiting for remote host to acknowledge close  
-    * `TIME_WAIT`: Connection closed, socket waiting on network to finish  
-    * `LISTEN`: Usually a service listening port; can be viewed with `-l`  
+* `Proto`: Packet protocol of the connection, mainly TCP/UDP.
+* `Recv-Q`: Total bytes copied from non-user program connections.
+* `Send-Q`: Bytes sent by remote host without ACK flag; also refers to bytes occupied by active connection SYN or other flag packets.
+* `Local Address`: Local endpoint address, can be IP or full hostname, formatted as "IP:port".
+* `Foreign Address`: Remote host IP and port number.
+* `stat`: Status bar.
+    * `ESTABLISHED`: Connection established.
+    * `SYN_SENT`: Sent an active connection (SYN flag) packet.
+    * `SYN_RECV`: Received an active connection request packet.
+    * `FIN_WAIT1`: Socket service interrupted, connection is closing.
+    * `FIN_WAIT2`: Connection closed, waiting for remote host to acknowledge close.
+    * `TIME_WAIT`: Connection closed, socket waiting on network to finish.
+    * `LISTEN`: Usually a service listening port; can be viewed with `-l`.
 
 The function of `netstat` is to check network connection status. The most common aspects are **how many ports I have open waiting for client connections** and **the current state of my network connections, including how many are established or have issues**.
 
 **Examples:**
 
 1. **`netstat -n | awk '/^tcp/ {++y[$NF]} END {for(w in y) print w, y[w]}'`**
-1. **`netstat -nlp | grep <pid>`** 
+1. **`netstat -nlp | grep <pid>`**
 
 ## 5.2 tc
 
@@ -2441,9 +2441,9 @@ Traffic management is controlled by three types of objects: `qdisc` (queueing di
 
 **Examples:**
 
-* `tc qdisc add dev em1 root netem delay 300ms`: Set network delay to 300ms  
-* `tc qdisc add dev em1 root netem loss 8% 20%`: Set packet loss rate between 8% and 20%  
-* `tc qdisc del dev em1 root`: Delete the specified settings  
+* `tc qdisc add dev em1 root netem delay 300ms`: Set network delay to 300ms.
+* `tc qdisc add dev em1 root netem loss 8% 20%`: Set packet loss rate between 8% and 20%.
+* `tc qdisc del dev em1 root`: Delete the specified settings.
 
 ## 5.3 ss
 
@@ -2451,7 +2451,7 @@ Traffic management is controlled by three types of objects: `qdisc` (queueing di
 
 When the number of socket connections on a server becomes very large, both the `netstat` command and directly using `cat /proc/net/tcp` become slow.
 
-The secret to `ss`’s speed lies in its use of the `tcp_diag` module in the TCP protocol stack. `tcp_diag` is a module for analysis and statistics that can get first-hand information from the Linux kernel, ensuring that `ss` is fast and efficient.
+The secret to `ss`'s speed lies in its use of the `tcp_diag` module in the TCP protocol stack. `tcp_diag` is a module for analysis and statistics that can get first-hand information from the Linux kernel, ensuring that `ss` is fast and efficient.
 
 **Pattern:**
 
@@ -2459,30 +2459,30 @@ The secret to `ss`’s speed lies in its use of the `tcp_diag` module in the TCP
 
 **Options:**
 
-* `-t`: List tcp sockets  
-* `-u`: List udp sockets  
-* `-a`: List all sockets  
-* `-l`: List all listening sockets  
-* `-e`: Show detailed socket information, including inode number  
-* `-s`: Show summary information only  
-* `-p`: Show processes using the socket  
-* `-n`: Do not resolve service names  
-* `-r`: Resolve service names  
-* `-m`: Show memory usage  
-* `-h`: Show help documentation  
-* `-i`: Show tcp socket details  
+* `-t`: List tcp sockets.
+* `-u`: List udp sockets.
+* `-a`: List all sockets.
+* `-l`: List all listening sockets.
+* `-e`: Show detailed socket information, including inode number.
+* `-s`: Show summary information only.
+* `-p`: Show processes using the socket.
+* `-n`: Do not resolve service names.
+* `-r`: Resolve service names.
+* `-m`: Show memory usage.
+* `-h`: Show help documentation.
+* `-i`: Show tcp socket details.
 
 **Examples:**
 
-* `ss -s`  
-* `ss -t -a`: Show all tcp sockets  
-* `ss -ti -a`: Show all tcp sockets with details  
-* `ss -u -a`: Show all udp sockets  
-* `ss -nlp | grep 22`: Find the program that opened socket/port 22  
-* `ss -o state established`: Show all sockets in established state  
-* `ss -o state FIN-WAIT-1 dst 192.168.25.100/24`: Show all sockets in `FIN-WAIT-1` state with destination network `192.168.25.100/24`  
-* `ss -nap`  
-* `ss -nap -e`  
+* `ss -s`
+* `ss -t -a`: Show all tcp sockets.
+* `ss -ti -a`: Show all tcp sockets with details.
+* `ss -u -a`: Show all udp sockets.
+* `ss -nlp | grep 22`: Find the program that opened socket/port 22.
+* `ss -o state established`: Show all sockets in established state.
+* `ss -o state FIN-WAIT-1 dst 192.168.25.100/24`: Show all sockets in `FIN-WAIT-1` state with destination network `192.168.25.100/24`.
+* `ss -nap`
+* `ss -nap -e`
 * `ss -naptu`
 
 ## 5.4 ip
@@ -2515,14 +2515,14 @@ For detailed usage, refer to `ip link help`
 
 **Examples:**
 
-* `ip link`: View all network interfaces  
-* `ip link up`: View interfaces in the up state  
-* `ip -d link`: View detailed information  
-    * `ip -d link show lo`  
-* `ip link set eth0 up`: Enable the network interface  
-* `ip link set eth0 down`: Disable the network interface  
-* `ip link delete tunl0`: Delete the network interface  
-* `cat /sys/class/net/xxx/carrier`: Check if the network cable is plugged in (corresponds to `ip link` showing `state UP` or `state DOWN`)  
+* `ip link`: View all network interfaces.
+* `ip link up`: View interfaces in the up state.
+* `ip -d link`: View detailed information.
+    * `ip -d link show lo`
+* `ip link set eth0 up`: Enable the network interface.
+* `ip link set eth0 down`: Disable the network interface.
+* `ip link delete tunl0`: Delete the network interface.
+* `cat /sys/class/net/xxx/carrier`: Check if the network cable is plugged in (corresponds to `ip link` showing `state UP` or `state DOWN`).
 
 ### 5.4.3 ip route
 
@@ -2533,11 +2533,11 @@ For detailed usage, refer to `ip route help`
 **Linux supports up to 255 routing tables, each with a `table id` and `table name`. Among them, 4 tables are built into the Linux system:**
 
 * **`table id = 0`: Reserved by the system**
-* **`table id = 255`: Local routing table, named `local`**. This table contains local interface addresses, broadcast addresses, and NAT addresses. It is automatically maintained by the system and cannot be modified directly by administrators.  
+* **`table id = 255`: Local routing table, named `local`**. This table contains local interface addresses, broadcast addresses, and NAT addresses. It is automatically maintained by the system and cannot be modified directly by administrators.
     * `ip r show table local`
-* **`table id = 254`: Main routing table, named `main`**. If no routing table is specified, all routes are placed here by default. Routes added by older tools like `route` are usually added here. Routes in the `main` table are normal routing entries. When using `ip route` to configure routes, if no table is specified, operations default to this table.  
+* **`table id = 254`: Main routing table, named `main`**. If no routing table is specified, all routes are placed here by default. Routes added by older tools like `route` are usually added here. Routes in the `main` table are normal routing entries. When using `ip route` to configure routes, if no table is specified, operations default to this table.
     * `ip r show table main`
-* **`table id = 253`: Default routing table, named `default`**. Default routes usually reside in this table.  
+* **`table id = 253`: Default routing table, named `default`**. Default routes usually reside in this table.
     * `ip r show table default`
 
 **Additional notes:**
@@ -2626,9 +2626,9 @@ ip route add throw 172.16.0.0/12
 **`proto`**: Indicates the timing of the route addition. It can be represented by a number or a string. The correspondence between numbers and strings can be found in `/etc/iproute2/rt_protos`.
 
 1. **`redirect`**: Indicates that the route was added due to an `ICMP` redirect.
-2. **`kernel`**: The route is automatically configured by the kernel during installation.
-3. **`boot`**: The route is installed during the boot process. If a routing daemon starts, it will clear these route rules.
-4. **`static`**: The route is installed by the administrator to override dynamic routes.
+1. **`kernel`**: The route is automatically configured by the kernel during installation.
+1. **`boot`**: The route is installed during the boot process. If a routing daemon starts, it will clear these route rules.
+1. **`static`**: The route is installed by the administrator to override dynamic routes.
 
 #### 5.4.3.5 route src
 
@@ -2655,11 +2655,11 @@ This is considered a hint to the kernel (used to answer: if I want to send a pac
 ip route show table local
 
 #-------------------------↓↓↓↓↓↓-------------------------
-local 192.168.99.35 dev eth0  proto kernel  scope host  src 192.168.99.35 
-broadcast 127.255.255.255 dev lo  proto kernel  scope link  src 127.0.0.1 
-broadcast 192.168.99.255 dev eth0  proto kernel  scope link  src 192.168.99.35 
-broadcast 127.0.0.0 dev lo  proto kernel  scope link  src 127.0.0.1 
-local 127.0.0.1 dev lo  proto kernel  scope host  src 127.0.0.1 
+local 192.168.99.35 dev eth0  proto kernel  scope host  src 192.168.99.35
+broadcast 127.255.255.255 dev lo  proto kernel  scope link  src 127.0.0.1
+broadcast 192.168.99.255 dev eth0  proto kernel  scope link  src 192.168.99.35
+broadcast 127.0.0.0 dev lo  proto kernel  scope link  src 127.0.0.1
+local 127.0.0.1 dev lo  proto kernel  scope host  src 127.0.0.1
 local 127.0.0.0/8 dev lo  proto kernel  scope host  src 127.0.0.1
 #-------------------------↑↑↑↑↑↑-------------------------
 ```
@@ -2671,8 +2671,8 @@ Policy-based routing is more powerful and flexible than traditional routing. It 
 In Linux, a routing policy `rule` mainly contains three pieces of information: the priority of the `rule`, the conditions, and the routing table. The lower the priority number, the higher the priority. Then, depending on which conditions are met, the specified routing table is used for routing. **At Linux system startup, the kernel configures three default rules in the routing policy database: `rule 0`, `rule 32766`, and `rule 32767` (the numbers indicate the rule priorities). Their specific meanings are as follows:**
 
 1. **`rule 0`**: Matches packets under any condition and looks up the `local` routing table (table id = 255). `rule 0` is very special and cannot be deleted or overridden.
-2. **`rule 32766`**: Matches packets under any condition and looks up the `main` routing table (table id = 254). System administrators can delete or override this rule with another policy.
-3. **`rule 32767`**: Matches packets under any condition and looks up the `default` routing table (table id = 253). This rule handles packets not matched by the previous default rules. This rule can also be deleted.
+1. **`rule 32766`**: Matches packets under any condition and looks up the `main` routing table (table id = 254). System administrators can delete or override this rule with another policy.
+1. **`rule 32767`**: Matches packets under any condition and looks up the `default` routing table (table id = 253). This rule handles packets not matched by the previous default rules. This rule can also be deleted.
 * In Linux, rules are matched sequentially according to their priority. Suppose the system only has the three rules with priorities `0`, `32766`, and `32767`. The system first tries rule `0` to find routes in the local routing table. If the destination is in the local network or is a broadcast address, a matching route will be found here. If no route is found, it moves to the next non-empty rule — here, rule `32766` — to search the main routing table. If no matching route is found, it falls back to rule `32767` to look up the default routing table. If this also fails, routing fails.
 
 **Examples:**
@@ -2834,7 +2834,7 @@ When a packet does not match any of the rules we set, whether the packet is acce
 * `iptables -A INPUT -i lo -j ACCEPT`: Accept packets from any source or destination as long as they come through the `lo` interface—this is called a trusted device.
 * `iptables -A INPUT -i eth1 -j ACCEPT`: Adds the interface `eth1` as a trusted device.
 * `iptables -A INPUT -s 192.168.2.200 -j LOG`: Logs packets from this source IP to the kernel log file (e.g., `/var/log/messages`), then continues to match further rules (different from most rules).
-* Logging rules (should be placed first, otherwise if other rules match first, these won’t execute):
+* Logging rules (should be placed first, otherwise if other rules match first, these won't execute):
     * `iptables -I INPUT -p icmp -j LOG --log-prefix "liuye-input: "`
     * `iptables -I FORWARD -p icmp -j LOG --log-prefix "liuye-forward: "`
     * `iptables -I OUTPUT -p icmp -j LOG --log-prefix "liuye-output: "`
@@ -2972,8 +2972,8 @@ VLAN filter list
 
 **Options:**
 
-* `-t`: followed by the process ID  
-* `-n`: followed by the command to execute
+* `-t`: followed by the process ID.
+* `-n`: followed by the command to execute.
 
 **Examples:**
 
@@ -3061,31 +3061,31 @@ Docker uses a Unix domain socket, corresponding to the socket file `/var/run/doc
 **Method 1: Change the client's access method**
 
 ```sh
-# In terminal 1, listen on local port 18080 and forward the traffic to Docker's domain socket  
-# The two `-d` options output fatal, error, and notice level information  
+# In terminal 1, listen on local port 18080 and forward the traffic to Docker's domain socket.
+# The two `-d` options output fatal, error, and notice level information.
 socat -d -d TCP-LISTEN:18080,fork,bind=127.0.0.1 UNIX:/var/run/docker.sock
 
-# In terminal 2, run tcpdump to capture packets  
+# In terminal 2, run tcpdump to capture packets.
 tcpdump -i lo -netvv port 18080 -w file1.cap
 
-# In terminal 3, run the Docker command  
+# In terminal 3, run the Docker command.
 docker -H tcp://localhost:18080 images
 ```
 
 **Method 2: Do not change the client's access method**
 
 ```sh
-# In terminal 1, run the `mv` command to rename the original domain socket file. This operation does not change the file descriptor, so after moving, Docker listens on the socket `/var/run/docker.sock.original`  
+# In terminal 1, run the `mv` command to rename the original domain socket file. This operation does not change the file descriptor, so after moving, Docker listens on the socket `/var/run/docker.sock.original`.
 sudo mv /var/run/docker.sock /var/run/docker.sock.original
 sudo socat TCP-LISTEN:18081,reuseaddr,fork UNIX-CONNECT:/var/run/docker.sock.original
 
-# In terminal 2, run  
+# In terminal 2, run.
 sudo socat UNIX-LISTEN:/var/run/docker.sock,fork TCP-CONNECT:127.0.0.1:18081
 
-# In terminal 3, run tcpdump to capture packets  
+# In terminal 3, run tcpdump to capture packets.
 tcpdump -i lo -vv port 18081 -w file2.cap
 
-# In terminal 3, run the Docker command  
+# In terminal 3, run the Docker command.
 docker -H tcp://localhost:18081 images
 ```
 
@@ -3125,9 +3125,9 @@ yum install -y dsniff
 
 **Options:**
 
-* `-i`: specify the network interface  
-* `-1...9`: priority level; the higher the priority, the easier it is to kill the connection  
-* `expression`: filter expression, similar to tcpdump  
+* `-i`: specify the network interface.
+* `-1...9`: priority level; the higher the priority, the easier it is to kill the connection.
+* `expression`: filter expression, similar to tcpdump.
 
 **Examples:**
 
@@ -3137,25 +3137,25 @@ yum install -y dsniff
 
 **Pattern:**
 
-* `socat [options] <address> <address>`  
+* `socat [options] <address> <address>`
 * The two `address` arguments are the key. An `address` is similar to a file descriptor. Socat works by creating a `pipe` between the two specified `address` descriptors for sending and receiving data.
 
 **Options:**
 
-* `address`: can be one of the following forms  
-    * `-`: represents standard input/output  
-    * `/var/log/syslog`: can be any file path; if relative, use `./` to open a file as a data stream  
-    * `TCP:127.0.0.1:1080`: establish a TCP connection as a data stream (TCP can be replaced by UDP)  
-    * `TCP-LISTEN:12345`: create a TCP listening port (TCP can be replaced by UDP)  
-    * `EXEC:/bin/bash`: execute a program as a data stream  
+* `address`: can be one of the following forms.
+    * `-`: represents standard input/output.
+    * `/var/log/syslog`: can be any file path; if relative, use `./` to open a file as a data stream.
+    * `TCP:127.0.0.1:1080`: establish a TCP connection as a data stream (TCP can be replaced by UDP).
+    * `TCP-LISTEN:12345`: create a TCP listening port (TCP can be replaced by UDP).
+    * `EXEC:/bin/bash`: execute a program as a data stream.
 
 **Examples:**
 
-* `socat - /var/www/html/flag.php`: read a file via Socat, absolute path  
-* `socat - ./flag.php`: read a file via Socat, relative path  
-* `echo "This is Test" | socat - /tmp/hello.html`: write to a file  
-* `socat TCP-LISTEN:80,fork TCP:www.baidu.com:80`: forward local port to remote  
-* `socat TCP-LISTEN:12345 EXEC:/bin/bash`: open a shell proxy locally  
+* `socat - /var/www/html/flag.php`: read a file via Socat, absolute path.
+* `socat - ./flag.php`: read a file via Socat, relative path.
+* `echo "This is Test" | socat - /tmp/hello.html`: write to a file.
+* `socat TCP-LISTEN:80,fork TCP:www.baidu.com:80`: forward local port to remote.
+* `socat TCP-LISTEN:12345 EXEC:/bin/bash`: open a shell proxy locally.
 
 ## 5.13 dhclient
 
@@ -3165,22 +3165,22 @@ yum install -y dsniff
 
 **Options:**
 
-* `-d`: always run the program in the foreground  
-* `-q`: quiet mode, do not print any error messages  
-* `-r`: release the IP address  
+* `-d`: always run the program in the foreground.
+* `-q`: quiet mode, do not print any error messages.
+* `-r`: release the IP address.
 
 **Examples:**
 
-* `dhclient`: obtain an IP address  
-* `dhclient -r`: release the IP address  
+* `dhclient`: obtain an IP address.
+* `dhclient -r`: release the IP address.
 
 ## 5.14 arp
 
 **Examples:**
 
-* `arp`: view the ARP cache  
-* `arp -n`: view the ARP cache, display IP addresses without domain names  
-* `arp 192.168.56.1`: view the MAC address of the IP `192.168.56.1`  
+* `arp`: view the ARP cache.
+* `arp -n`: view the ARP cache, display IP addresses without domain names.
+* `arp 192.168.56.1`: view the MAC address of the IP `192.168.56.1`.
 
 ## 5.15 [arp-scan](https://github.com/royhills/arp-scan)
 
@@ -3215,17 +3215,17 @@ make install
 
 **Options:**
 
-* `-c`: followed by the number of packets to send  
-* `-s`: specify the size of the data  
-* `-M [do|want|dont]`: set the MTU strategy, where  
-  * `do` means do not allow fragmentation;  
-  * `want` means allow fragmentation when the packet is large;  
-  * `dont` means do not set the `DF` (Don't Fragment) flag  
+* `-c`: followed by the number of packets to send.
+* `-s`: specify the size of the data.
+* `-M [do|want|dont]`: set the MTU strategy, where.
+  * `do` means do not allow fragmentation.
+  * `want` means allow fragmentation when the packet is large.
+  * `dont` means do not set the `DF` (Don't Fragment) flag.
 
 **Examples:**
 
-* `ping -c 3 www.baidu.com`  
-* `ping -s 1460 -M do baidu.com`: send packets with a size of 1460 (+28) bytes and forbid fragmentation  
+* `ping -c 3 www.baidu.com`.
+* `ping -s 1460 -M do baidu.com`: send packets with a size of 1460 (+28) bytes and forbid fragmentation.
 
 ## 5.17 arping
 
@@ -3235,31 +3235,31 @@ make install
 
 **Options:**
 
-* `-c`: specify the number of packets to send  
-* `-b`: continuously send requests using broadcast  
-* `-w`: specify the timeout duration  
-* `-I`: specify which Ethernet device to use  
-* `-D`: enable address conflict detection mode  
+* `-c`: specify the number of packets to send.
+* `-b`: continuously send requests using broadcast.
+* `-w`: specify the timeout duration.
+* `-I`: specify which Ethernet device to use.
+* `-D`: enable address conflict detection mode.
 
 **Examples:**
 
-* `arping -c 1 -w 1 -I eth0 -b -D 192.168.1.1`: this command can be used to detect if there is an IP conflict in the local network  
-  * If this command returns 0: it means no conflict exists; otherwise, a conflict exists  
+* `arping -c 1 -w 1 -I eth0 -b -D 192.168.1.1`: this command can be used to detect if there is an IP conflict in the local network.
+  * If this command returns 0: it means no conflict exists; otherwise, a conflict exists.
 
 **Why can the `-D` option detect IP conflicts**
 
-* Environment description:  
-  * Machine A, IP: `192.168.2.2/24`, MAC address: `68:ed:a4:39:92:4b`  
-  * Machine B, IP: `192.168.2.2/24`, MAC address: `68:ed:a4:39:91:e6`  
-  * Router, IP: `192.168.2.1/24`, MAC address: `c8:94:bb:af:bd:8c`  
-* When running `arping -c 1 -w 1 -I eno1 -b 192.168.2.2` on Machine A, and capturing packets on both Machine A and Machine B, the capture results are as follows:  
-  * ![arping-1](/images/Linux-Frequently-Used-Commands/arping-1.png)  
-  * ![arping-2](/images/Linux-Frequently-Used-Commands/arping-2.png)  
-  * After the ARP reply is sent to the router, the router does not know which device to forward the packet to, so it simply discards it  
-* When running `arping -c 1 -w 1 -I eno1 -D -b 192.168.2.2` on Machine A, and capturing packets on both Machine A and Machine B, the capture results are as follows:  
-  * ![arping-3](/images/Linux-Frequently-Used-Commands/arping-3.png)  
-  * ![arping-4](/images/Linux-Frequently-Used-Commands/arping-4.png)  
-  * The ARP reply directly specifies the target machine's MAC address, so it is delivered directly to Machine A  
+* Environment description:
+  * Machine A, IP: `192.168.2.2/24`, MAC address: `68:ed:a4:39:92:4b`.
+  * Machine B, IP: `192.168.2.2/24`, MAC address: `68:ed:a4:39:91:e6`.
+  * Router, IP: `192.168.2.1/24`, MAC address: `c8:94:bb:af:bd:8c`.
+* When running `arping -c 1 -w 1 -I eno1 -b 192.168.2.2` on Machine A, and capturing packets on both Machine A and Machine B, the capture results are as follows:
+  * ![arping-1](/images/Linux-Frequently-Used-Commands/arping-1.png).
+  * ![arping-2](/images/Linux-Frequently-Used-Commands/arping-2.png).
+  * After the ARP reply is sent to the router, the router does not know which device to forward the packet to, so it simply discards it.
+* When running `arping -c 1 -w 1 -I eno1 -D -b 192.168.2.2` on Machine A, and capturing packets on both Machine A and Machine B, the capture results are as follows:
+  * ![arping-3](/images/Linux-Frequently-Used-Commands/arping-3.png).
+  * ![arping-4](/images/Linux-Frequently-Used-Commands/arping-4.png).
+  * The ARP reply directly specifies the target machine's MAC address, so it is delivered directly to Machine A.
 
 ## 5.18 hping3
 
@@ -3404,7 +3404,7 @@ ClientAliveCountMax 3
 When the RSA fingerprint of the remote machine changes, the above error message will appear when trying to ssh again. There are two ways to fix this:
 
 1. Delete the entry related to the specified `hostname or IP` from `.ssh/known_hosts`
-2. Use `ssh-keygen` to remove the entry related to the specified `hostname or IP` from `.ssh/known_hosts`
+1. Use `ssh-keygen` to remove the entry related to the specified `hostname or IP` from `.ssh/known_hosts`
     ```sh
     # If the -f option is not used, it will modify the .ssh/known_hosts file for the current user by default
     ssh-keygen -f "/Users/hechenfeng/.ssh/known_hosts" -R "<hostname or IP>"
@@ -3425,16 +3425,16 @@ sshpass -p 'xxxxx' ssh -o StrictHostKeyChecking=no test@1.2.3.4
 
 **Options:**
 
-* `-p`: Preserve the source file's permission information  
-* `-P`: Specify the port number  
-* `-r`: When the source is a directory, recursively copy the entire directory (including subdirectories)  
-* `-l`: Limit the transfer rate, unit is Kbits/s  
+* `-p`: Preserve the source file's permission information.
+* `-P`: Specify the port number.
+* `-r`: When the source is a directory, recursively copy the entire directory (including subdirectories).
+* `-l`: Limit the transfer rate, unit is Kbits/s.
 
 **Examples:**
 
 * `scp /etc/hosts* student@127.0.0.1:~`
 * `scp /tmp/Ubuntu.txt root@192.168.136.130:~/Desktop`
-* `scp -P 16666 root@192.168.136.130:/tmp/test.log ~/Desktop`: Specify port number 16666 for host `192.168.136.130`  
+* `scp -P 16666 root@192.168.136.130:/tmp/test.log ~/Desktop`: Specify port number 16666 for host `192.168.136.130`.
 * `scp -r local_folder remote_username@remote_ip:remote_folder `
 
 ## 6.3 watch
@@ -3465,63 +3465,63 @@ sshpass -p 'xxxxx' ssh -o StrictHostKeyChecking=no test@1.2.3.4
 
 **Options:**
 
-* `-H`: Show threads  
-* `-p`: View a specified process  
-* `-b`: Non-interactive mode, typically used with `-n` to specify the number of iterations  
+* `-H`: Show threads.
+* `-p`: View a specified process.
+* `-b`: Non-interactive mode, typically used with `-n` to specify the number of iterations.
 
 **Examples:**
 
-* `top -p 123`: View the process with PID 123  
-* `top -Hp 123`: View the process with PID 123 and all its threads  
-* `top -b -n 3`: Run in batch mode and update 3 times  
+* `top -p 123`: View the process with PID 123.
+* `top -Hp 123`: View the process with PID 123 and all its threads.
+* `top -b -n 3`: Run in batch mode and update 3 times.
 
 **Output Description:**
 
 * **First line:**
-    * Current time  
-    * Uptime  
-    * Number of logged-in users  
-    * System load averages over 1, 5, and 15 minutes  
-* **Second line**: Total number of processes and counts in various states  
-* **Third line**: CPU usage; note that `wa` (I/O wait) is important—high `wa` often indicates I/O bottlenecks  
-* **Fourth and fifth lines**: Physical and virtual memory usage; the less swap used, the better—high swap usage means insufficient physical memory  
-* **Sixth line**: The command input area in `top` interactive mode  
-* **Seventh line and onward**: Per-process resource usage  
-    * `PID`: Process ID  
-    * `USER`: User who owns the process  
-    * `PR`: Priority (lower is higher priority)  
-    * `NI`: Nice value (affects priority; lower is higher priority)  
-    * `%CPU`: CPU usage  
-    * `%MEM`: Memory usage  
-    * `TIME+`: Cumulative CPU time used  
-    * `COMMAND`: Command name  
+    * Current time.
+    * Uptime.
+    * Number of logged-in users.
+    * System load averages over 1, 5, and 15 minutes.
+* **Second line**: Total number of processes and counts in various states.
+* **Third line**: CPU usage; note that `wa` (I/O wait) is important—high `wa` often indicates I/O bottlenecks.
+* **Fourth and fifth lines**: Physical and virtual memory usage; the less swap used, the better—high swap usage means insufficient physical memory.
+* **Sixth line**: The command input area in `top` interactive mode.
+* **Seventh line and onward**: Per-process resource usage.
+    * `PID`: Process ID.
+    * `USER`: User who owns the process.
+    * `PR`: Priority (lower is higher priority).
+    * `NI`: Nice value (affects priority; lower is higher priority).
+    * `%CPU`: CPU usage.
+    * `%MEM`: Memory usage.
+    * `TIME+`: Cumulative CPU time used.
+    * `COMMAND`: Command name.
 * **By default, top sorts by CPU usage. Press `h` for help.**
 * **Sorting keys:**
-    * `P`: Sort by CPU usage (default descending, press `R` to reverse)  
-    * `M`: Sort by memory usage  
-    * `T`: Sort by time used  
+    * `P`: Sort by CPU usage (default descending, press `R` to reverse).
+    * `M`: Sort by memory usage.
+    * `T`: Sort by time used.
 * **Other interactive commands:**
-    * `1`: Show each CPU core’s usage separately  
-    * `2`: Show only average CPU usage  
-    * `x`: Highlight the sorted column  
-    * `-R`: Reverse sort order  
-    * `n [num]`: Show only the top `num` entries (`0` means no limit)  
-    * `l`: Toggle display of CPU load info  
-    * `t`: Toggle task and CPU details  
-    * `m`: Toggle memory details  
-    * `c`: Show full command line  
-    * `V`: Show commands in a tree format  
-    * `H`: Show threads  
-    * `W`: Save current interactive settings to `~/.toprc`, enabling consistent output when using non-interactive mode like `top -b -n 1`  
+    * `1`: Show each CPU core's usage separately.
+    * `2`: Show only average CPU usage.
+    * `x`: Highlight the sorted column.
+    * `-R`: Reverse sort order.
+    * `n [num]`: Show only the top `num` entries (`0` means no limit).
+    * `l`: Toggle display of CPU load info.
+    * `t`: Toggle task and CPU details.
+    * `m`: Toggle memory details.
+    * `c`: Show full command line.
+    * `V`: Show commands in a tree format.
+    * `H`: Show threads.
+    * `W`: Save current interactive settings to `~/.toprc`, enabling consistent output when using non-interactive mode like `top -b -n 1`.
 * **Memory-related fields:**
-    * `VIRT` (virtual memory size): Total virtual memory used by the process, including code, data, shared libs, swapped pages, and mapped-but-unused pages  
+    * `VIRT` (virtual memory size): Total virtual memory used by the process, including code, data, shared libs, swapped pages, and mapped-but-unused pages.
         * `VIRT = SWAP + RES`
-    * `SWAP`: Amount of virtual memory swapped out  
-    * `RES`: Non-swapped physical memory  
+    * `SWAP`: Amount of virtual memory swapped out.
+    * `RES`: Non-swapped physical memory.
         * `RES = CODE + DATA`
-    * `CODE` (TRS): Physical memory used by the process code  
-    * `DATA` (DRS): Physical memory used by non-code (data and stack)  
-    * `SHR`: Shared memory used  
+    * `CODE` (TRS): Physical memory used by the process code.
+    * `DATA` (DRS): Physical memory used by non-code (data and stack).
+    * `SHR`: Shared memory used.
 
 ## 6.5 htop
 
@@ -3565,33 +3565,33 @@ yum install -y sysstat
 
 **Options:**
 
-* `-u`: View CPU usage  
-* `-q`: View CPU load  
-* `-r`: View memory usage  
-* `-b`: View I/O and transfer rate information  
-* `-d`: View I/O status for each disk  
-* `-B`: View paging activity  
-* `-f <filename>`: Specify sa log file  
-* `-P <cpu num>|ALL`: View stats for a specific CPU, `ALL` means all CPUs  
-* `-n [keyword]`: View network-related info; keywords can be:  
-    * `DEV`: Network interfaces  
-    * `EDEV`: Network interface errors  
-    * `SOCK`: Sockets  
-    * `IP`: IP traffic  
-    * `TCP`: TCP traffic  
-    * `UDP`: UDP traffic  
-* `-h`: Output in human-readable format  
+* `-u`: View CPU usage.
+* `-q`: View CPU load.
+* `-r`: View memory usage.
+* `-b`: View I/O and transfer rate information.
+* `-d`: View I/O status for each disk.
+* `-B`: View paging activity.
+* `-f <filename>`: Specify sa log file.
+* `-P <cpu num>|ALL`: View stats for a specific CPU, `ALL` means all CPUs.
+* `-n [keyword]`: View network-related info; keywords can be:.
+    * `DEV`: Network interfaces.
+    * `EDEV`: Network interface errors.
+    * `SOCK`: Sockets.
+    * `IP`: IP traffic.
+    * `TCP`: TCP traffic.
+    * `UDP`: UDP traffic.
+* `-h`: Output in human-readable format.
 
 **Examples:**
 
-* `sar -u ALL 1`: Output CPU info aggregated for all cores every second  
-* `sar -P ALL 1`: Output CPU info per core every second  
-* `sar -r ALL -h 1`: Output memory info every second in human-readable form  
-* `sar -B 1`: Output paging info every second  
-* `sar -n TCP,UDP -h 1`: View TCP/UDP summary every second  
-* `sar -n DEV -h 1`: View real-time network interface traffic every second  
-* `sar -b 1`: View summary I/O info every second  
-* `sar -d -h 1`: View per-disk I/O info every second  
+* `sar -u ALL 1`: Output CPU info aggregated for all cores every second.
+* `sar -P ALL 1`: Output CPU info per core every second.
+* `sar -r ALL -h 1`: Output memory info every second in human-readable form.
+* `sar -B 1`: Output paging info every second.
+* `sar -n TCP,UDP -h 1`: View TCP/UDP summary every second.
+* `sar -n DEV -h 1`: View real-time network interface traffic every second.
+* `sar -b 1`: View summary I/O info every second.
+* `sar -d -h 1`: View per-disk I/O info every second.
 
 ## 6.8 tsar
 
@@ -3615,47 +3615,47 @@ yum install -y sysstat
 
 **Options:**
 
-* `-a, --active`: Show active and inactive memory  
-* `-f, --forks`: Number of forks since system start (in Linux, process creation uses the fork syscall)  
-    * Info is retrieved from the `processes` field in `/proc/stat`  
-* `-m, --slabs`: View system slab info  
-* `-s, --stats`: View detailed memory usage info  
-* `-d, --disk`: View detailed disk usage info  
-* `-D, --disk-sum`: Summarize disk statistics  
-* `-p, --partition <dev>`: View detailed info of specified partition  
-* `-S, --unit <char>`: Specify output unit, supports only `k/K` and `m/M`, default is `K`  
-* `-w, --wide`: Output more detailed info  
-* `-t, --timestamp`: Output timestamps  
-* `delay`: Sampling interval  
-* `count`: Sampling count  
+* `-a, --active`: Show active and inactive memory.
+* `-f, --forks`: Number of forks since system start (in Linux, process creation uses the fork syscall).
+    * Info is retrieved from the `processes` field in `/proc/stat`.
+* `-m, --slabs`: View system slab info.
+* `-s, --stats`: View detailed memory usage info.
+* `-d, --disk`: View detailed disk usage info.
+* `-D, --disk-sum`: Summarize disk statistics.
+* `-p, --partition <dev>`: View detailed info of specified partition.
+* `-S, --unit <char>`: Specify output unit, supports only `k/K` and `m/M`, default is `K`.
+* `-w, --wide`: Output more detailed info.
+* `-t, --timestamp`: Output timestamps.
+* `delay`: Sampling interval.
+* `count`: Sampling count.
 
 **Output Details:**
 
-* `process`  
-    * `r`: Number of running processes (in `running` or `waiting` state)  
-    * `b`: Number of blocked processes  
-* `memory`  
-    * `swpd`: Total virtual memory  
-    * `free`: Total free memory  
-    * `buff`: Total memory used as Buffer  
-    * `cache`: Total memory used as Cache  
-    * `inact`: Total inactive memory (requires `-a` option)  
-    * `active`: Total active memory (requires `-a` option)  
-* `swap`  
-    * `si`: Amount of memory swapped in from disk per second  
-    * `so`: Amount of memory swapped out to disk per second  
-* `io`  
-    * `bi`: Blocks received from block device per second  
-    * `bo`: Blocks sent to block device per second  
-* `system`  
-    * `in`: Number of interrupts per second, including clock interrupts  
-    * `cs`: Number of context switches per second  
-* `cpu`  
-    * `us`: User CPU time  
-    * `sy`: System (kernel) CPU time  
-    * `id`: Idle CPU time  
-    * `wa`: CPU time waiting for IO  
-    * `st`: Time stolen from a virtual machine  
+* `process`
+    * `r`: Number of running processes (in `running` or `waiting` state).
+    * `b`: Number of blocked processes.
+* `memory`
+    * `swpd`: Total virtual memory.
+    * `free`: Total free memory.
+    * `buff`: Total memory used as Buffer.
+    * `cache`: Total memory used as Cache.
+    * `inact`: Total inactive memory (requires `-a` option).
+    * `active`: Total active memory (requires `-a` option).
+* `swap`
+    * `si`: Amount of memory swapped in from disk per second.
+    * `so`: Amount of memory swapped out to disk per second.
+* `io`
+    * `bi`: Blocks received from block device per second.
+    * `bo`: Blocks sent to block device per second.
+* `system`
+    * `in`: Number of interrupts per second, including clock interrupts.
+    * `cs`: Number of context switches per second.
+* `cpu`
+    * `us`: User CPU time.
+    * `sy`: System (kernel) CPU time.
+    * `id`: Idle CPU time.
+    * `wa`: CPU time waiting for IO.
+    * `st`: Time stolen from a virtual machine.
 
 **Examples:**
 
@@ -3700,15 +3700,15 @@ yum install -y sysstat
 
 **Options:**
 
-* `-c`: Mutually exclusive with `-d`, shows only CPU-related information  
-* `-d`: Mutually exclusive with `-c`, shows only disk-related information  
-* `-k`: Display I/O rate in kB (default is `Blk`, the filesystem block)  
-* `-m`: Display I/O rate in MB (default is `Blk`, the filesystem block)  
-* `-t`: Print date information  
-* `-x`: Print extended information  
-* `-z`: Omit devices with no events during sampling  
-* `interval`: Print interval  
-* `count`: Number of times to print; if omitted, print continuously  
+* `-c`: Mutually exclusive with `-d`, shows only CPU-related information.
+* `-d`: Mutually exclusive with `-c`, shows only disk-related information.
+* `-k`: Display I/O rate in kB (default is `Blk`, the filesystem block).
+* `-m`: Display I/O rate in MB (default is `Blk`, the filesystem block).
+* `-t`: Print date information.
+* `-x`: Print extended information.
+* `-z`: Omit devices with no events during sampling.
+* `interval`: Print interval.
+* `count`: Number of times to print; if omitted, print continuously.
 
 **Output Details:(`man iostat`)**
 
@@ -4282,7 +4282,7 @@ X_VNC <--> X_Client: X Protocol
     * `vncserver :x` — start service on port `5900 + x`
     * `vncserver -kill :x` — stop service on port `5900 + x`
     * `vncserver -list` — show all running `Xvnc` instances
-2. **Download `VNC Viewer` from official website**
+1. **Download `VNC Viewer` from official website**
     * By default, you can log in with your Linux username and password
 
 **Tips:**
@@ -4293,13 +4293,13 @@ X_VNC <--> X_Client: X Protocol
 * **How to copy and paste between Mac and remote Linux, see [copy paste between mac and remote desktop](https://discussions.apple.com/thread/8470438)**
     * `Remote Linux -> Mac`:
         1. In `VNC Viewer`, select text and press `Ctrl + Shift + C` (sometimes just selecting the text is enough)
-        2. On Mac, paste with `Command + V`
+        1. On Mac, paste with `Command + V`
     * `Mac -> Remote Linux` (often fails for unknown reasons):
         1. On Mac, select text and press `Command + C`
-        2. In `VNC Viewer`, paste with `Ctrl + Shift + V`
+        1. In `VNC Viewer`, paste with `Ctrl + Shift + V`
     * `Remote Linux -> Remote Linux`:
         1. In `VNC Viewer`, select text and press `Ctrl + Shift + C`
-        2. In `VNC Viewer`, paste with `Ctrl + Shift + V`
+        1. In `VNC Viewer`, paste with `Ctrl + Shift + V`
 
 ## 8.3 NX (Recommended)
 
@@ -4312,7 +4312,7 @@ X_VNC <--> X_Client: X Protocol
 1. **Install `NX Server` on Linux: example with CentOS, download the rpm package and install**
     * `rpm -ivh nomachine_7.7.4_1_x86_64.rpm`
     * `/etc/NX/nxserver --restart`
-2. **Download `NX Client` from the official website**
+1. **Download `NX Client` from the official website**
     * The default port for `NX Server` is `4000`
     * You can log in with your Linux username and password by default
 
@@ -4738,6 +4738,33 @@ apt install clang-format-X.Y
 
 Or refer to {% post_link Linux-Filepath %} for scripts that read `/proc/net/tcp` directly
 
+#### 11.2.3.6 How to test Network Bandwidth
+
+### 11.2.4 Filesystem
+
+* Use `iperf`
+
+#### 11.2.4.1 How to test Disk Bandwidth
+
+```sh
+fio --name=maxwrite --filename=$(pwd)/testfile --rw=write --bs=1M --size=10G --numjobs=8 --iodepth=32 --direct=1 --ioengine=io_uring
+fio --name=maxread  --filename=$(pwd)/testfile --rw=read  --bs=1M --size=10G --numjobs=8 --iodepth=32 --direct=1 --ioengine=io_uring
+```
+
+Explanation of parameters:
+
+* `--bs=1M`: Use a large block size (1 MB) to approach sequential bandwidth limits.
+* `--size=10G`: Operate on a sufficiently large file (10 GB) to avoid cache effects.
+* `--numjobs=8`: Launch 8 parallel jobs to better saturate the disk. You can increase this (e.g., 16) to see if throughput scales further.
+* `--iodepth=32`: Queue up 32 I/O requests per job so the disk always has work to do.
+* `--direct=1`: Bypass the OS cache for accurate device-level performance.
+* `--ioengine`: Specifies which I/O backend (engine) fio should use to issue read/write operations.
+    * `psync`: Default synchronous I/O (each read/write call blocks until it completes). Very simple, but no queueing; `iodepth` is effectively capped at 1.
+    * `libaio`: Linux native asynchronous I/O (AIO). Allows multiple I/O requests to be queued and processed concurrently. Supports `iodepth` > 1.
+    * `io_uring`: A newer Linux kernel interface (since 5.1+) that provides a more efficient way to submit and complete asynchronous I/O with less syscall overhead. Generally faster and lower latency than `libaio`.
+
+In the output, look for `bw=XXXXMB/s`, which shows the achieved bandwidth.
+
 ## 11.3 Assorted
 
 ### 11.3.1 Allow using docker command without sudo
@@ -4763,16 +4790,29 @@ Or refer to {% post_link Linux-Filepath %} for scripts that read `/proc/net/tcp`
 
 * `cat /proc/sys/kernel/random/uuid`
 
-## 11.4 Health Thresholds for Monitoring Metrics
+## 11.4 Experienced Numbers
+
+### 11.4.1 Health Thresholds for Monitoring Metrics
 
 1. `CPU Usage`: Less than `70%`.
 1. `CPU Load`: Less than `<coreNum> * 0.7`.
 1. `Memory Usage`: Less than `50%`.
 1. `Disk Usage`: Less than `70%`.
 1. `iowait`: Less than `50ms`.
+1. `ioutil`: Less than `90%`.
 1. `Threads`: Less than `10K`.
 1. `IOPS`: Less than `1K`.
 1. `inode`: Less than `50%`.
+
+### 11.4.2 Resource Limitations
+
+* `Disk Bandwidth`
+    * `hdd`: 100-250 MB/s.
+    * `ssd`
+        * SATA SSD（SATA 3）: 400–550 MB/s(It's limitation is 600 MB/s). 
+        * NVMe SSD (PCIe 3.0 x4)：2,000–3,500 MB/s.
+        * NVMe SSD (PCIe 4.0 x4)：5,000–7,000 MB/s.
+        * NVMe SSD (PCIe 5.0 x4)：10,000–14,000 MB/s.
 
 # 12 Reference
 

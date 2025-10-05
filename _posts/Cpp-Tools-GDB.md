@@ -111,7 +111,7 @@ When we enter the `gdb shell` using the command `gdb <binary>`, the program will
 * `run`: Starts executing the program until it hits the first breakpoint or the program finishes.
 * `start`: Starts executing the program and stops at the first line of the main function.
 
-If the program encounters an exception (such as a segmentation fault), we will get some useful information, including the line number where the error occurred, the function’s parameters, and more.
+If the program encounters an exception (such as a segmentation fault), we will get some useful information, including the line number where the error occurred, the function's parameters, and more.
 
 ```sh
 cat > segment_fault.cpp << 'EOF'

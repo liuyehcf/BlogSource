@@ -540,8 +540,8 @@ mysql> SELECT name FROM test.user WHERE id = 1 LOCK IN SHARE MODE; -- 查询数�
 假设数据库在操作时，按如下约定记录日志：
 
 1. 事务开始时，记录`START T`
-2. 事务修改时，记录`(T, x, v)`，说明事务`T`操作对象`x`，`x`的值为`v` 
-3. 事务结束时，记录`COMMIT T `
+1. 事务修改时，记录`(T, x, v)`，说明事务`T`操作对象`x`，`x`的值为`v` 
+1. 事务结束时，记录`COMMIT T `
 
 ### 4.3.1 undo log
 
@@ -552,19 +552,19 @@ mysql> SELECT name FROM test.user WHERE id = 1 LOCK IN SHARE MODE; -- 查询数�
 **使用`undo log`时，要求**
 
 1. 记录修改日志时，`(T, x, v)`中`v`为`x`修改前的值，这样才能借助这条日志来回滚
-2. 事务提交后，必须在事务的所有修改（包括记录的修改日志）都持久化后才能写事务`T`的`COMMIT`日志；这样才能保证，宕机恢复时，已经`COMMIT`的事务的所有修改都已经持久化，不需要回滚
+1. 事务提交后，必须在事务的所有修改（包括记录的修改日志）都持久化后才能写事务`T`的`COMMIT`日志；这样才能保证，宕机恢复时，已经`COMMIT`的事务的所有修改都已经持久化，不需要回滚
 
 **使用`undo log`时事务执行顺序**
 
 1. 记录`START T`
-2. 记录需要修改的记录的旧值（要求持久化）
-3. 根据事务的需要更新数据库（要求持久化）
-4. 记录`COMMIT T`
+1. 记录需要修改的记录的旧值（要求持久化）
+1. 根据事务的需要更新数据库（要求持久化）
+1. 记录`COMMIT T`
 
 **使用`undo log`进行宕机回滚**
 
 1. 扫描日志，找出所有已经`START`，还没有`COMMIT`的事务
-2. 针对所有未`COMMIT`的日志，根据`undo log`来进行回滚 
+1. 针对所有未`COMMIT`的日志，根据`undo log`来进行回滚 
 
 **如果数据库访问很多，日志量也会很大，宕机恢复时，回滚的工作量也就很大，为了加快回滚，可以通过`checkpoint`机制来加速回滚**
 
@@ -575,7 +575,7 @@ mysql> SELECT name FROM test.user WHERE id = 1 LOCK IN SHARE MODE; -- 查询数�
 **借助`checkpoint`来进行回滚：从后往前，扫描`undo log`**
 
 1. 如果先遇到`checkpoint_start`，则将`checkpoint_start`之后的所有未提交的事务进行回滚
-2. 如果先遇到`checkpoint_end`，则将前一个`checkpoint_start`之后所有未提交的事务进行回滚（在`checkpoint`的过程中，可能有很多新的事务`START`或者`COMMIT`)
+1. 如果先遇到`checkpoint_end`，则将前一个`checkpoint_start`之后所有未提交的事务进行回滚（在`checkpoint`的过程中，可能有很多新的事务`START`或者`COMMIT`)
 
 ### 4.3.2 redo log
 
@@ -594,20 +594,20 @@ mysql> SELECT name FROM test.user WHERE id = 1 LOCK IN SHARE MODE; -- 查询数�
 **使用`redo log`时事务执行顺序**
 
 1. 记录`START T`
-2. 记录事务需要修改记录的新值（要求持久化）
-3. 记录`COMMIT T`（要求持久化）
-4. 将事务相关的修改写入数据库 
+1. 记录事务需要修改记录的新值（要求持久化）
+1. 记录`COMMIT T`（要求持久化）
+1. 将事务相关的修改写入数据库 
 
 **在日志中使用checkpoint**
 
 1. 在日志中记录`checkpoint_start(T1, T2, ..., Tn)`（`Tx`代表做`checkpoint`时，正在进行还未`COMMIT`的日志）
-2. 将所有已提交的事务的更改进行持久化
-3. 在日志中记录`checkpoint_end`
+1. 将所有已提交的事务的更改进行持久化
+1. 在日志中记录`checkpoint_end`
 
 **根据checkpoint来加速恢复：从后往前，扫描`redo log`**
 
 1. 如果先遇到`checkpoint_start`，则把`T1~Tn`以及`checkpoint_start`之后的所有已经`COMMIT`的事务进行重做
-2. 如果先遇到`checkpoint_end`，则`T1~Tn`以及前一个`checkpoint_start`之后所有已经`COMMIT`的事务进行重做
+1. 如果先遇到`checkpoint_end`，则`T1~Tn`以及前一个`checkpoint_start`之后所有已经`COMMIT`的事务进行重做
 
 ## 4.4 MVCC机制剖析
 

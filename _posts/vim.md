@@ -1746,7 +1746,7 @@ Home: [coc-java](https://github.com/search?q=coc-java)
         </classpath>
         ```
 
-    * Assuming a submodule uses `thrift`, you need to place the `.classpath` file in the submodule’s directory, not in the root directory of the project.  
+    * Assuming a submodule uses `thrift`, you need to place the `.classpath` file in the submodule's directory, not in the root directory of the project.  
 * When the plugin `org.eclipse.m2e:lifecycle-mapping` is present, `jdt.ls` cannot work properly. This issue is currently unresolved.
 
 ### 3.9.3 coc-pyright
@@ -2175,7 +2175,7 @@ call plug#end()
     * `<c-s>`: Select current file  
     * `<c-t>`: Open selected file in a new tab  
     * `<c-p>`: Preview selected file  
-* If it doesn’t work, it might be a Python-related issue  
+* If it doesn't work, it might be a Python-related issue  
     * Run `:checkhealth`  
 
 ## 3.14 fzf.vim
@@ -2229,8 +2229,8 @@ call plug#end()
 
 **Usage (search syntax reference: [junegunn/fzf-search-syntax](https://github.com/junegunn/fzf#search-syntax)):**
 
-* `:Ag`: Perform a global search (depends on the command-line tool `ag`. Installation instructions on the plugin’s [GitHub page](https://github.com/ggreer/the_silver_searcher))  
-* `:Rg`: Perform a global search (depends on the command-line tool `rg`. Installation instructions on the plugin’s [GitHub page](https://github.com/BurntSushi/ripgrep))  
+* `:Ag`: Perform a global search (depends on the command-line tool `ag`. Installation instructions on the plugin's [GitHub page](https://github.com/ggreer/the_silver_searcher))  
+* `:Rg`: Perform a global search (depends on the command-line tool `rg`. Installation instructions on the plugin's [GitHub page](https://github.com/BurntSushi/ripgrep))  
 * `[Ctrl] + j/k` / `[Ctrl] + n/p`: Move up/down by line  
 * `PageUp/PageDown`: Move up/down by page  
 * **Matching rules:**  

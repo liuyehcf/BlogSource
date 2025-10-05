@@ -61,6 +61,8 @@ date: 2018-02-05 09:25:59
 
 # 3 Kernel
 
+* [Official Kernel Repository](https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/)
+    * [Read-only mirror in github](https://github.com/torvalds/linux)
 * [lkml.org](https://lkml.org/)
 * [Doc](https://www.kernel.org/doc/Documentation/)
     * [cgroup-v2](https://www.kernel.org/doc/Documentation/admin-guide/cgroup-v2.rst)

@@ -165,7 +165,18 @@ brew --prefix <software>
 
 **[FAQ](https://gitee.com/cunkai/HomebrewCN/blob/master/error.md)**
 
-## 2.3 更换Homebrew镜像源
+## 2.3 多用户场景下homebrew安装
+
+默认情况下，homebrew会安装到`/opt/homebrew`这个路径下，可以通过如下方式安装到用户目录下：
+
+```sh
+# 这个仓库clone下来就算下载完成了，bin目录下包含所有的二进制
+git clone https://github.com/Homebrew/brew ~/.brew
+
+echo 'eval "$(/Users/$(whoami)/.brew/bin/brew shellenv)"' >> ~/.zprofile
+```
+
+## 2.4 更换Homebrew镜像源
 
 ```sh
 # step 1: 替换brew.git
@@ -194,7 +205,7 @@ source ~/.bash_profile
 brew update
 ```
 
-## 2.4 常用软件下载
+## 2.5 常用软件下载
 
 ```sh
 brew install openjdk@11
@@ -202,7 +213,7 @@ brew install maven
 brew install protobuf
 ```
 
-### 2.4.1 解压缩
+### 2.5.1 解压缩
 
 ```sh
 file xxx.zip
@@ -669,6 +680,17 @@ caffeinate -d -t 32400
 ## 6.13 禁止iCloud设备之间的联动
 
 Search key word `handoff`
+
+## 6.14 外接设备无法识别
+
+方法1：
+
+* `sudo killall -9 coreaudiod`: 强制结束并重启 macOS 的 coreaudiod 守护进程，重启过程中，USB 设备枚举/权限校验会被刷新。
+* 重新插拔设备
+
+方法2：
+
+* `System Settings` -> `Privacy & Security` -> `Security` -> `Allow accessories to connect`
 
 # 7 参考
 

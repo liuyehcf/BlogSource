@@ -528,7 +528,7 @@ cmake -L -N build
 **Where to find header files `.h`, `-I (GCC)`**
 
 1. `include_directories`: This method adds include search paths at a global scope. These search paths are added to all targets (including all sub-targets) and appended to the `INCLUDE_DIRECTORIES` property of every target.  
-2. `target_include_directories`: This method adds include search paths to a specific target and appends them to that target's `INCLUDE_DIRECTORIES` property.
+1. `target_include_directories`: This method adds include search paths to a specific target and appends them to that target's `INCLUDE_DIRECTORIES` property.
 
 How to view the values of the `INCLUDE_DIRECTORIES` property at both the global scope and the target scope
 

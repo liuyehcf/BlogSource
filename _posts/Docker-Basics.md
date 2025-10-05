@@ -263,7 +263,13 @@ docker run -d --name minio \
 ```
 
 ```sh
-mc alias set local http://localhost:9000 admin password123
+# Don't forget to unset envs like unset http_proxy && unset https_proxy && unset no_proxy
+# Otherwise, you may get this error message: `mc: <ERROR> Unable to list folder. Access Denied.`
+curl -v http://localhost:9000/minio/health/ready
+mc alias set myminio http://localhost:9000 admin password123
+mc ls myminio/<path>
+mc find myminio/<path>
+mc cp myminio/<path> <local_path>
 ```
 
 Client tools: `aws`

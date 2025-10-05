@@ -2167,6 +2167,7 @@ int main() {
 1. `std::make_integer_sequence`
 1. `std::integer_sequence`
 1. `std::make_integer_sequence`
+1. `std::ignore`
 
 ## 31.1 How to return pair containing reference type
 

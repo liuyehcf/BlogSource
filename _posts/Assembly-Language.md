@@ -329,8 +329,8 @@ A `Symbol` is composed of letters and underscores, ending with a colon `:`.
 
 1. **`nasm`: Stands for `Netwide Assembler`. It's a generic assembler that uses `Intel Syntax`.**
     * Lacks the `PTR` keyword, so `mov DWORD PTR [rbp-0xc], edi` should be written as `mov DWORD [rbp-0xc], edi`.
-2. `masm`: Stands for `Microsoft Macro Assembler`. It's specifically written by Microsoft for assembly under `windows`.
-3. **`gas`: Stands for `GNU Assembler` and uses `AT&T Syntax`.**
+1. `masm`: Stands for `Microsoft Macro Assembler`. It's specifically written by Microsoft for assembly under `windows`.
+1. **`gas`: Stands for `GNU Assembler` and uses `AT&T Syntax`.**
 
 ```sh
 wget http://mirror.centos.org/centos/7/os/x86_64/Packages/nasm-2.10.07-7.el7.x86_64.rpm

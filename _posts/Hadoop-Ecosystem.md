@@ -766,6 +766,12 @@ You need to implement the parsing of the path yourself.
     }
 ```
 
+### 2.4.3 How to disable Filesystem.CACHE
+
+For `org.apache.hadoop.fs.FileSystem`, it has a static `CACHE` field. Using URI as it's cache key. And it can be disable by setting `fs.{scheme}.impl.disable.cache` to `true`
+
+* `scheme` can be `s3a`, etc.
+
 # 3 Spark
 
 [What Is Apache Spark?](https://www.databricks.com/glossary/what-is-apache-spark)

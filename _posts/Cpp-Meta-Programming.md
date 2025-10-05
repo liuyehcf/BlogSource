@@ -328,7 +328,7 @@ Beyond basic numeric computation, metaprogramming can also be used to deduce con
 **Code 8:**
 
 1. Define `TypeToNullable`, and specialize it for `std::optional<T>`. Its purpose is to automatically convert both `std::optional<T>` and `T` to `std::optional<T>`.
-2. Define `TupleToNullable`, which decomposes all types in a tuple, converts them into a parameter pack, passes each type in the parameter pack to `TypeToNullable`, and finally reassembles the results into a new tuple.
+1. Define `TupleToNullable`, which decomposes all types in a tuple, converts them into a parameter pack, passes each type in the parameter pack to `TypeToNullable`, and finally reassembles the results into a new tuple.
 
 ```cpp
 template <typename T>
@@ -427,12 +427,12 @@ According to the One Definition Rule, a template can be instantiated with the sa
 `Chiel Douwes` conducted an in-depth analysis of common template operations in metaprogramming, comparing the costs of several template operations (Cost of operations: The Rule of Chiel) from highest to lowest (without considering `C++14` variable templates):
 
 1. Substitution Failure Is Not An Error (`SFINAE`)
-2. Instantiating function templates
-3. Instantiating class templates
-4. Using alias templates
-5. Adding parameters to class templates
-6. Adding parameters to alias templates
-7. Using cached types
+1. Instantiating function templates
+1. Instantiating class templates
+1. Using alias templates
+1. Adding parameters to class templates
+1. Adding parameters to alias templates
+1. Using cached types
 
 Following these principles, `Odin Holmes` designed the type manipulation library `Kvasir`, which achieves high compilation performance compared to type manipulation libraries based on `C++98/11`. To measure the effectiveness of compilation performance optimizations, `Louis Dionne` developed a CMake-based compile-time benchmarking framework.
 

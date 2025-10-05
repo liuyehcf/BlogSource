@@ -1549,6 +1549,7 @@ ln -s '/usr/lib/systemd/system/demo-service.service' '/etc/systemd/system/multi-
 * `journalctl _COMM=systemctl`: Display logs by command.
 * `journalctl _PID=1`: Display logs by pid.
 * If `/var/log/journal` is not existed, then journal may not work.
+* `SYSTEMD_LESS=FRXMK journalctl -u xxx.service`: Those letters are flags passed to `less`, because `journalctl` uses `less` as its pager. This settings can enable message wrapping rather than chopping.
 
 ## 3.5 User Service Manager
 

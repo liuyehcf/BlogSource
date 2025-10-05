@@ -88,7 +88,7 @@ Now, if we close the browser, there will be `1024 - 512 - 256 = 256MB` of free m
 The issue of memory fragmentation in this context occurs in two ways:
 
 1. **External memory fragmentation**, which results in multiple non-contiguous small blocks of physical memory, preventing the loading of new programs.
-2. **Internal memory fragmentation**, where all of a program's memory is loaded into physical memory, but some portions of that memory may not be frequently used, leading to memory waste.
+1. **Internal memory fragmentation**, where all of a program's memory is loaded into physical memory, but some portions of that memory may not be frequently used, leading to memory waste.
 
 The solutions for addressing these two types of memory fragmentation are different.
 

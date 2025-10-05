@@ -86,9 +86,63 @@ If you want to change a macro definition at compile time, there are several ways
     g++ your_file.cpp -o output -DDEBUG
     ```
 
-### 2.2.2 Tips
+### 2.2.2 Macro Expansion
 
-#### 2.2.2.1 do while(0) in macros
+**Macro replacement proceeds left-to-right ([The Macro Expansion Process](https://www.boost.org/doc/libs/1_85_0/libs/wave/doc/macro_expansion_process.html)):**
+
+1. If, during scanning (or rescanning) an identifier is found, it is looked up in the symbol table. If the identifier is not found in the symbol table, it is not a macro and scanning continues.
+1. If the identifier is found, the value of a flag associated with the identifier is used to determine if the identifier is available for expansion. If it is not, the specific token (i.e. the specific instance of the identifier) is marked as disabled and is not expanded. If the identifier is available for expansion, the value of a different flag associated with the identifier in the symbol table is used to determine if the identifier is an object-like or function-like macro. If it is an object-like macro, it is expanded. If it is a function-like macro, it is only expanded if the next token is an left parenthesis.
+1. An identifier is available for expansion if it is not marked as disabled and if the the value of the flag associated with the identifier is not set, which is used to determine if the identifier is available for expansion.
+1. If a macro is an object-like macro, skip past the next two paragraphs.
+1. If a macro to be expanded is a function-like macro, it must have the exact number of actual arguments as the number of formal parameters required by the definition of the macro. Each argument is recursively scanned and expanded. Each parameter name found in the replacement list is replaced by the expanded actual argument after leading and trailing whitespace and all placeholder tokens are removed **unless the parameter name immediately follows the stringizing operator (`#`) or is adjacent to the token-pasting operator (`##`)**.
+1. **If the parameter name immediately follows the stringizing operator (`#`), a stringized version of the unexpanded actual argument is inserted**. If the parameter name is adjacent to the token-pasting operator (`##`), the unexpanded actual argument is inserted after all placeholder tokens are removed.
+
+```cpp
+// Concat x and y, both parameters won't be expanded before concatenation, and the result of concatenation can be expanded if possible
+#define TOKEN_CONCAT(x, y) x##y
+// Make sure x and y are fully expanded
+#define TOKEN_CONCAT_FORWARD(x, y) TOKEN_CONCAT(x, y)
+
+#define DEFINE_INT_1 int prefix_1_##__LINE__
+#define DEFINE_INT_2 int TOKEN_CONCAT(prefix_2_, __LINE__)
+#define DEFINE_INT_3 int TOKEN_CONCAT_FORWARD(prefix_3_, __LINE__)
+#define LINE_NUMBER_AS_VALUE TOKEN_CONCAT(__LINE, __)
+
+int main() {
+    DEFINE_INT_1 = 1;
+    DEFINE_INT_2 = 2;
+    DEFINE_INT_3 = 3;
+    int i4 = LINE_NUMBER_AS_VALUE;
+    return 0;
+}
+```
+
+* For `DEFINE_INT_1`, `DEFINE_INT_2` and `DEFINE_INT_3`, only `DEFINE_INT_3` works as we expected.
+    * when you use `TOKEN_CONCAT` or `#` directly with macro arguments, it won't expand those arguments before concatenation. This means if `x` or `y` are themselves macros, they will not be expanded before concatenation.
+    * The `TOKEN_CONCAT_FORWARD` macro is a forward macro that ensures its arguments are fully expanded before passing them to `TOKEN_CONCAT`
+* For `LINE_NUMBER_AS_VALUE`, the expansion happens after the concatenation.
+
+```sh
+gcc -E main.cpp
+# 0 "main.cpp"
+# 0 "<built-in>"
+# 0 "<command-line>"
+# 1 "/usr/include/stdc-predef.h" 1 3 4
+# 0 "<command-line>" 2
+# 1 "main.cpp"
+# 11 "main.cpp"
+int main() {
+    int prefix_1___LINE__ = 1;
+    int prefix_2___LINE__ = 2;
+    int prefix_3_14 = 3;
+    int i4 = 15;
+    return 0;
+}
+```
+
+### 2.2.3 Best Practice
+
+#### 2.2.3.1 do while(0) in macros
 
 Consider the following macro definition:
 
@@ -155,7 +209,7 @@ Finally, we optimize the macro into the following form
 #define foo(x) do { bar(x); baz(x); } while (0)
 ```
 
-#### 2.2.2.2 Variant
+#### 2.2.3.2 Variant
 
 With the help of nested macros and agreed naming conventions, we can automatically generate `else if` branches. The sample code is as follows:
 
@@ -254,7 +308,44 @@ int main() {
 }
 ```
 
-#### 2.2.2.3 Comma Problem
+#### 2.2.3.3 Linux Kernel's Container Of
+
+[container_of.h](https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git/tree/include/linux/container_of.h)
+
+Alternative implementation in cpp:
+
+```cpp
+#include <iostream>
+#include <string>
+
+template <typename T, typename M>
+T* container_of(M* ptr, M T::*member) {
+    static_assert(std::is_standard_layout<T>::value, "container_of requires standard-layout type");
+    char* mem = reinterpret_cast<char*>(&(reinterpret_cast<T*>(0)->*member));
+    return reinterpret_cast<T*>(reinterpret_cast<char*>(ptr) - (mem - reinterpret_cast<char*>(0)));
+}
+
+struct Person {
+    int id;
+    std::string name;
+};
+
+int main() {
+    Person p;
+    p.id = 1;
+    p.name = "Alice";
+
+    auto* name_ptr = &p.name;
+    Person* p_ptr = container_of(name_ptr, &Person::name);
+
+    std::cout << "Person ID: " << p_ptr->id << ", Name: " << p_ptr->name << std::endl;
+    return 0;
+};
+```
+
+### 2.2.4 FAQ
+
+#### 2.2.4.1 Comma Problem
 
 [pass method with template arguments to a macro](https://stackoverflow.com/questions/4496842/pass-method-with-template-arguments-to-a-macro)
 
@@ -280,60 +371,6 @@ void call_func() {
 
 int main() {
     call_func<true, true>();
-    return 0;
-}
-```
-
-### 2.2.3 Macro Expansion
-
-**Macro replacement proceeds left-to-right ([The Macro Expansion Process](https://www.boost.org/doc/libs/1_85_0/libs/wave/doc/macro_expansion_process.html)):**
-
-1. If, during scanning (or rescanning) an identifier is found, it is looked up in the symbol table. If the identifier is not found in the symbol table, it is not a macro and scanning continues.
-1. If the identifier is found, the value of a flag associated with the identifier is used to determine if the identifier is available for expansion. If it is not, the specific token (i.e. the specific instance of the identifier) is marked as disabled and is not expanded. If the identifier is available for expansion, the value of a different flag associated with the identifier in the symbol table is used to determine if the identifier is an object-like or function-like macro. If it is an object-like macro, it is expanded. If it is a function-like macro, it is only expanded if the next token is an left parenthesis.
-1. An identifier is available for expansion if it is not marked as disabled and if the the value of the flag associated with the identifier is not set, which is used to determine if the identifier is available for expansion.
-1. If a macro is an object-like macro, skip past the next two paragraphs.
-1. If a macro to be expanded is a function-like macro, it must have the exact number of actual arguments as the number of formal parameters required by the definition of the macro. Each argument is recursively scanned and expanded. Each parameter name found in the replacement list is replaced by the expanded actual argument after leading and trailing whitespace and all placeholder tokens are removed **unless the parameter name immediately follows the stringizing operator (`#`) or is adjacent to the token-pasting operator (`##`)**.
-1. **If the parameter name immediately follows the stringizing operator (`#`), a stringized version of the unexpanded actual argument is inserted**. If the parameter name is adjacent to the token-pasting operator (`##`), the unexpanded actual argument is inserted after all placeholder tokens are removed.
-
-```cpp
-// Concat x and y, both parameters won't be expanded before concatenation, and the result of concatenation can be expanded if possible
-#define TOKEN_CONCAT(x, y) x##y
-// Make sure x and y are fully expanded
-#define TOKEN_CONCAT_FORWARD(x, y) TOKEN_CONCAT(x, y)
-
-#define DEFINE_INT_1 int prefix_1_##__LINE__
-#define DEFINE_INT_2 int TOKEN_CONCAT(prefix_2_, __LINE__)
-#define DEFINE_INT_3 int TOKEN_CONCAT_FORWARD(prefix_3_, __LINE__)
-#define LINE_NUMBER_AS_VALUE TOKEN_CONCAT(__LINE, __)
-
-int main() {
-    DEFINE_INT_1 = 1;
-    DEFINE_INT_2 = 2;
-    DEFINE_INT_3 = 3;
-    int i4 = LINE_NUMBER_AS_VALUE;
-    return 0;
-}
-```
-
-* For `DEFINE_INT_1`, `DEFINE_INT_2` and `DEFINE_INT_3`, only `DEFINE_INT_3` works as we expected.
-    * when you use `TOKEN_CONCAT` or `#` directly with macro arguments, it won't expand those arguments before concatenation. This means if `x` or `y` are themselves macros, they will not be expanded before concatenation.
-    * The `TOKEN_CONCAT_FORWARD` macro is a forward macro that ensures its arguments are fully expanded before passing them to `TOKEN_CONCAT`
-* For `LINE_NUMBER_AS_VALUE`, the expansion happens after the concatenation.
-
-```sh
-gcc -E main.cpp
-# 0 "main.cpp"
-# 0 "<built-in>"
-# 0 "<command-line>"
-# 1 "/usr/include/stdc-predef.h" 1 3 4
-# 0 "<command-line>" 2
-# 1 "main.cpp"
-# 11 "main.cpp"
-int main() {
-    int prefix_1___LINE__ = 1;
-    int prefix_2___LINE__ = 2;
-    int prefix_3_14 = 3;
-    int i4 = 15;
     return 0;
 }
 ```
@@ -1146,7 +1183,7 @@ Suppose you request to access memory from `0x0001-0x0008`, which is also 8 bytes
 **Memory Alignment Rules**
 
 1. **The offset of the first member of a structure is `0`. For all subsequent members, the offset relative to the start address of the structure must be an integer multiple of the smaller of the member's size and the `effective alignment value`. If necessary, the compiler will insert padding bytes between members.**
-2. **The total size of the structure must be an integer multiple of the `effective alignment value`. If necessary, the compiler will add padding bytes after the last member.**
+1. **The total size of the structure must be an integer multiple of the `effective alignment value`. If necessary, the compiler will add padding bytes after the last member.**
 * **Effective alignment value: the smaller of the value specified by `#pragma pack(n)` and the size of the largest data type in the structure. This value is also called the alignment unit. In GCC, the default is `#pragma pack(4)`, and this value can be changed using the preprocessor directive `#pragma pack(n)`, where n can be `1`, `2`, `4`, `8`, or `16`.**
 
 **Let's illustrate this with an example**
@@ -5472,7 +5509,7 @@ If an operation A "happens-before" another operation B, it means that A is guara
 **`Sequential consistency model (SC)`**, also known as the sequential consistency model, essentially stipulates two things:
 
 1. **Each thread's instructions are executed in the order specified by the program (from the perspective of a single thread)**
-2. **The interleaving order of thread execution can be arbitrary, but the overall execution order of the entire program, as observed by all threads, must be the same (from the perspective of the entire program)**
+1. **The interleaving order of thread execution can be arbitrary, but the overall execution order of the entire program, as observed by all threads, must be the same (from the perspective of the entire program)**
     * That is, there should not be a situation where for write operations `W1` and `W2`, processor 1 sees the order as: `W1 -> W2`; while processor 2 sees the order as: `W2 -> W1`
 
 ### 6.2.2 Relaxed consistency model
@@ -5480,7 +5517,7 @@ If an operation A "happens-before" another operation B, it means that A is guara
 **`Relaxed consistency model` also known as the loose memory consistency model, is characterized by:**
 
 1. **Within the same thread, access to the same atomic variable cannot be reordered (from the perspective of a single thread)**
-2. **Apart from ensuring the atomicity of operations, there is no stipulation on the order of preceding and subsequent instructions, and the order in which other threads observe data changes may also be different (from the perspective of the entire program)**
+1. **Apart from ensuring the atomicity of operations, there is no stipulation on the order of preceding and subsequent instructions, and the order in which other threads observe data changes may also be different (from the perspective of the entire program)**
     * That is, different threads may observe the relaxed operations on a single atomic value in different orders.
 
 **Looseness can be measured along the following two dimensions:**
@@ -6634,9 +6671,9 @@ Type erasure is a programming technique that lets you hide ("erase") concrete ty
 **Levels of `exception safety`:**
 
 1. `No-throw guarantee`: Guarantees that no exceptions will be thrown outward. Exceptions may occur inside the method but will be properly handled.
-2. `Strong exception safety`: Exceptions may be thrown, but the operation guarantees no side effects — all objects will be restored to their state prior to the call.
-3. `Basic exception safety`: Exceptions may be thrown, and failed operations may cause side effects, but all invariants will be preserved. Any stored data will remain valid, though possibly different from the original. Resource leaks (including memory leaks) are usually excluded through an invariant that all resources are considered and managed.
-4. `No exception safety`: No guarantees of exception safety are provided.
+1. `Strong exception safety`: Exceptions may be thrown, but the operation guarantees no side effects — all objects will be restored to their state prior to the call.
+1. `Basic exception safety`: Exceptions may be thrown, and failed operations may cause side effects, but all invariants will be preserved. Any stored data will remain valid, though possibly different from the original. Resource leaks (including memory leaks) are usually excluded through an invariant that all resources are considered and managed.
+1. `No exception safety`: No guarantees of exception safety are provided.
 
 ## 8.3 RAII
 
