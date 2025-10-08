@@ -722,14 +722,35 @@ For environment variables set up before starting program, we can check them by `
 
 [Tutorial](https://lldb.llvm.org/use/tutorial.html)
 
-LLDB is similar to GDB in most operations, but there are some differences (`help` for more details):
+## 6.1 Tips
 
-1. There is no `start` command
-1. `frame select <id>`/`f <id>`: select a frame
-1. `breakpoint set -E c++`: tells LLDB to break on C++ exceptions
-1. `list -<count>`: Print previous `<count>` lines
-1. `lldb -c <core> <binary>`: Analyze core file
-1. `lldb <binary> -- <args>`
+### 6.1.1 Command
+
+* `lldb -c <core> <binary>`: Analyze core file.
+* `lldb <binary> -- <args>`: Run with arguments.
+
+### 6.1.2 Display/Select Frame
+
+* `(lldb) frame select <id>`/`f <id>`: select a frame.
+
+### 6.1.3 Break on all cpp exceptions
+
+* `(lldb) breakpoint set -E c++`: tells LLDB to break on C++ exceptions.
+
+### 6.1.4 Show source code
+
+* `(lldb) list -<count>`: Print previous `<count>` lines.
+
+### 6.1.5 Redirect source file path
+
+* `(lldb) settings set target.source-map <original-path> <new-path>`
+
+### 6.1.6 Display source file path
+
+* `(lldb) image dump line-table <source_file>`
+    * `(lldb) image dump line-tabl main.cpp`
+* `(lldb) image lookup -v -n <symbol>`
+    * `(lldb) image lookup -v -n main`
 
 # 7 Reference
 

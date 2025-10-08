@@ -345,7 +345,11 @@ A DSO is just another term for a shared library (e.g., `.so` file on Linux, `.dl
 
 Please refer to `man ld.so` for details:
 
-### 2.6.1 LD_PRELOAD
+### 2.6.1 LD_LIBRARY_PATH
+
+Specifies the directories to search for shared libraries (dynamic libraries) at runtime.
+
+### 2.6.2 LD_PRELOAD
 
 Lists shared libraries that are loaded (preloaded) before any other shared libraries. This can be used to override functions in other shared objects.
 
@@ -396,7 +400,7 @@ fopen() returned NULL
 #-------------------------↑↑↑↑↑↑-------------------------
 ```
 
-### 2.6.2 LD_DEBUG
+### 2.6.3 LD_DEBUG
 
 Usage: `LD_DEBUG=<type> <binary>`, here are all available types.
 
@@ -411,65 +415,7 @@ Usage: `LD_DEBUG=<type> <binary>`, here are all available types.
 1. `unused`: Determine unused DSOs.
 1. `versions`: Display version dependencies.
 
-## 2.7 How to make library
-
-### 2.7.1 How to make static library
-
-```sh
-cat > foo.cpp << 'EOF'
-#include <iostream>
-
-void foo() {
-    std::cout << "hello, this is foo" << std::endl;
-}
-EOF
-
-cat > main.cpp << 'EOF'
-void foo();
-
-int main() {
-    foo();
-    return 0;
-}
-EOF
-
-gcc -o foo.o -c foo.cpp -O3 -Wall -fPIC
-ar rcs libfoo.a foo.o
-
-gcc -o main main.cpp -O3 -L . -lfoo -lstdc++
-./main
-```
-
-### 2.7.2 How to make dynamic library
-
-```sh
-cat > foo.cpp << 'EOF'
-#include <iostream>
-
-void foo() {
-    std::cout << "hello, this is foo" << std::endl;
-}
-EOF
-
-cat > main.cpp << 'EOF'
-void foo();
-
-int main() {
-    foo();
-    return 0;
-}
-EOF
-
-gcc -o foo.o -c foo.cpp -O3 -Wall -fPIC
-gcc -shared -o libfoo.so foo.o
-
-gcc -o main main.cpp -O3 -L . -lfoo -lstdc++
-./main # ./main: error while loading shared libraries: libfoo.so: cannot open shared object file: No such file or directory
-gcc -o main main.cpp -O3 -L . -Wl,-rpath=`pwd` -lfoo -lstdc++
-./main
-```
-
-## 2.8 ABI
+## 2.7 ABI
 
 `ABI` stands for `Application Binary Interface`. It is the interface between two binary modules. A binary module can be a `lib`, an operating system infrastructure, or a running user program.
 
@@ -489,7 +435,7 @@ Specifically, `ABI` defines the following:
 1. How to initiate system calls
 1. File formats such as `lib` and `object file`
 
-### 2.8.1 cxxabi.h
+### 2.7.1 cxxabi.h
 
 Some commonly used functions for handling C++ ABI (Application Binary Interface), defined in `<cxxabi.h>`, include(The prefix `__cxa` stands for `C++ eXception ABI`):
 
@@ -499,7 +445,7 @@ Some commonly used functions for handling C++ ABI (Application Binary Interface)
 * `abi::__cxa_current_exception_type`: Used to retrieve type information for the current exception. It returns a pointer to a `std::type_info` object that describes the type of the current thrown exception.
 * `abi::__cxa_bad_cast`: Used to throw a `std::bad_cast` exception when a `dynamic_cast` fails. It's typically called when a runtime type conversion fails.
 
-### 2.8.2 Language-Specific ABI
+### 2.7.2 Language-Specific ABI
 
 摘自[What is C++ ABI?](https://www.quora.com/What-is-C-ABI)
 
@@ -512,7 +458,7 @@ Some commonly used functions for handling C++ ABI (Application Binary Interface)
 > * How are overloaded functions and operators “named” in object files? This is where “name mangling” usually comes in: The type of the various functions is encoded in their object file names. That also handles the “overloading” that results from template instantiations.
 > * How are spilled inline functions and template instantiations handled? After all, different object files might use/spill the same instances, which could lead to collisions.
 
-### 2.8.3 Dual ABI
+### 2.7.3 Dual ABI
 
 [Dual ABI](https://gcc.gnu.org/onlinedocs/libstdc++/manual/using_dual_abi.html)
 
@@ -528,7 +474,7 @@ Other references:
 * [ABI Policy and Guidelines](https://gcc.gnu.org/onlinedocs/libstdc++/manual/abi.html)
 * [C/C++ ABI兼容那些事儿](https://zhuanlan.zhihu.com/p/556726543)
 
-### 2.8.4 ABI Mismatch Example
+### 2.7.4 ABI Mismatch Example
 
 Backgrounds: `std::string` underwent significant changes between the old and new ABI versions.
 
@@ -603,7 +549,7 @@ gcc -o abi_conflict_main_1_library_0 -D_GLIBCXX_USE_CXX11_ABI=1 main.cpp library
 gcc -o abi_conflict_main_1_library_1 -D_GLIBCXX_USE_CXX11_ABI=1 main.cpp library_1.o -O3 -lstdc++ -std=gnu++17
 ```
 
-### 2.8.5 ABI Mismatch Issue
+### 2.7.5 ABI Mismatch Issue
 
 ```
 # compile works fine
@@ -622,11 +568,11 @@ The errors you're encountering at runtime indicate that your application (`main`
 * `gcc -o main main.cpp -O0 -lstdc++ -fuse-ld=gold -Wl,--verbose`: Check the dynamic lib path that used at link time.
 * `ldd main`: Check the dynamic lib path that used at runtime.
 
-## 2.9 Commonly-used Librarys
+## 2.8 Commonly-used Librarys
 
 [Library Interfaces and Headers](https://docs.oracle.com/cd/E86824_01/html/E54772/makehtml-id-7.html#scrolltoc)
 
-### 2.9.1 libc/glibc/glib
+### 2.8.1 libc/glibc/glib
 
 **You can refer to `man libc/glibc` for details**
 
@@ -645,15 +591,73 @@ The errors you're encountering at runtime indicate that your application (`main`
 * `gcc -print-file-name=libc.so`
 * `strings /lib64/libc.so.6 | grep GLIBC`: Check the version of `glibc` APIs
 
-### 2.9.2 Others
+### 2.8.2 Others
 
 1. `libm`：c math library
 1. `libz`：compression/decompression library
 1. `libpthread`：POSIX threads library
 
-## 2.10 Assorted
+## 2.9 Assorted
 
-### 2.10.1 Catch exceptions from dynamic library
+### 2.9.1 How to build library
+
+#### 2.9.1.1 How to build static library
+
+```sh
+cat > foo.cpp << 'EOF'
+#include <iostream>
+
+void foo() {
+    std::cout << "hello, this is foo" << std::endl;
+}
+EOF
+
+cat > main.cpp << 'EOF'
+void foo();
+
+int main() {
+    foo();
+    return 0;
+}
+EOF
+
+gcc -o foo.o -c foo.cpp -O3 -Wall -fPIC
+ar rcs libfoo.a foo.o
+
+gcc -o main main.cpp -O3 -L . -lfoo -lstdc++
+./main
+```
+
+#### 2.9.1.2 How to build dynamic library
+
+```sh
+cat > foo.cpp << 'EOF'
+#include <iostream>
+
+void foo() {
+    std::cout << "hello, this is foo" << std::endl;
+}
+EOF
+
+cat > main.cpp << 'EOF'
+void foo();
+
+int main() {
+    foo();
+    return 0;
+}
+EOF
+
+gcc -o foo.o -c foo.cpp -O3 -Wall -fPIC
+gcc -shared -o libfoo.so foo.o
+
+gcc -o main main.cpp -O3 -L . -lfoo -lstdc++
+./main # ./main: error while loading shared libraries: libfoo.so: cannot open shared object file: No such file or directory
+gcc -o main main.cpp -O3 -L . -Wl,-rpath=`pwd` -lfoo -lstdc++
+./main
+```
+
+### 2.9.2 Catch exceptions from dynamic library
 
 **Conditions for exceptions to propagate correctly**
 
@@ -814,7 +818,105 @@ gcc -o catch_abnormal dl_main.cpp -fno-gnu-unique -ldl -lstdc++
 ./catch_abnormal
 ```
 
-## 2.11 Reference
+### 2.9.3 Wrap mechanism
+
+The `--wrap` linker feature (supported by GNU `ld` and accessible via `gcc -Wl,--wrap=symbol`) lets you intercept calls to a symbol at link time by renaming references. It’s a deterministic, build-time way to hook or override functions without changing callers.
+
+How it works (conceptually)
+
+* When you pass `-Wl,--wrap=symbol` to the linker:
+* Every reference to `symbol` in the linked objects is rewritten to call `__wrap_symbol`.
+* Every reference to `__real_symbol` is rewritten to refer to the original `symbol`.
+* So you implement `__wrap_symbol` to intercept the call, and if you want to call the original implementation from inside the wrapper you call `__real_symbol`.
+
+```sh
+cat > foo.cpp << 'EOF'
+#include <iostream>
+
+int* foo() {
+    std::cout << "hello, this is foo" << std::endl;
+    return (int*)malloc(100);
+}
+EOF
+
+cat > main.cpp << 'EOF'
+#include <cstdio>
+#include <cstdlib>
+
+int* foo();
+
+extern "C" {
+void* __real_malloc(size_t c);
+
+void* __wrap_malloc(size_t c) {
+    printf("malloc called with %zu\n", c);
+    return __real_malloc(c);
+}
+}
+
+int main() {
+    auto* res = foo();
+    res[0] = 1;
+    return 0;
+}
+EOF
+```
+
+#### 2.9.3.1 Work with Static Linking
+
+And here are how to build the program.
+
+```sh
+gcc -o foo.o -c foo.cpp -O3 -Wall -fPIC
+ar rcs libfoo.a foo.o
+gcc -o main main.cpp -O3 -L . -Wl,-wrap=malloc -lfoo -lstdc++
+
+./main
+```
+
+And it prints:
+
+```
+hello, this is foo
+malloc called with 100
+```
+
+The reason why static linking works fine with the `-Wl,-wrap=malloc` hook, is because of how static linking works:
+
+* In static linking, the object code (or binary code) for the functions used from the static library is embedded directly into the final executable at link-time.
+* So, when you use the `-Wl,-wrap=malloc` linker option, it can intercept and replace all calls to `malloc` in both the `main` program and any static libraries, as they are all being linked together into a single executable at the same time.
+* Essentially, the linker sees the entire code (from the main program and the static library) as one unit and can replace all calls to `malloc` with calls to `__wrap_malloc`.
+
+#### 2.9.3.2 Not Work with Dynamic Linking
+
+And here are how to build the program.
+
+```sh
+gcc -o foo.o -c foo.cpp -O3 -Wall -fPIC
+gcc -shared -o libfoo.so foo.o
+gcc -o main main.cpp -O3 -L . -Wl,-rpath=`pwd` -Wl,-wrap=malloc  -lfoo -lstdc++
+
+./main
+```
+
+And it prints:
+
+```
+hello, this is foo
+```
+
+Here's a step-by-step breakdown:
+
+1. When you compile `foo.cpp` into `foo.o`, there's a call to `malloc` in the machine code, but it's not yet resolved to an actual memory address. It's just a placeholder that says "I want to call `malloc`".
+1. When you link `foo.o` into `libfoo.so`, the call to `malloc` inside `foo` is linked. It's resolved to the `malloc` function provided by the C library.
+1. Later, when you link `main.cpp` into an executable, you're using the `-Wl,-wrap=malloc` option, but that only affects calls to `malloc` that are being linked at that time. The call to `malloc` inside `foo` was already linked in step 2, so it's unaffected.
+
+### 2.9.4 How to see man page of library functions
+
+* `man 3 malloc`
+* `man 3 dlopen`
+
+## 2.10 Reference
 
 * [Program Library HOWTO](https://tldp.org/HOWTO/Program-Library-HOWTO/shared-libraries.html)
 * [Shared Libraries: Understanding Dynamic Loading](https://amir.rachum.com/blog/2016/09/17/shared-libraries/)
@@ -831,7 +933,59 @@ Virtual memory is allocated through system call `brk` and `mmap`, please refer t
 
 memory management libraries run in user mode and typically use low-level system calls for virtual memory allocation. Different libraries may employ different memory allocation algorithms to effectively manage allocated and deallocated memory blocks in the heap.
 
-## 3.1 tcmalloc
+## 3.1 ptmalloc
+
+ptmalloc is the default implementation of malloc in glibc, a multithreaded extension of Doug Lea's dlmalloc that adds multiple memory arenas and thread-safe locking to support concurrent allocations.
+
+* [malloc.c](https://sourceware.org/git/?p=glibc.git;a=blob;f=malloc/malloc.c)
+
+**Supported options(with default values):**
+
+* `M_MXFAST`: 64
+* `M_TRIM_THRESHOLD`: 128*1024
+* `M_TOP_PAD`: 0
+* `M_MMAP_THRESHOLD`: 128*1024
+* `M_MMAP_MAX`: 65536
+
+### 3.1.1 When to use brk and mmap
+
+ptmalloc (the default `malloc` in glibc) uses both `brk()` and `mmap()`, depending on the allocation size and context:
+
+* `brk()`(the heap): used for small and medium allocations, below the mmap threshold (default ≈ 128 KB).
+* `mmap()`(anonymous mapping): used for large allocations, ≥ the mmap threshold, or when the heap (brk) cannot grow further.
+
+```cpp
+#include <malloc.h>
+
+#include <cstdio>
+#include <cstdlib>
+#include <iostream>
+#include <vector>
+
+int main() {
+    // mallopt(M_MMAP_THRESHOLD, 128 * 1024);
+
+    std::vector<char*> bytes;
+    std::vector<size_t> sizes{1, 32, 64, 128, 256, 512};
+    for (size_t size : sizes) {
+        std::cout << "Allocating " << size << " KB" << std::endl;
+        char* b = new char[size * 1024];
+        bytes.push_back(b);
+    }
+
+    for (char* b : bytes) {
+        delete[] b;
+    }
+    return 0;
+}
+```
+
+```sh
+gcc -o main main.cpp -Wl,-Bstatic -lstdc++ -Wl,-Bdynamic -std=gnu++17
+strace -e trace=memory ./main
+```
+
+## 3.2 tcmalloc
 
 [tcmalloc](https://github.com/google/tcmalloc)
 
@@ -854,7 +1008,7 @@ memory management libraries run in user mode and typically use low-level system 
 yum -y install gperftools gperftools-devel
 ```
 
-### 3.1.1 Heap-profile
+### 3.2.1 Heap-profile
 
 **`main.cpp`：**
 
@@ -929,7 +1083,7 @@ pprof --text ./main /tmp/test-profile.0001.heap | head -30
 pprof --svg ./main /tmp/test-profile.0001.heap > heap.svg
 ```
 
-## 3.2 jemalloc
+## 3.3 jemalloc
 
 [jemalloc](https://github.com/jemalloc/jemalloc)
 
@@ -942,7 +1096,7 @@ pprof --svg ./main /tmp/test-profile.0001.heap > heap.svg
 * For large object allocation, the memory fragmentation is less than `tcmalloc`
 * Finer granularity of memory categorization, with fewer locks compared to `tcmalloc`
 
-### 3.2.1 Memory Stats
+### 3.3.1 Memory Stats
 
 **Key Metrics:**
 
@@ -971,7 +1125,7 @@ pprof --svg ./main /tmp/test-profile.0001.heap > heap.svg
 * `Allocator Overhead`: The difference between active and allocated plus metadata. This helps in understanding how much additional memory jemalloc needs to manage your allocations.
 * `Virtual Memory Overhead`: The difference between mapped and resident memory. This shows how much memory is being reserved in the virtual address space but not necessarily backed by physical memory.
 
-### 3.2.2 Install
+### 3.3.2 Install
 
 [jemalloc/INSTALL.md](https://github.com/jemalloc/jemalloc/blob/dev/INSTALL.md)
 
@@ -986,7 +1140,7 @@ make -j $(( (cores=$(nproc))>1?cores/2:1 ))
 sudo make install
 ```
 
-### 3.2.3 Heap-profile
+### 3.3.3 Heap-profile
 
 [Getting Started](https://github.com/jemalloc/jemalloc/wiki/Getting-Started)
 
@@ -1084,7 +1238,7 @@ Total: 100.1 MB
 * `sudo apt install -y graphviz` or `sudo yum install -y graphviz`
 * `jeprof --show_bytes --svg main <heap_file> > <svg_file>`
 
-### 3.2.4 Work with http
+### 3.3.4 Work with http
 
 Source:
 
@@ -1200,14 +1354,14 @@ dot -Tsvg heap-profile.dot -o heap-profile.svg
 dot -Tpdf heap-profile.dot -o heap-profile.pdf
 ```
 
-### 3.2.5 Reference
+### 3.3.5 Reference
 
 * [Jemalloc内存分配与优化实践](https://mp.weixin.qq.com/s?__biz=Mzg3Mjg2NjU4NA==&mid=2247484507&idx=1&sn=0befa2bec46c3fe64807f5b79b2940d5)
 * [[Feature] support heap profile using script](https://github.com/StarRocks/starrocks/pull/35322)
 
-## 3.3 [mimalloc](https://github.com/microsoft/mimalloc)
+## 3.4 [mimalloc](https://github.com/microsoft/mimalloc)
 
-## 3.4 Comparison
+## 3.5 Comparison
 
 `tcmalloc` and `jemalloc` are both memory allocators, and they are commonly used in software development to manage dynamic memory allocation in programs. However, they have different characteristics and were designed to address different issues. Here's a comparison of the two:
 
@@ -1224,9 +1378,9 @@ dot -Tpdf heap-profile.dot -o heap-profile.pdf
     * **jemalloc**: Widely used in applications requiring high-performance memory management, such as databases and large multithreaded applications.
     * **tcmalloc**: Particularly suitable for applications that frequently allocate and deallocate memory due to its high-performance thread caching feature.
 
-## 3.5 Hook
+## 3.6 Hook
 
-### 3.5.1 Override the operator new
+### 3.6.1 Wrap malloc
 
 ```cpp
 #include <cstddef>
@@ -1234,16 +1388,6 @@ dot -Tpdf heap-profile.dot -o heap-profile.pdf
 #include <cstdlib>
 #include <iostream>
 #include <new>
-
-void* operator new(std::size_t size) {
-    std::cout << "Custom new called with size: " << size << std::endl;
-    return malloc(size);
-}
-
-void operator delete(void* ptr) noexcept {
-    std::cout << "Custom delete called" << std::endl;
-    free(ptr);
-}
 
 extern "C" {
 void* __real_malloc(size_t c);
@@ -1262,11 +1406,16 @@ int main() {
 ```
 
 ```sh
+# Link stdc++ statically (working with operator new)
+gcc -o main main.cpp -Wl,-wrap=malloc -Wl,-Bstatic -lstdc++ -Wl,-Bdynamic -std=gnu++17
+./main
+
+# Link stdc++ dynamically (not working with operator new)
 gcc -o main main.cpp -Wl,-wrap=malloc -lstdc++ -std=gnu++17
 ./main
 ```
 
-### 3.5.2 Wrap operator new by its mangled name
+### 3.6.2 Wrap operator new by its mangled name
 
 The mangled name for `operator new` with a `size_t` argument is `_Znwm`.
 
@@ -1303,93 +1452,7 @@ gcc -o main main.cpp -Wl,-wrap=malloc -Wl,-wrap=_Znwm -lstdc++ -std=gnu++17
 ./main
 ```
 
-### 3.5.3 Work With Library
-
-`foo.cpp` is like this:
-
-```cpp
-#include <iostream>
-
-int* foo() {
-    std::cout << "hello, this is foo" << std::endl;
-    return (int*)malloc(100);
-}
-```
-
-`main.cpp` is like this:
-
-```cpp
-#include <cstdio>
-#include <cstdlib>
-
-int* foo();
-
-extern "C" {
-void* __real_malloc(size_t c);
-
-void* __wrap_malloc(size_t c) {
-    printf("malloc called with %zu\n", c);
-    return __real_malloc(c);
-}
-}
-
-int main() {
-    auto* res = foo();
-    res[0] = 1;
-    return 0;
-}
-```
-
-#### 3.5.3.1 Static Linking Library(Working)
-
-And here are how to build the program.
-
-```sh
-gcc -o foo.o -c foo.cpp -O3 -Wall -fPIC
-ar rcs libfoo.a foo.o
-gcc -o main main.cpp -O3 -L . -Wl,-wrap=malloc -lfoo -lstdc++
-
-./main
-```
-
-And it prints:
-
-```
-hello, this is foo
-malloc called with 100
-```
-
-The reason why static linking works fine with the `-Wl,-wrap=malloc` hook, is because of how static linking works:
-
-* In static linking, the object code (or binary code) for the functions used from the static library is embedded directly into the final executable at link-time.
-* So, when you use the `-Wl,-wrap=malloc` linker option, it can intercept and replace all calls to `malloc` in both the `main` program and any static libraries, as they are all being linked together into a single executable at the same time.
-* Essentially, the linker sees the entire code (from the main program and the static library) as one unit and can replace all calls to `malloc` with calls to `__wrap_malloc`.
-
-#### 3.5.3.2 Dynamic Linking library(Not Working)
-
-And here are how to build the program.
-
-```sh
-gcc -o foo.o -c foo.cpp -O3 -Wall -fPIC
-gcc -shared -o libfoo.so foo.o
-gcc -o main main.cpp -O3 -L . -Wl,-rpath=`pwd` -Wl,-wrap=malloc  -lfoo -lstdc++
-
-./main
-```
-
-And it prints:
-
-```
-hello, this is foo
-```
-
-Here's a step-by-step breakdown:
-
-1. When you compile `foo.cpp` into `foo.o`, there's a call to `malloc` in the machine code, but it's not yet resolved to an actual memory address. It's just a placeholder that says "I want to call `malloc`".
-1. When you link `foo.o` into `libfoo.so`, the call to `malloc` inside `foo` is linked. It's resolved to the `malloc` function provided by the C library.
-1. Later, when you link `main.cpp` into an executable, you're using the `-Wl,-wrap=malloc` option, but that only affects calls to `malloc` that are being linked at that time. The call to `malloc` inside `foo` was already linked in step 2, so it's unaffected.
-
-## 3.6 How free can know the size of the allocated memory block?
+## 3.7 How free can know the size of the allocated memory block?
 
 `free()` can determine the size of the allocated memory block because the allocator stores the block's size (and other metadata) in a hidden header located just before the pointer returned by `malloc()`.
 
@@ -1440,7 +1503,7 @@ int main() {
 }
 ```
 
-## 3.7 Reference
+## 3.8 Reference
 
 * [heapprofile.html](https://gperftools.github.io/gperftools/heapprofile.html)
 * [Apache Doris-调试工具](https://doris.apache.org/developer-guide/debug-tool.html)
@@ -2016,6 +2079,8 @@ end, back to main
 
 [ftp.gnu.org](https://ftp.gnu.org/gnu/)
 
+[sourceware.org](https://sourceware.org/)
+
 ## 7.1 Build & Install
 
 **You can download any version from [gcc-ftp](http://ftp.gnu.org/gnu/gcc/), I choose `gcc-14.1.0`**
@@ -2076,7 +2141,7 @@ Post Settings: (Use `sudo ldconfig -p | grep stdc++` to check the default path o
 
 ## 7.2 GNU Binutils
 
-The GNU Binutils are a collection of binary tools. The main ones are:
+The [GNU Binutils](https://sourceware.org/binutils/) are a collection of binary tools. The main ones are:
 
 * `ld`: the GNU linker.
 * `as`: the GNU assembler.
@@ -2140,62 +2205,62 @@ addr2line: Dwarf Error: found dwarf version '5', this reader only handles versio
 
 1. **Compilation Information**
     * `-v`: Outputs compilation details, including header file search paths, actual values of some environment variables, etc.
-    * `-H`: Outputs the header files used during compilation
+    * `-H`: Outputs the header files used during compilation.
 1. **File Types**
-    * `-E`: Generate preprocessed file (`.i`)
-    * `-S`: Generate assembly file (`.s`)
-        * `-fverbose-asm`: Includes some annotation comments
-    * `-c`: Generate object file (`.o`)
-    * By default, generates an executable file
+    * `-E`: Generate preprocessed file (`.i`).
+    * `-S`: Generate assembly file (`.s`).
+        * `-fverbose-asm`: Includes some annotation comments.
+    * `-c`: Generate object file (`.o`).
+    * By default, generates an executable file.
 1. **Optimization Levels**
-    1. `-O0` (default): No optimization
-    1. `-O/-O1`: Tries to apply some optimizations to reduce code size and improve executable speed without affecting compilation speed
-    1. `-O2`: This level sacrifices some compilation speed; besides all optimizations of `-O1`, it applies almost all supported optimizations for the target to improve runtime speed
+    1. `-O0` (default): No optimization.
+    1. `-O/-O1`: Tries to apply some optimizations to reduce code size and improve executable speed without affecting compilation speed.
+    1. `-O2`: This level sacrifices some compilation speed; besides all optimizations of `-O1`, it applies almost all supported optimizations for the target to improve runtime speed.
     1. `-O3`: In addition to all `-O2` optimizations, generally uses many vectorization algorithms to increase code parallelism, utilizing modern CPU pipelines, caches, etc.
-    * The optimization options enabled at different levels can be referenced in the `man page`
+    * The optimization options enabled at different levels can be referenced in the `man page`.
 1. **Debugging**
-    * `-gz[=type]`: Compresses the debugging section of `DWARF` format files using the specified compression method
-    * `-g`: Generate debug information
-    * `-ggdb`: Generate debug information specific for `gdb`
-    * `-gdwarf`/`-gdwarf-version`: Generate debug info in `DWARF` format; versions available are `2/3/4/5`, default is 4
-1. **`-print-search-dirs`: Print search paths**
-1. **`-I <path>`: Add header file search path**
-    * Multiple `-I` parameters can be used, e.g. `-I path1 -I path2`
-1. **`-L <path>`: Add library search path**
-1. **`-l<lib_name>`: Add library**
-    * Search for the specified static or dynamic library; if both exist, dynamic library is chosen by default
-    * For example, `-lstdc++`, `-lpthread`
-1. **`-std=<std_version>`: Specify standard library type and version**
-    * For example, `-std=gnu++17`
-1. **`-W<xxx>`: Warning options**
-    * `-Wall`: Enable most warning messages (some warnings cannot be enabled by this flag by default)
-    * `-Wno<xxx>`: Disable specific types of warnings
-    * `-Werror`: Treat all warnings as errors (will cause compilation to fail)
-    * `-Werror=<xxx>`: Treat a specific warning as an error (will cause compilation to fail)
+    * `-gz[=type]`: Compresses the debugging section of `DWARF` format files using the specified compression method.
+    * `-g`: Produce debugging information in the operating system's native format (stabs, `COFF`, `XCOFF`, or `DWARF`).
+    * `-ggdb`: Produce debugging information for use by GDB.
+    * `-gdwarf`/`-gdwarf-version`: Produce debugging information in `DWARF` format (if that is supported).  The value of version may be either 2, 3, 4 or 5; the default version for most targets is 5.
+1. **`-print-search-dirs`: Print search paths.**
+1. **`-I <path>`: Add header file search path.**
+    * Multiple `-I` parameters can be used, e.g. `-I path1 -I path2`.
+1. **`-L <path>`: Add library search path.**
+1. **`-l<lib_name>`: Add library.**
+    * Search for the specified static or dynamic library; if both exist, dynamic library is chosen by default.
+    * For example, `-lstdc++`, `-lpthread`.
+1. **`-std=<std_version>`: Specify standard library type and version.**
+    * For example, `-std=gnu++17`.
+1. **`-W<xxx>`: Warning options.**
+    * `-Wall`: Enable most warning messages (some warnings cannot be enabled by this flag by default).
+    * `-Wno<xxx>`: Disable specific types of warnings.
+    * `-Werror`: Treat all warnings as errors (will cause compilation to fail).
+    * `-Werror=<xxx>`: Treat a specific warning as an error (will cause compilation to fail).
 1. **`-static`: Use static linking for all libraries, including `libc` and `libc++`**
-1. **`-print-file-name=<library>`: Print the full absolute name of the library file library that would be used when linking**
+1. **`-print-file-name=<library>`: Print the full absolute name of the library file library that would be used when linking.**
     * `gcc -print-file-name=libgcov.a`
     * `gcc -print-file-name=libdl.a`
     * `gcc -print-file-name=libstdc++.a`
 1. **`-D <macro_name>[=<macro_definition>]`: Define macro**
     * For example, `-D MY_DEMO_MACRO`, `-D MY_DEMO_MACRO=2`, `-D 'MY_DEMO_MACRO="hello"'`, `-D 'ECHO(a)=(a)'`
-1. **`-U <macro_name>`: Undefine macro**
-1. **`--coverage`: a synonym for `-fprofile-arcs -ftest-coverage` (when compiling) and `-lgcov` (when linking)**
-1. **`-fno-access-control`: Disable access control, for example, allowing direct access to private fields and methods of a class from outside the class, generally used for unit testing**
+1. **`-U <macro_name>`: Undefine macro.**
+1. **`--coverage`: a synonym for `-fprofile-arcs -ftest-coverage` (when compiling) and `-lgcov` (when linking).**
+1. **`-fno-access-control`: Disable access control, for example, allowing direct access to private fields and methods of a class from outside the class, generally used for unit testing.**
 1. **Vectorization Related Parameters**
-    * `-fopt-info-vec` / `-fopt-info-vec-optimized`: Output detailed information when loops are vectorized
-    * `-fopt-info-vec-missed`: Output detailed information when loops cannot be vectorized
-    * `-fopt-info-vec-note`: Output all detailed information about loop vectorization optimization
-    * `-fopt-info-vec-all`: Enable all parameters that output detailed vectorization information
-    * `-fno-tree-vectorize`: Disable vectorization
+    * `-fopt-info-vec` / `-fopt-info-vec-optimized`: Output detailed information when loops are vectorized.
+    * `-fopt-info-vec-missed`: Output detailed information when loops cannot be vectorized.
+    * `-fopt-info-vec-note`: Output all detailed information about loop vectorization optimization.
+    * `-fopt-info-vec-all`: Enable all parameters that output detailed vectorization information.
+    * `-fno-tree-vectorize`: Disable vectorization.
     * **Generally, larger width vector registers require specifying these parameters:**
         * `-mmmx`
         * `-msse`, `-msse2`, `-msse3`, `-mssse3`, `-msse4`, `-msse4a`, `-msse4.1`, `-msse4.2`
         * `-mavx`, `-mavx2`, `-mavx512f`, `-mavx512pf`, `-mavx512er`, `-mavx512cd`, `-mavx512vl`, `-mavx512bw`, `-mavx512dq`, `-mavx512ifma`, `-mavx512vbmi`
         * ...
-1. **`-fPIC`: If the target machine supports it, generate position-independent code, suitable for dynamic linking and avoids any limitations on the size of the Global Offset Table**
-1. **`-fomit-frame-pointer`: When necessary, allow some functions to omit the frame pointer**
-    * `-fno-omit-frame-pointer`: All functions must include a frame pointer
+1. **`-fPIC`: If the target machine supports it, generate position-independent code, suitable for dynamic linking and avoids any limitations on the size of the Global Offset Table.**
+1. **`-fomit-frame-pointer`: When necessary, allow some functions to omit the frame pointer.**
+    * `-fno-omit-frame-pointer`: All functions must include a frame pointer.
 1. `-faligned-new`
 1. `-fsized-deallocation`: Enable the `delete` operator that receives a `size` parameter. [C++ Sized Deallocation](http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2013/n3778.html). Modern memory allocators, when allocating memory for objects, need to specify the size and for space efficiency do not store object size information around the object memory. Therefore, when freeing objects, the memory size occupied must be found, which is expensive because it is usually not in cache. The compiler allows providing a `global delete operator` that accepts a `size` parameter and uses this version to destruct the object.
 1. `-mcmodel=small/medium/large`: is an option used in compilers like GCC (GNU Compiler Collection) to specify the memory model for code generation. This option is particularly relevant in systems with large address spaces, such as 64-bit architectures, where how the program accesses memory can significantly impact performance and compatibility.
@@ -2657,20 +2722,20 @@ strings <binary_file> | grep <linker_name>
 * `CXX`
 * `CFLAGS`
 * `CXXFLAGS`
-* `LDFLAGS`：Specifies flags to pass to the linker (`ld`) when building programs
+* `LDFLAGS`：Specifies flags to pass to the linker (`ld`) when building programs.
 
 **`man gcc`:**
 
-* `CPATH`: Affects both C and C++ compilers
+* `CPATH`: Affects both C and C++ compilers.
 * `C_INCLUDE_PATH`
 * `CPLUS_INCLUDE_PATH`
 * `OBJC_INCLUDE_PATH`
-* `LIBRARY_PATH`: Specifies the directories to search for library files at compile time
+* `LIBRARY_PATH`: Specifies the directories to search for library files at compile time.
 
 **`man ld`:**
 
-* `LD_LIBRARY_PATH`: Specifies the directories to search for shared libraries (dynamic libraries) at runtime
-* `LD_RUN_PATH`: Provides a way to ensure that your program can locate the shared libraries it depends on, regardless of the runtime environment (like `LD_LIBRARY_PATH`), by embedding the necessary search paths directly into the executable
+* `LD_LIBRARY_PATH`: Specifies the directories to search for shared libraries (dynamic libraries) at runtime.
+* `LD_RUN_PATH`: Provides a way to ensure that your program can locate the shared libraries it depends on, regardless of the runtime environment (like `LD_LIBRARY_PATH`), by embedding the necessary search paths directly into the executable.
 
 **`man ld.so`**
 

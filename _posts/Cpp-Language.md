@@ -317,12 +317,22 @@ Alternative implementation in cpp:
 ```cpp
 #include <iostream>
 #include <string>
+#include <type_traits>
+
+#define container_of(mptr, ptype, mname)                                                                           \
+    ({                                                                                                             \
+        static_assert(std::is_standard_layout_v<ptype>, "container_of requires standard-layout type");             \
+        std::byte* __mptr = reinterpret_cast<std::byte*>(mptr);                                                    \
+        static_assert(std::is_same_v<std::decay_t<decltype(*mptr)>, decltype(reinterpret_cast<ptype*>(0)->mname)>, \
+                      "pointer type mismatch in container_of()");                                                  \
+        reinterpret_cast<ptype*>(__mptr - offsetof(ptype, mname));                                                 \
+    })
 
 template <typename T, typename M>
-T* container_of(M* ptr, M T::*member) {
-    static_assert(std::is_standard_layout<T>::value, "container_of requires standard-layout type");
-    char* mem = reinterpret_cast<char*>(&(reinterpret_cast<T*>(0)->*member));
-    return reinterpret_cast<T*>(reinterpret_cast<char*>(ptr) - (mem - reinterpret_cast<char*>(0)));
+T* container_of_template(M* mptr, M T::*member) {
+    static_assert(std::is_standard_layout_v<T>, "container_of requires standard-layout type");
+    auto moff = reinterpret_cast<std::byte*>(&(reinterpret_cast<T*>(0)->*member)) - reinterpret_cast<std::byte*>(0);
+    return reinterpret_cast<T*>(reinterpret_cast<std::byte*>(mptr) - moff);
 }
 
 struct Person {
@@ -336,9 +346,15 @@ int main() {
     p.name = "Alice";
 
     auto* name_ptr = &p.name;
-    Person* p_ptr = container_of(name_ptr, &Person::name);
+    {
+        Person* p_ptr = container_of(name_ptr, Person, name);
+        std::cout << "Person ID: " << p_ptr->id << ", Name: " << p_ptr->name << std::endl;
+    }
 
-    std::cout << "Person ID: " << p_ptr->id << ", Name: " << p_ptr->name << std::endl;
+    {
+        Person* p_ptr = container_of_template(name_ptr, &Person::name);
+        std::cout << "Person ID: " << p_ptr->id << ", Name: " << p_ptr->name << std::endl;
+    }
     return 0;
 };
 ```
@@ -6974,7 +6990,53 @@ int main() {
 
 # 10 Assorted
 
+## 10.1 One Definition Rule, ODR
+
 1. [Definitions and ODR (One Definition Rule)](https://en.cppreference.com/w/cpp/language/definition.html)
+
+## 10.2 Properties of classes
+
+### 10.2.1 Trivial class
+
+[Trivial class](https://en.cppreference.com/w/cpp/language/classes.html#Trivial_class)
+
+A trivial class in C++ is one that has no user-defined special member functions and all of its special members (default constructor, copy/move constructors, assignment operators, destructor) are implicitly declared and trivial themselves.
+
+* We can safely memcpy or memmove trivial objects.
+
+**Type traits:**
+
+* `std::is_trivial_v`
+
+### 10.2.2 Standard-layout class
+
+[Standard-layout class](https://en.cppreference.com/w/cpp/language/classes.html#Standard-layout_class)
+
+A standard-layout class is a class (or struct/union) whose memory layout is predictable and compatible with C.
+
+* Use `offsetof()` and `container_of()` safely.
+* C-compatible interop.
+    * Pass them safely between C++ and C functions.
+    * Use them in extern "C" interfaces.
+    * Map them directly to equivalent C structs.
+
+**Type traits:**
+
+* `std::is_standard_layout_v`
+
+### 10.2.3 POD class
+
+[POD class](https://en.cppreference.com/w/cpp/language/classes.html#POD_class)
+
+In C++, a POD class — "Plain Old Data" — is a very simple, memory-layout-predictable type.
+It behaves like a C `struct`, meaning you can safely copy its memory with `memcpy`, reinterpret it as bytes, use it in `union`, and even use tricks like `container_of()`.
+
+* POD class must be trivial class.
+* POD class must be Standard-layout class.
+
+**Type traits:**
+
+* `std::is_pod_v`: Equals to `std::is_standard_layout_v && std::is_trivial_v`
 
 # 11 Tips
 
