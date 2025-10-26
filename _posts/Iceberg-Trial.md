@@ -14,6 +14,13 @@ categories:
 
 # 1 Killing Feature
 
+## 1.1 Hidden Partitioning
+
+Hidden Partitioning has several meanings:
+
+* Partition information won't be placed at file's path like hive does.
+* A partition can be derived from an expression such as partition by `toDate(event_time)`, where `event_time` is a regular timestamp column. Similarly, a partition filter can be inferred from a predicate that involves only `event_time`, for example, `event_time > '2025-10-10 12:12:12'`.
+
 # 2 Spark & Iceberg
 
 ## 2.1 Step1: Create a shared network
@@ -820,5 +827,6 @@ Refer to [Reserved Field IDs](https://github.com/apache/iceberg/blob/main/format
 
 * [Iceberg Docs](https://iceberg.apache.org/docs/nightly/)
 * [Iceberg Spec](https://iceberg.apache.org/spec/)
+* [Roadmap Overview](https://apache.github.io/iceberg/roadmap/)
 * [优化数据查询性能：StarRocks 与 Apache Iceberg 的强强联合](https://mp.weixin.qq.com/s/wP9q7NACYEyY-TdrSceq4A)
 * [StarRocks Lakehouse 快速入门——Apache Iceberg](https://mp.weixin.qq.com/s/pIXKXKNBLG5EPkAkiowBLQ)

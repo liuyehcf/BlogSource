@@ -1841,6 +1841,16 @@ Arrow ABI stands for Apache Arrow Application Binary Interface. It's a low-level
 * `ImportSchema`/`ExportSchema`
 * `ExportRecordBatch`/`ImportRecordBatch`
 
+**Key Principles:**
+
+* Ownership: Clearly transfer ownership; the importer calls `release` exactly once; exporter keeps buffers valid until `release`.
+* Threading: Treat `get_schema`/`get_next`/`release` as single-threaded; route all callbacks to one owner thread unless you fully guarantee thread safety.
+* Call order: Call `get_schema` before any `get_next`; keep one stable schema for the entire stream.
+* End-of-stream and errors: Distinguish clean EOS from errors; implement `get_last_error` with meaningful messages.
+* Memory lifetime: All exported buffers (data/validity/offsets/children/dicts) must outlive `release`; don't mix allocators across runtimes for objects the other side frees.
+* Streaming/backpressure: Prefer bounded, demand-driven flow; support early cancellation (consumer drop) to stop production and free resources.
+* Cross-runtime nuances: Respect GIL/JNI/env constraints; don't move callbacks across threads that lack required runtime state.
+
 **Demo:**
 
 * [arrow_abi_demo](https://github.com/liuyehcf/cpp-demo-projects/tree/main/arrow/arrow_abi_demo)

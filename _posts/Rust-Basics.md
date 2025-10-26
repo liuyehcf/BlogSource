@@ -14,9 +14,15 @@ categories:
 
 # 1 Language
 
-## 1.1 Data Types
+## 1.1 Keyword
 
-### 1.1.1 Unsafe Raw Pointers
+### 1.1.1 'static
+
+The `'static` lifetime means: lives for the entire program duration.
+
+## 1.2 Data Types
+
+### 1.2.1 Unsafe Raw Pointers
 
 * `*const T`: raw pointer to immutable data.
 * `*mut T`: raw pointer to mutable data.
@@ -34,7 +40,7 @@ fn main() {
 }
 ```
 
-## 1.2 Ownership
+## 1.3 Ownership
 
 **Keep these rules in mind as we work through the examples that illustrate them:**
 
@@ -43,7 +49,7 @@ fn main() {
 * When the owner goes out of scope, the value will be dropped.
 * Rust will never automatically create “deep” copies of your data.
 
-### 1.2.1 Reference
+### 1.3.1 Reference
 
 Mutable references restrictions: 
 
@@ -77,15 +83,90 @@ The benefit of having this restriction is that Rust can prevent data races at co
 * At least one of the pointers is being used to write to the data.
 * There's no mechanism being used to synchronize access to the data.
 
-### 1.2.2 The Slice Type
+### 1.3.2 The Slice Type
 
 A slice is a kind of reference, so it does not have ownership.
 
-## 1.3 Fundamentals of Asynchronous Programming: Async, Await, Futures, and Streams
+## 1.4 Scope
 
-### 1.3.1 Parallelism and Concurrency
+* RAII, Resource Acquisition Is Initialization:
+    * The notion of a destructor in Rust is provided through the Drop `trait`.
+* Ownership and moves:
+    * Because variables are in charge of freeing their own resources, resources can only have one owner.
+    * When doing assignments `let x = y` or passing function arguments by value `foo(x)`, the ownership of the resources is transferred. In Rust-speak, this is known as a `move`.
+* Borrowing:
+    * Most of the time, we'd like to access data without taking ownership over it. To accomplish this, Rust uses a borrowing mechanism. Instead of passing objects by value `T`, objects can be passed by reference `&T`.
 
-## 1.4 Attributes
+## 1.5 Fundamentals of Asynchronous Programming: Async, Await, Futures, and Streams
+
+### 1.5.1 Parallelism and Concurrency
+
+## 1.6 Generic
+
+### 1.6.1 Bounds
+
+When working with generics, the type parameters often must use traits as bounds to stipulate what functionality a type implements.
+
+Multiple bounds for a single type can be applied with a `+`. Like normal, different types are separated with `,`.
+
+## 1.7 Traits
+
+A `trait` is a collection of methods defined for an unknown type: `Self`. They can access other methods declared in the same trait.
+
+**Commonly used traits:**
+
+* `Drop`
+* `Iterator`
+* `Clone`
+
+### 1.7.1 Dispatch
+
+```rust
+trait Speak {
+    fn speak(&self);
+}
+
+struct Dog;
+impl Speak for Dog {
+    fn speak(&self) {
+        println!("Woof!");
+    }
+}
+
+struct Cat;
+impl Speak for Cat {
+    fn speak(&self) {
+        println!("Meow!");
+    }
+}
+
+// Static dispatch
+fn talk_static<T: Speak>(animal: T) {
+    animal.speak();
+}
+
+// Dynamic dispatch
+fn talk_dynamic(animal: &dyn Speak) {
+    animal.speak();
+}
+
+fn main() {
+    let dog = Dog;
+    let cat = Cat;
+
+    // Using static dispatch
+    talk_static(dog);
+    talk_static(cat);
+
+    // Using dynamic dispatch
+    let animals: Vec<&dyn Speak> = vec![&Dog, &Cat];
+    for animal in animals {
+        talk_dynamic(animal);
+    }
+}
+```
+
+## 1.8 Attributes
 
 Refer to [Attributes](https://doc.rust-lang.org/reference/attributes.html) for more details.
 
@@ -96,9 +177,9 @@ Refer to [Attributes](https://doc.rust-lang.org/reference/attributes.html) for m
 * Derive macro helper attributes
 * Tool attributes
 
-### 1.4.1 Built-in attributes
+### 1.8.1 Built-in attributes
 
-#### 1.4.1.1 Derive
+#### 1.8.1.1 Derive
 
 Attribute `Derive` is used to automatically implement standard traits for a struct or enum.
 
@@ -108,14 +189,14 @@ Attribute `Derive` is used to automatically implement standard traits for a stru
 * `PartialEq & Eq`: Enables `==` and `!=` comparisons
 * `Hash`: Allows using the type in a HashMap
 
-#### 1.4.1.2 inline
+#### 1.8.1.2 inline
 
 Attribute `inline` is used to hint compiler to inline a function.
 
 * `#[inline(always)]`: Forces inlining.
 * `#[inline(never)]`: Prevents inlining.
 
-#### 1.4.1.3 allow
+#### 1.8.1.3 allow
 
 Attribute `allow` is used to suppress warnings.
 
@@ -124,7 +205,7 @@ Attribute `allow` is used to suppress warnings.
 * `#[allow(dead_code)]`
 * `#[allow(unused_variables, dead_code)]`
 
-#### 1.4.1.4 cfg
+#### 1.8.1.4 cfg
 
 Attribute `cfg` is used to enable conditional compilation.
 
@@ -135,7 +216,7 @@ fn only_on_linux() {
 }
 ```
 
-#### 1.4.1.5 test
+#### 1.8.1.5 test
 
 Marks a test function.
 
@@ -156,12 +237,12 @@ mod tests {
 }
 ```
 
-#### 1.4.1.6 Linkage & FFI (Interfacing with C): no_mangle, repr
+#### 1.8.1.6 Linkage & FFI (Interfacing with C): no_mangle, repr
 
 * `#[no_mangle]`: Prevents Rust from renaming a function.
 * `#[repr(C)]`: Ensures a struct has C-compatible layout.
 
-## 1.5 Modular Architecture
+## 1.9 Modular Architecture
 
 **Main Concepts:**
 
@@ -170,13 +251,13 @@ mod tests {
 * `Modules and use`: Let you control the organization, scope, and privacy of paths
 * `Paths`: A way of naming an item, such as a struct, function, or module
 
-### 1.5.1 Crate
+### 1.9.1 Crate
 
 A crate is the smallest amount of code that the Rust compiler considers at a time. Crates can contain modules, and the modules may be defined in other files that get compiled with the crate.
 
 A crate can come in one of two forms: a binary crate or a library crate. Most of the time when Rustaceans say 'crate', they mean library crate, and they use 'crate' interchangeably with the general programming concept of a 'library'.
 
-### 1.5.2 Package
+### 1.9.2 Package
 
 A package is a bundle of one or more crates that provides a set of functionality. A package contains a `Cargo.toml` file that describes how to build those crates.
 
@@ -184,7 +265,7 @@ Cargo follows a convention that `src/main.rs` is the crate root of a binary crat
 
 A package can have multiple binary crates by placing files in the src/bin directory: each file will be a separate binary crate.
 
-### 1.5.3 Module
+### 1.9.3 Module
 
 **Main keywords:**
 
@@ -206,7 +287,7 @@ A package can have multiple binary crates by placing files in the src/bin direct
 * `Private vs. public`: Code within a module is private from its parent modules by default. To make a module public, declare it with `pub mod` instead of `mod`. To make items within a public module public as well, use `pub` before their declarations.
 * `The use keyword`: Within a scope, the `use` keyword creates shortcuts to items to reduce repetition of long paths. In any scope that can refer to `crate::garden::vegetables::Asparagus`, you can create a shortcut with use `crate::garden::vegetables::Asparagus`; and from then on you only need to write Asparagus to make use of that type in the scope.
 
-### 1.5.4 Prelude
+### 1.9.4 Prelude
 
 In Rust, the prelude is a small set of commonly used types, traits, and macros from the standard library that are automatically imported into every Rust crate.
 
@@ -267,6 +348,44 @@ fn main() {
     for handle in handles {
         handle.join().unwrap();
     }
+}
+```
+
+## 2.3 std::sync::mpsc
+
+`std::sync::mpsc` in Rust is a standard library module that provides multi-producer, single-consumer (MPSC) channels for safe message passing between threads, enabling concurrent communication through a sender `tx` and a receiver `rx`.
+
+```rust
+use std::sync::mpsc;
+use std::thread;
+use std::time::Duration;
+
+fn main() {
+    // Create a channel
+    let (tx, rx) = mpsc::channel();
+
+    // Spawn a thread to send messages
+    let sender_thread = thread::spawn(move || {
+        let messages = vec![
+            String::from("Hello"),
+            String::from("from"),
+            String::from("the"),
+            String::from("thread!"),
+        ];
+
+        for msg in messages {
+            tx.send(msg).unwrap();
+            thread::sleep(Duration::from_secs(1)); // Simulate some work
+        }
+    });
+
+    // Receive messages in the main thread
+    for received in rx {
+        println!("Received: {}", received);
+    }
+
+    // Wait for the sender thread to finish
+    sender_thread.join().unwrap();
 }
 ```
 

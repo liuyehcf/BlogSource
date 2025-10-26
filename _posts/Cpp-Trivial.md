@@ -728,7 +728,7 @@ gcc -o catch_abnormal main.cpp -L. -lthrow_stripped -Wl,-rpath,. -std=gnu++17 -l
 ./catch_abnormal
 ```
 
-**Demo1: different RTTI**
+**Demo2: different RTTI**
 
 ```sh
 cat > lib.h << 'EOF'
@@ -771,7 +771,7 @@ struct MyException {
 int main() {
     std::cout << "typeid in main: " << &typeid(MyException) << std::endl;
 
-    void* handle = dlopen("./libthrow_static.so", RTLD_NOW | RTLD_LOCAL | RTLD_DEEPBIND);
+    void* handle = dlopen("./libthrow.so", RTLD_NOW | RTLD_LOCAL | RTLD_DEEPBIND);
     if (!handle) {
         std::cerr << "dlopen failed: " << dlerror() << std::endl;
         return 1;
@@ -812,15 +812,24 @@ int main() {
 }
 EOF
 
-# Disables the GNU extension that makes typeinfo and some other inline-emitted objects “linkonce-ODR” with STB_GNU_UNIQUE binding. With the default (-fgnu-unique), identical RTTI emitted in multiple DSOs is marked as STB_GNU_UNIQUE, so the dynamic loader canonicalises them to a single instance.
-gcc -o libthrow_static.so lib.cpp -fPIC -shared -fvisibility=hidden -fno-gnu-unique -std=gnu++17 -Wl,-Bstatic -lstdc++ -Wl,-Bdynamic -static-libgcc
+# Link libstdc++ statically
+gcc -o libthrow.so lib.cpp -fPIC -shared -fvisibility=hidden -fno-gnu-unique -std=gnu++17 -Wl,-Bstatic -lstdc++ -Wl,-Bdynamic -static-libgcc
 gcc -o catch_abnormal dl_main.cpp -fno-gnu-unique -ldl -lstdc++
 ./catch_abnormal
+
+# Link libstdc++ dynamically
+gcc -o libthrow.so lib.cpp -fPIC -shared -fvisibility=hidden -fno-gnu-unique -std=gnu++17 -lstdc++ -static-libgcc
+gcc -o catch_normal dl_main.cpp -fno-gnu-unique -ldl -lstdc++
+./catch_normal
 ```
+
+* With the default (`-fgnu-unique`), identical RTTI emitted in multiple DSOs is marked as `STB_GNU_UNIQUE`, so the dynamic loader canonicalises them to a single instance.
+* With dynamic `libstdc++`: the exception is catchable across DSOs even if the `type_info*` pointers differ, because libstdc++'s matching logic will (when needed) fall back to name-based checks inside one shared copy of the runtime.
+* With `libstdc++` (and especially `libgcc`) linked statically: you've created a separate C++/unwind runtime inside the `.so`. Now the throw happens in one runtime and the catch happens in another, the unwinder/metadata aren't shared, then the process terminates (core).
 
 ### 2.9.3 Wrap mechanism
 
-The `--wrap` linker feature (supported by GNU `ld` and accessible via `gcc -Wl,--wrap=symbol`) lets you intercept calls to a symbol at link time by renaming references. It’s a deterministic, build-time way to hook or override functions without changing callers.
+The `--wrap` linker feature (supported by GNU `ld` and accessible via `gcc -Wl,--wrap=symbol`) lets you intercept calls to a symbol at link time by renaming references. It's a deterministic, build-time way to hook or override functions without changing callers.
 
 How it works (conceptually)
 

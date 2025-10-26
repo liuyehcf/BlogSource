@@ -2176,7 +2176,8 @@ call plug#end()
     * `<c-t>`: Open selected file in a new tab  
     * `<c-p>`: Preview selected file  
 * If it doesn't work, it might be a Python-related issue  
-    * Run `:checkhealth`  
+    * Run `:checkhealth`
+* Cache path: Defined by `g:Lf_CacheDirectory`, which is `~/.vim/cache/LeaderF`
 
 ## 3.14 fzf.vim
 

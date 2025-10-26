@@ -269,6 +269,8 @@ You can view the documentation through `man proc`.
         }       
         ```
 
+    * `/proc/<pid>/smaps_rollup`: Memory mappings with statistics
+        * Referenced: The amount of memory in this mapping that has been recently accessed (i.e., referenced) by the process, which is also called `WSS`(Working Set Size).
     * **`/proc/<pid>/net`: Does not only list network information related to that process, but all the network information in the network namespace which that process belongs to.**
         * `/proc/pid>/net/tcp`
             * Display all listening addresses for a given pid:
