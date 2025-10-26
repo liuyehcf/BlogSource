@@ -1002,9 +1002,10 @@ EOF
 # 5 Reference
 
 * [Rust Documentation](https://doc.rust-lang.org/stable/)
-* [The Rust Programming Language](https://doc.rust-lang.org/stable/book/index.html)
-* [The Rust Reference](https://doc.rust-lang.org/stable/reference/)
-* [The Cargo Book](https://doc.rust-lang.org/stable/cargo/)
-* [The rustc book](https://doc.rust-lang.org/stable/rustc/index.html)
+    * [The Rust Programming Language](https://doc.rust-lang.org/stable/book/index.html)
+    * [Rust by Example](https://doc.rust-lang.org/rust-by-example/)
+    * [The Rust Reference](https://doc.rust-lang.org/stable/reference/)
+    * [The Cargo Book](https://doc.rust-lang.org/stable/cargo/)
+    * [The rustc book](https://doc.rust-lang.org/stable/rustc/index.html)
 * [CXX — safe interop between Rust and C++](https://cxx.rs/)
 * [Crate cxx](https://docs.rs/cxx/latest/cxx/#cargo-based-setup)
