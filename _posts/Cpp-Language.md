@@ -2873,6 +2873,44 @@ b=2
 ref=2
 ```
 
+### 4.3.2 const reference and lifetime
+
+In C++, a `const&` can bind to a temporary, and the lifetime of that temporary is extended to match the lifetime of the reference.
+
+```cpp
+#include <iostream>
+#include <string>
+
+std::string func1() {
+    return "hello, this is func1";
+}
+
+struct Foo {
+    const std::string& content;
+
+    Foo(std::string content_) : content(content_) { std::cout << "Init content=" << content << std::endl; }
+};
+
+int main() {
+    const auto& str = func1();
+    std::cout << "str=" << str << std::endl;
+
+    Foo f("hello this is foo");
+    std::cout << "f.content=" << f.content << std::endl;
+    return 0;
+}
+```
+
+```sh
+gcc -o main main.cpp -lstdc++ -std=gnu++20 -O3
+./main
+str=hello, this is func1
+Init content=hello this is foo
+f.content=ej 'o
+```
+
+In the above case, lifetime of `content_` is finished when exiting the constructor.
+
 ## 4.4 Class
 
 ### 4.4.1 Member Initializer List

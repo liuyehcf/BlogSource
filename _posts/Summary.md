@@ -1,5 +1,5 @@
 ---
-title: Summary-of-Key-Points
+title: Summary
 date: 2018-01-19 13:18:39
 tags: 
 - 原创
@@ -289,7 +289,10 @@ categories:
         - SFINAE(Substitution Failure Is Not An Error)
             - Determine if the class has specific members
 - Functional Programming
-    - Type Erasure(std::function <- Lambda)
+    - Type Erasure
+        - std::function <- Lambda
+        - std::any
+        - virtual function, OOP
     - Function Objects
     - Lambda Expression
     - Higher-Order Functions(Treats Functions as First-Class Citizens)
@@ -417,8 +420,28 @@ An Application Binary Interface (ABI) is a set of rules and conventions that dic
         - Check Constraint
     - OLAP & OLTP
     - Lakehouse
+        - Table Format
+            - Hive
+            - Paimon
+            - Iceberg
+        - File Format
+            - Parquet
+            - ORC
+            - Avro
+            - CSV
+        - Catalog
+            - External Catalog
+                - Partially Lifecycle Management
+            - Internal Catalog
+                - Fully Lifecycle Management
+                - Easy to add engine-specific optimizations
+                    - Prune & Index
+                    - Statistics Enhancement
+                - Lowest latency due to in-memory or local metadata access
+                - Strong consistency & High real-time capability
         - Low Cost Storage
         - Performance
+            - IO Prefetch/Alignement/Coalesce/Prune
     - Database Auditing
     - Database Security
     - Database Access Control
@@ -547,7 +570,16 @@ An Application Binary Interface (ABI) is a set of rules and conventions that dic
             - Arrow
             - Parquet
             - ORC
-            - Iceberg
+    - Storage as a Service
+        - API
+    - Table–Stream Duality
+        - A stream is a changelog of a table, and a table is the materialized result of a stream
+        - Change Data Capture/Feed (CDC/CDF)
+            - Maintain both table and binlog/changelog at the sametime
+            - Not good for write, good for incremental read/changelog feed.
+        - Row Linerage (Iceberg v3)
+            - Row linerage information is recorded inside the table format.
+            - Good for write while has slight overhead on read (Infer row linerage on read).
 - Database Framework
     - Parser
         - Grammar Checking
@@ -777,6 +809,10 @@ An Application Binary Interface (ABI) is a set of rules and conventions that dic
     - Graph Database
     - Object-Oriented Database
         - ObjectDB
+- Workloads
+    - CPU-intensive scenarios
+    - I/O-intensive scenarios
+    - High-concurrency, low-latency scenarios
 - Test Sets
     - SSB
     - TPC-H
@@ -1068,7 +1104,9 @@ Now, instead of storing all these chunks as is, Roaring Bitmaps compresses them:
 
 *  Disadvantages: When some page is frequently used for a period of time, and it will stay in the poll for a long while(May be it can be solved with frequency degradation)
 
-## 3.9 Not yet mastered
+## 3.9 CDC vs. Row Linerage
+
+## 3.10 Not yet mastered
 
 1. WAL Structure
 1. LSM Structure

@@ -161,7 +161,7 @@ For better observability and query analysis, I introduced support for runtime pr
     * Reduce the scheduling overhead and optimize the utilization of available CPU resources.
     * It is easier to set different parallelism for different parts of the query.
 1. Could describe the subquery classifications?
-    * [Summary-of-Key-Points](/_posts/Summary-of-Key-Points.md)
+    * [Summary](/_posts/Summary.md)
 1. How many subquery transformation rules in Starrocks?
     * [DBMS-Optimizer](/_posts/DBMS-Optimizer.md)
 1. How does starrocks process subquery?
@@ -802,7 +802,7 @@ For better observability and query analysis, I introduced support for runtime pr
 
 # 10 Reference
 
-* [Summary-of-Key-Points](/_posts/Summary-of-Key-Points.md)
+* [Summary](/_posts/Summary.md)
 * [cpp-interview](https://github.com/huihut/interview)
 * [interview](https://github.com/Olshansk/interview)
 * [Interview](https://github.com/apachecn/Interview)

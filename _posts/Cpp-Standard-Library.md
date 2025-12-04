@@ -1388,7 +1388,9 @@ int main() {
 ## 22.1 sstring
 
 1. `std::stringstream`
-1. `std::istringstream`: Use this and `std::getline` to achieve the function of spliting a string
+    * `str`: Gets or sets the contents of underlying string device object.
+    * `clear`: Modifies state flags.
+1. `std::istringstream`: Use this and `std::getline` to achieve the function of spliting a string.
 1. `std::ostringstream`
 
 ```cpp

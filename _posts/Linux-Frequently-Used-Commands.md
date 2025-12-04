@@ -1259,6 +1259,7 @@ The `r` in its name stands for `remote`, and `rsync` essentially means remote sy
 
 * `rsync -av /src/foo /dest`: Copies the entire directory `/src/foo` into the directory `/dest`.
 * `rsync -av /src/foo/ /dest`: Copies the contents of the directory `/src/foo` into the directory `/dest`.
+    * `rsync -av /src/foo/ /dest/`: Same meaning.
 * `rsync -a --exclude=log/ dir1/ dir2`: Copies the contents of `dir1` into the directory `dir2`, excluding all subdirectories named `log`.
 * `rsync -a --exclude=log/ dir1 dir2`: Copies the entire `dir1` directory into the `dir2` directory, excluding all subdirectories named `log`.
 * `rsync -a dir1 user1@192.168.0.1:~`: Copies the entire `dir1` directory to a directory named `~` under the user directory of `user1` on the machine `192.168.0.1`, resulting in `~/\~/dir1` (**a very tricky issue**).
@@ -1370,6 +1371,7 @@ The `r` in its name stands for `remote`, and `rsync` essentially means remote sy
 * `wget -r -np -nH -P /root/test -R "index.html*" 'http://192.168.66.1/stuff'`: Recursive download but excluding pattern `index.html*`.
 * `wget -r -np -nH -P /root/test 'ftp://192.168.66.1/stuff'`: Recursive download.
 * `wget --proxy=http://proxy.example.com:8080 http://example.com/file`
+* `wget 'http://[ipv6]:19999/file' --no-proxy`: Ipv6 should be wrapped by quotes.
 
 ## 2.24 tree
 
@@ -2223,12 +2225,12 @@ This command is used to allow authorized users to execute programs as another us
 **Usage:**
 
 * `tmux`: Start a new session, named with an incrementing number.
-* `tmux new -s <name>`: Start a new session with a specified name.
-* `tmux ls`: List all sessions.
-* `tmux attach-session -t <name>`: Attach to a session with a specific name.
-* `tmux kill-session -t <name>`: Kill a session with a specific name.
-* `tmux rename-session -t <old-name> <new-name>`: Rename a session.
-* `tmux source-file ~/.tmux.conf`: Reload config.
+* `tmux [-L <socket_name> -f <config_path>] new -s <name>`: Start a new session with a specified name.
+* `tmux [-L <socket_name>] ls`: List all sessions.
+* `tmux [-L <socket_name>] attach-session -t <name>`: Attach to a session with a specific name.
+* `tmux [-L <socket_name>] kill-session -t <name>`: Kill a session with a specific name.
+* `tmux [-L <socket_name>] rename-session -t <old-name> <new-name>`: Rename a session.
+* `tmux [-L <socket_name>] source-file ~/.tmux.conf`: Reload config.
 * `tmux clear-history`: Clean history.
 * `tmux kill-server`: Kill server.
 * **`<prefix> ?`: List key bindings.**

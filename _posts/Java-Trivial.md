@@ -276,6 +276,14 @@ From [Java Downloads](https://www.oracle.com/java/technologies/downloads/), you 
 
 Debug tool like `gdb`
 
+## 2.11 jcmd
+
+### 2.11.1 Show heap stats
+
+```sh
+jcmd <pid> GC.heap_info
+```
+
 # 3 Monitor
 
 ## 3.1 Arthas

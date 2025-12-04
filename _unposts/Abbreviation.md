@@ -92,6 +92,7 @@
 | Abbreviation | Explanation |
 |:--|:--|
 | CDC | Change Data Capture |
+| CDF | Change Data Feed |
 | ODS | Operational Data Store |
 | DWD | Data Warehouse Detail |
 | DWM | Data Warehouse Middle |

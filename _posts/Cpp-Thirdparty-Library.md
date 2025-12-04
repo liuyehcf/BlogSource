@@ -15,6 +15,14 @@ categories:
 
 ## 1.1 libbacktrace
 
+libbacktrace is a library developed by GCC to provide file name, function name, and line number information for stack traces.
+
+It is designed to be simple to use, fast, and very accurate when debug information (`.debug_info`, `DWARF`) is available.
+
+Unlike libunwind, which focuses on unwinding frames, libbacktrace focuses on symbolizing addresses (turning program counters into file/line/function names).
+
+Here's a simple tutorial of how to use it, including installation.
+
 ```sh
 git clone https://github.com/ianlancetaylor/libbacktrace.git
 cd libbacktrace
@@ -83,9 +91,12 @@ gcc -o main main.cpp -lstdc++ -std=gnu++17 -lbacktrace -g
 
 ## 1.2 libunwind
 
-[The libunwind project](https://www.nongnu.org/libunwind/index.html)
+libunwind is a portable and high-performance library designed to inspect and manipulate call stacks (perform stack unwinding). It provides low-level control over the process of walking back through function frames, retrieving register values, and analyzing execution state.
 
-[github-libunwind](https://github.com/libunwind/libunwind)
+* [The libunwind project](https://www.nongnu.org/libunwind/index.html)
+* [github-libunwind](https://github.com/libunwind/libunwind)
+
+Here's a simple tutorial of how to use it, including installation.
 
 ```sh
 git clone https://github.com/libunwind/libunwind.git
@@ -184,9 +195,41 @@ gcc -o main main.cpp -lstdc++ -std=gnu++17 -lunwind -DUNW_LOCAL_ONLY
 0x40114a: _start (+0x2a)
 ```
 
-### 1.2.1 How to automatically generate a stacktrace when my program crashes
+### 1.2.1 Commonly Used Functions in libunwind
+
+```cpp
+/// Low-level APIs:
+// Captures the current machine register state into a `unw_context_t` structure
+int unw_getcontext(unw_context_t* context);
+
+// Initializes a local cursor to walk the current thread's stack.
+int unw_init_local(unw_cursor_t* cursor, unw_context_t* context);
+
+// Moves the cursor to the next stack frame.
+int unw_step(unw_cursor_t* cursor);
+
+// Retrieves the value of a specific register in the current frame.
+int unw_get_reg(unw_cursor_t* cursor, unw_regnum_t reg, unw_word_t* value);
+
+// Retrieves the function name (mangled) of the current stack frame.
+int unw_get_proc_name(unw_cursor_t* cursor,
+                      char* buffer,
+                      size_t length,
+                      unw_word_t* offset);
+
+/// High-level APIs:
+// Captures a list of return addresses (similar to glibc backtrace()).
+int unw_backtrace(void** buffer, int size);
+
+// Turns error codes (from unw_step, unw_get_reg, etc.) into readable text.
+const char* unw_strerror(int error_code);
+```
+
+### 1.2.2 How to automatically generate a stacktrace when my program crashes
 
 [How to automatically generate a stacktrace when my program crashes](https://stackoverflow.com/questions/77005/how-to-automatically-generate-a-stacktrace-when-my-program-crashes)
+
+Here's a demo project: [coredump_demo](https://github.com/liuyehcf/cpp-demo-projects/tree/main/libunwind/coredump_demo)
 
 ## 1.3 bison
 
@@ -826,7 +869,36 @@ int main() {
 }
 ```
 
-## 2.7 Reference
+## 2.7 Thread
+
+### 2.7.1 upgrade_mutex
+
+[upgrade_mutex](https://www.boost.org/doc/libs/latest/doc/html/thread/synchronization.html#thread.synchronization.mutex_types.upgrade_mutex)
+
+```cpp
+#include <boost/thread.hpp>
+#include <boost/thread/lock_types.hpp>
+#include <boost/thread/locks.hpp>
+#include <iostream>
+
+int main() {
+    boost::upgrade_mutex mtx;
+
+    boost::upgrade_lock<boost::upgrade_mutex> ulk(mtx);
+    std::cout << "Got upgrade (read) lock" << std::endl;
+
+    boost::upgrade_to_unique_lock<boost::upgrade_mutex> uniqueLock(ulk);
+    std::cout << "Upgraded to unique (write) lock" << std::endl;
+
+    return 0;
+}
+```
+
+```sh
+gcc -o main main.cpp -lstdc++ -std=gnu++20 -O3 -lboost_thread -pthread
+```
+
+## 2.8 Reference
 
 * [The Boost C++ Libraries BoostBook Documentation Subset](https://www.boost.org/doc/libs/master/doc/html/)
 * [How to print current call stack](https://www.boost.org/doc/libs/1_66_0/doc/html/stacktrace/getting_started.html)

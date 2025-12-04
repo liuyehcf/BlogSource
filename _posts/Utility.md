@@ -203,7 +203,11 @@ Unicode Box Drawing character set, which includes a variety of horizontal, verti
 * [GitHub Proxy](https://ghproxy.com/)
 * [GitMirror](https://gitmirror.com/)
 
-## 3.3 Reference
+## 3.3 ZeroOmega - Chrome Extension
+
+* [ZeroOmega](https://github.com/zero-peak/ZeroOmega)
+
+## 3.4 Reference
 
 * [Project V/V2Ray](https://www.v2ray.com/awesome/tools.html)
 * [Project X/X2Ray](https://xtls.github.io/)

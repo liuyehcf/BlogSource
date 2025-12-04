@@ -690,12 +690,13 @@ int main() {
 EOF
 
 mkdir build
-g++ -o build/main_static cpp/main.cpp target/release/libcpp_invoke_rust_demo.a -I target/cxxbridge -lpthread -ldl
+# Static version
+gcc -o build/main_static -Itarget/cxxbridge cpp/main.cpp target/release/libcpp_invoke_rust_demo.a -lstdc++ -std=gnu++17 -lpthread -ldl
 build/main_static
 
-# Dynamic version cannot work
-g++ -o build/main_dynamic cpp/main.cpp -Ltarget/release -lcpp_invoke_rust_demo -I target/cxxbridge -lpthread -ldl
-LD_LIBRARY_PATH=target/release ./main_dynamic
+# Dynamic version
+gcc -o build/main_dynamic -Itarget/cxxbridge -Ltarget/release cpp/main.cpp -lcpp_invoke_rust_demo -lstdc++ -std=gnu++17 -lpthread -ldl
+LD_LIBRARY_PATH=target/release build/main_dynamic
 
 # Or you can use cmake to build this
 cat > CMakeLists.txt << 'EOF'
@@ -918,12 +919,15 @@ int main() {
 EOF
 
 mkdir build
-g++ -o build/main_static cpp/main.cpp target/release/librust_ffi.a -I target/cxxbridge -lpthread -ldl
+OUT=$(echo target/release/build/cpp_invoke_rust_demo-*/out)
+CXXOUT=$(echo target/release/build/cxx-*/out)
+# Static version
+gcc -o build/main_static -I"$OUT/cxxbridge/include" cpp/main.cpp target/release/librust_ffi.a -lstdc++ -std=gnu++17 -lpthread -ldl
 build/main_static
 
 # Dynamic version cannot work
-g++ -o build/main_dynamic cpp/main.cpp -Ltarget/release -lrust_ffi -I target/cxxbridge -lpthread -ldl
-LD_LIBRARY_PATH=target/release ./main_dynamic
+gcc -o build/main_dynamic -I"$OUT/cxxbridge/include" -Ltarget/release cpp/main.cpp "$OUT/cxxbridge/sources/cpp_invoke_rust_demo/src/bridge.rs.cc" "$CXXOUT/libcxxbridge1.a" -lrust_ffi -lstdc++ -std=gnu++17 -lpthread -ldl
+LD_LIBRARY_PATH=target/release build/main_dynamic
 
 # Or you can use cmake to build this
 cat > CMakeLists.txt << 'EOF'
@@ -999,7 +1003,13 @@ edition = "2021"
 EOF
 ```
 
-# 5 Reference
+# 5 Tips
+
+## 5.1 Check all compile checks
+
+`rustc -W help`
+
+# 6 Reference
 
 * [Rust Documentation](https://doc.rust-lang.org/stable/)
     * [The Rust Programming Language](https://doc.rust-lang.org/stable/book/index.html)

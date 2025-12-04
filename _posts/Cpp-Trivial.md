@@ -1245,7 +1245,9 @@ Total: 100.1 MB
 **Generage svg:**
 
 * `sudo apt install -y graphviz` or `sudo yum install -y graphviz`
-* `jeprof --show_bytes --svg main <heap_file> > <svg_file>`
+* `jeprof --show_bytes --svg <binary> <heap_file> > <svg_file>`
+* Work with [FlameGraph](https://github.com/brendangregg/FlameGraph):
+    * `jeprof --show_bytes <binary> <heap_file> --collapsed | ${FlameGraph}/flamegraph.pl --minwidth 3 > <svg_file>`
 
 ### 3.3.4 Work with http
 

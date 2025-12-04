@@ -1648,6 +1648,39 @@ then
 fi
 ```
 
+### 5.1.1 Condition pattern
+
+* `if [ expr ] `
+* `if [[ expr ]]`
+* `if command`
+* `if (( expression ))`: Arithmetic Evaluation
+    * If the `result ≠ 0` → true
+    * If the `result = 0` → false
+
+```sh
+# 1. File check
+if [ -f "/etc/passwd" ]; then
+    echo "File exists"
+fi
+
+# 2. Pattern match (bash)
+if [[ $USER == a* ]]; then
+    echo "User starts with 'a'"
+fi
+
+# 3. Command condition
+if grep -q "root" /etc/passwd; then
+    echo "Contains 'root'"
+fi
+
+# 4. Arithmetic condition
+a=5
+b=10
+if (( a < b )); then
+    echo "a is less than b"
+fi
+```
+
 ## 5.2 if else
 
 ```sh
