@@ -2300,6 +2300,89 @@ int main() {
 * Each `Visitor, variant` pair generates a `vtable` that stores all function pointers, ordered according to the declaration order of types in the `std::variant`.
 * When accessing with `std::visit`, the function pointer in the `vtable` is located using `std::variant::index` and then invoked.
 
+## 32.2 Example: Calculate Row-wise Hash
+
+```cpp
+#include <cstdint>
+#include <iostream>
+#include <string>
+#include <variant>
+#include <vector>
+
+struct HashCalculator {
+    void append_bool(bool value) { data.push_back(value ? 1 : 0); }
+    void append_int8(int8_t value) { data.push_back(static_cast<uint8_t>(value)); }
+    void append_int16(int16_t value) {
+        data.push_back(static_cast<uint8_t>(value & 0xFF));
+        data.push_back(static_cast<uint8_t>((value >> 8) & 0xFF));
+    }
+    void append_int32(int32_t value) {
+        for (int i = 0; i < 4; ++i) {
+            data.push_back(static_cast<uint8_t>((value >> (i * 8)) & 0xFF));
+        }
+    }
+    void append_int64(int64_t value) {
+    void append_float(float value) {
+        uint32_t as_int = *reinterpret_cast<uint32_t*>(&value);
+        append_int32(as_int);
+    }
+    void append_double(double value) {
+        uint64_t as_int = *reinterpret_cast<uint64_t*>(&value);
+        append_int64(as_int);
+    }
+    void append_string(const std::string& value) {
+        append_int32(static_cast<int32_t>(value.size()));
+        data.insert(data.end(), value.begin(), value.end());
+    }
+    std::vector<uint8_t> data;
+
+    int32_t hash() const {
+        int32_t hash_value = 0;
+        for (uint8_t byte : data) {
+            hash_value = (hash_value * 31) + byte;
+        }
+        return hash_value;
+    }
+};
+
+using DynType = std::variant<bool, int8_t, int16_t, int32_t, int64_t, float, double, std::string>;
+
+int32_t hash(const std::vector<DynType>& values) {
+    HashCalculator calculator;
+    for (const auto& value : values) {
+        std::visit(
+                [&calculator](auto&& arg) {
+                    using T = std::decay_t<decltype(arg)>;
+                    if constexpr (std::is_same_v<T, bool>) {
+                        calculator.append_bool(arg);
+                    } else if constexpr (std::is_same_v<T, int8_t>) {
+                        calculator.append_int8(arg);
+                    } else if constexpr (std::is_same_v<T, int16_t>) {
+                        calculator.append_int16(arg);
+                    } else if constexpr (std::is_same_v<T, int32_t>) {
+                        calculator.append_int32(arg);
+                    } else if constexpr (std::is_same_v<T, int64_t>) {
+                        calculator.append_int64(arg);
+                    } else if constexpr (std::is_same_v<T, float>) {
+                        calculator.append_float(arg);
+                    } else if constexpr (std::is_same_v<T, double>) {
+                        calculator.append_double(arg);
+                    } else if constexpr (std::is_same_v<T, std::string>) {
+                        calculator.append_string(arg);
+                    }
+                },
+                value);
+    }
+    return calculator.hash();
+}
+
+int main() {
+    std::cout << hash({true, int8_t(42), int16_t(300), int32_t(70000), int64_t(5000000000), 3.14f, 2.71828, "hello"})
+              << std::endl;
+    return 0;
+}
+```
+
 # 33 Containers
 
 1. `<vector>`: Internally, it is an array. When resizing or shrinking, data is copied or moved, so the element type must have at least a copy constructor or a move constructor. For example, `std::vector<std::atomic_bool>` cannot use `push_back` or `emplace_back` to add elements.

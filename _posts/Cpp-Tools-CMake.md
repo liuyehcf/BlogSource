@@ -409,6 +409,20 @@ Probably the most important item is targets. Targets represent executables, libr
 
 In addition to storing their type, targets also keep track of general properties. These properties can be set and retrieved using the `set_target_properties` and `get_target_property` commands, or the more general `set_property` and `get_property` commands.
 
+## 2.1 Library
+
+| Feature/Ability | STATIC | SHARED | MODULE | OBJECT | INTERFACE | ALIAS |
+|--|--|--|--|--|--|--|
+| Produces compiled output | ✔ `.a` | ✔ `.so/.dll` | ✔ plugin | ✔ `.o` | ❌ | ❌ |
+| Contains sources | ✔ | ✔ | ✔ | ✔ | ❌ | ❌ |
+| Can be linked normally | ✔ | ✔ | ❌ (normally) | ❌ (used as sources) | ✔ | ✔ |
+| Can have include dirs | ✔ | ✔ | ✔ | ✔ | ✔ (INTERFACE) | ✔ |
+| Can have compile definitions | ✔ | ✔ | ✔ | ✔ | ✔ (INTERFACE) | ✔ |
+| Can have compile options | ✔ | ✔ | ✔ | ✔ | ✔ (INTERFACE) | ✔ |
+| Propagates usage requirements | ✔ | ✔ | ✔ | ❌ | ✔ | ✔ |
+| Built once and reused | ✔ | ✔ | ✔ | ❌ (recompiled by consumers) | n/a | n/a |
+| Typical use case | static libs | shared libs | plugins | object reuse | header-only/config | rename a target |
+
 # 3 variables
 
 In CMake, variables themselves are typeless. CMake variables are stored as strings when defined, but these strings can be interpreted as different types (such as boolean, integer, etc.) through CMake commands and syntax. Below are some common variable types and examples of how to use them in CMake:

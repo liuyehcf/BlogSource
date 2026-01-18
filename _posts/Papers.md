@@ -2000,6 +2000,8 @@ Data Stream Processing System, DSPS
         * [Automatic SQL Tuning in Oracle 10g](/resources/paper/Automatic-SQL-Tuning-in-Oracle-10g.pdf)
         * [Optimizer Plan Change Management: Improved Stability and Performance in Oracle 11g](/resources/paper/Optimizer-Plan-Change-Management-Improved-Stability-and-Performance-in-Oracle-11g.pdf)
         * [Query Optimization in Oracle 12c Database In-Memory](/resources/paper/Query-Optimization-in-Oracle-12c-Database-In-Memory.pdf)
+    * snowflake
+        * [The Snowflake Elastic Data Warehouse](/resources/paper/The-Snowflake-Elastic-Data-Warehouse.pdf)
     * facebook
         * [Velox: Meta's Unified Execution Engine](https://scontent-hkg4-2.xx.fbcdn.net/v/t39.8562-6/302757195_3033291893628871_4556621853780203235_n.pdf?_nc_cat=109&ccb=1-7&_nc_sid=ad8a9d&_nc_ohc=hY-ITB_TXPQAX8Ylsh_&_nc_ht=scontent-hkg4-2.xx&oh=00_AT9PVOmf5doA__7E1n_itQFL30Ri-4TTXQbVqhmSEMUjDA&oe=6314D2A7)
     * Stream processing

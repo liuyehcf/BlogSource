@@ -45,9 +45,7 @@ categories:
 
 ### 1.1.1 Here Document
 
-`Here Document`是`Shell`中的一种特殊的重定向方式，用来将输入重定向到一个交互式`Shell`脚本或程序
-
-它的基本的形式如下
+A `Here Document` is a special form of input redirection in Shell, used to feed input to an interactive shell script or program.
 
 ```sh
 command << delimiter
@@ -55,15 +53,24 @@ command << delimiter
 delimiter
 ```
 
-例如
+Example:
 
 ```sh
 wc -l << EOF
-    欢迎来到
-    菜鸟教程
-    www.runoob.com
+    hello,
+    world
+    !
 EOF
-3          # 输出结果为 3 行
+```
+
+Multi line String:
+
+```sh
+my_str=$(cat <<'EOF'
+$HOME will not be expanded
+$(date) will not be executed
+EOF
+)
 ```
 
 ### 1.1.2 Here String

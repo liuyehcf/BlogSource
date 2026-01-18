@@ -205,6 +205,13 @@ int unw_getcontext(unw_context_t* context);
 // Initializes a local cursor to walk the current thread's stack.
 int unw_init_local(unw_cursor_t* cursor, unw_context_t* context);
 
+// It is an extended version that allows you to specify how unwinding should behave using flags.
+// The most important flag: UNW_INIT_SIGNAL_FRAME
+//      This tells libunwind: The context comes from a signal handler; the first frame is a signal frame.
+int unw_init_local2(unw_cursor_t *cursor,
+                    unw_context_t *context,
+                    int flags);
+
 // Moves the cursor to the next stack frame.
 int unw_step(unw_cursor_t* cursor);
 
@@ -1638,6 +1645,10 @@ add_executable(bar bar.cc ${PROTO_SRCS} ${PROTO_HDRS})
 target_link_libraries(bar ${Protobuf_LIBRARIES})
 ```
 
+**Tips:**
+
+For type `optional string`, do not set empty string to it.
+
 ## 5.10 leveldb
 
 ```sh
@@ -1912,6 +1923,7 @@ Arrow ABI stands for Apache Arrow Application Binary Interface. It's a low-level
 * `ArrowArrayStream`
 * `ImportSchema`/`ExportSchema`
 * `ExportRecordBatch`/`ImportRecordBatch`
+    * `ImportRecordBatch` takes ownership of ArrowArray's release, it will invoke release when going out of scope.
 
 **Key Principles:**
 

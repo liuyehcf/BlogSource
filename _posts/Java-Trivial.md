@@ -280,9 +280,10 @@ Debug tool like `gdb`
 
 ### 2.11.1 Show heap stats
 
-```sh
-jcmd <pid> GC.heap_info
-```
+* Heap information: `jcmd <pid> GC.heap_info`
+* VM flags: `jcmd <pid> VM.flags`
+* Stack and lock: `jcmd <pid> Thread.print -l`
+* Big classes: `jcmd <pid> GC.class_histogram live`
 
 # 3 Monitor
 
@@ -329,7 +330,9 @@ jcmd <pid> GC.heap_info
 
 ```sh
 wget https://github.com/leibnitz27/cfr/releases/download/0.152/cfr-0.152.jar
+
 java -jar cfr-0.152.jar xxx.class
+java -jar cfr-0.152.jar xxx.jar --outputdir <output>
 ```
 
 ## 4.2 JD

@@ -580,6 +580,10 @@ An Application Binary Interface (ABI) is a set of rules and conventions that dic
         - Row Linerage (Iceberg v3)
             - Row linerage information is recorded inside the table format.
             - Good for write while has slight overhead on read (Infer row linerage on read).
+    - Data Ingestion and Loading Techniques
+        - INSERT: writes rows via SQL.
+        - LOAD: imports bulk data quickly from files.
+        - INGESTION: the entire process of bringing data from external systems into the database (batch or streaming).
 - Database Framework
     - Parser
         - Grammar Checking
@@ -1104,9 +1108,124 @@ Now, instead of storing all these chunks as is, Roaring Bitmaps compresses them:
 
 *  Disadvantages: When some page is frequently used for a period of time, and it will stay in the poll for a long while(May be it can be solved with frequency degradation)
 
-## 3.9 CDC vs. Row Linerage
+## 3.9 Stream vs. Batch
 
-## 3.10 Not yet mastered
+### 3.9.1 Batch Processing (Offline Processing)
+
+Batch processing handles data in large batches collected over a certain period (hourly, daily, weekly). It prioritizes high throughput over low latency.
+
+**Key Characteristics:**
+
+* High latency (minutes → hours)
+* Processes historical data
+* Suitable for heavy computations
+* Cost-efficient and scalable
+
+**Common Use Cases:**
+
+* Daily business reports (T+1)
+* Data warehouse ETL
+* Machine learning model training
+* Offline user behavior analytics
+
+**Typical Technologies:**
+
+* Hadoop MapReduce
+* Spark (Batch mode) / Hive
+* Presto / Trino
+* Data lakes (HDFS, S3 + Iceberg/Hudi/Delta)
+
+### 3.9.2 Real-Time Processing (Streaming)
+
+Real-time processing handles data continuously as it arrives (events, logs, clicks). The goal is low latency (milliseconds to seconds).
+
+**Key Characteristics:**
+
+* Continuous, incremental computation
+* Low latency and instant insights
+* Often paired with message queues (Kafka)
+* Handles high-volume, fast-arriving data
+
+**Common Use Cases:**
+
+* Real-time monitoring & alerting
+* Fraud detection / risk scoring
+* Recommendation systems
+* Real-time dashboards (DAU, metrics refresh every second)
+
+**Typical Technologies:**
+
+* Kafka (message broker)
+* Apache Flink / Spark Streaming / Storm
+* Redis, ClickHouse (real-time OLAP)
+* Elasticsearch (log & search analytics)
+
+### 3.9.3 Unified Batch-Stream Processing (Stream-Batch Unification)
+
+Unified batch-stream processing uses one single framework to handle both batch jobs and streaming jobs, often with the same code logic.
+
+This solves the long-standing issue where companies must maintain two separate systems (batch + streaming), resulting in inconsistent results and high maintenance cost.
+
+**Key Characteristics:**
+
+* One engine handles both real-time and offline data
+* One codebase → consistent metrics
+* Lower development & operational cost
+* Online processing (stream) + historical processing (batch)
+
+**Common Use Cases:**
+
+* Scenarios needing strict consistency between real-time and offline metrics
+* Real-time + batch data pipelines on data lakes
+* Real-time dashboards + periodic backfill jobs
+* Financial, risk management, audit systems
+
+**Typical Technologies:**
+
+* Apache Flink (most complete unified architecture)
+* Spark Structured Streaming
+* RisingWave / Materialize (real-time SQL with persistent views)
+
+### 3.9.4 OLAP Engine's View on Streaming vs. Batch
+
+Take Clickhouse as example for OLAP engine. From its core architectural design, Clickhouse is primarily built for:
+
+* High-throughput batch analytics
+* Columnar storage
+* Vectorized execution
+* Massively parallel processing (MPP)
+
+This means Clickhouse excels at scanning large volumes of data and performing aggregations, joins, and analytical queries in a batch-oriented manner.
+
+> In short: ClickHouse is a batch analytics engine at its core.
+
+**How ClickHouse Handles "Streaming" Data:**
+
+* ClickHouse does not perform streaming computation, but it supports streaming ingestion — meaning data can be continuously fed into ClickHouse in small batches and queried almost immediately.
+
+**What ClickHouse can do:**
+
+* Consume data continuously from Kafka, RabbitMQ, or other queues
+* Insert data in micro-batches (e.g., via Kafka Engine + Materialized Views)
+* Provide near real-time query performance
+* Support sub-second ingestion-to-query latency depending on setup
+
+**What it cannot do:**
+
+* No event-time processing
+* No watermarking
+* No sliding/tumbling windows with streaming semantics
+* No continuous stateful processing
+* No exactly-once streaming execution model
+
+**Therefore:**
+
+> ClickHouse can accept streaming data, but does not compute in a streaming fashion.
+It performs fast, batch-style queries over data that arrives in real time.
+
+## 3.10 CDC vs. Row Linerage
+
+## 3.11 Not yet mastered
 
 1. WAL Structure
 1. LSM Structure

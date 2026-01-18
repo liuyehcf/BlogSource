@@ -429,4 +429,5 @@ You can view the documentation through `man proc`.
 1. `/dev/disk/by-partlabel`: The directory contains symbolic links to partitions on storage devices identified by their partition labels.
 1. `/dev/disk/by-id`: The directory contains symbolic links to storage devices based on their unique hardware identifiers.
 1. `/dev/tty`: is a special file in Unix-like operating systems that represents the controlling terminal for the current process. In other words, it is a reference to the terminal device (such as a command-line interface) that is currently interacting with the user.
-
+1. `/dev/kmsg`: is a kernel message interface in Linux. It provides direct, structured access to the kernel log buffer, and it is the modern replacement / complement to the legacy `/proc/kmsg`.
+    * Add some log to dmesg: `echo "<6>TEST dmesg timestamp check: $(date -Ins)" | sudo tee /dev/kmsg >/dev/null`

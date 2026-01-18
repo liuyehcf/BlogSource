@@ -1328,7 +1328,17 @@ The `r` in its name stands for `remote`, and `rsync` essentially means remote sy
 * `tar cvf - /home/liuye | sha1sum`: `-` indicates standard input/output, here it represents standard output
 * `wget -qO- xxx.tar.gz | tar -xz -C /tmp/target`
 
-## 2.22 curl
+## 2.22 gzip
+
+gzip (GNU zip) is a fast, lossless compression utility commonly used on Unix/Linux systems to reduce file size. It uses the DEFLATE algorithm (LZ77 + Huffman coding) and is optimized for speed and simplicity rather than maximum compression.
+
+**Examples:**
+
+* `gzip file.txt`: Compress and create `file.txt.gz`, and delete the original `file.txt`.
+* `gzip -c file.txt > file.txt.gz`: Compress and keep the original.
+* `gzip -d file.txt.gz`(Or `gunzip file.txt.gz`): Decompress and create `file.txt` and delete the original `file.txt.gz`.
+
+## 2.23 curl
 
 **Pattern:**
 
@@ -1348,7 +1358,7 @@ The `r` in its name stands for `remote`, and `rsync` essentially means remote sy
 
 * `curl -L -o <filename> '<url>'`
 
-## 2.23 wget
+## 2.24 wget
 
 **Pattern:**
 
@@ -1373,7 +1383,7 @@ The `r` in its name stands for `remote`, and `rsync` essentially means remote sy
 * `wget --proxy=http://proxy.example.com:8080 http://example.com/file`
 * `wget 'http://[ipv6]:19999/file' --no-proxy`: Ipv6 should be wrapped by quotes.
 
-## 2.24 tree
+## 2.25 tree
 
 **Pattern:**
 
@@ -1384,14 +1394,14 @@ The `r` in its name stands for `remote`, and `rsync` essentially means remote sy
 * `-N`: Display non-ASCII characters, can show Chinese
 * `-L [num]`: Control the display depth level
 
-## 2.25 split
+## 2.26 split
 
 **Examples:**
 
 * `split -b 2048M bigfile bigfile-slice-`: Split the file by size, each split file is up to `2048M`, with the prefix `bigfile-slice-`
 * `split -l 10000 bigfile bigfile-slice-`: Split the file by lines, each split file contains up to `10000` lines, with the prefix `bigfile-slice-`
 
-## 2.26 base64
+## 2.27 base64
 
 Used for `base64` encoding and decoding of input
 
@@ -1400,7 +1410,7 @@ Used for `base64` encoding and decoding of input
 * `echo "hello" | base64`
 * `echo "hello" | base64 | base64 -d`
 
-## 2.27 md5sum
+## 2.28 md5sum
 
 Calculate the MD5 checksum of input or file
 
@@ -1408,7 +1418,7 @@ Calculate the MD5 checksum of input or file
 
 * `echo -n "hello" | md5sum`
 
-## 2.28 openssl
+## 2.29 openssl
 
 This command is used to encrypt or decrypt files using a specified algorithm
 
@@ -1418,7 +1428,7 @@ This command is used to encrypt or decrypt files using a specified algorithm
 * `openssl aes-256-cbc -a -salt -in blob.txt -out cipher`
 * `openssl aes-256-cbc -a -d -in cipher -out blob-rebuild.txt`
 
-## 2.29 bc
+## 2.30 bc
 
 bc can be used for base conversion
 
@@ -1429,7 +1439,7 @@ bc can be used for base conversion
 * `((num=8#77)); echo ${num}`: Convert octal to decimal
 * `((num=16#FF)); echo ${num}`: Convert hexadecimal to decimal
 
-## 2.30 dirname
+## 2.31 dirname
 
 `dirname` is used to return the directory part of a file path. This command does not check whether the directory or file corresponding to the path actually exists.
 
@@ -1447,7 +1457,7 @@ ROOT=$(dirname "$0")
 ROOT=$(cd "$ROOT"; pwd)
 ```
 
-## 2.31 addr2line
+## 2.32 addr2line
 
 This command is used to view the correspondence between binary offsets and source code. If the binary and the machine that produced the core file are not the same, symbol table mismatches may occur, resulting in incorrect source code locations.
 
@@ -1455,7 +1465,7 @@ This command is used to view the correspondence between binary offsets and sourc
 
 * `addr2line 4005f5 -e test`: View the source code corresponding to the instruction at position `4005f5` in the binary `test`
 
-## 2.32 ldd
+## 2.33 ldd
 
 This command is used to see which dynamic libraries an executable file is linked to
 
@@ -1465,7 +1475,7 @@ This command is used to see which dynamic libraries an executable file is linked
     * `readelf -a ./main | grep NEEDED`
     * `objdump -x ./main | grep NEEDED`
 
-## 2.33 ldconfig
+## 2.34 ldconfig
 
 **Generate dynamic library cache or read dynamic library information from cache**
 
@@ -1475,7 +1485,7 @@ This command is used to see which dynamic libraries an executable file is linked
 * `ldconfig -v`: Regenerate `/etc/ld.so.cache` and output detailed information
 * `ldconfig -p`: Read and display dynamic library information from `/etc/ld.so.cache`
 
-## 2.34 objdump
+## 2.35 objdump
 
 This command is used for disassembly
 
@@ -1485,7 +1495,7 @@ This command is used for disassembly
 * `objdump -drwCS -M intel main.o`
 * `objdump -p main`
 
-## 2.35 objcopy & strip
+## 2.36 objcopy & strip
 
 This command is used to extract debug information from binaries. Example:
 
@@ -1502,7 +1512,7 @@ readelf --string-dump=.gnu_debuglink main-with-debug
 
 When you're debugging the binary through `gdb`, it will automatically load the corresponding debug info file, and you can also manually load it using the `symbol-file` command, like `(gdb) symbol-file /path/to/binary_file.debuginfo`.
 
-## 2.36 nm
+## 2.37 nm
 
 This command is used to view the symbol table
 
@@ -1518,7 +1528,7 @@ This command is used to view the symbol table
 * `nm -D xxx.so`
 * `nm -u xxx.so`
 
-## 2.37 strings
+## 2.38 strings
 
 This command is used to view all string information contained in a binary file
 
@@ -1526,7 +1536,7 @@ This command is used to view all string information contained in a binary file
 
 * `strings main`
 
-## 2.38 iconf
+## 2.39 iconf
 
 **Options:**
 
@@ -1542,7 +1552,7 @@ This command is used to view all string information contained in a binary file
 
 * `iconv -f gbk -t utf-8 s.txt > t.txt`
 
-## 2.39 expect
+## 2.40 expect
 
 expect is an automation tool for interactive sessions. By writing custom configurations, it can automatically fill in data.
 
@@ -1583,7 +1593,7 @@ EOF
 expect /tmp/test_expect.config
 ```
 
-## 2.40 parallel
+## 2.41 parallel
 
 The parallel command is a powerful utility in Unix-like operating systems designed for running multiple shell commands in parallel, rather than sequentially. This can significantly speed up the execution of tasks that can be performed concurrently, especially when processing large amounts of data or performing operations on multiple files or processes at the same time.
 
@@ -2233,7 +2243,10 @@ This command is used to allow authorized users to execute programs as another us
 * `tmux [-L <socket_name>] source-file ~/.tmux.conf`: Reload config.
 * `tmux clear-history`: Clean history.
 * `tmux kill-server`: Kill server.
+* `tmux swap-window -s <win1> -t <win2>`: Swap two windows.
 * **`<prefix> ?`: List key bindings.**
+    * **Command:**
+        * `<prefix> :`: Execute tmux command. For example, if you want to execute `tmux swap-window -s <win1> -t <win2>`, then you only need to type `swap-window -s <win1> -t <win2>`.
     * **Pane:**
         * `<prefix> "`: Split pane vertically.
         * `<prefix> %`: Split pane horizontally.
@@ -4741,6 +4754,10 @@ apt install clang-format-X.Y
 Or refer to {% post_link Linux-Filepath %} for scripts that read `/proc/net/tcp` directly
 
 #### 11.2.3.6 How to test Network Bandwidth
+
+#### 11.2.3.7 How to list all unix socket
+
+* `lsof -U -w`
 
 ### 11.2.4 Filesystem
 

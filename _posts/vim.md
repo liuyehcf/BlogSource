@@ -125,8 +125,8 @@ Ex mode, on the other hand, is a more powerful command-line mode that is entered
 
 **Line-wise Movement:**
 
-* `gj`: Move down by one visual line (It works with wrapped lines). 
-* `gk`: Move up by one visual line (It works with wrapped lines). 
+* `gj`: Move down by one visual line (It works with wrapped lines).
+* `gk`: Move up by one visual line (It works with wrapped lines).
 * `+`: Move to the first non-blank character of the next line.
 * `-`: Move to the first non-blank character of the previous line.
 * `G`: Move to the last line of the file.
@@ -527,10 +527,10 @@ Record refers to a feature that allows you to record a sequence of keystrokes an
 
 ## 2.16 Mapping
 
-* **`map`**: Recursive mapping  
-* **`noremap`**: Non-recursive mapping  
-* **`unmap`**: Reset specified key to default behavior  
-* `mapclear`: Clear all `map` configurations, use with caution  
+* **`map`**: Recursive mapping
+* **`noremap`**: Non-recursive mapping
+* **`unmap`**: Reset specified key to default behavior
+* `mapclear`: Clear all `map` configurations, use with caution
 
 | COMMANDS | MODES |
 |:--|:--|
@@ -760,24 +760,24 @@ Referring to [How can I insert a real tab character in Vim?](https://stackoverfl
 
 **Example: Insert the same content on multiple lines simultaneously**
 
-1. At the column where you need to insert content, press `[Ctrl] + v` and select the lines to modify simultaneously  
-1. Press `I` to enter insert mode  
-1. Type the text you want to insert  
-1. Press `esc` twice  
+1. At the column where you need to insert content, press `[Ctrl] + v` and select the lines to modify simultaneously
+1. Press `I` to enter insert mode
+1. Type the text you want to insert
+1. Press `esc` twice
 
 **Example: Insert the same content at the end of multiple lines simultaneously**
 
-1. At the column where you need to insert content, press `[Ctrl] + v` and select the lines to modify simultaneously  
-1. Press `$` to move to the end of the line  
-1. Press `A` to enter insert mode  
-1. Type the text you want to insert  
-1. Press `esc` twice  
+1. At the column where you need to insert content, press `[Ctrl] + v` and select the lines to modify simultaneously
+1. Press `$` to move to the end of the line
+1. Press `A` to enter insert mode
+1. Type the text you want to insert
+1. Press `esc` twice
 
 **Example: Delete the same content on multiple lines simultaneously**
 
-1. At the column where you need to delete content, press `[Ctrl] + v` and select the lines to modify simultaneously  
-1. Select the columns to delete simultaneously  
-1. Press `d` to delete simultaneously  
+1. At the column where you need to delete content, press `[Ctrl] + v` and select the lines to modify simultaneously
+1. Select the columns to delete simultaneously
+1. Press `d` to delete simultaneously
 
 ### 2.21.4 Chinese Garbled Text
 
@@ -1057,21 +1057,21 @@ cscope
 **How to use it in vim**
 
 ```vim
-" Add database  
+" Add database
 :cscope add cscope.out
 
-" Find definition  
+" Find definition
 :cscope find g <symbol>
 
-" Find references  
+" Find references
 :cscope find s <symbol>
 
-" Enable quickfix  
-" +: Append results to quickfix  
-" -: Clear quickfix and add results to quickfix  
+" Enable quickfix
+" +: Append results to quickfix
+" -: Clear quickfix and add results to quickfix
 :set cscopequickfix=s-,c-,d-,i-,t-,e-,a-
 
-" For other configuration methods and usage, refer to help  
+" For other configuration methods and usage, refer to help
 :help cscope
 ```
 
@@ -1124,15 +1124,15 @@ wget https://ftp.gnu.org/pub/gnu/global/global-6.6.7.tar.gz --no-check-certifica
 tar -zxvf global-6.6.7.tar.gz
 cd global-6.6.7
 
-# Detection script — installs missing dependencies as needed  
+# Detection script — installs missing dependencies as needed
 sh reconf.sh
 
-# Compile and install  
-./configure  
-make  
+# Compile and install
+./configure
+make
 sudo make install
 
-# After successful installation, the directory /usr/local/share/gtags will contain two files: gtags.vim and gtags-cscope.vim  
+# After successful installation, the directory /usr/local/share/gtags will contain two files: gtags.vim and gtags-cscope.vim
 # Copy these two files to the ~/.vim directory
 cp -vrf /usr/local/share/gtags/gtags.vim /usr/local/share/gtags/gtags-cscope.vim ~/.vim
 ```
@@ -1140,25 +1140,25 @@ cp -vrf /usr/local/share/gtags/gtags.vim /usr/local/share/gtags/gtags-cscope.vim
 **How to use the command-line tools:**
 
 ```sh
-# Treat header files as source files for parsing; otherwise, symbols in header files may not be recognized  
+# Treat header files as source files for parsing; otherwise, symbols in header files may not be recognized
 export GTAGSFORCECPP=1
 
-# Build the database in the current directory, which will generate the following three files:  
-# 1. GTAGS: database storing symbol definitions  
-# 2. GRTAGS: database storing symbol references  
-# 3. GPATH: database storing paths  
+# Build the database in the current directory, which will generate the following three files:
+# 1. GTAGS: database storing symbol definitions
+# 2. GRTAGS: database storing symbol references
+# 3. GPATH: database storing paths
 gtags
 
-# Find definition  
+# Find definition
 global -d <symbol>
 
-# Find references  
+# Find references
 global -r <symbol>
 ```
 
 **Configuration (`~/.vimrc`):**
 
-1. The first `GTAGSLABEL` tells `gtags` to use the local analyzer for six natively supported languages such as `C/C++/Java`, while other languages use the `pygments` module.  
+1. The first `GTAGSLABEL` tells `gtags` to use the local analyzer for six natively supported languages such as `C/C++/Java`, while other languages use the `pygments` module.
 1. The second environment variable must be set (in my environment, it works without setting it), otherwise `native-pygments` and the `language map` definitions will not be found.
 
 ```vim
@@ -1176,8 +1176,8 @@ endif
 
 **`FAQ`: **
 
-1. `global -d` cannot find class definitions; possible reasons include:  
-    1. **Classes marked with `final` — `gtags` cannot find their definitions, a frustrating bug that caused me a lot of trouble.**  
+1. `global -d` cannot find class definitions; possible reasons include:
+    1. **Classes marked with `final` — `gtags` cannot find their definitions, a frustrating bug that caused me a lot of trouble.**
 1. `global -d` cannot find definitions of member variables.
 
 ### 3.2.5 LSP-clangd (Recommend)
@@ -1202,24 +1202,24 @@ function setup_github_repo() {
         sed -i -r 's|([^/]?)https://github.com/|\1https://mirror.ghproxy.com/https://github.com/|g' ${gitmodule}
     done
 }
-# Initialize submodules  
-setup_github_repo  
+# Initialize submodules
+setup_github_repo
 git submodule init && git submodule update
 
-# `CMAKE_PREFIX_PATH` is used to specify the search path for clang/llvm related headers and libraries. According to the installation method in the "Install llvm" section, the installation path is /usr/local  
+# `CMAKE_PREFIX_PATH` is used to specify the search path for clang/llvm related headers and libraries. According to the installation method in the "Install llvm" section, the installation path is /usr/local
 cmake -H. -BRelease -DCMAKE_BUILD_TYPE=Release -DCMAKE_PREFIX_PATH=/usr/local
 
-# Build  
+# Build
 cmake --build Release
 
-# Install  
+# Install
 cmake --build Release --target install
 ```
 
 **How to generate a full index for the project?**
 
-1. Use build tools like `cmake` to generate `compile_commands.json` and place this file in the root directory of the project.  
-1. Configure the `LSP-client` plugin; I use `LanguageClient-neovim`.  
+1. Use build tools like `cmake` to generate `compile_commands.json` and place this file in the root directory of the project.
+1. Configure the `LSP-client` plugin; I use `LanguageClient-neovim`.
 1. Open the project in vim, and the index will be created automatically.
 
 ### 3.2.7 LSP-jdtls (Optional)
@@ -1607,22 +1607,22 @@ call plug#end()
 
 **Usage:**
 
-* **`:CocStart`**: If auto-start is disabled in the configuration, this command needs to be run manually to start Coc.  
-* **`:CocUpdate`**: Update all plugins.  
-* **`:CocConfig`**: Edit the configuration file located at `~/.vim/coc-settings.json`.  
-* **`:CocAction`**: Code actions (e.g., code generation).  
-* **`:CocInfo`**  
-* **`:CocList [options] [args]`**  
-    * `:CocList extensions`  
-    * Operations:  
-        * Insert mode  
-            * `[Ctrl] + o`: Switch to normal mode  
-        * Normal mode  
-            * `i/I/o/O/a/A`: Enter insert mode  
-            * `p`: Toggle preview window  
-            * `[Ctrl] + e`: Scroll down in preview window  
-            * `[Ctrl] + y`: Scroll up in preview window  
-* **`:CocCommand <plugin-command>`**  
+* **`:CocStart`**: If auto-start is disabled in the configuration, this command needs to be run manually to start Coc.
+* **`:CocUpdate`**: Update all plugins.
+* **`:CocConfig`**: Edit the configuration file located at `~/.vim/coc-settings.json`.
+* **`:CocAction`**: Code actions (e.g., code generation).
+* **`:CocInfo`**
+* **`:CocList [options] [args]`**
+    * `:CocList extensions`
+    * Operations:
+        * Insert mode
+            * `[Ctrl] + o`: Switch to normal mode
+        * Normal mode
+            * `i/I/o/O/a/A`: Enter insert mode
+            * `p`: Toggle preview window
+            * `[Ctrl] + e`: Scroll down in preview window
+            * `[Ctrl] + y`: Scroll up in preview window
+* **`:CocCommand <plugin-command>`**
     * `:CocCommand workspace.showOutput`: View logs
 
 **Paths:**
@@ -1635,14 +1635,14 @@ call plug#end()
 
 **FAQ:**
 
-* `client coc abnormal exit with: 1`: Most likely an issue with `node`.  
-* The `node` version should neither be too new nor too old; `v16` is recommended.  
-* `clangd` version 16 or above supports macro expansion (`K`).  
-* How to modify header file search paths? Specify the `-I` parameter in `compile_commands.json` or `compile_flags.txt`.  
-* Index file path: `<project path>/.cache/clangd`.  
-* Setting `set(CMAKE_CXX_STANDARD 17)` in `cmake` generates `compile_commands.json` whose compile commands do not include the `-std=gnu++17` flag, causing `clangd` to warn when processing C++17 features (e.g., `Decomposition declarations are a C++17 extension (clang -Wc++17-extensions)`). This can be fixed by setting `CMAKE_CXX_FLAGS` to add the compile flag `-std=gnu++17`.  
-    * Setting only `CMAKE_CXX_STANDARD` is not enough; you also need to set `CMAKE_CXX_STANDARD_REQUIRED`. See [CMake's set(CMAKE_CXX_STANDARD 11) does not work](https://github.com/OSGeo/PROJ/issues/1924).  
-* Setting `set(CMAKE_CXX_COMPILER g++)` in `cmake` does not affect `clangd`. For example, `clang` does not support the `-fopt-info-vec` flag, and will still warn.  
+* `client coc abnormal exit with: 1`: Most likely an issue with `node`.
+* The `node` version should neither be too new nor too old; `v16` is recommended.
+* `clangd` version 16 or above supports macro expansion (`K`).
+* How to modify header file search paths? Specify the `-I` parameter in `compile_commands.json` or `compile_flags.txt`.
+* Index file path: `<project path>/.cache/clangd`.
+* Setting `set(CMAKE_CXX_STANDARD 17)` in `cmake` generates `compile_commands.json` whose compile commands do not include the `-std=gnu++17` flag, causing `clangd` to warn when processing C++17 features (e.g., `Decomposition declarations are a C++17 extension (clang -Wc++17-extensions)`). This can be fixed by setting `CMAKE_CXX_FLAGS` to add the compile flag `-std=gnu++17`.
+    * Setting only `CMAKE_CXX_STANDARD` is not enough; you also need to set `CMAKE_CXX_STANDARD_REQUIRED`. See [CMake's set(CMAKE_CXX_STANDARD 11) does not work](https://github.com/OSGeo/PROJ/issues/1924).
+* Setting `set(CMAKE_CXX_COMPILER g++)` in `cmake` does not affect `clangd`. For example, `clang` does not support the `-fopt-info-vec` flag, and will still warn.
 * The standard library search path used by `clangd` is determined by the compiler used in the compile commands inside `compile_commands.json`. If the compiler is an older version, it will use the corresponding older header paths; a newer compiler uses newer header paths.
 
 ### 3.9.1 coc-explorer
@@ -1671,30 +1671,30 @@ call plug#end()
 
 **Usage:**
 
-* `?`: Help documentation  
-* `j`: Move cursor down  
-* `k`: Move cursor up  
-* `h`: Collapse directory  
-* `l`: Expand directory or open file  
-* `gh`: Recursively collapse all  
-* `gl`: Recursively expand all  
-* `*`: Select/Deselect  
-* `J`: Select/Deselect and move cursor down  
-* `K`: Select/Deselect and move cursor up  
-* `Il`: Enable/disable file `label` preview  
-* `Ic`: Enable/disable file content preview  
-* `q`: Quit  
-* `a`: Create new file  
-* `A`: Create new directory  
-* `r`: Rename  
-* `df/dF`: Delete file; `df` moves to recycle bin, `dF` deletes permanently  
-* **Symbols:**  
-    * `?`: New file, not yet tracked by `git`  
-    * `A`: New file, added to staging area  
-    * `M`: File modified  
-        * `dim`: File differs from last commit  
-        * `bright`: File differs from staging area  
-* **Assorted:**  
+* `?`: Help documentation
+* `j`: Move cursor down
+* `k`: Move cursor up
+* `h`: Collapse directory
+* `l`: Expand directory or open file
+* `gh`: Recursively collapse all
+* `gl`: Recursively expand all
+* `*`: Select/Deselect
+* `J`: Select/Deselect and move cursor down
+* `K`: Select/Deselect and move cursor up
+* `Il`: Enable/disable file `label` preview
+* `Ic`: Enable/disable file content preview
+* `q`: Quit
+* `a`: Create new file
+* `A`: Create new directory
+* `r`: Rename
+* `df/dF`: Delete file; `df` moves to recycle bin, `dF` deletes permanently
+* **Symbols:**
+    * `?`: New file, not yet tracked by `git`
+    * `A`: New file, added to staging area
+    * `M`: File modified
+        * `dim`: File differs from last commit
+        * `bright`: File differs from staging area
+* **Assorted:**
     * The number before the file indicates the number of errors; you can use `Il` to view the full label.
 
 ### 3.9.2 coc-java
@@ -1726,18 +1726,18 @@ Home: [coc-java](https://github.com/search?q=coc-java)
 
 **Usage:**
 
-* `:CocCommand workspace.showOutput java`: View `jdt.ls` logs  
-    * `"java.trace.server": "verbose"`: More detailed logs  
+* `:CocCommand workspace.showOutput java`: View `jdt.ls` logs
+    * `"java.trace.server": "verbose"`: More detailed logs
 * `:CocCommand java.open.serverLog`: View raw `jdt.ls` logs
 
 **Tips: **
 
-* If the project uses third-party libraries like `thrift` or `protobuf` that generate source code, you need to package the generated source code and `.class` files into `.jar` files, then inform `jdt.ls` via configuration:  
-    * Use the `java.project.referencedLibraries` setting to pass additional jar paths. This setting may not work properly. The issue [Doesn't recognize imports in classpath on a simple project](https://github.com/neoclide/coc-java/issues/93) mentions switching from `vim` to `neovim` can fix this. Other related issues:  
-        * [java.project.referencedLibraries](https://github.com/redhat-developer/vscode-java/pull/1196#issuecomment-568192224)  
-        * [Add multiple folders to src path](https://github.com/microsoft/vscode-java-dependency/issues/412)  
-        * [Managing Java Projects in VS Code](https://code.visualstudio.com/docs/java/java-project)  
-        * [referencedLibraries / classpath additions not working](https://github.com/neoclide/coc-java/issues/146)  
+* If the project uses third-party libraries like `thrift` or `protobuf` that generate source code, you need to package the generated source code and `.class` files into `.jar` files, then inform `jdt.ls` via configuration:
+    * Use the `java.project.referencedLibraries` setting to pass additional jar paths. This setting may not work properly. The issue [Doesn't recognize imports in classpath on a simple project](https://github.com/neoclide/coc-java/issues/93) mentions switching from `vim` to `neovim` can fix this. Other related issues:
+        * [java.project.referencedLibraries](https://github.com/redhat-developer/vscode-java/pull/1196#issuecomment-568192224)
+        * [Add multiple folders to src path](https://github.com/microsoft/vscode-java-dependency/issues/412)
+        * [Managing Java Projects in VS Code](https://code.visualstudio.com/docs/java/java-project)
+        * [referencedLibraries / classpath additions not working](https://github.com/neoclide/coc-java/issues/146)
     * Alternatively, configure `.classpath` as per [eclipse.jdt.ls/org.eclipse.jdt.ls.core/.classpath](https://github.com/eclipse/eclipse.jdt.ls/blob/master/org.eclipse.jdt.ls.core/.classpath).
         ```xml
         <?xml version="1.0" encoding="UTF-8"?>
@@ -1746,7 +1746,7 @@ Home: [coc-java](https://github.com/search?q=coc-java)
         </classpath>
         ```
 
-    * Assuming a submodule uses `thrift`, you need to place the `.classpath` file in the submodule's directory, not in the root directory of the project.  
+    * Assuming a submodule uses `thrift`, you need to place the `.classpath` file in the submodule's directory, not in the root directory of the project.
 * When the plugin `org.eclipse.m2e:lifecycle-mapping` is present, `jdt.ls` cannot work properly. This issue is currently unresolved.
 
 ### 3.9.3 coc-pyright
@@ -1769,7 +1769,7 @@ Home: [coc-pyright](https://github.com/fannheyward/coc-pyright)
 
 **Tips: **
 
-* Third-party libraries installed via pip cannot be found by pyright  
+* Third-party libraries installed via pip cannot be found by pyright
     * You can use the [venv](https://www.liaoxuefeng.com/wiki/1016959663602400/1019273143120480) module to create an isolated Python environment. The steps are as follows (from the `coc-pyright` official documentation):
     ```sh
     python3 -m venv ~/.venv
@@ -1810,13 +1810,13 @@ call plug#begin()
 " .....Other Plugins....
 " ......................
 
-" Omit common configuration  
-" Map snippet expansion trigger to shortcut [Ctrl] + e  
-imap <c-e> <Plug>(coc-snippets-expand)  
-" In visual mode, map jump to next placeholder to shortcut [Ctrl] + j  
-vmap <c-j> <Plug>(coc-snippets-select)  
-" In insert mode, map jump to next/previous placeholder to [Ctrl] + j and [Ctrl] + k respectively  
-let g:coc_snippet_next = '<c-j>'  
+" Omit common configuration
+" Map snippet expansion trigger to shortcut [Ctrl] + e
+imap <c-e> <Plug>(coc-snippets-expand)
+" In visual mode, map jump to next placeholder to shortcut [Ctrl] + j
+vmap <c-j> <Plug>(coc-snippets-select)
+" In insert mode, map jump to next/previous placeholder to [Ctrl] + j and [Ctrl] + k respectively
+let g:coc_snippet_next = '<c-j>'
 let g:coc_snippet_prev = '<c-k>'
 
 call plug#end()
@@ -1824,7 +1824,7 @@ call plug#end()
 
 **Usage:**
 
-* In insert mode, after typing a snippet trigger, press `<c-e>` to expand the snippet  
+* In insert mode, after typing a snippet trigger, press `<c-e>` to expand the snippet
 * `:CocList snippets`: View all available snippets
 
 **FAQ:**
@@ -1889,12 +1889,12 @@ call plug#end()
 }
 ```
 
-* `coc.preferences.diagnostic.displayByAle`: Whether to display diagnostics in the style of the `ALE` plugin  
-* `diagnostic.virtualText`: Whether to display diagnostic information as virtual text  
-* `diagnostic.virtualTextPrefix`: Prefix for the diagnostic virtual text  
-* `diagnostic.virtualTextCurrentLineOnly`: Whether to show diagnostics only for the current line where the cursor is located  
-* `explorer.file.reveal.auto`: Automatically highlight the file corresponding to the current buffer in the file explorer  
-* `suggest.noselect`: `true`/`false`, indicates whether the first item is automatically selected during autocomplete. Default is `false`, meaning the first item is auto-selected; pressing `tab` again moves to the second item. See [Ability to tab to first option](https://github.com/neoclide/coc.nvim/issues/1339)  
+* `coc.preferences.diagnostic.displayByAle`: Whether to display diagnostics in the style of the `ALE` plugin
+* `diagnostic.virtualText`: Whether to display diagnostic information as virtual text
+* `diagnostic.virtualTextPrefix`: Prefix for the diagnostic virtual text
+* `diagnostic.virtualTextCurrentLineOnly`: Whether to show diagnostics only for the current line where the cursor is located
+* `explorer.file.reveal.auto`: Automatically highlight the file corresponding to the current buffer in the file explorer
+* `suggest.noselect`: `true`/`false`, indicates whether the first item is automatically selected during autocomplete. Default is `false`, meaning the first item is auto-selected; pressing `tab` again moves to the second item. See [Ability to tab to first option](https://github.com/neoclide/coc.nvim/issues/1339)
 * `inlayHint.display`: Whether to display inlay hints by default
 
 ## 3.10 vimspector
@@ -1935,13 +1935,13 @@ call plug#end()
 
 **Usage:**
 
-* **Layout**  
-    * `Variables and scopes`: Top-left corner. Press Enter to expand or collapse.  
-    * `Watches`: Middle-left. Enter edit mode, type an expression and press Enter to add a watch; use Delete key to remove a watch.  
-    * `StackTrace`: Bottom-left corner. Press Enter to expand thread stack.  
-    * `Console`: Standard output and standard error.  
-* **For each project, a `.vimspector.json` file needs to be provided in the project root directory to configure project-related debug parameters**  
-    * `configurations.<config_name>.default: true`: Whether to use this configuration as default. If there are multiple configurations, do not set this.  
+* **Layout**
+    * `Variables and scopes`: Top-left corner. Press Enter to expand or collapse.
+    * `Watches`: Middle-left. Enter edit mode, type an expression and press Enter to add a watch; use Delete key to remove a watch.
+    * `StackTrace`: Bottom-left corner. Press Enter to expand thread stack.
+    * `Console`: Standard output and standard error.
+* **For each project, a `.vimspector.json` file needs to be provided in the project root directory to configure project-related debug parameters**
+    * `configurations.<config_name>.default: true`: Whether to use this configuration as default. If there are multiple configurations, do not set this.
     * Example for `C-Family`:
         ```json
         {
@@ -1986,22 +1986,22 @@ Home: [coc-java-debug](https://github.com/dansomething/coc-java-debug)
 
 `coc-java-debug` depends on `coc.nvim`, `coc-java`, and `vimspector`
 
-* Plugins are installed/uninstalled via `coc.nvim` with interfaces exposed through `CocCommand`  
+* Plugins are installed/uninstalled via `coc.nvim` with interfaces exposed through `CocCommand`
 * `coc-java-debug` acts as an adapter for `vimspector`
 
 **Installation: Run `:CocInstall coc-java-debug` inside the vim interface**
 
 **Usage:**
 
-* **`:CocCommand java.debug.vimspector.start`**  
-* **For each project, a `.vimspector.json` file must be provided in the project root directory to configure project-specific debug parameters:**  
-    * `adapters.java-debug-server.port`: The port number required by the `java-debug-server` at startup. This is a placeholder; a free port will be assigned automatically at runtime.  
-    * `configurations.<config_name>.configuration.port`: The debug port number for the Java program.  
-    * `configurations.<config_name>.configuration.projectName`: The project name corresponding to `pom.xml`. See [Debugging Java with JDB or Vim](https://urfoex.blogspot.com/2020/08/debugging-java-with-jdb-or-vim.html). If this parameter does not match, adding a `Watch` in the `Watches` page will result in errors:  
-        * When not set: `Result: Cannot evaluate because of java.lang.IllegalStateException: Cannot evaluate, please specify projectName in launch.json`  
-        * When set incorrectly: `Result: Cannot evaluate because of java.lang.IllegalStateException: Project <wrong name> cannot be found`  
-        * Related links:  
-            * [Visual Studio Code projectName](https://stackoverflow.com/questions/48490671/visual-studio-code-projectname)  
+* **`:CocCommand java.debug.vimspector.start`**
+* **For each project, a `.vimspector.json` file must be provided in the project root directory to configure project-specific debug parameters:**
+    * `adapters.java-debug-server.port`: The port number required by the `java-debug-server` at startup. This is a placeholder; a free port will be assigned automatically at runtime.
+    * `configurations.<config_name>.configuration.port`: The debug port number for the Java program.
+    * `configurations.<config_name>.configuration.projectName`: The project name corresponding to `pom.xml`. See [Debugging Java with JDB or Vim](https://urfoex.blogspot.com/2020/08/debugging-java-with-jdb-or-vim.html). If this parameter does not match, adding a `Watch` in the `Watches` page will result in errors:
+        * When not set: `Result: Cannot evaluate because of java.lang.IllegalStateException: Cannot evaluate, please specify projectName in launch.json`
+        * When set incorrectly: `Result: Cannot evaluate because of java.lang.IllegalStateException: Project <wrong name> cannot be found`
+        * Related links:
+            * [Visual Studio Code projectName](https://stackoverflow.com/questions/48490671/visual-studio-code-projectname)
             * [Debugger for Java](https://marketplace.visualstudio.com/items?itemName=vscjava.vscode-java-debug)
     ```json
     {
@@ -2116,8 +2116,8 @@ call plug#end()
 
 **Usage:**
 
-* **`ia/aa`**: Parameter object. You can use `via/vaa`/`dia/daa`/`cia/caa` to select/delete/change the current parameter.  
-* **`ii/ai`**: Indentation object. You can use `vii/vai`/`dii/dai`/`cii/cai` to select/delete/change content at the same indentation level.  
+* **`ia/aa`**: Parameter object. You can use `via/vaa`/`dia/daa`/`cia/caa` to select/delete/change the current parameter.
+* **`ii/ai`**: Indentation object. You can use `vii/vai`/`dii/dai`/`cii/cai` to select/delete/change content at the same indentation level.
 * **`if/af`**: Function object. You can use `vif/vaf`/`dif/daf`/`cif/caf` to select/delete/change the current function's content.
 
 ## 3.13 LeaderF
@@ -2138,8 +2138,10 @@ Plug 'Yggdroot/LeaderF', { 'do': ':LeaderfInstallCExtension' }
 " Map fuzzy file search to shortcut [Ctrl] + p
 let g:Lf_ShortcutF = '<c-p>'
 let g:Lf_ShortcutB = '<m-n>'
-" Map :LeaderfMru to shortcut [Ctrl] + n
-nnoremap <c-n> :LeaderfMru<cr>
+" Map :LeaderfMru to shortcut [Option] + m, which is 「µ」
+nnoremap µ :LeaderfMru<cr>
+" Map :LeaderfMruCwd to shortcut [Ctrl] + n
+nnoremap <c-n> :LeaderfMruCwd<cr>
 " Map :LeaderfFunction! to shortcut [Option] + p, which is 「π」
 nnoremap π :LeaderfFunction!<cr>
 let g:Lf_StlSeparator = { 'left': '', 'right': '', 'font': '' }
@@ -2161,21 +2163,22 @@ call plug#end()
 
 **Usage:**
 
-* `:LeaderfFunction!`: Pops up the function list  
-* `:LeaderfMru`: Searches recently accessed files; mapped to shortcut `[Ctrl] + n` via the above configuration  
-* File fuzzy search is mapped to shortcut `[Ctrl] + p` as configured above  
-* Search mode: start typing to perform fuzzy search  
-    * `tab`: Switch to normal mode; in normal mode, use `j/k` to move up/down  
-    * `<c-r>`: Toggle between fuzzy search mode and regex mode  
-    * `<c-f>`: Toggle between full path search mode and name-only search mode  
-    * `<c-u>`: Clear search input  
-    * `<c-j>/<c-k>`: Move cursor down/up  
-    * `<c-a>`: Select all  
-    * `<c-l>`: Clear selection  
-    * `<c-s>`: Select current file  
-    * `<c-t>`: Open selected file in a new tab  
-    * `<c-p>`: Preview selected file  
-* If it doesn't work, it might be a Python-related issue  
+* `:LeaderfFunction!`: Pops up the function list
+* `:LeaderfMru`: Searches recently accessed files; mapped to shortcut `[Option] + m` via the above configuration
+* `:LeaderfMruCwd`: Searches recently accessed files in current working directory; mapped to shortcut `[Ctrl] + n` via the above configuration
+* File fuzzy search is mapped to shortcut `[Ctrl] + p` as configured above
+* Search mode: start typing to perform fuzzy search
+    * `tab`: Switch to normal mode; in normal mode, use `j/k` to move up/down
+    * `<c-r>`: Toggle between fuzzy search mode and regex mode
+    * `<c-f>`: Toggle between full path search mode and name-only search mode
+    * `<c-u>`: Clear search input
+    * `<c-j>/<c-k>`: Move cursor down/up
+    * `<c-a>`: Select all
+    * `<c-l>`: Clear selection
+    * `<c-s>`: Select current file
+    * `<c-t>`: Open selected file in a new tab
+    * `<c-p>`: Preview selected file
+* If it doesn't work, it might be a Python-related issue
     * Run `:checkhealth`
 * Cache path: Defined by `g:Lf_CacheDirectory`, which is `~/.vim/cache/LeaderF`
 
@@ -2230,17 +2233,17 @@ call plug#end()
 
 **Usage (search syntax reference: [junegunn/fzf-search-syntax](https://github.com/junegunn/fzf#search-syntax)):**
 
-* `:Ag`: Perform a global search (depends on the command-line tool `ag`. Installation instructions on the plugin's [GitHub page](https://github.com/ggreer/the_silver_searcher))  
-* `:Rg`: Perform a global search (depends on the command-line tool `rg`. Installation instructions on the plugin's [GitHub page](https://github.com/BurntSushi/ripgrep))  
-* `[Ctrl] + j/k` / `[Ctrl] + n/p`: Move up/down by line  
-* `PageUp/PageDown`: Move up/down by page  
-* **Matching rules:**  
-    * **`xxx`**: Fuzzy match (may be tokenized)  
-    * **`'xxx`**: Non-fuzzy match (no tokenization)  
-    * **`^xxx`**: Prefix match  
-    * **`xxx$`**: Suffix match  
-    * **`!xxx`**: Inverse match  
-    * **The above rules can be freely combined**  
+* `:Ag`: Perform a global search (depends on the command-line tool `ag`. Installation instructions on the plugin's [GitHub page](https://github.com/ggreer/the_silver_searcher))
+* `:Rg`: Perform a global search (depends on the command-line tool `rg`. Installation instructions on the plugin's [GitHub page](https://github.com/BurntSushi/ripgrep))
+* `[Ctrl] + j/k` / `[Ctrl] + n/p`: Move up/down by line
+* `PageUp/PageDown`: Move up/down by page
+* **Matching rules:**
+    * **`xxx`**: Fuzzy match (may be tokenized)
+    * **`'xxx`**: Non-fuzzy match (no tokenization)
+    * **`^xxx`**: Prefix match
+    * **`xxx$`**: Suffix match
+    * **`!xxx`**: Inverse match
+    * **The above rules can be freely combined**
     * **To precisely match a string containing spaces: `'Hello\ world`**. Since spaces are used as token separators, the space must be escaped with a backslash (`\`).
 
 ## 3.15 Git Plugins
@@ -2321,11 +2324,11 @@ call plug#end()
 
 **Usage:**
 
-* **`\cc`**: Add comment; adds comment to each line  
-* **`\cm`**: Comment the selected region with a pair of comment symbols  
-* **`\cs`**: Add a "sexy" comment  
-* **`\ca`**: Change the comment style  
-* **`\cu`**: Uncomment  
+* **`\cc`**: Add comment; adds comment to each line
+* **`\cm`**: Comment the selected region with a pair of comment symbols
+* **`\cs`**: Add a "sexy" comment
+* **`\ca`**: Change the comment style
+* **`\cu`**: Uncomment
 * **`\c<space>`**: If part of the selected region is commented, uncomment the selected region; otherwise, toggle comment
 
 ## 3.17 vim-codefmt
@@ -2386,8 +2389,8 @@ Glaive codefmt google_java_executable="java -jar /usr/local/share/google-java-fo
 
 **Usage:**
 
-* `:FormatCode`: Format code  
-* `:Glaive codefmt`: View configuration (you can also see all configuration options via `:help codefmt`)  
+* `:FormatCode`: Format code
+* `:Glaive codefmt`: View configuration (you can also see all configuration options via `:help codefmt`)
     * `clang_format_executable`: Path to the `clang_format` executable; can be modified with `:Glaive codefmt clang_format_executable="clang-format-10"`
 
 **Install the Python formatter `autopep8`**
@@ -2402,8 +2405,8 @@ sudo ln /home/home/liuyehcf/.local/lib/python3.6/site-packages/autopep8.py /usr/
 
 **Install the Perl formatter `perltidy`**
 
-* `cpan install Perl::Tidy`  
-* `brew install perltidy`  
+* `cpan install Perl::Tidy`
+* `brew install perltidy`
 * The `perltidy` related pull request has not yet been merged and needs to be manually applied: [Add perl formatting support using Perltidy](https://github.com/google/vim-codefmt/pull/227). Steps are as follows:
     ```sh
     git fetch origin pull/227/head:pull_request_227
@@ -2412,8 +2415,8 @@ sudo ln /home/home/liuyehcf/.local/lib/python3.6/site-packages/autopep8.py /usr/
 
     * Alternatively, if you don't want to do that, you can temporarily replace it using the following method:
         ```
-        " Configure Perl formatting; use `gg=G` to format  
-        " https://superuser.com/questions/805695/autoformat-for-perl-in-vim  
+        " Configure Perl formatting; use `gg=G` to format
+        " https://superuser.com/questions/805695/autoformat-for-perl-in-vim
         " Install perltidy via `cpan Perl::Tidy`
         autocmd FileType perl setlocal equalprg=perltidy\ -st\ -ce
         if has('nvim')
@@ -2447,37 +2450,37 @@ call plug#end()
 
 **Usage:**
 
-* Full usage reference: `:help surround`  
-* `cs`: `cs, change surroundings` — replace the surrounding characters of the current text  
-    * `cs([`  
-    * `cs[{`  
-    * `cs{<q>`  
-    * `cs{>`  
-* `ds`: `ds, delete surroundings` — delete the surrounding characters of the current text  
-    * `ds{`  
-    * `ds<`  
-    * `ds<q>`  
-* `ys`: `you surround` — add surrounding characters to specified text. Usually used with text objects  
-    * `ysiw[` — `iw` is a text object  
-    * `ysa"fprint` — `a"` is the text object, `f` means surround by function call, `print` is the function name. Format: `print(<text>)`  
-    * `ysa"Fprint` — like above, `F` adds extra spaces inside parentheses: `print( <text> )`  
-    * `ysa"<c-f>print` — like above, `<c-f>` adds the surrounding on the outermost side: `(print <text>)`  
-* `yss`: surround the current line (excluding leading and trailing whitespace)  
-    * `yss(`  
-    * `yssb`  
-    * `yss{`  
-    * `yssB`  
-* `yS`: like `ys`, but adds surrounding characters on the line before and after the selection  
-    * `ySiw[` — `iw` is the text object  
-* `ySS`: like `yss`, but adds surrounding characters on the line before and after the selection  
-    * `ySS(`  
-    * `ySSb`  
-    * `ySS{`  
-    * `ySSB`  
-* `[visual]S`: add surrounding characters to the visually selected text  
-    * `vllllS'` — `v` enters visual mode, `llll` moves 4 chars right  
-    * `vllllSfprint` — like above, `f` means surround by function call, `print` is the function name: `print(<text>)`  
-    * `vllllSFprint` — like above, `F` adds extra spaces: `print( <text> )`  
+* Full usage reference: `:help surround`
+* `cs`: `cs, change surroundings` — replace the surrounding characters of the current text
+    * `cs([`
+    * `cs[{`
+    * `cs{<q>`
+    * `cs{>`
+* `ds`: `ds, delete surroundings` — delete the surrounding characters of the current text
+    * `ds{`
+    * `ds<`
+    * `ds<q>`
+* `ys`: `you surround` — add surrounding characters to specified text. Usually used with text objects
+    * `ysiw[` — `iw` is a text object
+    * `ysa"fprint` — `a"` is the text object, `f` means surround by function call, `print` is the function name. Format: `print(<text>)`
+    * `ysa"Fprint` — like above, `F` adds extra spaces inside parentheses: `print( <text> )`
+    * `ysa"<c-f>print` — like above, `<c-f>` adds the surrounding on the outermost side: `(print <text>)`
+* `yss`: surround the current line (excluding leading and trailing whitespace)
+    * `yss(`
+    * `yssb`
+    * `yss{`
+    * `yssB`
+* `yS`: like `ys`, but adds surrounding characters on the line before and after the selection
+    * `ySiw[` — `iw` is the text object
+* `ySS`: like `yss`, but adds surrounding characters on the line before and after the selection
+    * `ySS(`
+    * `ySSb`
+    * `ySS{`
+    * `ySSB`
+* `[visual]S`: add surrounding characters to the visually selected text
+    * `vllllS'` — `v` enters visual mode, `llll` moves 4 chars right
+    * `vllllSfprint` — like above, `f` means surround by function call, `print` is the function name: `print(<text>)`
+    * `vllllSFprint` — like above, `F` adds extra spaces: `print( <text> )`
     * `vllllS<c-f>print` — like above, `<c-f>` adds the surrounding on the outermost side: `(print <text>)`
 
 ## 3.19 UltiSnips
@@ -2694,8 +2697,10 @@ Plug 'Yggdroot/LeaderF', { 'do': ':LeaderfInstallCExtension' }
 " Map fuzzy file search to shortcut [Ctrl] + p
 let g:Lf_ShortcutF = '<c-p>'
 let g:Lf_ShortcutB = '<m-n>'
-" Map :LeaderfMru to shortcut [Ctrl] + n
-nnoremap <c-n> :LeaderfMru<cr>
+" Map :LeaderfMru to shortcut [Option] + m, which is 「µ」
+nnoremap µ :LeaderfMru<cr>
+" Map :LeaderfMruCwd to shortcut [Ctrl] + n
+nnoremap <c-n> :LeaderfMruCwd<cr>
 " Map :LeaderfFunction! to shortcut [Option] + p, which is 「π」
 nnoremap π :LeaderfFunction!<cr>
 let g:Lf_StlSeparator = { 'left': '', 'right': '', 'font': '' }
