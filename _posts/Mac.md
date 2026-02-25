@@ -692,6 +692,10 @@ Search key word `handoff`
 
 * `System Settings` -> `Privacy & Security` -> `Security` -> `Allow accessories to connect`
 
+## 6.15 Show Scroll Bars
+
+* `System Settings` -> `Appearance` -> `Show scroll bars` -> `Always`
+
 # 7 参考
 
 * [Mac 下利用 Launchctl 自启动 mysql](http://squll369.iteye.com/blog/1965185)

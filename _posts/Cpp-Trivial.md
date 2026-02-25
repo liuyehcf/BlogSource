@@ -1863,11 +1863,35 @@ endif()
 * [google/sanitizers](https://github.com/google/sanitizers)
 * [深入浅出 Sanitizer Interceptor 机制](https://mp.weixin.qq.com/s?__biz=Mzg3Mjg2NjU4NA==&mid=2247483868&idx=1&sn=a85112e88cd187e27f418ff044247956&chksm=cee9f7abf99e7ebdac55e36077b4f915bccbe33a8a6ee9920136a1dc9598e2ae62bb95d3a25f&scene=21#wechat_redirect)
 
-# 6 Coroutines
+# 6 Debug
 
-## 6.1 Stackfull Coroutines
+## 6.1 DWARF
 
-### 6.1.1 Manually Implement Context Switch
+DWARF (Debugging With Attributed Record Formats) is the industry-standard data format used by compilers and debuggers to explain the relationship between a program's executable code and its original source code.
+
+**What Does DWARF Actually Do?** When you compile code with a flag like `-g`, the compiler embeds `DWARF` data into the binary. This data acts as a "translator" for the debugger, providing several key maps:
+
+* The Address Map: Translates machine code addresses back to file names and line numbers.
+* The Variable Map: Tells the debugger where a variable is stored (e.g., in `Register RAX` or at `Stack Offset -16`).
+* The Type System: Defines what a `struct` or `class` looks like, including its size and member offsets.
+* Scope Information: Tells the debugger which variables are currently "in scope" based on the Instruction Pointer.
+
+## 6.2 -g vs. -ggdb
+
+| Feature | -g | -ggdb |
+|--|--|--|
+| Philosophy | Generic & Portable. Produces debug information in the system's native format (usually DWARF). | GNU-Specific. Optimized specifically for the GNU Debugger (GDB). |
+| Content | Includes standard debugging data that most debuggers (GDB, LLDB, etc.) can read. | Includes GDB-specific extensions that might not be understood by other debuggers. |
+| Compatibility | Use this if you might debug with something other than GDB (like LLDB on macOS). | Use this if you are strictly using GDB and want the most powerful features. |
+| Output | Usually DWARF 4 or 5 on modern systems. | DWARF plus extra GDB "secret sauce" (like improved macro support). |
+
+If you specify both `-g` and `-ggdb` in the same compilation command, **the last one wins.**
+
+# 7 Coroutines
+
+## 7.1 Stackfull Coroutines
+
+### 7.1.1 Manually Implement Context Switch
 
 `jump_fcontext` and `make_fcontext` is copy from [context.h](https://github.com/apache/brpc/blob/master/src/bthread/context.h) and [context.cpp](https://github.com/apache/brpc/blob/master/src/bthread/context.cpp)
 
@@ -2006,7 +2030,7 @@ func2 step5, jump to main
 end, back to main
 ```
 
-### 6.1.2 Using Boost Context
+### 7.1.2 Using Boost Context
 
 ```cpp
 #include <boost/context/fiber.hpp>
@@ -2086,13 +2110,13 @@ func2 step5, jump to main
 end, back to main
 ```
 
-# 7 GNU
+# 8 GNU
 
 [ftp.gnu.org](https://ftp.gnu.org/gnu/)
 
 [sourceware.org](https://sourceware.org/)
 
-## 7.1 Build & Install
+## 8.1 Build & Install
 
 **You can download any version from [gcc-ftp](http://ftp.gnu.org/gnu/gcc/), I choose `gcc-14.1.0`**
 
@@ -2150,7 +2174,7 @@ Post Settings: (Use `sudo ldconfig -p | grep stdc++` to check the default path o
     * [Bug 100017 - [11 regression] error: 'fenv_t' has not been declared in '::' -- canadian compilation fails](https://gcc.gnu.org/bugzilla/show_bug.cgi?id=100017)
         * Solution: [Comment 12](https://gcc.gnu.org/bugzilla/show_bug.cgi?id=100017#c12)
 
-## 7.2 GNU Binutils
+## 8.2 GNU Binutils
 
 The [GNU Binutils](https://sourceware.org/binutils/) are a collection of binary tools. The main ones are:
 
@@ -2200,7 +2224,7 @@ make -j $(( (cores=$(nproc))>1?cores/2:1 ))
 sudo make install
 ```
 
-### 7.2.1 DWARF Error
+### 8.2.1 DWARF Error
 
 ```
 addr2line: Dwarf Error: found dwarf version '5', this reader only handles version 2, 3 and 4 information.
@@ -2210,7 +2234,7 @@ addr2line: Dwarf Error: found dwarf version '5', this reader only handles versio
 1. Try use different linker.
 1. Try use higher version of `binutils`.
 
-## 7.3 gcc
+## 8.3 gcc
 
 **Common Parameter Descriptions:**
 
@@ -2289,7 +2313,7 @@ addr2line: Dwarf Error: found dwarf version '5', this reader only handles versio
         * Uses absolute addresses for both data and code, allowing for very large applications.
         * However, this comes at the cost of efficiency, as the generated code is less optimized compared to the small and medium models.
 
-### 7.3.1 How to link libc++ statically
+### 8.3.1 How to link libc++ statically
 
 **Use `g++`:**
 
@@ -2318,7 +2342,7 @@ target_compile_options(<target> PRIVATE -static-libstdc++)
 target_link_options(<target> PRIVATE -static-libstdc++)
 ```
 
-### 7.3.2 Code Coverage
+### 8.3.2 Code Coverage
 
 **Here's how it works: `gcov` determines which files to analyze for coverage information based on the profile data files (`*.gcda` and `*.gcno`) that are generated when you compile and run your program with the appropriate GCC flags (`-fprofile-arcs` and `-ftest-coverage`). Here's a breakdown of how `gcov` knows which files to load:**
 
@@ -2367,7 +2391,7 @@ genhtml coverage.info --output-directory out
 xdg-open out/index.html
 ```
 
-#### 7.3.2.1 Disadvantages
+#### 8.3.2.1 Disadvantages
 
 1. `.gcda` Files are only written on graceful exit.
     * If the program crashes or is killed abruptly (e.g., kill -9), the `.gcda` files might be missing or incomplete.
@@ -2394,7 +2418,7 @@ xdg-open out/index.html
 1. Clean old data before new runs.
     * Leftover `.gcda` files from previous runs can mess up your current coverage.
 
-#### 7.3.2.2 Difference between gcc compilation and CMake compilation
+#### 8.3.2.2 Difference between gcc compilation and CMake compilation
 
 **When you compile a source file using gcc with coverage flags:**
 
@@ -2486,7 +2510,7 @@ genhtml coverage.info --output-directory out
 xdg-open out/index.html
 ```
 
-#### 7.3.2.3 Trigger flush manually
+#### 8.3.2.3 Trigger flush manually
 
 `nm -g $(g++ -print-file-name=libgcov.a)` cannot find symbol `__gcov_flush`, so use `__gcov_dump` instead.
 
@@ -2568,7 +2592,7 @@ xdg-open out/index.html
 
 If you comment out `setup_signal_handler`, the file `code_coverage_manual_flush_demo.cpp.gcda` won't include any code coverage information.
 
-#### 7.3.2.4 Use Customized Directory
+#### 8.3.2.4 Use Customized Directory
 
 ```sh
 mkdir -p code_coverage_customized_directory_demo
@@ -2638,7 +2662,7 @@ genhtml coverage.info --output-directory out
 xdg-open out/index.html
 ```
 
-## 7.4 ld
+## 8.4 ld
 
 **Type:**
 
@@ -2692,7 +2716,7 @@ xdg-open out/index.html
     ./proxy_malloc
     ```
 
-### 7.4.1 How to check default linker
+### 8.4.1 How to check default linker
 
 ```sh
 ls -l $(which ld)
@@ -2700,7 +2724,7 @@ ls -l $(which ld)
 update-alternatives --display ld
 ```
 
-### 7.4.2 How to print dynamic lib path when linking program
+### 8.4.2 How to print dynamic lib path when linking program
 
 ```sh
 # default GNU ld
@@ -2713,7 +2737,7 @@ gcc -o your_program your_program.c -fuse-ld=gold -Wl,--verbose
 gcc -o your_program your_program.c -fuse-ld=lld -Wl,--verbose
 ```
 
-### 7.4.3 How to determine which linker was used to link a binary file
+### 8.4.3 How to determine which linker was used to link a binary file
 
 ```sh
 # method 1
@@ -2723,9 +2747,9 @@ readelf -p .comment <binary_file>
 strings <binary_file> | grep <linker_name>
 ```
 
-## 7.5 lto-dump
+## 8.5 lto-dump
 
-## 7.6 ENV
+## 8.6 ENV
 
 **Common:**
 
@@ -2755,11 +2779,11 @@ strings <binary_file> | grep <linker_name>
 * `LD_DEBUG`/`LD_DEBUG_OUTPUT`
 * `LD_PROFILE`/`LD_PROFILE_OUTPUT`
 
-## 7.7 Reference
+## 8.7 Reference
 
-# 8 LLVM Tools
+# 9 LLVM Tools
 
-## 8.1 Build & Install
+## 9.1 Build & Install
 
 **Doc:**
 
@@ -2824,11 +2848,11 @@ sudo ninja -C build install-clang-format
 sudo ninja -C build install-clangd
 ```
 
-### 8.1.1 Tips
+### 9.1.1 Tips
 
 1. Build `release/11.x` with high version of gcc or clang, you may need to add additional `-DCMAKE_CXX_STANDARD=17`, otherwise, you may encounter `no member named 'numeric_limits' in namespace 'std'`
 
-## 8.2 clang
+## 9.2 clang
 
 **Doc:**
 
@@ -2855,7 +2879,7 @@ cmake -B build \
       -DCMAKE_SHARED_LINKER_FLAGS="-stdlib=libc++"
 ```
 
-### 8.2.1 Code Coverage
+### 9.2.1 Code Coverage
 
 **Here's an example of using clang directly:**
 
@@ -2947,7 +2971,7 @@ llvm-cov show ./build/code_coverage_demo \
 xdg-open coverage_html/index.html
 ```
 
-#### 8.2.1.1 Trigger flush manually
+#### 9.2.1.1 Trigger flush manually
 
 If a large-scale program using LLVM's code coverage tools (like llvm-profraw via instrumentation with `-fprofile-instr-generate`) crashes or cannot shut down gracefully, the `.profraw` data may be incomplete or not written at all. This happens because profile data is typically written on normal process termination.
 
@@ -3030,7 +3054,7 @@ xdg-open coverage_html/index.html
 
 If you comment out `setup_signal_handler`, the size of `coverage.profraw` will be zero.
 
-#### 8.2.1.2 Merge Coverage
+#### 9.2.1.2 Merge Coverage
 
 LLVM code coverage (using tools like `llvm-cov` and `llvm-profdata`) natively supports merging coverage data from multiple runs.
 
@@ -3102,11 +3126,11 @@ llvm-cov show ./build/code_merge_multi_coverage_demo \
 xdg-open coverage_html/index.html
 ```
 
-#### 8.2.1.3 Tips
+#### 9.2.1.3 Tips
 
 1. How to disable generating `.profraw` file: `LLVM_PROFILE_FILE=/dev/null <binary> <args>`
 
-## 8.3 clang-format
+## 9.3 clang-format
 
 **How to use: Create a `.clang-format` file in the `user directory` or the `project root directory` to specify the formatting style. Below is an example**
 
@@ -3138,7 +3162,7 @@ SpacesBeforeTrailingComments: 1
 
 * [StarRocks-format](https://github.com/StarRocks/starrocks/blob/main/.clang-format)
 
-## 8.4 clangd
+## 9.4 clangd
 
 **`compile_commands.json` vs. `compile_flags.txt`([JSON Compilation Database Format Specification](https://clang.llvm.org/docs/JSONCompilationDatabase.html))**
 
@@ -3156,7 +3180,7 @@ SpacesBeforeTrailingComments: 1
 * `--compile-commands-dir=`: Specifies the path to search for `compile_commands.json`.
     * Example: `--compile-commands-dir=/home/test/code/duckdb/build`
 
-### 8.4.1 .clangd Configuration
+### 9.4.1 .clangd Configuration
 
 [Configuration](https://clangd.llvm.org/config)
 
@@ -3219,7 +3243,7 @@ If:
     Add: [-Wextra]
 ```
 
-## 8.5 clang-tidy
+## 9.5 clang-tidy
 
 [Clang-Tidy](https://clang.llvm.org/extra/clang-tidy/)
 
@@ -3255,7 +3279,7 @@ Checks: >
 WarningsAsErrors: '*'
 ```
 
-### 8.5.1 Warning Suppress Syntax
+### 9.5.1 Warning Suppress Syntax
 
 We can use `NOLINT`, `NOLINTNEXTLINE`, and `NOLINTBEGIN ... NOLINTEND` to suppress warnings if we don't want to disable rules by default.
 
@@ -3306,13 +3330,13 @@ class Foo {
 };
 ```
 
-## 8.6 lld
+## 9.6 lld
 
-## 8.7 lldb
+## 9.7 lldb
 
-# 9 Google Tools
+# 10 Google Tools
 
-## 9.1 bloaty
+## 10.1 bloaty
 
 [bloaty](https://github.com/google/bloaty) is a size profiler for binaries.
 
@@ -3325,13 +3349,13 @@ class Foo {
 * Requirements: `<binary>` is compiled with debug info.
 * `bloaty -d compileunits <binary>`
 
-# 10 Assorted
+# 11 Assorted
 
-## 10.1 Dynamic Analysis
+## 11.1 Dynamic Analysis
 
 ![analysis-tools](/images/Cpp-Trivial/analysis-tools.png)
 
-## 10.2 How to check the compile error message
+## 11.2 How to check the compile error message
 
 Example:
 
@@ -3366,11 +3390,11 @@ When interpreting compiler error messages, especially those involving template i
 
 In Summary: While the bottom-up approach is useful for quickly identifying the core error and the immediate lines of code causing it, you sometimes need to go top-down to fully understand the context and sequence of events leading to the error. With experience, you'll develop an intuition for quickly scanning and pinpointing the most relevant parts of such error messages.
 
-## 10.3 How to check standard library search path when compiling
+## 11.3 How to check standard library search path when compiling
 
 Add `-v` option.
 
-## 10.4 ccache
+## 11.4 ccache
 
 CCache stores its compile cache in a directory specified by the `CCACHE_DIR` environment variable. By default, this directory is located at `~/.ccache` in the user's home directory. The cache directory contains various files and subdirectories that ccache uses to manage its cache of compiled objects.
 
@@ -3384,10 +3408,11 @@ export CMAKE_CXX_COMPILER_LAUNCHER=ccache
 **Usage:**
 
 * `ccache -z`: Zero statistics counters
-* `ccache -s -v`: show summary of configuration and statistics counters in human-readable format (use `-v/--verbose` once or twice for more details).
+* `ccache -s -v`: Show summary of configuration and statistics counters in human-readable format (use `-v/--verbose` once or twice for more details).
+* `ccache -p`: Print config
 * `ccache --max-size=500G`
 
-## 10.5 Document
+## 11.5 Document
 
 1. [cpp reference](https://en.cppreference.com/w/)
 1. [cppman](https://github.com/aitjcize/cppman/)
@@ -3395,7 +3420,7 @@ export CMAKE_CXX_COMPILER_LAUNCHER=ccache
     * Example: `cppman vector::begin`
     * Rebuild index: `cppman -r`
 
-## 10.6 manpage
+## 11.6 manpage
 
 ```sh
 sudo apt install -y gcc-doc
@@ -3404,6 +3429,6 @@ man gcc
 man g++
 ```
 
-## 10.7 Reference
+## 11.7 Reference
 
 * [C/C++ 头文件以及库的搜索路径](https://blog.csdn.net/crylearner/article/details/17013187)

@@ -3928,6 +3928,7 @@ yum install -y iotop
 
 **Options:**
 
+* `-a`: Show accumulated I/O instead of bandwidth. In this mode, iotop shows the amount of I/O processes have done since iotop started.
 * `-o`: Only display processes or threads currently performing I/O operations
 * `-u`: Followed by a username
 * `-P`: Display processes only, not threads
@@ -3937,6 +3938,7 @@ yum install -y iotop
 **Examples:**
 
 * `iotop`
+* `iotop -oPa`
 * `iotop -oP`
 * `iotop -oP -b -n 10`
 * `iotop -u admin`

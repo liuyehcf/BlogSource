@@ -1329,7 +1329,7 @@ configure_file(${CMAKE_SOURCE_DIR}/config.h.in ${CMAKE_BINARY_DIR}/config.h)
 
 add_compile_options(-O3 -Wall)
 
-file(GLOB MY_PROJECT_SOURCES "*.cpp")
+file(GLOB MY_PROJECT_SOURCES CONFIGURE_DEPENDS "*.cpp")
 add_executable(${PROJECT_NAME} ${MY_PROJECT_SOURCES})
 
 target_compile_options(${PROJECT_NAME} PRIVATE -static-libstdc++)
@@ -1455,7 +1455,7 @@ cmake -DCMAKE_BUILD_TYPE=RelWithDebInfo <path>
 
 ```cmake
 # Search for all .cpp and .h files in the current directory
-file(GLOB MY_PROJECT_SOURCES "*.cpp")
+file(GLOB MY_PROJECT_SOURCES CONFIGURE_DEPENDS "*.cpp")
 
 # Add the found files to the executable
 add_executable(MyExecutable ${MY_PROJECT_SOURCES})
@@ -1464,7 +1464,7 @@ add_executable(MyExecutable ${MY_PROJECT_SOURCES})
 If your project has a more complex structure and you wish to recursively search all subdirectories for files, you can replace the `file(GLOB ...)` command with `file(GLOB_RECURSE ...)`:
 
 ```cmake
-file(GLOB_RECURSE MY_PROJECT_SOURCES "*.cpp")
+file(GLOB_RECURSE MY_PROJECT_SOURCES CONFIGURE_DEPENDS "*.cpp")
 add_executable(MyExecutable ${MY_PROJECT_SOURCES})
 ```
 
@@ -1606,7 +1606,7 @@ There are three ways:
 
     project(custom_command_demo_3)
 
-    file(GLOB MY_PROJECT_SOURCES "*.cpp")
+    file(GLOB MY_PROJECT_SOURCES CONFIGURE_DEPENDS "*.cpp")
     add_executable(${PROJECT_NAME} ${MY_PROJECT_SOURCES})
 
     target_compile_options(${PROJECT_NAME} PRIVATE -static-libstdc++)
@@ -1642,7 +1642,7 @@ There are three ways:
 
     project(custom_command_demo_4)
 
-    file(GLOB MY_PROJECT_SOURCES "*.cpp")
+    file(GLOB MY_PROJECT_SOURCES CONFIGURE_DEPENDS "*.cpp")
     add_executable(${PROJECT_NAME} ${MY_PROJECT_SOURCES})
 
     target_compile_options(${PROJECT_NAME} PRIVATE -static-libstdc++)
@@ -1685,7 +1685,7 @@ cmake_minimum_required(VERSION 3.20)
 
 project(build_events_demo)
 
-file(GLOB MY_PROJECT_SOURCES "*.cpp")
+file(GLOB MY_PROJECT_SOURCES CONFIGURE_DEPENDS "*.cpp")
 add_executable(${PROJECT_NAME} ${MY_PROJECT_SOURCES})
 
 target_compile_options(${PROJECT_NAME} PRIVATE -static-libstdc++)
@@ -1746,7 +1746,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED True)
 
 add_compile_options(-O3 -Wall)
 
-file(GLOB MY_PROJECT_SOURCES "*.cpp")
+file(GLOB MY_PROJECT_SOURCES CONFIGURE_DEPENDS "*.cpp")
 add_executable(${PROJECT_NAME} ${MY_PROJECT_SOURCES})
 
 target_compile_options(${PROJECT_NAME} PRIVATE -static-libstdc++)
@@ -1794,7 +1794,7 @@ set(ALL_JAR_PATHS
     ${MODULE_2_PATH}
 )
 
-file(GLOB_RECURSE JAVA_SOURCES ${JAVA_PROJECT_DIR}/src/main/java/*.java)
+file(GLOB_RECURSE JAVA_SOURCES CONFIGURE_DEPENDS ${JAVA_PROJECT_DIR}/src/main/java/*.java)
 
 add_custom_command(
     OUTPUT ${ALL_JAR_PATHS}
@@ -1908,6 +1908,165 @@ dot -Tpng build/graph/graph.dot -o build/graph/graph.png
 # Generate svg(preferred)
 dot -Tsvg build/graph/graph.dot -o build/graph/graph.svg
 ```
+
+## 6.13 CMake + Ninja: What Gets Cached and Where
+
+When building a project with CMake + Ninja, there are multiple layers of caching. Understanding them helps avoid confusing build issues and "why didn't this change take effect?" moments.
+
+```
+        ┌─────────────────────────────────────────┐
+        │              Source Tree                │
+        │         (CMakeLists.txt, *.cc)          │
+        └─────────────┬───────────────────────────┘
+                      │
+                      │  cmake -S . -B build
+                      ▼
+        ┌─────────────────────────────────────────┐
+        │            CMake Configure              │
+        │  - compiler detection                   │
+        │  - toolchain / sysroot                  │
+        │  - find_package / try_compile           │
+        └─────────────┬───────────────────────────┘
+                      │
+                      │ writes
+                      ▼
+        ┌─────────────────────────────────────────┐
+        │           CMake Cache                   │
+        │           CMakeCache.txt                │
+        │   (options, paths, feature results)     │
+        └─────────────┬───────────────────────────┘
+                      │
+                      │ generates
+                      ▼
+        ┌─────────────────────────────────────────┐
+        │           Ninja Build Rules             │
+        │            build.ninja                  │
+        └─────────────┬───────────────────────────┘
+                      │
+                      │ ninja
+                      ▼
+        ┌─────────────────────────────────────────┐
+        │          Ninja Build State              │
+        │   .ninja_log      .ninja_deps           │
+        │   (what is built, dependencies)         │
+        └─────────────┬───────────────────────────┘
+                      │
+                      │ invokes
+                      ▼
+        ┌─────────────────────────────────────────┐
+        │        Compiler / Linker                │
+        │   (gcc / clang / lld / ld)              │
+        └─────────────┬───────────────────────────┘
+                      │
+                      │ optional
+                      ▼
+        ┌─────────────────────────────────────────┐
+        │        Compiler Cache (optional)        │
+        │     ccache / sccache                    │
+        │     (~/.ccache, $SCCACHE_DIR)           │
+        └─────────────────────────────────────────┘
+
+```
+
+### 6.13.1 CMake Cache (Configuration-Time Cache)
+
+**Location:**
+
+build/CMakeCache.txt
+build/CMakeFiles/
+
+**What it caches:** CMake stores the results of all configuration-time decisions, including:
+
+* Compiler and toolchain
+    * `CMAKE_C_COMPILER`
+    * `CMAKE_CXX_COMPILER`
+    * sysroot/cross-compilation settings
+* Build options
+    * `CMAKE_BUILD_TYPE`
+    * `CMAKE_CXX_FLAGS`
+* Feature detection results
+    * `HAVE_STDLIB_H`
+    * `SIZEOF_LONG`
+* Dependency discovery
+    * `find_package()`/`find_library()` results
+* User-defined cache variables (`option()`, `set(... CACHE)`)
+
+**Common pitfalls:**
+
+* Changing compilers or toolchains without clearing the cache.
+* Updating dependency paths but CMake still uses old ones.
+* Modifying build-type-related flags with no effect.
+
+**How to inspect:**
+
+* `cmake -LAH build`
+
+**How to clear:**
+
+* `rm -rf build/`
+    * at least `CMakeCache.txt` and `CMakeFiles/`
+
+**How to disable cache and build from scratch:**
+
+* `cmake --fresh -B build ...`: Option `--fresh` performs a fresh configuration of the build tree. This removes any existing `CMakeCache.txt` file and associated `CMakeFiles/` directory, and recreates them from scratch.
+
+### 6.13.2 Ninja Build State Cache (Build-Time Cache)
+
+**Location:**
+
+* `build/build.ninja`
+* `build/.ninja_log`
+* `build/.ninja_deps`
+
+**What it caches:**
+
+* `build.ninja`: build rules generated by CMake.
+* `.ninja_log`: records what has already been built.
+* `.ninja_deps`: header dependency information.
+
+**Common pitfalls:**
+
+* Editing `CMakeLists.txt` but only running `ninja`.
+* Build rules don't change because CMake wasn't re-run.
+
+**Correct workflow**:
+
+```sh
+# Method 1
+cmake -S . -B build
+ninja -C build
+
+# Method 2
+# reconfigure is a phony target generated by CMake
+# Internally it runs something equivalent to: cmake -S <source> -B <build>
+ninja -C build reconfigure
+```
+
+**Cleaning build outputs:**
+
+* `ninja -C build clean`
+    * This does not clear the CMake cache.
+
+### 6.13.3 Compiler Cache (Optional, but Common)
+
+**Common Tools:**
+
+* `ccache`
+* `sccache`
+
+**What they cache:**
+
+* Compiled object files (`.o`)
+* Based on compiler, flags, macros, and include paths.
+
+**Common pitfalls:**
+
+* Builds appear unchanged even after modifying macros or headers.
+* Cache hits mask real recompilation.
+
+**Clear cache:**
+
+* `ccache -C`
 
 # 7 Install
 

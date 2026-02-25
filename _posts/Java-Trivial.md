@@ -278,10 +278,12 @@ Debug tool like `gdb`
 
 ## 2.11 jcmd
 
-### 2.11.1 Show heap stats
+**Useful commands:**
 
 * Heap information: `jcmd <pid> GC.heap_info`
+* Metaspace information: `jcmd <pid> VM.metaspace`
 * VM flags: `jcmd <pid> VM.flags`
+* VM command: `jcmd <pid> VM.command_line`
 * Stack and lock: `jcmd <pid> Thread.print -l`
 * Big classes: `jcmd <pid> GC.class_histogram live`
 

@@ -456,9 +456,17 @@ git reflog
 ## 3.7 Patch
 
 ```sh
+# For commits
 git --no-pager diff <commit1> <commit2> > /tmp/patch.diff
-git apply --stat ~/tmp/patch.txt
-git apply ~/tmp/patch.txt
+git apply --stat /tmp/patch.diff
+git apply /tmp/patch.diff
+git apply --reject /tmp/patch.diff
+
+# For stash
+git --no-pager stash show -p stash@{0} > /tmp/patch.diff
+git apply --stat /tmp/patch.diff
+git apply /tmp/patch.diff
+git apply --reject /tmp/patch.diff
 ```
 
 ## 3.8 Clone
@@ -553,6 +561,14 @@ git submodule sync --recursive <path/to/submodule>
 
 # Check Status
 git submodule status
+
+# Remove submodule
+# step1: Deinit
+git submodule deinit -f <path/to/submodule>
+# step2: Remove from index
+git rm -f <path/to/submodule>
+# step3: Remove leftover git metadata
+rm -rf .git/modules/<path/to/submodule>
 ```
 
 # 5 Plugin
@@ -693,7 +709,7 @@ wget https://raw.githubusercontent.com/<user>/<repository>/<branch>/<filepath>
 ```sh
 git diff HEAD -U0 --no-color | clang-format-diff -p1 -i
 
-git diff --name-only HEAD | grep -E '(\.h$)|(\.cpp$)|(\.hpp$)|(\.tpp$)|(\.c$)' | xargs git diff HEAD -U0 --no-color | clang-format-diff -p1 -i
+git diff --name-only --relative HEAD | grep -E '(\.h$)|(\.cpp$)|(\.hpp$)|(\.tpp$)|(\.c$)' | xargs git diff --relative HEAD -U0 --no-color | clang-format-diff -p1 -i
 ```
 
 ## 12.8 fatal: bad object

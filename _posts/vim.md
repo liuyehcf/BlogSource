@@ -3843,6 +3843,14 @@ let g:gutentags_dont_load = 1
 :set conceallevel=0
 ```
 
+## 7.10 How to disable automatic newline-at-EOF
+
+Just like `echo -n 'content' > file` does.
+
+```vim
+:set nofixeol
+```
+
 # 8 Reference
 
 * **[《Vim 中文速查表》](https://github.com/skywind3000/awesome-cheatsheets/blob/master/editors/vim.txt)**

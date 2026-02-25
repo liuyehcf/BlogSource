@@ -255,7 +255,13 @@ HotKey In Windows: `Ctrl+Alt+O`
 </code_scheme>
 ```
 
-### 1.5.5 Util
+### 1.5.5 Using Eclipse Code Formatter As Default Formater
+
+1. Install plugin: `Eclipse Code Formatter`
+1. `Settings` -> `Other Settings` -> `Eclipse Code Formatter`
+1. Setup config file.
+
+### 1.5.6 Util
 
 参考[command-line-formatter](https://www.jetbrains.com/help/idea/command-line-formatter.html)
 
@@ -361,7 +367,11 @@ If you want to install jdk into `/Library/Java/JavaVirtualMachines`, you need to
 
 * `Settings` -> `Editor` -> `Inspections` -> ⚙️ -> `Restore Defaults`
 
-## 2.12 Reference
+## 2.12 How to disable all Maven warnings globally
+
+* `Settings` -> `Editor` -> `Inspections` -> `Maven` -> `Security` -> `Vulnerable declared dependency`
+
+## 2.13 Reference
 
 * [IntelliJ IDEA 设置选中标识符高亮](http://blog.csdn.net/wskinght/article/details/43052407)
 * [IntelliJ IDEA 总结](https://www.zhihu.com/question/20450079)

@@ -94,7 +94,8 @@ gcc -o main main.cpp -lstdc++ -std=gnu++17 -lbacktrace -g
 libunwind is a portable and high-performance library designed to inspect and manipulate call stacks (perform stack unwinding). It provides low-level control over the process of walking back through function frames, retrieving register values, and analyzing execution state.
 
 * [The libunwind project](https://www.nongnu.org/libunwind/index.html)
-* [github-libunwind](https://github.com/libunwind/libunwind)
+* [github-non-GNU-libunwind](https://github.com/libunwind/libunwind)
+* [github-llvm-libunwind](https://github.com/llvm/llvm-project/tree/main/libunwind)
 
 Here's a simple tutorial of how to use it, including installation.
 
@@ -237,6 +238,189 @@ const char* unw_strerror(int error_code);
 [How to automatically generate a stacktrace when my program crashes](https://stackoverflow.com/questions/77005/how-to-automatically-generate-a-stacktrace-when-my-program-crashes)
 
 Here's a demo project: [coredump_demo](https://github.com/liuyehcf/cpp-demo-projects/tree/main/libunwind/coredump_demo)
+
+### 1.2.3 Core Stack vs. Signal Stack
+
+Each thread has its own main stack:
+
+* function call frames.
+* local variables.
+* return addresses.
+* saved registers.
+
+Typical growth direction: downward (on most architectures).
+
+```
+High memory
+┌─────────────────────────┐
+│     older frames        │
+├─────────────────────────┤
+│ function A frame        │
+├─────────────────────────┤
+│ function B frame        │
+├─────────────────────────┤
+│ current function frame  │  <-- SP (stack pointer)
+└─────────────────────────┘
+Low memory
+```
+
+Signal stack (alternate stack) is used only when a signal handler executes.
+
+* prevent stack overflow during signal handling.
+* allow handling signals even when main stack is corrupted.
+* useful in crash handling (segfault, stack overflow).
+
+```
+Separate memory region
+
+High memory
+┌─────────────────────────┐
+│     unused              │
+├─────────────────────────┤
+│ signal handler frames   │  <-- SP during signal handler
+├─────────────────────────┤
+│ saved registers/context │
+└─────────────────────────┘
+Low memory
+```
+
+How they interact when a signal arrives:
+
+* Case A: default (no signal stack)
+
+    ```
+    Before signal:
+
+    Core stack:
+    ┌──────────────────────┐
+    │ function C           │
+    │ function B           │
+    │ function A           │
+    └──────────────────────┘
+
+    Signal arrives ↓
+
+    Kernel pushes signal frame on SAME stack:
+
+    ┌──────────────────────┐
+    │ signal handler frame │
+    ├──────────────────────┤
+    │ function C           │
+    │ function B           │
+    │ function A           │
+    └──────────────────────┘
+    ```
+
+    * Risk: if stack overflow caused the signal → handler may fail too.
+* Case B: using alternate signal stack
+    * Memory layout:
+    ```
+    Core stack (thread stack)         Signal stack (alt stack)
+    ┌──────────────────────┐          ┌──────────────────────┐
+    │ function C           │          │ signal handler frame │
+    │ function B           │          │ saved context        │
+    │ function A           │          └──────────────────────┘
+    └──────────────────────┘
+    ```
+
+    * Execution flow:
+    ```
+    1. Thread running on core stack
+    2. Signal occurs
+    3. Kernel saves CPU context
+    4. Switch SP → signal stack
+    5. Run handler
+    6. Handler returns
+    7. Restore SP → core stack
+    8. Resume interrupted function
+    ```
+
+timeline of core execution:
+
+```
+Normal execution:
+
+CPU → Core stack
+        ↓
+   function A
+        ↓
+   function B
+        ↓
+   function C
+
+Signal arrives:
+
+Kernel:
+   save registers
+   choose stack:
+       if SA_ONSTACK → signal stack
+       else → core stack
+
+Handler running:
+
+CPU → Signal stack
+        ↓
+   signal_handler()
+
+Handler returns:
+
+Kernel:
+   restore registers
+   restore stack pointer
+
+CPU → Core stack
+        ↓
+   resume function C
+```
+
+### 1.2.4 Unwind Table
+
+An Unwind Table is essentially a "map" or a "cheat sheet" that tells a debugger or a library (like libunwind) how to reconstruct the previous function's state.When a function is running, it changes the Stack Pointer (RSP) and saves registers (RBX, RBP, etc.) to the stack. If a crash or a signal happens, the CPU only knows the current state. To see the "Core Stack" (the caller), the unwinder needs to "undo" the current function's changes.
+
+**Why do we need it?**
+
+> In the old days, every function used a Frame Pointer (RBP). Backtracing was easy: you just followed the chain of pointers.Modern compilers optimize away the Frame Pointer (`-fomit-frame-pointer`) to free up a register for data. Without RBP, the only way to find the caller is to know exactly how much the stack was decremented at every single instruction.The Unwind > Table stores this metadata.
+
+**Where is it stored?** The table is typically stored in special sections of your ELF binary:
+
+* `.eh_frame`: (Common) Used by C++ for exception handling and by `libunwind`. It is loaded into memory at runtime.
+* `.debug_frame`: (Optional) Standard DWARF debug info, usually only present if you compiled with `-g`.
+* `vDSO`(virtual Dynamic Shared Object): The kernel provides a "virtual" library that contains the unwind table for the Signal Restorer.
+
+**What is inside a table entry?** An entry (often called a Canonical Frame Address or CFA definition) tells the unwinder:
+
+* At instruction address `0x40056a`, the previous stack pointer was at `$RSP + 32`, and the Return Address is stored at `$CFA - 8`.
+* Example "Logic" of an Entry:
+
+| Instruction Range | CFA (Rule to find previous stack) | Return Address (RA) |
+|--|--|--|
+| `0x400500 - 0x400505` | `$RSP + 8` | at `$CFA - 8` |
+| `0x400506 - 0x400520` | `$RSP + 64` | at `$CFA - 8` |
+
+**Common "Breaks" in the Table:**
+
+* Hand-written Assembly: If your `sa_restorer` is raw assembly, it probably doesn't have `.cfi` (Call Frame Information) directives.
+* Kernel/vDSO Mismatch: Sometimes the kernel's vDSO has a restorer but the DWARF info is stripped or malformed.
+* Signal Boundaries: Moving from a "Signal Stack" to a "Core Stack" requires a special type of unwind entry called `S` (Signal Frame) which tells the unwinder to look for a `ucontext_t` instead of a normal stack frame.
+
+**How to see the table in LLDB:**
+
+* `image show-unwind -a <address>`
+
+### 1.2.5 Related Compile Options
+
+* **`-fexceptions`**: Enables exception handling support and generates unwind metadata required for C++ throw/catch.
+* `-fno-exceptions`: Disables exception handling and omits related unwind information.
+* `-funwind-tables`: Emits stack unwind tables even without exceptions, enabling backtrace and crash analysis.
+* `-fno-unwind-tables`: Prevents generation of unwind tables, reducing size but breaking stack unwinding.
+* **`-fasynchronous-unwind-tables`**: Generates unwind info usable at any instruction boundary, suitable for signals and profilers.
+* `-fno-asynchronous-unwind-tables`: Disables async-safe unwind info, limiting reliable stack tracing during interrupts/signals.
+* `-fomit-frame-pointer`: Removes frame pointers for optimization, making stack unwinding rely on DWARF metadata.
+* **`-fno-omit-frame-pointer`**: Preserves frame pointers to improve debugger, profiler, and unwinding reliability.
+* **`-g`**: Produces debug information (DWARF), improving stack traces and unwind accuracy.
+* `-gdwarf-*`: Selects DWARF version, which affects the format and capability of unwind/debug metadata.
+* `-fno-rtti`: Disables RTTI generation, often used with reduced exception/unwind runtime overhead.
+* `-O*` (e.g., `-O2`): Optimization may alter stack layout and inlining, affecting unwind behavior and trace readability.
 
 ## 1.3 bison
 

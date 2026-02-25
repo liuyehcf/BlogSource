@@ -31,5 +31,19 @@ cmake -B build -G Ninja
 
 ## 3.1 Check Target
 
-* `ninja -C build -t targets`
-* `cat build/build.ninja | grep 'build all:'`
+```sh
+ninja -C build -t targets
+cat build/build.ninja | grep 'build all:'
+```
+
+## 3.2 Explain Operations on Targets
+
+```sh
+ninja -C build -d explain
+```
+
+## 3.3 Build Target Graph
+
+```sh
+ninja -C build -t graph | dot -Tsvg > graph.svg
+```
