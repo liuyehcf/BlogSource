@@ -236,7 +236,7 @@ echo ${count} # Always 0
                 echo "item=${item}"
                 if [ "${item}" == "b" ]; then
                     return
-                fi 
+                fi
             done
         done
     }
@@ -251,7 +251,7 @@ echo ${count} # Always 0
                 echo "item=${item}"
                 if [ "${item}" == "b" ]; then
                     return
-                fi 
+                fi
             done < <(echo -e "${content}")
         done
     }
@@ -388,6 +388,35 @@ Conditional expressions are used by the `[[` compound command and the `test` and
 * `string1 < string2`: True if string1 sorts before string2 lexicographically.
 * `string1 > string2`: True if string1 sorts after string2 lexicographically.
 
+## 1.8 Word Splitting
+
+Word splitting is a step in the shell's command-line processing where the shell breaks an expanded string into multiple words based on whitespace (or other delimiters).
+
+**It happens after certain expansions and before command execution.**
+
+**When does word splitting happen? In POSIX-style shells (bash, sh, zsh in sh-mode), the order is roughly:**
+
+1. Step1: Parameter expansion, like `$var`, `${var}`
+1. Step2: Command substitution, like `$(...)`, `` `...` ``
+1. Step3: Arithmetic expansion
+1. **Step4: Word splitting**
+    * **Word splitting only happens on unquoted expansions**.
+    * **Default splitting rule: `$IFS`**
+1. Step5: Filename expansion (globbing),like `*`, `?`, `[abc]`
+
+**How to avoid word splitting bugs (best practices)**
+
+1. Always quote variable expansions.
+1. Use arrays instead of strings (bash).
+1. Temporarily control `IFS` (advanced)
+
+**In an assignment:**
+
+* Parameter expansion happens
+* Command substitution happens
+* **Word splitting is suppressed**
+* **Globbing is suppressed**
+
 # 2 Special Symbols
 
 shell中的特殊符号包括如下几种
@@ -470,7 +499,7 @@ shell中的特殊符号包括如下几种
             echo -e "\nUsing \$@:"
             for a in $@; do
                 echo $a;
-            done              
+            done
             EOF
 
             bash test.sh one two "three four"
@@ -678,7 +707,7 @@ done < "test.txt"
 while IFS= read -r line
 do
     echo $line
-done < <(cmd) 
+done < <(cmd)
 ```
 
 **方式2**
@@ -978,7 +1007,7 @@ echo $a     # 输出12
 
 ```sh
 expr 1 + 3
- 
+
 a=10;b=5
 expr $a + $b
 expr $a - $b
@@ -1025,7 +1054,7 @@ array_name[n]=valuen
 ### 3.3.1 Operations
 
 #### 3.3.1.1 Get All Elements
- 
+
 ```sh
 ${array[@]}
 ${array[*]}
@@ -1259,7 +1288,7 @@ function test() {
     map_name[key1]=value1
     map_name[key2]=value2
     ...
-    map_name[keyn]=valuen    
+    map_name[keyn]=valuen
 }
 ```
 
@@ -1395,7 +1424,7 @@ For `[*]`, like `${array[*]}`, `${map[*]}` and `${!map[*]}`, all items as a sing
     do
         echo -e "\titem: ${item}"
     done
-    
+
     IFS=,
     echo 'Quote ${array[@]} with IFS=",": ' "${array[@]}"
     echo 'Quote ${array[*]} with IFS=",": ' "${array[*]}"
@@ -1648,10 +1677,10 @@ fi
 ```sh
 if condition
 then
-    command1 
+    command1
     command2
     ...
-    commandN 
+    commandN
 fi
 ```
 
@@ -1693,7 +1722,7 @@ fi
 ```sh
 if condition
 then
-    command1 
+    command1
     command2
     ...
     commandN
@@ -1708,8 +1737,8 @@ fi
 if condition1
 then
     command1
-elif condition2 
-then 
+elif condition2
+then
     command2
 else
     commandN
@@ -1793,7 +1822,7 @@ function isNumber() {
     esac
 }
 
-for ((i=0; i<100; i++)) 
+for ((i=0; i<100; i++))
 do
     isNumber ${i}
 done
@@ -1852,26 +1881,26 @@ echo $?
 
 # 7 builtin
 
-`bash shell`的命令分为两类：外部命令和内部命令。外部命令是通过系统调用或独立的程序实现的，如`sed`、`awk`等等。内部命令是由特殊的文件格式（`.def`）所实现，如`cd`、`history`、`exec`等等
+Commands in the `bash shell` are divided into two categories: external commands and internal commands. External commands are implemented through system calls or as standalone programs, such as `sed`, `awk`, and so on. Internal commands are implemented through special file formats (`.def`), such as `cd`, `history`, `exec`, and so on.
 
-通过`man builtins`查看说明文档
+You can view the documentation using `man builtins`.
 
 ## 7.1 shift
 
-shift用于移动参数的位置
+`shift` is used to shift the positions of parameters.
 
 **Pattern:**
 
-* `shift [n]`：n是数字，默认是1
+* `shift [n]`: `n` is a number, and the default value is 1.
 
 ```sh
 eval set -- a b c d
 
-echo $1 # 输出a
+echo $1 # Output a
 shift
-echo $1 # 输出b
+echo $1 # Output b
 shift 2
-echo $1 # 输出d
+echo $1 # Output d
 ```
 
 ## 7.2 eval
@@ -1954,45 +1983,35 @@ cd ${dir}
 
 ## 7.5 exec
 
-`exec`用于进程替换（类似系统调用`exec`），或者标准输入输出的重定向
+`exec` is used for process replacement (similar to the system call `exec`), or for redirecting standard input and output.
 
 **Examples:**
 
-* `exec 1>my.log 2>&1`：将标准输出、以及标准异常重定向到my.log文件中，对后续的所有命令都生效
+* `exec 1>my.log 2>&1`: Redirect standard output and standard error to the `my.log` file, and make it effective for all subsequent commands.
 
 ### 7.5.1 Work with pipe
 
 ```sh
 #!/bin/bash
 
-# 总数
-count=20 
+count=20
+paracount=5
+tempfifo=$$.fifo
 
-# 并行度
-paracount=5 
-
-# $$表示当前执行文件的PID
-tempfifo=$$.fifo        
-
-# 捕获信号 2 （ctrl C），并执行相应的动作
 trap "exec 1000>&-; exec 1000<&-; exit 0" 2
 
-# 创建fifo
 mkfifo ${tempfifo}
 
-# 将文件描述符 1000 分配给 tempfifo
 exec 1000<> ${tempfifo}
 rm -rf ${tempfifo}
 
 for ((i=1; i<=${paracount}; i++))
 do
-    # 向文件描述符中输入空行
     echo >&1000
 done
 
 for((i=1; i<=${count}; i++))
 do
-    # 从文件描述符中读取一行
     read -u 1000
     {
         echo "$i, sleep $(($i%5))s"
@@ -2001,50 +2020,40 @@ do
     } &
 done
 
-# 等待所有后台任务结束
 wait
 
 echo "done"
 ```
 
-**文件描述符用变量替代的版本1：**
+**Version 1: Using variables to replace file descriptors:**
 
-* 在`exec`中用`{}`而不是`${}`来引用变量
+* In `exec`, use `{}` instead of `${}` to reference variables
 
 ```sh
 #!/bin/bash
 
-# 总数
-count=20 
+count=20
 
-# 并行度
-paracount=5 
+paracount=5
 
-# 文件描述符（随意定）
 fd_fifo=1000
 
-# $$表示当前执行文件的PID
-tempfifo=$$.fifo        
+tempfifo=$$.fifo
 
-# 捕获信号 2 （ctrl C），并执行相应的动作
 trap "exec {fd_fifo}>&-; exec {fd_fifo}<&-; exit 0" 2
 
-# 创建fifo
 mkfifo ${tempfifo}
 
-# 将文件描述符 fd_fifo 分配给 tempfifo
 exec {fd_fifo}<> ${tempfifo}
 rm -rf ${tempfifo}
 
 for ((i=1; i<=${paracount}; i++))
 do
-    # 向文件描述符中输入空行
     echo >&${fd_fifo}
 done
 
 for((i=1; i<=${count}; i++))
 do
-    # 从文件描述符中读取一行
     read -u ${fd_fifo}
     {
         echo "$i, sleep $(($i%5))s"
@@ -2053,50 +2062,40 @@ do
     } &
 done
 
-# 等待所有后台任务结束
 wait
 
 echo "done"
 ```
 
-**文件描述符用变量替代的版本2：**
+**Version 2: Using variables to replace file descriptors:**
 
-* 使用`eval`
+* Use `eval`
 
 ```sh
 #!/bin/bash
 
-# 总数
-count=20 
+count=20
 
-# 并行度
-paracount=5 
+paracount=5
 
-# 文件描述符（随意定）
 fd_fifo=1000
 
-# $$表示当前执行文件的PID
-tempfifo=$$.fifo        
+tempfifo=$$.fifo
 
-# 捕获信号 2 （ctrl C），并执行相应的动作
 trap "eval 'exec ${fd_fifo}>&-; exec ${fd_fifo}<&-; exit 0'" 2
 
-# 创建fifo
 mkfifo ${tempfifo}
 
-# 将文件描述符 fd_fifo 分配给 tempfifo
 eval "exec ${fd_fifo}<> ${tempfifo}"
 rm -rf ${tempfifo}
 
 for ((i=1; i<=${paracount}; i++))
 do
-    # 向文件描述符中输入空行
     echo >&${fd_fifo}
 done
 
 for((i=1; i<=${count}; i++))
 do
-    # 从文件描述符中读取一行
     read -u ${fd_fifo}
     {
         echo "$i, sleep $(($i%5))s"
@@ -2105,7 +2104,6 @@ do
     } &
 done
 
-# 等待所有后台任务结束
 wait
 
 echo "done"
@@ -2113,12 +2111,12 @@ echo "done"
 
 ## 7.6 shopt
 
-用于启用/禁用shell扩展功能
+Used to enable/disable shell extension features.
 
 **Examples:**
 
-* `shopt -s extglob`：启用`extglob`
-* `shopt -u extglob`：禁用`extglob`
+* `shopt -s extglob`: Enable `extglob`.
+* `shopt -u extglob`: Disable `extglob`.
 
 ## 7.7 read
 
@@ -2128,54 +2126,57 @@ echo "done"
 
 **Options:**
 
-`-a`：后跟一个变量，该变量会被认为是个数组，然后给其赋值，**默认是以空格为分割符**
-`-d`：后面跟一个标志符，其实只有其后的第一个字符有用，作为结束的标志
-`-p`：后面跟提示信息，即在输入前打印提示信息
-`-e`：在输入的时候可以使用命令补全功能
-`-n`：后跟一个数字，定义输入文本的长度，很实用
-`-r`：屏蔽`\`，如果没有该选项，则`\`作为一个转义字符，有的话`\`就是个正常的字符了
-`-s`：安静模式，在输入字符时不再屏幕上显示，例如login时输入密码
-`-t`：后面跟秒数，定义输入字符的等待时间
-`-u`：后面跟fd，从文件描述符中读入，该文件描述符可以是exec新开启的
+`-a`: followed by a variable, which will be treated as an array and assigned values; **by default, space is used as the delimiter**.
+`-d`: followed by a delimiter; in fact, only the first character after it is used as the terminating character.
+`-p`: followed by a prompt message, which is printed before input.
+`-e`: enables command completion during input.
+`-n`: followed by a number, defining the length of the input text; very useful.
+`-r`: disables `\`; if this option is not used, `\` acts as an escape character; with it, `\` is treated as a normal character.
+`-s`: silent mode; characters are not displayed on the screen when typing, for example when entering a password during login.
+`-t`: followed by a number of seconds, defining the time to wait for input.
+`-u`: followed by an fd, reads input from the specified file descriptor, which can be newly opened by `exec`.
 
-**简单读取**
+**Demo:**
 
 ```sh
 #!/bin/bash
 
-#这里默认会换行  
-echo "输入网站名: "  
-#读取从键盘的输入  
-read website  
-echo "你输入的网站名是 $website"  
-exit 0  #退出
+# By default, this will add a newline
+echo "Enter website name: "
+
+# Read input from the keyboard
+read website
+
+echo "The website name you entered is $website"
+
+exit 0  # Exit
 ```
 
-**`-p`参数，允许在`read`命令行中直接指定一个提示**
+**The `-p` option allows specifying a prompt directly in the `read` command line**.
 
 ```sh
 #!/bin/bash
 
-read -p "输入网站名:" website
-echo "你输入的网站名是 $website" 
+read -p "Enter website name:" website
+echo "The website name you entered is $website"
 exit 0
 ```
 
-**`-t`参数指定`read`命令等待输入的秒数，当计时满时，`read`命令返回一个非零退出状态**
+**The `-t` option specifies the number of seconds the `read` command waits for input. When the time expires, the `read` command returns a non-zero exit status**.
 
 ```sh
 #!/bin/bash
 
-if read -t 5 -p "输入网站名:" website
+if read -t 5 -p "Enter website name:" website
 then
-    echo "你输入的网站名是 $website"
+    echo "The website name you entered is $website"
 else
-    echo "\n抱歉，你输入超时了。"
+    echo "\nSorry, your input has timed out."
 fi
 exit 0
 ```
 
-**`-n`参数设置`read`命令计数输入的字符。当输入的字符数目达到预定数目时，自动退出，并将输入的数据赋值给变量**
+**The `-n` option sets the number of characters that the `read` command counts as input. When the specified number of characters is reached, it exits automatically and assigns the input data to the variable**.
 
 ```sh
 #!/bin/bash
@@ -2192,26 +2193,26 @@ esac
 exit 0
 ```
 
-**`-s`选项能够使`read`命令中输入的数据不显示在命令终端上（实际上，数据是显示的，只是`read`命令将文本颜色设置成与背景相同的颜色）。输入密码常用这个选项**
+**The `-s` option makes the data entered in the `read` command not displayed on the terminal (in fact, the data is displayed, but the `read` command sets the text color to be the same as the background color). This option is commonly used when entering passwords**.
 
 ```sh
 #!/bin/bash
 
-read  -s  -p "请输入您的密码:" pass
-echo "\n您输入的密码是 $pass"
+read -s -p "Please enter your password:" pass
+echo "\nThe password you entered is $pass"
 exit 0
 ```
 
-**按行读取文件**
+**Read a file line by line**
 
 ```sh
 #!/bin/bash
-  
-count=1    # 赋值语句，不加空格
-cat test.txt | while IFS= read -r line      # cat 命令的输出作为read命令的输入,read读到>的值放在line中
+
+count=1
+cat test.txt | while IFS= read -r line
 do
    echo "Line $count:$line"
-   count=$[ $count + 1 ]          # 注意中括号中的空格。
+   count=$[ $count + 1 ]
 done
 echo "finish"
 exit 0
@@ -2219,27 +2220,26 @@ exit 0
 
 ## 7.8 getopts
 
-**格式：`getopts [option[:]] VARIABLE`**
+**Pattern: `getopts [option[:]] VARIABLE`**
 
-* `option`：选项，为单个字母
-* `:`：如果某个选项（option）后面出现了冒号（`:`），则表示这个选项后面可以接参数
-* `VARIABLE`：表示将某个选项保存在变量`VARIABLE`中
+* `option`: an option, a single letter.
+* `:`: if a colon (`:`) appears after an option, it means that this option can take an argument.
+* `VARIABLE`: indicates that an option is stored in the variable `VARIABLE`.
 
-`getopts`是linux系统中的一个内置变量，一般用在循环中。每当执行循环时，`getopts`都会检查下一个命令选项，如果这些选项出现
-在option中，则表示是合法选项，否则不是合法选项。并将这些合法选项保存在`VARIABLE`这个变量中
+`getopts` is a built-in command in Linux, and is generally used in a loop. Each time the loop is executed, `getopts` checks the next command-line option. If the option appears in `option`, it is considered a valid option; otherwise, it is invalid. All valid options are stored in the variable `VARIABLE`.
 
-`getopts`还包含两个内置变量，及`OPTARG`和`OPTIND`
+`getopts` also provides two built-in variables: `OPTARG` and `OPTIND`.
 
-1. `OPTARG`：选项后面的参数
-1. `OPTIND`：下一个选项的索引（该索引是相对于`$*`的索引，因此如果选项有参数的话，索引是非连续的）
+1. `OPTARG`: the argument that follows an option.
+1. `OPTIND`: the index of the next option (this index is relative to `$*`, so if an option has an argument, the indices are not continuous).
 
-**Examples:**：`getopts ":a:bc:" opt`（参数部分：`-a 11 -b -c 5`）
+**Examples:** `getopts ":a:bc:" opt` (arguments: `-a 11 -b -c 5`).
 
-* 第一个冒号表示忽略错误
-* 字符后面的冒号表示该选项必须有自己的参数
-* `$OPTARG`存储相应选项的参数，如例中的`11`、`5`两个参数
-* `$OPTIND`总是存储原始`$*`中下一个要处理的选项的索引（注意不是参数，而是选项），此处指的是`a`,`b`,`c`这三个选项（而不是那些数字，当然数字也是会占有位置的）的索引
-    * **`OPTIND`初值为1，遇到`x`（选项不带参数），则`OPTIND += 1`；遇到`x:`（选项带参数），则`OPTARG`=argv[OPTIND+1]，`OPTIND += 2`**
+* The first colon means to ignore errors.
+* A colon after a character means that the option must have its own argument.
+* `$OPTARG` stores the argument of the corresponding option, such as `11` and `5` in the example.
+* `$OPTIND` always stores the index of the next option to be processed in the original `$*` (note that it refers to options, not arguments). Here it refers to the indices of the three options `a`, `b`, and `c` (not the numbers, although the numbers also occupy positions).
+    * **The initial value of `OPTIND` is 1. When encountering `x` (an option without an argument), `OPTIND += 1`; when encountering `x:` (an option with an argument), then `OPTARG = argv[OPTIND+1]`, and `OPTIND += 2`**.
 
 ```sh
 #!/bin/sh
@@ -2307,30 +2307,30 @@ option '-c', OPTIND: '6'
 option '-b', OPTIND: '7'
 ```
 
-**注意：如果getopts置于函数内部时，getopts解析的是函数的所有入参，可以通过`$@`将脚本的所有参数传递给函数**
+**Note: If `getopts` is placed inside a function, it parses all arguments passed to the function. You can pass all script arguments to the function using `$@`.**
 
 ## 7.9 getopt
 
-**格式：`getopt [options] -- parameters`**
+**Pattern: `getopt [options] -- parameters`**
 
 **Options:**
 
-* `-o, --options <选项字符串>`：要识别的短选项
-    * 单个字符表示选项。例如`-o "abc"`，`a`、`b`、`c`表示3个选项
-    * 第一个冒号`:`表示忽略错误
-    * 单个字符后接一个冒号`:`，表示该选项后必须跟一个参数，参数紧跟在选项后或者以空格隔开。例如`-o a:bc`，选项`a`必须要有参数，选项`b`、`c`无需参数
-    * 单个字符后接两个冒号`::`，表示该选项后必须跟一个参数，且参数必须紧跟在选项后不能以空格隔开。例如`-o a::bc`
-* `-a, --alternative`：允许长选项以`-`开始，否则默认长选项要求以`--`开头
-* `-l, --longoptions <长选项>`：要识别的长选项
-    * **只有`-l`选项，无`-o`选项时，`-l`选项无效（如果没有短选项，可以加上`-o ''`或者`-o ':'`）**
-    * 以逗号`,`分隔的长字符串表示选项。例如`-l "along,blong"`，`along`、`blong`表示2个选项
-    * **字符串后接一个冒号`:`，表示该选项后必须跟一个参数，参数和选项必须用空格隔开（仅有这一条冒号规则）**
-* `-n, --name <程序名>`：将错误报告给的程序名
+* `-o, --options <option string>`: short options to be recognized.
+    * A single character represents an option. For example, `-o "abc"` means `a`, `b`, and `c` are three options.
+    * The first colon `:` means to ignore errors.
+    * A single character followed by one colon `:` means the option must be followed by an argument, which can be immediately after the option or separated by a space. For example, `-o a:bc` means option `a` must have an argument, while options `b` and `c` do not require arguments.
+    * A single character followed by two colons `::` means the option must be followed by an argument, and the argument must be immediately after the option with no space. For example, `-o a::bc`.
+* `-a, --alternative`: allows long options to start with `-`; otherwise, long options are required to start with `--` by default.
+* `-l, --longoptions <long options>`: long options to be recognized.
+    * **If only `-l` is specified without `-o`, then `-l` is invalid (if there are no short options, you can add `-o ''` or `-o ':'`)**.
+    * Long options are specified as comma-separated strings. For example, `-l "along,blong"` means `along` and `blong` are two options.
+    * **A single colon `:` after a string means the option must be followed by an argument, and the argument must be separated from the option by a space (this is the only colon rule here)**.
+* `-n, --name <program name>`: the program name used in error reports.
 
-**输出：getopt会将参数项进行重组和排序，会分成两组，以`--`符号分隔**
+**Output: `getopt` reorganizes and sorts the arguments, dividing them into two groups separated by `--`**.
 
-1. **`--`之前是合法的`选项`、`参数`集合**
-1. **`--`之后是多余的`参数`集合，注意，这里不包含非法`选项`**
+1. **Before `--` is the collection of valid `options` and their `arguments`**.
+1. **After `--` is the collection of extra `arguments`; note that this does not include invalid `options`**.
 
 ```sh
 getopt -o 'a' -- -a
@@ -2349,31 +2349,31 @@ getopt: invalid option -- 'b'
  --
 #-------------------------↑↑↑↑↑↑-------------------------
 
-# 加上第一个:之后，可以忽略错误的选项
+# After adding the first `:`, invalid options can be ignored.
 getopt -o ':a' -- -b
 #-------------------------↓↓↓↓↓↓-------------------------
  --
 #-------------------------↑↑↑↑↑↑-------------------------
 
-# 选项和参数紧贴
+# The option and its argument are written immediately next to each other.
 getopt -o ':a:' -- -a1
 #-------------------------↓↓↓↓↓↓-------------------------
  -a '1' --
 #-------------------------↑↑↑↑↑↑-------------------------
 
-# 选项和参数以空格分开
+# The option and its argument are separated by a space.
 getopt -o ':a:' -- -a 1
 #-------------------------↓↓↓↓↓↓-------------------------
  -a '1' --
 #-------------------------↑↑↑↑↑↑-------------------------
 
-# 选项和参数紧贴
+# The option and its argument are written immediately next to each other.
 getopt -o ':a::' -- -a1
 #-------------------------↓↓↓↓↓↓-------------------------
  -a '1' --
 #-------------------------↑↑↑↑↑↑-------------------------
 
-# 选项和'参数'分开，其实'1'并没有被识别为参数
+# The option and the 'argument' are separated, but in fact '1' is not recognized as an argument.
 getopt -o ':a::' -- -a 1
 #-------------------------↓↓↓↓↓↓-------------------------
  -a '' -- '1'
@@ -2381,19 +2381,19 @@ getopt -o ':a::' -- -a 1
 ```
 
 ```sh
-# 当没有-o选项时，-l无效
+# When there is no `-o` option, `-l` is invalid.
 getopt -l 'along' -- --along
 #-------------------------↓↓↓↓↓↓-------------------------
  --
 #-------------------------↑↑↑↑↑↑-------------------------
 
-# 正常case
+# Normal case.
 getopt -o '' -l 'along' -- --along
 #-------------------------↓↓↓↓↓↓-------------------------
  --along --
 #-------------------------↑↑↑↑↑↑-------------------------
 
-# 没有指定 -a 选项，且选项以 - 开头时
+# When the `-a` option is not specified and the option starts with `-`.
 getopt -o '' -l 'along' -- -along
 #-------------------------↓↓↓↓↓↓-------------------------
 getopt: invalid option -- 'a'
@@ -2404,32 +2404,32 @@ getopt: invalid option -- 'g'
  --
 #-------------------------↑↑↑↑↑↑-------------------------
 
-# 传入错误参数，且未忽略错误
+# An invalid parameter is passed in, and errors are not ignored.
 getopt -o '' -l 'along' -- --blong
 #-------------------------↓↓↓↓↓↓-------------------------
 getopt: unrecognized option '--blong'
  --
 #-------------------------↑↑↑↑↑↑-------------------------
 
-# 没有指定 -a 选项，且选项以 - 开头，忽略错误
+# When the `-a` option is not specified, the option starts with `-`, and errors are ignored.
 getopt -o ':' -l 'along' -- -along
 #-------------------------↓↓↓↓↓↓-------------------------
  --
 #-------------------------↑↑↑↑↑↑-------------------------
 
-# 传入错误参数，忽略错误
+# An invalid parameter is passed in, and errors are ignored.
 getopt -o ':' -l 'along' -- --blong
 #-------------------------↓↓↓↓↓↓-------------------------
  --
 #-------------------------↑↑↑↑↑↑-------------------------
 
-# 必须指定参数，且指定参数，以空格分隔
+# The argument must be specified, and it is provided separated by a space.
 getopt -o '' -al 'along:' -- -along arg1
 #-------------------------↓↓↓↓↓↓-------------------------
  --along 'arg1' --
 #-------------------------↑↑↑↑↑↑-------------------------
 
-# 必须指定参数，且未指定参数，未忽略错误
+# The argument must be specified, but it is not provided, and errors are not ignored.
 getopt -o '' -al 'along:' -- -along
 #-------------------------↓↓↓↓↓↓-------------------------
 getopt: option '--along' requires an argument
@@ -2442,15 +2442,15 @@ getopt: option '--along' requires an argument
 ```sh
 cat > test.sh << 'EOF'
 #!/bin/bash
- 
+
 TEMP=`getopt -o ab:c:: --long a-long,b-long:,c-long:: \
      -n 'example.bash' -- "$@"`
- 
+
 if [ $? != 0 ] ; then echo "Terminating..." >&2 ; exit 1 ; fi
 
-# 重新设置参数 
+# Reset params
 eval set -- "$TEMP"
- 
+
 while true ; do
         case "$1" in
                 -a|--a-long) echo "Option a" ; shift ;;
@@ -2485,7 +2485,7 @@ Remaining arguments:
 
 ## 7.10 printf
 
-主要用于格式转换，以及格式化输出，当入参是数组的时候，会对数组的每个元素应用指定的格式化模式
+Mainly used for format conversion and formatted output. When the input parameter is an array, the specified formatting pattern is applied to each element of the array.
 
 ```sh
 printf %x 255
@@ -2511,44 +2511,69 @@ world
 #-------------------------↑↑↑↑↑↑-------------------------
 ```
 
+### 7.10.1 Variable expansion
+
+```sh
+# content needs to be enclosed in single quotes, otherwise the variable will be expanded by default.
+content='a=$FOO\nb=$BAR\nc=$BAZ\n'
+export FOO=hello
+export BAR=world
+export BAZ=NOPE
+
+# Keep it exactly as-is (preserve multiple lines, do not expand \n):
+printf '%s' "$content"
+
+# The literal \n needs to be expanded into real line breaks:
+printf '%b' "$content"
+
+# Environment variables (such as $FOO) need to be substituted in the text, but \n should not be expanded:
+printf '%s' "$content" | envsubst
+printf '%s' "$content" | envsubst '$FOO $BAR'
+
+# Both environment variables need to be substituted and \n needs to be expanded into real line breaks:
+printf '%b' "$(printf '%s' "$content" | envsubst)"
+printf '%b' "$(printf '%s' "$content" | envsubst '$FOO $BAR')"
+```
+
 ## 7.11 declare
 
-`declare`用于定义变量、增减属性、查看变量信息。若在函数内部使用`declare`，那么默认是`local`的
+`declare` is used to define variables, add or remove attributes, and view variable information. When `declare` is used inside a function, it is `local` by default.
 
-**格式：`declare [-/+ aAfFgilrtux] [-p] [name[=value] ...]`**
+**Pattern: `declare [-/+ aAfFgilrtux] [-p] [name[=value] ...]`**
 
 **Options:**
 
-* `-/+`：`-`增加属性，`+`删除属性
-    * `a`：数组
-    * `A`：map
-    * `f`：函数
-    * `i`：整数
-* `-p`：查看变量信息，包括类型以及值
+* `-/+`: `-` adds attributes, `+` removes attributes.
+    * `a`: array.
+    * `A`: map.
+    * `f`: function.
+    * `i`: integer.
+    * `n`: reference.
+* `-p`: view variable information, including its type and value
 
 **Examples:**
 
 ```sh
-# 查看函数定义
+# View definition of function
 declare -f <function>
-# 查看普通变量
+# View variable
 declare -p <variable>
 
-# 定义数组
+# Declare array
 declare -a <array>
 
-# 定义map
+# Declare map
 declare -A <map>
 
-# 定义整数
+# Declare integer
 declare -i <integer>
 ```
 
 ## 7.12 local
 
-用于在函数内定义局部变量，其作用域就是函数本身
+Used to define local variables inside a function; their scope is limited to the function itself
 
-**格式：`local [option] [name[=value] ...]`，其中`option`部分参考`declare`即可**
+**Pattern: `local [option] [name[=value] ...]`, where the `option` part follows the same rules as `declare`**
 
 **Examples:**
 
@@ -2565,17 +2590,17 @@ echo "outside function: '${arr[@]}'"
 
 ## 7.13 typeset
 
-**功能属于`declare`的子集，不推荐使用**
+**Its functionality is a subset of `declare` and is not recommended for use**.
 
 ## 7.14 alias
 
-**`alias`用于设置别名**
+**`alias` is used to set aliases**.
 
 **Examples:**
 
 * `alias lh='ls -alt'`
-* `alias xxx="${BASE_DIR}/xxx.sh"`，`${BASE_DIR}`的解析发生在配置时，在`zsh`等shell中，`xxx`会高亮
-* `alias xxx='${BASE_DIR}/xxx.sh'`，`${BASE_DIR}`的解析发生在执行时，在`zsh`等shell中，`xxx`不会高亮
+* `alias xxx="${BASE_DIR}/xxx.sh"`, the expansion of `${BASE_DIR}` happens at configuration time; in shells like `zsh`, `xxx` will be highlighted.
+* `alias xxx='${BASE_DIR}/xxx.sh'`, the expansion of `${BASE_DIR}` happens at execution time; in shells like `zsh`, `xxx` will not be highlighted.
 
 **How to disable alias: `\cp` will use the original `cp` command, rather than the alias if there exists.**
 
@@ -2583,22 +2608,22 @@ echo "outside function: '${arr[@]}'"
 
 **Examples:**
 
-* `export -p`：打印所有导出的符号
-* `export <name>`：导出变量
-* `export -f <func_name>`：导出函数
+* `export -p`: print all exported symbols.
+* `export <name>`: export a variable.
+* `export -f <func_name>`: export a function.
 
 ## 7.16 ulimit
 
-设置或查看各类限制
+Set or view various types of limits.
 
 **Examples:**
 
 * `ulimit -a`
-* `ulimit -v 1000000`：将进程的最大内存设置为`1000000`字节，仅在当前`shell`以及`shell`的子进程中生效
+* `ulimit -v 1000000`: Set the maximum memory of the process to `1000000` bytes, effective only in the current `shell` and its child processes.
 
 ## 7.17 pushd & popd
 
-`pushd`和`popd`是用于操作目录栈的命令，在切换目录时非常有用。它们可以让你在不同目录之间快速切换，并在需要时返回到先前的目录。`dirs -c`可以用于清空stack。
+`pushd` and `popd` are commands used to operate on the directory stack, which are very useful when switching directories. They allow you to quickly switch between different directories and return to previous directories when needed. `dirs -c` can be used to clear the stack.
 
 **Examples:**
 
@@ -2634,23 +2659,25 @@ The `compgen` command is used to generate possible completions for a given prefi
 
 ## 8.1 Option Separator
 
-选项分隔符为`--`，它有什么用呢？
+The option separator is `--`. What is it used for.
 
-举个简单的例子，如何创建一个名为`-f`的目录？`mkdir -f`肯定是不行的，因为`-f`会被当做mkdir命令的选项，此时我们就需要选项分隔符来终止`mkdir`对于后续字符串的解析，即`mkdir -- -f`
+Here is a simple example: how do you create a directory named `-f`.
+
+* `mkdir -f` definitely will not work, because `-f` will be treated as an option of the `mkdir` command. In this case, we need the option separator to terminate * `mkdir`'s parsing of subsequent strings, that is: `mkdir -- -f`.
 
 ## 8.2 Trap Signal
 
-`trap`常用来做一些清理工作，比如你在脚本中将一些进程放到后台执行，但如果脚本异常终止（比如用ctrl+c），那么这些后台进程可能得不到及时处理，这个时候就可以用`trap`来捕获信号，从而执行清理动作
+`trap` is commonly used to perform cleanup tasks. For example, if you start some processes in the background in a script, and the script terminates unexpectedly (such as by pressing Ctrl+C), those background processes may not be properly handled. In this case, you can use `trap` to capture signals and execute cleanup actions.
 
-**格式**
+**Pattern:**
 
 * `trap "commands" signal-list`
 
-**注意**
+**Note:**
 
-* 如果commands中包含变量，那么该变量在执行`trap`语句时就已解析，而非到真正捕获信号的时候才解析
+* If `commands` contains variables, those variables are expanded at the time the `trap` statement is executed, not when the signal is actually caught.
 
-**示例1**
+**Example 1:**
 
 ```sh
 # do other things
@@ -2664,9 +2691,9 @@ sleep 2
 # do other things
 ```
 
-**示例2（错误），该示例与示例1的差别就是用sudo执行ping命令**
+**Example 2 (Incorrect). The difference from Example 1 is that the `ping` command is executed with `sudo`.**
 
-* 这样是没法杀死`ping`这个后台进程的，因为`ping_pid`变量获取到的并不是`ping`的`pid`，而是`sudo`的`pid`
+* In this case, the background `ping` process cannot be killed, because the `ping_pid` variable does not get the PID of `ping`, but rather the PID of `sudo`.
 
 ```sh
 # do other things
@@ -2680,7 +2707,7 @@ sleep 2
 # do other things
 ```
 
-**实例3（对实例2进行调整）**
+**Example 3 (An adjustment to Example 2)**
 
 ```sh
 # do other things
@@ -2813,14 +2840,14 @@ echo -e "Done"
 
 ### 8.3.2 tput
 
-**设置颜色：**
+**Set colors:**
 
 ```sh
 tput setab [1-7] # Set the background colour using ANSI escape
 tput setaf [1-7] # Set the foreground colour using ANSI escape
 ```
 
-其中颜色编号表如下：
+The color code table is as follows:
 
 ```
 Num  Colour    #define         R G B
@@ -2835,7 +2862,7 @@ Num  Colour    #define         R G B
 7    white     COLOR_WHITE     1,1,1
 ```
 
-**样式设置：**
+**Style Settings:**
 
 ```sh
 tput bold    # Select bold mode
@@ -2847,7 +2874,7 @@ tput smso    # Enter standout （bold） mode
 tput rmso    # Exit standout mode
 ```
 
-**其他：**
+**Others:**
 
 ```sh
 tput sgr0    # Reset text format to the terminal's default
