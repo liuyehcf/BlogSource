@@ -704,42 +704,7 @@ For environment variables set up before starting program, we can check them by `
 * `dashboard thread`: enable/disable thread information (in large projects with many threads, this is usually disabled).
 * `dashboard`: refresh; typically used after viewing some variable information with `print`, to refresh and redisplay the details.
 
-# 6 LLDB
-
-[Tutorial](https://lldb.llvm.org/use/tutorial.html)
-
-## 6.1 Tips
-
-### 6.1.1 Command
-
-* `lldb -c <core> <binary>`: Analyze core file.
-* `lldb -- <binary> <args>`: Run with arguments.
-* `lldb -o "settings set target.env-vars env1=xxx env2=yyy" -o run -- <binary> <args>`: Run with arguments and envs.
-
-### 6.1.2 Display/Select Frame
-
-* `(lldb) frame select <id>`/`f <id>`: select a frame.
-
-### 6.1.3 Break on all cpp exceptions
-
-* `(lldb) breakpoint set -E c++`: tells LLDB to break on C++ exceptions.
-
-### 6.1.4 Show source code
-
-* `(lldb) list -<count>`: Print previous `<count>` lines.
-
-### 6.1.5 Redirect source file path
-
-* `(lldb) settings set target.source-map <original-path> <new-path>`
-
-### 6.1.6 Display source file path
-
-* `(lldb) image dump line-table <source_file>`
-    * `(lldb) image dump line-tabl main.cpp`
-* `(lldb) image lookup -v -n <symbol>`
-    * `(lldb) image lookup -v -n main`
-
-# 7 Reference
+# 6 Reference
 
 * [GDB Tutorial - A Walkthrough with Examples](https://www.cs.umd.edu/~srhuang/teaching/cmsc212/gdb-tutorial-handout.pdf)
 * [GDB Command Reference](https://visualgdb.com/gdbreference/commands/)

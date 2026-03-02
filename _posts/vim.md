@@ -2248,7 +2248,43 @@ call plug#end()
 
 ## 3.15 Git Plugins
 
-### 3.15.1 vim-fugitive
+### 3.15.1 gitsigns.nvim
+
+Home: [gitsigns](https://github.com/lewis6991/gitsigns.nvim)
+
+**Configuration(`~/.vimrc`):**
+
+```vim
+call plug#begin()
+
+" ......................
+" .....Other Plugins....
+" ......................
+
+Plug 'lewis6991/gitsigns.nvim'
+
+nnoremap <leader>gs :Gitsigns stage_hunk<cr>
+nnoremap <leader>gr :Gitsigns reset_hunk<cr>
+nnoremap <leader>gv :Gitsigns preview_hunk<cr>
+nnoremap <leader>gn :Gitsigns nav_hunk next<cr>
+nnoremap <leader>gp :Gitsigns nav_hunk prev<cr>
+
+call plug#end()
+```
+
+**Usage:**
+
+* Hunks actions:
+    * `:Gitsigns stage_hunk`: Stage/unstage hunks.
+    * `:Gitsigns reset_hunk`: Reset hunks.
+    * `:Gitsigns preview_hunk_inline`: Preview hunks inline.
+    * `:Gitsigns preview_hunk`: Preview hunks in popup.
+    * `:Gitsigns nav_hunk next/prev`: Navigate between hunks.
+* Blame:
+    * `:Gitsigns blame`: Show blame of current buffer.
+    * `:Gitsigns blame_line`: Show blame information for the current line in popup.
+
+### 3.15.2 vim-fugitive
 
 Home: [vim-fugitive](https://github.com/tpope/vim-fugitive)
 
@@ -2270,7 +2306,7 @@ call plug#end()
 
 * `:Git`: Acts as a replacement for the `git` command; you can follow it with normal `git` CLI arguments.
 
-### 3.15.2 diffview.nvim
+### 3.15.3 diffview.nvim
 
 Home: [diffview.nvim](https://github.com/sindrets/diffview.nvim)
 
@@ -2750,9 +2786,15 @@ command! -bang -nargs=* Rg call fzf#vim#grep("rg --column --line-number --no-hea
 
 " <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
-Plug 'tpope/vim-fugitive'
+Plug 'lewis6991/gitsigns.nvim'
 
-" <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+nnoremap <leader>gs :Gitsigns stage_hunk<cr>
+nnoremap <leader>gr :Gitsigns reset_hunk<cr>
+nnoremap <leader>gv :Gitsigns preview_hunk<cr>
+nnoremap <leader>gn :Gitsigns nav_hunk next<cr>
+nnoremap <leader>gp :Gitsigns nav_hunk prev<cr>
+
+Plug 'tpope/vim-fugitive'
 
 Plug 'sindrets/diffview.nvim'
 
