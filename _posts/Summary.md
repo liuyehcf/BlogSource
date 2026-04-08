@@ -1350,6 +1350,16 @@ It performs fast, batch-style queries over data that arrives in real time.
                 - N-Step-SCAN
             - LOOK
                 - C-LOOK (Circular LOOK)
+- I/O
+    - I/O Models
+        - Blocking I/O
+        - Non-Blocking I/O
+        - I/O Multiplexing
+        - Signal-Driven I/O
+        - Asynchronous I/O
+        - I/O Uring
+    - Page Cache
+        - O_DIRECT: skip page cache
 - Virtualization
     - Full Virtualization
     - Paravirtualization

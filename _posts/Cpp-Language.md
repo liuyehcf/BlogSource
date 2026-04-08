@@ -2704,7 +2704,7 @@ void foo() {
 }
 ```
 
-### 4.1.3 List-initialization
+### 4.1.3 List-initialization (Brace/Uniform Initialization)
 
 Initializes an object from braced-init-list.
 
@@ -2755,7 +2755,23 @@ Class { T member = { arg1, arg2, ... }; };
 Class { T member = { .des1 = arg1, .des2 { arg2 } ... }; }; (since C++20)
 ```
 
-#### 4.1.3.1 Aggregate initialization
+#### 4.1.3.1 How the Compiler Handles `{}`
+
+When you write:
+
+```cpp
+T obj{a,b,c};
+```
+
+the compiler checks in this order:
+
+1. `std::initializer_list` constructors
+    * The compiler treats `std::initializer_list<T>` with a very "VIP" status. It is one of the few types in the Standard Library that has a direct, hard-coded relationship with the C++ language core.
+1. other constructors
+1. aggregate initialization
+1. scalar initialization
+
+#### 4.1.3.2 Aggregate initialization
 
 [Aggregate initialization](https://en.cppreference.com/w/cpp/language/aggregate_initialization)
 

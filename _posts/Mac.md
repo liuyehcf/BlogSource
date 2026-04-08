@@ -452,7 +452,7 @@ rm -rf oh-my-zsh-agnoster-fcamblor
 
 **如果你选择了白色背景的话，agnoster也需要进行一些调整（2025-02-12之前）**
 
-1. `~/.zshrc`增加配置项`SOLARIZED_THEME="light"`
+1. `~/.zshrc`，在`source $ZSH/oh-my-zsh.sh`之后，增加配置项`SOLARIZED_THEME="light"`
 1. `~/.oh-my-zsh/themes/agnoster.zsh-theme`修改背景
     * 找到关键词`build_prompt`，这就是命令提示符的全部构成，每一个配置项的颜色都可以单独调整
     * 以`prompt_context`和`prompt_status`为例（我只改了这两个的颜色），将`prompt_segment`后面接的`black`改为`white`
@@ -476,7 +476,7 @@ rm -rf oh-my-zsh-agnoster-fcamblor
 
 **如果你选择了白色背景的话，agnoster也需要进行一些调整（2025-02-12之后）**
 
-1. `~/.zshrc`增加配置项`SOLARIZED_THEME="light"`
+1. `~/.zshrc`，在`source $ZSH/oh-my-zsh.sh`之后，增加配置项`SOLARIZED_THEME="light"`
 1. `~/.oh-my-zsh/themes/agnoster.zsh-theme`修改背景
     * `${AGNOSTER_CONTEXT_BG:=black}` -> `${AGNOSTER_CONTEXT_BG:=white}`
     * `${AGNOSTER_STATUS_BG:=black}` -> `${AGNOSTER_STATUS_BG:=white}`

@@ -444,6 +444,7 @@ Maven会假设用户的项目是这样的：
 
 1. `mvn dependency:list`
 1. `mvn dependency:tree`
+    * `mvn -pl <module_name> -am -P<profile_name> dependency:tree`
 1. `mvn dependency:analyze`
 
 # 2 Repository Classification

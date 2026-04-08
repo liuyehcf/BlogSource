@@ -543,6 +543,23 @@ git push <remote> <branch>
 git push <remote> -f <branch>:<remote_branch>
 ```
 
+## 3.10 Clean
+
+```sh
+# permanently removes all untracked files and directories from your local repository.
+# -f: force
+# -ff: including directories that is a indenpendent repo(has .git)
+# -d: include untracked directories
+git clean -dff
+
+# permanently removes all untracked files and directories from your local repository, including those normally ignored by .gitignore.
+# -x: include ignored files too
+git clean -xdff
+
+# For submodules
+git submodule foreach --recursive git clean -xdff
+```
+
 # 4 Submodule
 
 Commit hash of each submodule is stored as normal git object. You can check it by `git submodule status`

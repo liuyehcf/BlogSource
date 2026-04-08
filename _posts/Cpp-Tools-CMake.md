@@ -2068,6 +2068,15 @@ ninja -C build reconfigure
 
 * `ccache -C`
 
+## 6.14 How to check if find_package works
+
+```sh
+# COMPILER_ID: GNU/Clang
+# LANGUAGE: C/CXX
+# MODE: EXIST/COMPILE/LINK
+cmake --find-package -DNAME=ZLIB -DCOMPILER_ID=GNU -DLANGUAGE=C -DMODE=EXIST --debug-find
+```
+
 # 7 Install
 
 **We can get binary distributions from [Get the Software](https://cmake.org/download/):**

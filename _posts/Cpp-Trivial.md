@@ -2259,6 +2259,9 @@ addr2line: Dwarf Error: found dwarf version '5', this reader only handles versio
     * `-ggdb`: Produce debugging information for use by GDB.
     * `-gdwarf`/`-gdwarf-version`: Produce debugging information in `DWARF` format (if that is supported).  The value of version may be either 2, 3, 4 or 5; the default version for most targets is 5.
 1. **`-print-search-dirs`: Print search paths.**
+    * `install`
+    * `programs`
+    * `libraries`
 1. **`-I <path>`: Add header file search path.**
     * Multiple `-I` parameters can be used, e.g. `-I path1 -I path2`.
 1. **`-L <path>`: Add library search path.**
@@ -2673,10 +2676,15 @@ xdg-open out/index.html
 
 **How to specify `linker` in `gcc`**
 
-* `-B/usr/bin`: For GNU ld, setup searching directory
-* `-fuse-ld=gold`: For GNU gold
-* `-fuse-ld=lld`: For LLVM lld
-* `-B/usr/local/bin/gcc-mold`: For mold, setup searching directory
+* `-fuse-ld=ld`: For GNU ld.
+* `-fuse-ld=gold`: For GNU gold.
+* `-fuse-ld=lld`: For LLVM lld.
+* `-fuse-ld=mold`: For mold.
+
+**Where does gcc/clang search for liner:**
+
+* `gcc -print-search-dirs | grep programs`: gcc/clang will search `ld.<xxx>` in those paths.
+    * For `lld`, clang has special searching logic, if `ld.lld` not exists, it will search `lld` instead.
 
 **Common parameter explanations:**
 
@@ -2785,6 +2793,16 @@ strings <binary_file> | grep <linker_name>
 
 ## 9.1 Build & Install
 
+### 9.1.1 From Official Shell
+
+```sh
+wget https://apt.llvm.org/llvm.sh
+chmod +x llvm.sh
+sudo ./llvm.sh 16
+```
+
+### 9.1.2 From Source
+
 **Doc:**
 
 * [Getting Started with the LLVM System](https://llvm.org/docs/GettingStarted.html#getting-the-source-code-and-building-llvm)
@@ -2848,7 +2866,7 @@ sudo ninja -C build install-clang-format
 sudo ninja -C build install-clangd
 ```
 
-### 9.1.1 Tips
+### 9.1.3 Tips
 
 1. Build `release/11.x` with high version of gcc or clang, you may need to add additional `-DCMAKE_CXX_STANDARD=17`, otherwise, you may encounter `no member named 'numeric_limits' in namespace 'std'`
 

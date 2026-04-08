@@ -1050,3 +1050,33 @@ NoClassDefFoundError：意味着JVM之前已经尝试加载某个类，**但是�
 
 * [“NoClassDefFoundError: Could not initialize class” error](https://stackoverflow.com/questions/1401111/noclassdeffounderror-could-not-initialize-class-error)
 * [Why am I getting a NoClassDefFoundError in Java?](https://stackoverflow.com/questions/34413/why-am-i-getting-a-noclassdeffounderror-in-java)
+
+# 7 java.lang.OutOfMemoryError: GC overhead limit exceeded
+
+Why High Temporary Object Allocation Rates Can Cause OOM?
+
+The common assumption is: short-lived objects are safe because GC will collect them. This is true under light load, but breaks down when the allocation rate is high enough.
+
+**The Core Problem: Allocation Rate vs. GC Throughput**
+
+* GC can only reclaim memory during a collection cycle. If your application allocates objects faster than GC can reclaim them, the heap fills up regardless of whether those objects are technically collectable. "Collectable" and "collected in time" are not the same thing.
+
+**How It Escalates: The Promotion Cascade**: Modern JVMs use generational GC. Short-lived objects live in Eden, which is collected cheaply by Minor GC (stop-the-world, but fast). The problem unfolds in stages:
+
+1. **Eden fills faster than Minor GC can drain it**. With high allocation rates — especially from multiple concurrent threads — Eden is exhausted rapidly. Minor GCs become very frequent, spending more and more time paused.
+1. **Concurrent threads create objects that are "alive at the wrong moment"**. Even if an object's logical lifetime is one method call, it is still reachable during the GC pause that happens to fire mid-computation. Minor GC cannot collect it, so it is copied to Survivor space.
+1. **Survivor space overflows → premature promotion to Old Gen**. Survivor space is small by design. When it fills up, the JVM has no choice but to promote objects to Old Gen — even objects that would have died moments later. Short-lived objects start accumulating in a space designed for long-lived data.
+1. **Old Gen fills with objects that should never have been there**. Old Gen triggers Full GC (a far more expensive, longer stop-the-world pause). Full GC pauses all threads for longer, which means threads resume simultaneously and produce another allocation burst, which fills Eden again immediately.
+1. **GC enters a death spiral**. The JVM detects it is spending the majority of CPU time in GC while reclaiming very little heap per cycle. At this point it throws OutOfMemoryError: GC overhead limit exceeded — not because the heap is structurally full, but because the system can no longer make forward progress.
+
+**The Underlying Equation**
+
+* Heap pressure = allocation rate × average object lifetime
+* For truly short-lived objects, lifetime is near zero — but if allocation rate is high enough, even a near-zero lifetime keeps substantial memory "in flight" at any instant. Add concurrent threads and this in-flight volume multiplies linearly.
+
+**Why Reducing Allocation Rate Fixes It**. Cutting the allocation rate gives GC the headroom it needs:
+
+* Minor GC cycles are less frequent → pauses are shorter.
+* Fewer objects are alive during each GC pause → Survivor space does not overflow.
+* Old Gen is no longer polluted by short-lived objects → Full GC is rare or never triggered.
+* The system stays in the cheap, fast, incremental Minor GC regime rather than the expensive Full GC regime.

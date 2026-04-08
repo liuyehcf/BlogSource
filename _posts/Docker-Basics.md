@@ -585,6 +585,12 @@ nc -vz $(docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{e
 1. Client: `~/.docker/config.json`
 1. Daemon: `/etc/docker/daemon.json`
 
+## 7.15 How to execute command without sudo for normal user
+
+```sh
+sudo usermod -aG docker username
+```
+
 # 8 FAQ
 
 ## 8.1 K8S Env docker error

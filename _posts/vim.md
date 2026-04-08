@@ -1477,7 +1477,7 @@ use {
     'nvim-treesitter/nvim-treesitter',
     run = ':TSUpdate'
 }
-require('nvim-treesitter.configs').setup {
+require('nvim-treesitter').setup {
     highlight = {
         enable = true
     }
@@ -3018,7 +3018,7 @@ use {
     'nvim-treesitter/nvim-treesitter',
     run = ':TSUpdate'
 }
-require('nvim-treesitter.configs').setup {
+require('nvim-treesitter').setup {
     highlight = {
         enable = true
     }
@@ -3055,6 +3055,19 @@ use {
 -- <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 end)
+```
+
+### 3.21.3 `~/.vimrc_extra_post`
+
+```vim
+let g:gutentags_enabled = 0
+let g:gutentags_dont_load = 1
+
+let g:python3_host_prog = '/usr/bin/python3'
+Glaive codefmt clang_format_executable="clang-format-14"
+
+" g:rg_customized_options allows customized options, like: `--glob '!pattern'` to exclude certain path.
+let g:rg_customized_options = "--glob '!build' --glob '!contrib' "
 ```
 
 # 4 Legacy Plugins
@@ -3891,6 +3904,15 @@ Just like `echo -n 'content' > file` does.
 
 ```vim
 :set nofixeol
+```
+
+## 7.11 How to know what does vim do when saving file
+
+```vim
+:verbose autocmd BufWritePre
+
+" it may contains `nvim.editorconfig`, you can cancel it by:
+autocmd! nvim.editorconfig BufWritePre
 ```
 
 # 8 Reference

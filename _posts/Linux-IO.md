@@ -39,9 +39,22 @@ categories:
 
 # 2 Classic I/O Models
 
+In general, an I/O operation has two phases:
+
+* Waiting for data to be ready (data arrives in the kernel buffer)
+* Copying data from kernel space to user space
+
+Different I/O models handle these two phases differently.
+
 ## 2.1 Blocking I/O
 
-Blocking I/O waits until the data is available before returning.
+**Blocking I/O waits until the data is available before returning. Workflow:**
+
+* The process calls `read()` or `recv()`.
+* If the data is not ready, the process blocks (sleeps).
+* The kernel waits for data to arrive.
+* When data becomes available, the kernel copies the data to user space.
+* The system call returns.
 
 ```cpp
 #include <fcntl.h>
@@ -72,7 +85,11 @@ int main() {
 
 ## 2.2 Non-Blocking I/O
 
-Non-blocking I/O returns immediately if no data is available, requiring error handling.
+**Non-blocking I/O returns immediately if no data is available, requiring error handling. Workflow:**
+
+* The process calls `read()`.
+* If data is not ready, the kernel returns immediately with `EAGAIN`.
+* The application must retry repeatedly until data arrives.
 
 ```cpp
 #include <fcntl.h>
@@ -108,7 +125,13 @@ int main() {
 
 ## 2.3 I/O Multiplexing
 
-I/O multiplexing allows you to monitor multiple file descriptors at once.
+**I/O multiplexing allows you to monitor multiple file descriptors at once. Workflow:**
+
+* The application registers multiple sockets with `select`, `poll`, or `epoll`.
+* The process blocks inside `epoll_wait()` (or similar).
+* The kernel monitors all sockets.
+* When one or more sockets become ready, the kernel returns the event.
+* The application then calls `read()` on the ready socket.
 
 ### 2.3.1 select
 
@@ -317,7 +340,12 @@ int main() {
 
 ## 2.4 Signal-Driven I/O
 
-Signal-driven I/O uses a signal handler to be notified when the file descriptor is ready.
+**Signal-driven I/O uses a signal handler to be notified when the file descriptor is ready. Workflow:**
+
+* The process registers a signal handler (typically `SIGIO`).
+* When data arrives, the kernel sends a signal to the process.
+* The signal handler runs.
+* The process then calls `read()` to retrieve the data.
 
 ```cpp
 #include <fcntl.h>
@@ -421,7 +449,12 @@ int main() {
 
 ## 2.5 Asynchronous I/O (AIO)
 
-Asynchronous I/O allows you to start the I/O and be notified when it's done without waiting.
+**Asynchronous I/O allows you to start the I/O and be notified when it's done without waiting. Workflow:**
+
+* The process calls `aio_read()`.
+* The system call returns immediately.
+* The kernel waits for data and copies it to user space.
+* When the operation completes, the kernel notifies the process (callback, signal, or event).
 
 ```cpp
 #include <aio.h>
@@ -487,9 +520,9 @@ int main() {
 }
 ```
 
-## 2.6 I/O Uring
+### 2.5.1 I/O Uring
 
-io_uring is a high-performance asynchronous I/O framework introduced in Linux kernel 5.1 to improve I/O efficiency and performance. Developed by Jens Axboe, io_uring aims to provide a more efficient and flexible interface for asynchronous I/O operations by leveraging ring buffers for communication between user space and kernel space, minimizing the need for system calls, and reducing context switching.
+`io_uring` is a high-performance asynchronous I/O framework introduced in Linux kernel 5.1 to improve I/O efficiency and performance. Developed by Jens Axboe, io_uring aims to provide a more efficient and flexible interface for asynchronous I/O operations by leveraging ring buffers for communication between user space and kernel space, minimizing the need for system calls, and reducing context switching.
 
 ```cpp
 #include <fcntl.h>

@@ -402,6 +402,7 @@ java -jar build/libs/fernflower.jar -dgs=true /path_source_dir /path_target_dir
     git clone https://github.com/jenv/jenv.git ~/.jenv
     echo 'export PATH="$HOME/.jenv/bin:$PATH"' >> ~/.zshrc
     echo 'eval "$(jenv init -)"' >> ~/.zshrc
+    echo 'eval "jenv enable-plugin export > /dev/null 2>&1"' >> ~/.zshrc
 
     # Export JAVA_HOME path
     jenv enable-plugin export
