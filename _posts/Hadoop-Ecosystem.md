@@ -1902,6 +1902,125 @@ SELECT * FROM sales;
     * Hive 1.x: false
     * Hive 2.x: removed, which effectively makes it always true.
 
+## 4.6 Tips
+
+### 4.6.1 How to clean up dirty data in Hive Metastore
+
+Login pg first:
+
+```sh
+psql -U hive -d metastore
+```
+
+Then delete all related meta:
+
+```sh
+function gen_pg_sql() {
+    local target_database=$1
+    local target_table=$2
+    local sql=$(cat << EOF
+BEGIN;
+
+-- 1. Setup target table
+CREATE TEMP TABLE hms_target_tbl AS
+SELECT
+  t."TBL_ID",
+  t."SD_ID",
+  d."DB_ID",
+  d."NAME" AS "DB_NAME",
+  t."TBL_NAME"
+FROM "TBLS" t
+JOIN "DBS" d ON t."DB_ID" = d."DB_ID"
+WHERE d."NAME" = '${target_database}'
+  AND t."TBL_NAME" = '${target_table}';
+
+-- 2. Check if only return 1 row
+SELECT * FROM hms_target_tbl;
+
+-- If not one row, rollback.
+-- ROLLBACK;
+
+-- 3. Collect related ids
+CREATE TEMP TABLE hms_target_parts AS
+SELECT "PART_ID", "SD_ID"
+FROM "PARTITIONS"
+WHERE "TBL_ID" IN (SELECT "TBL_ID" FROM hms_target_tbl);
+
+CREATE TEMP TABLE hms_target_sds AS
+SELECT "SD_ID"
+FROM hms_target_tbl
+WHERE "SD_ID" IS NOT NULL
+UNION
+SELECT "SD_ID"
+FROM hms_target_parts
+WHERE "SD_ID" IS NOT NULL;
+
+CREATE TEMP TABLE hms_target_serdes AS
+SELECT "SERDE_ID"
+FROM "SDS"
+WHERE "SD_ID" IN (SELECT "SD_ID" FROM hms_target_sds)
+  AND "SERDE_ID" IS NOT NULL;
+
+-- 4. Delete partition related meta.
+DELETE FROM "PARTITION_KEY_VALS"
+WHERE "PART_ID" IN (SELECT "PART_ID" FROM hms_target_parts);
+
+DELETE FROM "PARTITION_PARAMS"
+WHERE "PART_ID" IN (SELECT "PART_ID" FROM hms_target_parts);
+
+DELETE FROM "PART_COL_STATS"
+WHERE "PART_ID" IN (SELECT "PART_ID" FROM hms_target_parts);
+
+DELETE FROM "PARTITIONS"
+WHERE "PART_ID" IN (SELECT "PART_ID" FROM hms_target_parts);
+
+DELETE FROM "PARTITION_KEYS"
+WHERE "TBL_ID" IN (SELECT "TBL_ID" FROM hms_target_tbl);
+
+-- 5. Delete table params
+DELETE FROM "TABLE_PARAMS"
+WHERE "TBL_ID" IN (SELECT "TBL_ID" FROM hms_target_tbl);
+
+DELETE FROM "TAB_COL_STATS"
+WHERE "TBL_ID" IN (SELECT "TBL_ID" FROM hms_target_tbl);
+
+-- 6. Delete storage descriptor
+DELETE FROM "BUCKETING_COLS"
+WHERE "SD_ID" IN (SELECT "SD_ID" FROM hms_target_sds);
+
+DELETE FROM "SORT_COLS"
+WHERE "SD_ID" IN (SELECT "SD_ID" FROM hms_target_sds);
+
+DELETE FROM "SD_PARAMS"
+WHERE "SD_ID" IN (SELECT "SD_ID" FROM hms_target_sds);
+
+DELETE FROM "SERDE_PARAMS"
+WHERE "SERDE_ID" IN (SELECT "SERDE_ID" FROM hms_target_serdes);
+
+-- 8. Delete TBLS/SDS/SERDES 
+DELETE FROM "TBLS"
+WHERE "TBL_ID" IN (SELECT "TBL_ID" FROM hms_target_tbl);
+
+DELETE FROM "SDS"
+WHERE "SD_ID" IN (SELECT "SD_ID" FROM hms_target_sds);
+
+DELETE FROM "SERDES"
+WHERE "SERDE_ID" IN (SELECT "SERDE_ID" FROM hms_target_serdes);
+
+-- 9. Check if no rows return
+SELECT t."TBL_ID", d."NAME", t."TBL_NAME"
+FROM "TBLS" t
+JOIN "DBS" d ON t."DB_ID" = d."DB_ID"
+WHERE d."NAME" = 'paimon_ci_00063'
+  AND t."TBL_NAME" = 'tbl_without_partition';
+
+COMMIT;
+EOF
+)
+    echo "${sql}"
+}
+```
+
 # 5 Flink
 
 Here's a example of how to use [docker-spark](https://github.com/big-data-europe/docker-spark) to start a flink cluster and do some tests.

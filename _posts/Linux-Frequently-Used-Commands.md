@@ -215,6 +215,9 @@ fuser -k -9 <old_dir>
 
 # update user's home directory
 usermod -d <new_dir> <username>
+
+# To ensure a higher success rate, we can combine the two commands.
+fuser -k -9 <old_dir> ; usermod -d <new_dir> <username>
 ```
 
 ## 1.18 userdel

@@ -2539,9 +2539,9 @@ enum class Color {
     Blue     // 2
 };
 
-Color c = Color::Red;                   // Must qualify the name
-int x = c;                              // ❌ Error — no implicit conversion to int
-int y = static_cast<int>(Color::Green); // ✅ explicit cast
+Color c = Color::Red;                                             // Must qualify the name
+int x = c;                                                        // ❌ Error — no implicit conversion to int
+int y = static_cast<std::underlying_type_t<Color>>(Color::Green); // ✅ explicit cast
 ```
 
 # 4 Syntax
