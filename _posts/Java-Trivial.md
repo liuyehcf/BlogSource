@@ -141,8 +141,8 @@ From [Java Downloads](https://www.oracle.com/java/technologies/downloads/), you 
 
 **示例：**
 
-* **`jstat -gc <vmid> 1000 1000`：查看`JVM`内存使用**
-* **`jstat -gcutil <vmid> 1000 1000`：查看`JVM`内存使用（百分比）**
+* **`jstat -gc <vmid> 1000 10`：查看`JVM`内存使用，每次间隔1000ms，一共10次**
+* **`jstat -gcutil <vmid> 1000 10`：查看`JVM`内存使用（百分比），每次间隔1000ms，一共10次**
 
 ## 2.4 jinfo
 
@@ -287,7 +287,7 @@ Debug tool like `gdb`
 * Stack and lock: `jcmd <pid> Thread.print -l`
 * Big classes: `jcmd <pid> GC.class_histogram live`
 
-# 3 Monitor
+# 3 Thirdparty-Tools
 
 ## 3.1 Arthas
 
@@ -300,10 +300,20 @@ Debug tool like `gdb`
 1. `help`:
     * `help`
     * `help <command>`
+1. `dashboard`
+1. `thread`:
+    * `thread`
+    * `thread -n 3`
 1. `trace`:
     * `trace org.apache.paimon.catalog.Catalog getTable`
 1. `monitor`:
     * `monitor -c 5 org.apache.paimon.catalog.Catalog getTable`
+1. `profiler`
+    * `profiler list`: list all supported events
+    * `profiler actions`: list all supported actions
+    * `profiler start --event alloc --interval 1000000`
+        * `interval`: sampling interval in ns
+    * `profiler stop --format html`
 1. `sc`:
     * `sc org.apache.commons.lang.StringUtils`
     * `sc -E org\\.apache\\.commons\\.lang\\.StringUtils`
@@ -321,6 +331,18 @@ Debug tool like `gdb`
 `Shallow Size`: This is the amount of memory allocated to store the object itself, not including the objects it references. This includes the memory used by the object's fields (for primitive types) and the memory used to store the references to other objects (for reference types). It does not include the memory used by the objects those references point to. Tools like VisualVM generally show the shallow size by default.
 
 `Retained Size`: This is the total amount of memory that would be freed if the object were garbage collected. This includes the shallow size of the object itself plus the shallow size of any objects that are exclusively referenced by this object (i.e., objects that would be garbage collected if this object were). The retained size provides a more complete picture of the "true" memory impact of an object but can be more complex to calculate. Some profiling tools provide this information, but it may require additional analysis or plugins.
+
+## 3.3 Eclipse Memory Analyzer Tool(MAT)
+
+The [Eclipse Memory Analyzer](https://eclipse.dev/mat/) is a fast and feature-rich Java heap analyzer that helps you find memory leaks and reduce memory consumption.
+
+How to use:
+
+1. Setup memory for running mat.
+    * `vim MemoryAnalyzer.ini`
+1. Run analyze task.
+    * `./ParseHeapDump.sh /path/to/your/heapdump.hprof org.eclipse.mat.api:suspects`
+    * This task will generate a zipped HTML leak suspects report (`*_Leak_Suspects.zip`) ranking the largest objects by retained size; to view it, download and extract the zip file on your local machine and open index.html in a web browser.
 
 # 4 Java Decompiler
 

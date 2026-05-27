@@ -427,6 +427,7 @@ An Application Binary Interface (ABI) is a set of rules and conventions that dic
         - File Format
             - Parquet
             - ORC
+            - Lance
             - Avro
             - CSV
         - Catalog
@@ -570,6 +571,12 @@ An Application Binary Interface (ABI) is a set of rules and conventions that dic
             - Arrow
             - Parquet
             - ORC
+            - Lance
+        - Compression
+            - Factors Affecting ZSTD Compression in Column Storage
+                - Data Sorting
+                - Value Frequency
+                - Data Similarity
     - Storage as a Service
         - API
     - Table–Stream Duality
@@ -745,6 +752,7 @@ An Application Binary Interface (ABI) is a set of rules and conventions that dic
                 - Index
                 - Late Materialization
                 - Cache
+                - IO Coalesce/Alignment
             - Pre-Calculation
                 - Pre Agg
                 - Pre Sort
@@ -1718,6 +1726,13 @@ Key characteristics of an event-driven system include:
                 - Fast Retransmit and Fast Recovery
                     - Detects and recovers from packet loss without waiting for timeout
                     - Resends segments upon receiving duplicate acknowledgments
+            - Backlog
+                - Incomplete Connection Queue / SYN Queue
+                    - SYN_RECV
+                    - controlled by /proc/sys/net/ipv4/tcp_max_syn_backlog
+                - Completed Connection Queue / Accept Queue
+                    - ESTABLISHED
+                    - controlled by /proc/sys/net/core/somaxconn
             - TCP Header
                 - Source and Destination Ports
                 - Sequence and Acknowledgment Numbers

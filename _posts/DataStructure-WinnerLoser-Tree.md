@@ -26,72 +26,120 @@ A Winner Loser Tree is a specialized data structure that is typically used in so
 
 class WinnerLoserTree {
 private:
-    struct Cmp {
-        bool operator()(const int32_t& num1, const int32_t& num2) const { return num1 < num2; }
-        static constexpr int32_t INVALID = std::numeric_limits<int32_t>::max();
-    };
+    // This implementation is for k-way merging: each leaf represents one input run's "current element".
+    // Internal nodes store the loser leaf index; _loser[0] stores the overall winner (leaf index with min key).
+    // Classic loser-tree implementation, works when k is not a power of two.
+    // Notes on sentinels:
+    // - We use +INF for empty/exhausted runs.
+    // - We use a dedicated sentinel leaf with -INF to bootstrap tree building.
+    static constexpr int64_t INF = std::numeric_limits<int64_t>::max();
+    static constexpr int64_t NEG_INF = std::numeric_limits<int64_t>::min();
 
 private:
-    const Cmp _cmp;
-    const size_t _size;
-    // Stores the actual leaf nodes.
-    std::vector<int32_t> _leaves;
-    // Stores the internal nodes (winners or losers) of the tree, which is actually the indexes of the leaf nodes.
-    // Each internal node store the loser of its children.
-    std::vector<size_t> _lower_tree;
-    // Store the final winner, which is the index of the leaf nodes.
-    size_t _winner;
+    size_t _k;                  // number of real runs (leaves)
+    size_t _n;                  // number of leaves in the underlying complete tree (power of two)
+    std::vector<int64_t> _keys; // leaf keys, size n+1; the (n)-th is a sentinel (NEG_INF)
+    std::vector<size_t> _loser; // size n; index 0 stores winner; 1..n-1 store internal-node losers
 
-    void _adjust(size_t leaf) {
-        // For a complete binary tree, the leaf size is power of two, we have `_size - 1` internal nodes,
-        // And here, the leaf nodes and internal nodes are separately stored. So the actual index of the leaf node in the
-        // tree should be `leaf + (_size - 1)`, so the parent should be `(leaf + (_size - 1) - 1) / 2`
-        //
-        // For a non-complete binary tree, the formula still works, but I can't prove it here.
-        size_t parent = (leaf + (_size - 1) - 1) / 2;
-        while (true) {
-            if (leaf < _size && (_lower_tree[parent] == _size || !_cmp(_leaves[leaf], _leaves[_lower_tree[parent]]))) {
-                std::swap(leaf, _lower_tree[parent]);
-            }
-            if (parent == 0) {
-                break;
-            }
-            parent = (parent - 1) / 2;
+    static size_t _next_pow2(size_t x) {
+        size_t n = 1;
+        while (n < x) {
+            n <<= 1;
         }
-        _winner = leaf;
+        return n;
+    }
+
+    // Adjust leaf s up to the root.
+    void _adjust(size_t s) {
+        // Use a complete binary tree with _n leaves (power of two).
+        // Parent starts from (s + _n) / 2 and moves up to the root.
+        for (size_t t = (s + _n) / 2; t > 0; t /= 2) {
+            size_t l = _loser[t];
+            // Keep s as the smaller one (winner) to move upward; loser[t] stores the larger one (loser).
+            // If values tie, the smaller index wins to make the result deterministic.
+            if (_keys[s] > _keys[l] || (_keys[s] == _keys[l] && s > l)) {
+                std::swap(s, _loser[t]);
+            }
+        }
+        _loser[0] = s;
     }
 
 public:
-    WinnerLoserTree(const std::vector<int32_t>& nums)
-            : _cmp({}), _size(nums.size()), _leaves(nums), _lower_tree(_size, _size), _winner(_size) {}
+    explicit WinnerLoserTree(const std::vector<int32_t>& keys) : _k(keys.size()), _n(_next_pow2(_k)) {
+        _keys.assign(_n, INF);
+        for (size_t i = 0; i < _k; ++i) {
+            _keys[i] = static_cast<int64_t>(keys[i]);
+        }
+        // Sentinel at index n.
+        _keys.push_back(NEG_INF);
 
-    void build() {
-        for (int32_t i = _size - 1; i >= 0; i--) {
-            _adjust(i);
+        _loser.assign(_n, _n);
+        // Initialize losers.
+        std::fill(_loser.begin(), _loser.end(), _n);
+
+        // Build: adjust from back to front.
+        for (int i = static_cast<int>(_n) - 1; i >= 0; --i) {
+            _adjust(static_cast<size_t>(i));
         }
     }
 
-    int pop() {
-        int32_t winner_num = _leaves[_winner];
-        _leaves[_winner] = _cmp.INVALID;
-        _adjust(_winner);
-        return winner_num;
+    size_t winner_index() const { return _k == 0 ? 0 : _loser[0]; }
+    int32_t winner_value() const {
+        const size_t w = winner_index();
+        if (w >= _n) {
+            return static_cast<int32_t>(INF);
+        }
+        return static_cast<int32_t>(_keys[w]);
+    }
+
+    // Replace the key of one run (leaf) and re-adjust.
+    void replace(size_t leaf, int32_t new_value) {
+        _keys[leaf] = static_cast<int64_t>(new_value);
+        _adjust(leaf);
+    }
+
+    void replace_inf(size_t leaf) {
+        _keys[leaf] = INF;
+        _adjust(leaf);
     }
 };
 
-std::vector<int> merge_k_sorte_arrays(const std::vector<std::vector<int>>& arrays) {
-    std::vector<int> merged;
-    std::vector<int> all_elements;
-
-    for (const auto& arr : arrays) {
-        all_elements.insert(all_elements.end(), arr.begin(), arr.end());
+std::vector<int32_t> merge_k_sorte_arrays(const std::vector<std::vector<int32_t>>& arrays) {
+    const size_t k = arrays.size();
+    std::vector<int32_t> merged;
+    if (k == 0) {
+        return merged;
     }
 
-    WinnerLoserTree lt(all_elements);
-    lt.build();
+    std::vector<size_t> pos(k, 0);
+    std::vector<int32_t> init_keys;
+    init_keys.reserve(k);
 
-    for (int i = 0; i < all_elements.size(); i++) {
-        merged.push_back(lt.pop());
+    size_t total = 0;
+    for (size_t i = 0; i < k; ++i) {
+        total += arrays[i].size();
+        if (arrays[i].empty()) {
+            init_keys.push_back(std::numeric_limits<int32_t>::max());
+        } else {
+            init_keys.push_back(arrays[i][0]);
+        }
+    }
+
+    WinnerLoserTree lt(init_keys);
+    merged.reserve(total);
+
+    for (size_t out = 0; out < total; ++out) {
+        const size_t w = lt.winner_index();
+        const int32_t v = lt.winner_value();
+        merged.push_back(v);
+
+        // Consume the current element from run w, advance its cursor, and replace the leaf key.
+        ++pos[w];
+        if (pos[w] < arrays[w].size()) {
+            lt.replace(w, arrays[w][pos[w]]);
+        } else {
+            lt.replace_inf(w);
+        }
     }
 
     return merged;
@@ -113,6 +161,8 @@ int main() {
             for (size_t j = 0; j < input_size; j++) {
                 input.push_back(u_num(e));
             }
+            // k-way merge requires each run to be sorted.
+            std::sort(input.begin(), input.end());
             expected.insert(expected.end(), input.begin(), input.end());
             arrays.push_back(std::move(input));
         }
@@ -122,7 +172,7 @@ int main() {
 
         for (size_t i = 0; i < result.size(); ++i) {
             if (result[i] != expected[i]) {
-                throw std::logic_error("assertiont failed");
+                throw std::logic_error("assertion failed");
             }
         }
         std::cout << "test(" << test << "): size=" << expected.size() << std::endl;

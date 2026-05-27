@@ -2097,6 +2097,51 @@ gcc -o arrow_parquet_demo arrow_parquet_demo.cpp -lstdc++ -std=gnu++17 -larrow -
 ./arrow_parquet_demo
 ```
 
+#### 6.1.1.1 parquet::ReaderProperties and parquet::ArrowReaderProperties
+
+[ReaderProperties](https://github.com/apache/arrow/blob/main/cpp/src/parquet/properties.h) handles how to read and decrypt raw bytes from a Parquet file, while [ArrowReaderProperties](https://github.com/apache/arrow/blob/main/cpp/src/parquet/properties.h) handles how to convert those raw bytes into memory-efficient Arrow structures.
+
+The data pipeline flows like this:
+
+```
+[ Raw Parquet File on Disk/Cloud ]
+              │
+              ▼   (Controlled by parquet::ReaderProperties)
+[ Decrypted / Decompressed RowGroups & Pages ]
+              │
+              ▼   (Controlled by parquet::ArrowReaderProperties)
+[ Multithreaded Conversion / Dictionary Encoding / Type Coercion ]
+              │
+              ▼
+[ In-Memory arrow::Table Object ]
+```
+
+| Feature / Configuration | `parquet::ReaderProperties` (Low-Level) | `parquet::ArrowReaderProperties` (High-Level) |
+|:--|:--|:--|
+| **Primary Focus** | Parquet file format specifications, encryption, and low-level I/O mechanics. | Arrow memory layout, CPU parallelization, and data type mapping. |
+| **Key Parameters** | • `buffer_size` (size of the low-level read buffer)<br>• `file_decryption_properties` (for modular encryption)<br>• `memory_pool` (allocator for raw bytes) | • `use_threads` (multi-threaded column decoding)<br>• `pre_buffer` (high-level asynchronous pre-fetching)<br>• `read_dictionary` (mapping to Arrow DictionaryType) |
+| **When to Use** | Required anytime you deal with Parquet, even if you are just reading raw Parquet metadata or chunks without using Arrow. | Only required when you are using the Arrow C++ integration to load Parquet files into `arrow::Table` or `arrow::RecordBatch`. |
+
+**Can a "Buffered Stream" Exist Alongside `pre_buffer`?**
+
+> yes, they can coexist, but their operational roles change. When pre_buffer is enabled, it takes full control of the I/O strategy, essentially rendering the traditional role of a "buffered stream" redundant.
+
+To understand why, let's look at how data fetching behaves in both scenarios:
+
+* Without pre_buffer (Traditional Buffered Stream): When relying strictly on a low-level `BufferedInputStream`, data fetching is serial and on-demand:
+    * The reader requests Column A -> the stream fetches a small block from disk into its internal buffer -> decodes Column A.
+    * The reader requests Column B -> the stream flushes/refills its buffer from disk -> decodes Column B.
+    * The Problem: This pattern creates many small, sequential I/O requests. On high-latency systems (like AWS S3 or HDFS), this causes massive network bottlenecks.
+* With `pre_buffer` Enabled: Once you set `set_pre_buffer(true)` in `ArrowReaderProperties`:
+    * Ahead-of-Time Scanning: Before decoding any actual data, Arrow scans the metadata to find the exact byte offsets of all the Column Chunks you intend to read.
+    * Asynchronous Coalescing: Arrow merges adjacent or nearby byte ranges into large blocks and issues asynchronous, parallel I/O requests to read these blocks into an isolated memory buffer.
+    * Bypassing Stream Buffering: When the reader subsequently asks for Column A or B, the underlying stream doesn't hit the disk or use its own buffering logic; it simply copies the data instantly from the already-downloaded `pre_buffer` memory space.
+
+Summary Recommendation:
+
+* For Local NVMe/SSD Storage: You usually do not need `pre_buffer`. The OS Page Cache and a standard `BufferedInputStream` are enough to saturate local disk bandwidth.
+* For Cloud/Remote Storage (S3, GCS, HDFS): Always enable `pre_buffer`. It drastically reduces the number of network round-trips by coalescing requests, often yielding a `10x` to `50x` performance boost over standard buffered streams.
+
 ### 6.1.2 ABI
 
 Arrow ABI stands for Apache Arrow Application Binary Interface. It's a low-level, language-independent memory format and set of C-compatible data structures that allow Arrow arrays, schemas, and record batches to be shared across different programming languages and runtimes without copying. Instead of serializing/deserializing data between languages (like Java/Rust <-> C++), Arrow ABI defines a common in-memory layout and pointer-based interface that everyone can agree on.

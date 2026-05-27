@@ -1331,6 +1331,14 @@ The `r` in its name stands for `remote`, and `rsync` essentially means remote sy
 * `tar cvf - /home/liuye | sha1sum`: `-` indicates standard input/output, here it represents standard output
 * `wget -qO- xxx.tar.gz | tar -xz -C /tmp/target`
 
+### 2.21.1 progress
+
+This tool can be described as a Tiny, Dirty, C command that looks for coreutils basic commands (`cp`, `mv`, `dd`, `tar`, `gzip/gunzip`, `cat`, etc.) currently running on your system and displays the percentage of copied data.
+
+**Examples:**
+
+* `progress -m`
+
 ## 2.22 gzip
 
 gzip (GNU zip) is a fast, lossless compression utility commonly used on Unix/Linux systems to reduce file size. It uses the DEFLATE algorithm (LZ77 + Huffman coding) and is optimized for speed and simplicity rather than maximum compression.
@@ -4071,6 +4079,10 @@ mount      –t debugfs    debugfs /sys/kernel/debug
 * `fuser -uv 80/tcp`
 * `fuser -k /tmp/a.txt`
 * `fuser -k 80/tcp`
+
+## 6.22 btop
+
+[btop](https://github.com/aristocratos/btop)
 
 # 7 Performance Analysis
 

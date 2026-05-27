@@ -726,6 +726,31 @@ let t:my_tab_variable = {'key': 'value'}
 
 1. `vim -V10logfile.txt`
 
+### 2.20.4 cd
+
+```vim
+" Show the current effective working directory
+:pwd
+
+" Show the current effective working directory, equivalent to function-style :pwd
+:echo getcwd()
+
+" Show the current window's working directory; falls back to tab/global if no local window cwd is set
+:echo getcwd(0)
+
+" Show the current tab's working directory; falls back to global if no tab-local cwd is set
+:echo getcwd(-1)
+
+" Change the global working directory, affecting the whole Vim/Neovim session
+:cd /path/to/dir
+
+" Change the local working directory for the current window only
+:lcd /path/to/dir
+
+" Change the local working directory for the current tab page only
+:tcd /path/to/dir
+```
+
 ## 2.21 Assorted
 
 * **`echo`**
@@ -2283,6 +2308,11 @@ call plug#end()
 * Blame:
     * `:Gitsigns blame`: Show blame of current buffer.
     * `:Gitsigns blame_line`: Show blame information for the current line in popup.
+* Baseline
+    * `:Gitsigns change_base`/`:Gitsigns change_base ~`: Set Index as baseline. It's default.
+    * `:Gitsigns change_base HEAD`: Set HEAD as baseline.
+* Others
+    * `:Gitsigns diffthis`
 
 ### 3.15.2 vim-fugitive
 

@@ -190,8 +190,7 @@ lldb -o "settings set target.env-vars FOO=bar BAZ=qux" -o run -- ./app arg1 arg2
 * Source:
   * `list <count>`: Print next `<count>` lines.
   * `list -<count>`: Print previous `<count>` lines.
-  * `list -f <file> -l <line>`: displays at `file:line`.
-  * `list -n <function>`: displays around a function.
+  * `list <file>:<line>`: displays at `file:line`.
   * Source map: `settings set target.source-map <orig> <new>`
 * Image/symbol lookup:
   * `image lookup -n <symbol>`
