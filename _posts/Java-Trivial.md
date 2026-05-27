@@ -60,192 +60,192 @@ From [Java Downloads](https://www.oracle.com/java/technologies/downloads/), you 
 
 ### 2.1.2 Enable Debug
 
-**Java 1.4 及更早版本: `-Xdebug -Xrunjdwp:server=y,transport=dt_socket,address=*:8000,suspend=n`**
+**Java 1.4 and earlier: `-Xdebug -Xrunjdwp:server=y,transport=dt_socket,address=*:8000,suspend=n`**
 
-* `-Xrunjdwp`：启动`JDWP, Java debug wire protocol`调试器
-* `transport=dt_socket`：使用套接字作为传输方式
-* `server=y`：作为调试服务器运行
-* `address=*:8000`：在所有网络接口上监听`8000`端口。同`0.0.0.0`
+* `-Xrunjdwp`: Starts the `JDWP, Java Debug Wire Protocol` debugger.
+* `transport=dt_socket`: Uses a socket as the transport method.
+* `server=y`: Runs as a debug server.
+* `address=*:8000`: Listens on port `8000` on all network interfaces. Same as `0.0.0.0`.
     * `8000`
     * `127.0.0.1:8000`
     * `0.0.0.0:8000`
-* `suspend=n`：`JVM`启动后不挂起，立即运行
+* `suspend=n`: Does not suspend after the `JVM` starts; runs immediately.
 
 **Java 1.5 (JDK 5): `-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:8000`**
 
-* `-agentlib:jdwp`：使用`jdwp`库启动`JDWP`调试器，且不需要额外指定`-Xdebug`
-* `transport=dt_socket`：使用套接字作为传输方式
-* `server=y`：作为调试服务器运行
-* `suspend=n`：`JVM`启动后不挂起，立即运行
-* `address=*:8000`：在所有网络接口上监听`8000`端口。同`0.0.0.0`
+* `-agentlib:jdwp`: Starts the `JDWP` debugger using the `jdwp` library, without needing to additionally specify `-Xdebug`.
+* `transport=dt_socket`: Uses a socket as the transport method.
+* `server=y`: Runs as a debug server.
+* `suspend=n`: Does not suspend after the `JVM` starts; runs immediately.
+* `address=*:8000`: Listens on port `8000` on all network interfaces. Same as `0.0.0.0`.
 
 ## 2.2 jps
 
-列出正在运行的虚拟机进程，并显示虚拟机执行主类名称以及这些进程的**本地虚拟机唯一`ID(Local Virtual Machine Identifier, LVMID)`**
+Lists the running virtual machine processes, and displays the main class name executed by the virtual machine as well as the **local virtual machine unique `ID (Local Virtual Machine Identifier, LVMID)`** of these processes.
 
-虽然功能比较单一，但它是使用频率最高的`JDK`命令行工具，因为其他`JDK`工具大多需要输入它查询到的`LVMID`来确定要监控的是哪一个虚拟机进程
+Although its functionality is relatively simple, it is the most frequently used `JDK` command-line tool, because most other `JDK` tools require the `LVMID` queried by it as input to determine which virtual machine process to monitor.
 
-**对本地虚拟机来说，`LVMID`与操作系统的进程`ID(Process Identifier，PID)`是一致的**，使用`Windows`的任务管理器或者`UNIX`的`ps`命令也可以查询到虚拟机进程的`LVMID`，如果同时启动了多个虚拟机进程，无法根据进程名称定位时，就只能依赖`jps`命令显示主类的功能才能区分了
+**For a local virtual machine, the `LVMID` is the same as the operating system process `ID (Process Identifier, PID)`**. You can also query the `LVMID` of a virtual machine process using the `Windows` Task Manager or the `UNIX` `ps` command. If multiple virtual machine processes are started at the same time and cannot be identified by process name, you have to rely on the `jps` command's ability to display the main class to distinguish them.
 
-**格式：**
+**Pattern:**
 
 * `jps [options] [hostid]`
 
-**参数说明：**
+**Parameter description:**
 
-* `-q`：只输出`LVMID`，省略主类的名称
-* `-m`：输出虚拟机进程启动时传递给主类`main()`函数的参数
-* `-l`：输出主类的全名，如果进程执行的是`Jar`包，输出`Jar`路径
-* `-v`：输出虚拟机进程启动时的`JVM`参数
+* `-q`: Outputs only the `LVMID`, omitting the name of the main class.
+* `-m`: Outputs the arguments passed to the main class `main()` function when the virtual machine process was started.
+* `-l`: Outputs the fully qualified name of the main class; if the process is executing a `Jar` package, outputs the `Jar` path.
+* `-v`: Outputs the `JVM` arguments used when the virtual machine process was started.
 
 ## 2.3 jstat
 
-`jstat(JVM Statistics Monitoring Tool)`是用于监视虚拟机各种运行状态信息的命令行工具
+`jstat (JVM Statistics Monitoring Tool)` is a command-line tool used to monitor various runtime status information of a virtual machine.
 
-`jstat`可以显示本地或者远程虚拟机进程中的类装载、内存、垃圾收集、`JIT`编译等运行数据，在没有`GUI`图形界面，只提供了纯文本控制台环境的服务器上，它将是运行期定位虚拟机性能问题的首选工具
+`jstat` can display runtime data such as class loading, memory, garbage collection, and `JIT` compilation for local or remote virtual machine processes. On servers without a `GUI` graphical interface and only a plain-text console environment, it is the preferred tool for locating virtual machine performance issues at runtime.
 
-**格式：**
+**Pattern:**
 
 * `jstat [option <vmid> [interval [s|ms] [count] ] ]`
 
-**参数说明：**
+**Parameter description:**
 
-* 如果是本地虚拟机进程，`VMID`与`LVMID`是一致的，如果是远程虚拟机进程，那`VMID`的格式应当是
+* If it is a local virtual machine process, `VMID` is the same as `LVMID`. If it is a remote virtual machine process, the format of `VMID` should be:
     * `[protocol:] [//] lvmid [@hostname[:port]/servername]`
-* `interval`和`count`代表查询间隔和次数，如果省略这两个参数，说明只查询一次
-    * `jstat -gc 2764 250 20`：每`250`毫秒查询一次进程`2764`垃圾收集情况，一共查询`20`次
-* `-class`：监视类装载、卸载数量、总空间以及类装载所耗费的时间
-* `-gc`：监视`Java`堆状况，包括`Eden`区、两个`survivor`区、老年代、永久代等的容量、已用空间、`GC`时间合计等信息
-* `-gccapacity`：监视内容与`-gc`基本相同，但输出主要关注`Java`堆各个区域使用到的最大、最小空间
-* `-gcutil`：监视内容与`-gc`基本相同，但输出主要关注已使用空间占总空间的百分比
-* `-gccause`：与`-gcutil`功能一样，但是会额外输出导致上一次`GC`产生的原因
-* `-gcnew`：监视新生代`GC`状况
-* `-gcnewcapacity`：监视内容与`-gcnew`基本相同，输出主要关注使用到的最大、最小空间
-* `-gcold`：监视老年代`GC`状况
-* `-gcoldcapacity`：监视内容与`-gcold`基本相同，输出主要关注使用到的最大、最小空间
-* `-gcpermcapacity`：输出永久代使用到的最大、最小空间
-* `-compiler`：输出`JIT`编译器编译过的方法、耗时等信息
-* `-printcompilation`：输出已经被`JIT`编译的方法
+* `interval` and `count` represent the query interval and number of queries. If these two parameters are omitted, it means querying only once.
+    * `jstat -gc 2764 250 20`: Queries the garbage collection status of process `2764` every `250` milliseconds, for a total of `20` times.
+* `-class`: Monitors the number of loaded and unloaded classes, total space, and the time spent on class loading.
+* `-gc`: Monitors the `Java` heap status, including the capacity, used space, total `GC` time, and other information for the `Eden` area, the two `survivor` areas, the old generation, the permanent generation, etc.
+* `-gccapacity`: Monitors basically the same content as `-gc`, but the output mainly focuses on the maximum and minimum space used by each area of the `Java` heap.
+* `-gcutil`: Monitors basically the same content as `-gc`, but the output mainly focuses on the percentage of used space relative to total space.
+* `-gccause`: Has the same function as `-gcutil`, but additionally outputs the reason that caused the previous `GC`.
+* `-gcnew`: Monitors the `GC` status of the young generation.
+* `-gcnewcapacity`: Monitors basically the same content as `-gcnew`, with the output mainly focusing on the maximum and minimum space used.
+* `-gcold`: Monitors the `GC` status of the old generation.
+* `-gcoldcapacity`: Monitors basically the same content as `-gcold`, with the output mainly focusing on the maximum and minimum space used.
+* `-gcpermcapacity`: Outputs the maximum and minimum space used by the permanent generation.
+* `-compiler`: Outputs information such as methods compiled by the `JIT` compiler and the time spent.
+* `-printcompilation`: Outputs methods that have already been compiled by the `JIT`.
 
-**输出内容意义：**
+**Meaning of output content:**
 
-* `E`：新生代区`Eden`
-* `S0\S1`：`Survivor0`、`Survivor1`这两个`Survivor`区
-* `O`：老年代`Old`
-* `P`：永久代`Permanet`
-* `YGC`：`Young GC`
-* `YGCT`：`Yount GC Time`
-* `FGC`：`Full GC`
-* `FTCG`：`Full GC Time`
-* `GCT`：`Minor GC`与`Full GC`总耗时
+* `E`: `Eden` area of the young generation.
+* `S0\S1`: The two `Survivor` areas: `Survivor0` and `Survivor1`.
+* `O`: Old generation `Old`.
+* `P`: Permanent generation `Permanent`.
+* `YGC`: `Young GC`
+* `YGCT`: `Young GC Time`
+* `FGC`: `Full GC`
+* `FTCG`: `Full GC Time`
+* `GCT`: Total time spent on `Minor GC` and `Full GC`
 
-**示例：**
+**Examples:**
 
-* **`jstat -gc <vmid> 1000 10`：查看`JVM`内存使用，每次间隔1000ms，一共10次**
-* **`jstat -gcutil <vmid> 1000 10`：查看`JVM`内存使用（百分比），每次间隔1000ms，一共10次**
+* **`jstat -gc <vmid> 1000 10`: View `JVM` memory usage, once every 1000 ms, for a total of 10 times.**
+* **`jstat -gcutil <vmid> 1000 10`: View `JVM` memory usage as percentages, once every 1000 ms, for a total of 10 times.**
 
 ## 2.4 jinfo
 
-`jinfo(Configuration Info for Java)`的作用是实时地查看和调整虚拟机各项参数
+`jinfo (Configuration Info for Java)` is used to view and adjust various virtual machine parameters in real time.
 
-使用`jps`命令的`-v`参数可以查看虚拟机启动时显示指定的参数列表，**但如果想知道未被显式指定的参数的系统默认值，除了去查找资料外，就只能用`jinfo`的`-flag`选项进行查询**
+You can use the `-v` option of the `jps` command to view the list of parameters explicitly specified when the virtual machine was started. **However, if you want to know the system default values of parameters that were not explicitly specified, besides looking them up in documentation, you can only use the `-flag` option of `jinfo` to query them.**
 
-如果`JDK1.6`或者以上版本，可以使用`-XX:+PrintFlagsFinal`查看参数默认值
+If you are using `JDK 1.6` or later, you can use `-XX:+PrintFlagsFinal` to view parameter default values.
 
-`jinfo`还可以使用`-sysprops`选项把虚拟机进程的`System.getProperties()`的内容打印出来
+`jinfo` can also use the `-sysprops` option to print the contents of `System.getProperties()` for the virtual machine process.
 
-**格式：**
+**Pattern:**
 
 * `jinfo [option] <vmid>`
 
-**参数说明**
+**Parameter description**
 
-* `-flag`：显式默认值
-    * `jinfo -flags 1874`：显式所有项的默认值
-    * `jinfo -flag CICompilerCount 1874`：显示指定项的默认值
-* `-sysprops`：把虚拟机进程的System.getProperties()的内容打印出来
+* `-flag`: Displays default values.
+    * `jinfo -flags 1874`: Displays the default values of all items.
+    * `jinfo -flag CICompilerCount 1874`: Displays the default value of the specified item.
+* `-sysprops`: Prints the contents of `System.getProperties()` for the virtual machine process.
 
 ## 2.5 jmap
 
-`jmap(Memory Map for Java)`命令用于生成堆转储快照(一般称为`heapdump`或`dump`文件)
+The `jmap (Memory Map for Java)` command is used to generate heap dump snapshots, generally called `heapdump` or `dump` files.
 
-`jmap`的作用并不仅仅为了获取`dump`文件，它还可以查询`finalize`执行队列、`Java`堆和永久代的详细信息，如空间使用率、当前用的是哪种收集器等
+The purpose of `jmap` is not only to obtain `dump` files. It can also query the `finalize` execution queue, as well as detailed information about the `Java` heap and permanent generation, such as space usage, the currently used collector, and so on.
 
-**格式：**
+**Pattern:**
 
 * `jmap [option] <vmid>`
 
-**参数说明：**
+**Parameter description:**
 
-* `-dump`：生成Java堆转储快照，格式为`-dump:[live, ]format=b, file=<filename>`，其中`live`子参数说明是否只`dump`出存活对象
-* `-finalizerinfo`：显示在`F-Queue`中等待`Finalizer`线程执行`finalize`方法的对象
-* `-heap`：显示`Java`堆详细信息，如使用哪种回收器，参数配置，分代状况等
-* `-histo`：显示堆中对象统计信息，包括类、实例数量、合计容量
-* `-permstat`：以`ClassLoader`为统计口径显示永久代内存状态
-* `-F`：当虚拟机进程对`-dump`选项没有响应时，可使用这个选项强制生成`dump`快照
+* `-dump`: Generates a Java heap dump snapshot. The format is `-dump:[live, ]format=b, file=<filename>`, where the `live` sub-parameter indicates whether to `dump` only live objects.
+* `-finalizerinfo`: Displays objects waiting in the `F-Queue` for the `Finalizer` thread to execute their `finalize` methods.
+* `-heap`: Displays detailed information about the `Java` heap, such as which collector is used, parameter configuration, generation status, and so on.
+* `-histo`: Displays object statistics in the heap, including classes, number of instances, and total capacity.
+* `-permstat`: Displays permanent generation memory status using `ClassLoader` as the statistical scope.
+* `-F`: When the virtual machine process does not respond to the `-dump` option, this option can be used to forcibly generate a `dump` snapshot.
 
-**示例**
+**Examples**
 
-* `jmap -dump:format=b,file=<dump_文件名> <java进程号>`：`dump`进程所有对象的堆栈
-* `jmap -dump:live,format=b,file=<dump_文件名> <java进程号>`：`dump`进程中存活对象的堆栈，会触发`full gc`
-* `jmap -histo:live <vmid>`：触发`full gc`
-* `jmap -histo <vmid> | sort -k 2 -g -r | less`：统计堆栈中对象的内存信息，按照对象实例个数降序打印
-* `jmap -histo <vmid> | sort -k 3 -g -r | less`：统计堆栈中对象的内存信息，按照对象占用内存大小降序打印
+* `jmap -dump:format=b,file=<dump_file_name> <java_process_id>`: `dump` the heap of all objects in the process.
+* `jmap -dump:live,format=b,file=<dump_file_name> <java_process_id>`: `dump` the heap of live objects in the process; this will trigger a `full gc`.
+* `jmap -histo:live <vmid>`: Triggers a `full gc`.
+* `jmap -histo <vmid> | sort -k 2 -g -r | less`: Collects memory information about objects in the heap and prints it in descending order by the number of object instances.
+* `jmap -histo <vmid> | sort -k 3 -g -r | less`: Collects memory information about objects in the heap and prints it in descending order by object memory usage.
 
 ## 2.6 jhat
 
-`jhat`是虚拟机堆转储快照分析工具
+`jhat` is a virtual machine heap dump snapshot analysis tool.
 
-`Sun JDK`提供`jhat(JVM Heap Analysis Tool)`命令与`jmap`搭配使用，来分析`jmap`生成的堆转储快照
+`Sun JDK` provides the `jhat (JVM Heap Analysis Tool)` command to be used together with `jmap` to analyze heap dump snapshots generated by `jmap`.
 
-`jhat`内置了一个微型的`HTTP/HTML`服务器，生成`dump`文件的分析结果后，可以在浏览器中查看
+`jhat` has a built-in lightweight `HTTP/HTML` server. After generating the analysis results for a `dump` file, you can view them in a browser.
 
-不过在实际工作中，除非真的没有别的工具可用，否则一般不会直接使用`jhat`命令来分析`dump`文件，原因如下
+However, in actual work, unless there really are no other tools available, the `jhat` command is generally not used directly to analyze `dump` files, for the following reasons:
 
-* 一般不会再部署应用程序的服务器上直接分析`dump`文件，即使可以这样做，也会尽量将`dump`文件复制到其他机器上进行分析，因为分析工作是一个耗时而且消耗硬件资源的过程，既然都要在其他机器上进行，就没有必要受到命令工具的限制了
-* `jhat`的分析功能相对来说比较简陋，`VisualVM`，以及专业用于分析`dump`文件的`Eclipse Memory Analyzer`、`IBM HeapAnalyzer`等工具，都能实现比`jhat`更强大更专业的分析功能
+* In general, `dump` files are not analyzed directly on the server where the application is deployed. Even if this can be done, the `dump` file is usually copied to another machine for analysis, because analysis is a time-consuming process that consumes hardware resources. Since the analysis is going to be performed on another machine anyway, there is no need to be limited by command-line tools.
+* The analysis capabilities of `jhat` are relatively limited. Tools such as `VisualVM`, as well as professional tools specifically used to analyze `dump` files, such as `Eclipse Memory Analyzer` and `IBM HeapAnalyzer`, can provide more powerful and professional analysis capabilities than `jhat`.
 
-**配合jmap的例子**
+**Example used together with jmap**
 
 1. `jmap -dump:format=b,file=dump.bin 1874`
-    * 文件相对路径为`dump.bin`
-    * `vmid`为1874
+    * The relative file path is `dump.bin`.
+    * The `vmid` is 1874.
 1. `jhat dump.bin`
-    * 在接下来的输出中会指定端口`7000`
-    * 在浏览器中键入`http://localhost:7000/`就可以看到分析结果，拉到最下面，包含如下导航：
-        * All classes including platform
-        * Show all members of the rootset
-        * Show instance counts for all classes (including platform)
-        * Show instance counts for all classes (excluding platform)
-        * Show heap histogram
-        * Show finalizer summary
-        * Execute Object Query Language (OQL) query
+    * The following output will specify port `7000`.
+    * Enter `http://localhost:7000/` in the browser to view the analysis results. Scroll to the bottom, and it contains the following navigation:
+        * All classes including platform.
+        * Show all members of the rootset.
+        * Show instance counts for all classes (including platform).
+        * Show instance counts for all classes (excluding platform).
+        * Show heap histogram.
+        * Show finalizer summary.
+        * Execute Object Query Language (OQL) query.
 
 ## 2.7 jstack
 
-`jstack`是`Java`堆栈跟踪工具
+`jstack` is a `Java` stack trace tool.
 
-`jstack(Stack Trace for Java)`命令用于生成虚拟机当前时刻的线程快照(一般称为`trheaddump`或者`javacore`文件)
+The `jstack (Stack Trace for Java)` command is used to generate a thread snapshot of the virtual machine at the current moment, generally called a `threaddump` or `javacore` file.
 
-线程快照就是当前虚拟机每一条线程正在执行的方法堆栈的集合，生成线程快照的主要目的是定位线程出现长时间停顿的原因，如线程死锁、死循环、请求外部资源导致的长时间等待都是导致线程长时间停顿的常见原因
+A thread snapshot is a collection of the method stacks currently being executed by every thread in the virtual machine. The main purpose of generating a thread snapshot is to locate the causes of long thread pauses, such as thread deadlocks, infinite loops, and long waits caused by requests for external resources, all of which are common causes of long thread pauses.
 
-线程出现停顿的时候通过`jstack`来查看各个线程的调用堆栈，就可以知道没有响应的线程到底在后台做了什么，或者等待什么资源
+When a thread pauses, you can use `jstack` to view the call stack of each thread, so you can know exactly what the unresponsive thread is doing in the background, or what resource it is waiting for.
 
-**格式：**
+**Pattern:**
 
 * `jstack [option] <vmid>`
 
-**参数说明：**
+**Parameter description:**
 
-* `-F`：当正常输出的请求不被响应时，强制输出线程堆栈
-* `-l`：除堆栈外，显示关于锁的附加信息
-* `-m`：如果调用本地方法的话，可以显示C/C++的堆栈
+* `-F`: Forces thread stack output when a normal output request is not responded to.
+* `-l`: Displays additional information about locks in addition to the stack.
+* `-m`: Displays the C/C++ stack if native methods are called.
 
-**在JDK1.5中，java.lang.Thread类新增一个getAllStackTraces()方法用于获取虚拟机中所有线程的StackTraceElement对象，使用这个对象可以通过简单的几行代码就能完成jstack的大部分功能，在实际项目中不妨调用这个方法做个管理员页面，可以随时使用浏览器来查看线程堆栈**
+**In `JDK 1.5`, the `java.lang.Thread` class added a `getAllStackTraces()` method to obtain the `StackTraceElement` objects of all threads in the virtual machine. Using this object, most of the functionality of `jstack` can be implemented with just a few simple lines of code. In real projects, you may consider calling this method to build an administrator page, so that you can view thread stacks in a browser at any time.**
 
 ## 2.8 java_home
 
-**`/usr/libexec/java_home -V`：用于查看本机上所有版本java的安装目录**
+**`/usr/libexec/java_home -V`: Used to view the installation directories of all Java versions on the local machine**
 
 ## 2.9 jar
 
@@ -1099,7 +1099,7 @@ function search() {
 
 Just use `-Djava.net.preferIPv4Stack=false -Djava.net.preferIPv6Addresses=true` can enable dual stack, it will try ipv6 first and downgrade to ipv4 if ipv6 failed.
 
-# 8 参考
+# 8 Reference
 
 * [JVM性能调优监控工具jps、jstack、jmap、jhat、jstat、hprof使用详解](https://my.oschina.net/feichexia/blog/196575)
 * [Java应用打开debug端口](https://www.cnblogs.com/lzmrex/articles/12579862.html)

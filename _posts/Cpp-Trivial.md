@@ -99,7 +99,7 @@ flowchart TD
 
 ### 2.3.1 Linux's so version mechanism
 
-**本小节转载摘录自[一文读懂Linux下动态链接库版本管理及查找加载方式](https://blog.ideawand.com/2020/02/15/how-does-linux-shared-library-versioning-works/)**
+**From [一文读懂Linux下动态链接库版本管理及查找加载方式](https://blog.ideawand.com/2020/02/15/how-does-linux-shared-library-versioning-works/)**
 
 In the `/lib64`, `/usr/lib64`, and `/usr/local/lib64` directories, you will see many symbolic links with the following characteristics, where `x`, `y`, and `z` are numbers. What is the purpose of these symbolic links and the numbers that follow them?
 
@@ -447,7 +447,7 @@ Some commonly used functions for handling C++ ABI (Application Binary Interface)
 
 ### 2.7.2 Language-Specific ABI
 
-摘自[What is C++ ABI?](https://www.quora.com/What-is-C-ABI)
+From [What is C++ ABI?](https://www.quora.com/What-is-C-ABI)
 
 > Often, a platform will specify a “base ABI” that specifies how to use that platform's basic services and that is often done in terms of C language capabilities. However, other programming languages like C++ may require support for additional mechanisms. That's how you get to language-specific ABIs, including a variety of C++ ABIs. Among the concerns of a C++ ABI are the following:
 > * How are classes with virtual functions represented? A C++ ABI will just about always extend the C layout rules for this, and specify implicit pointers in the objects that point to static tables (“vtables”) that themselves point to virtual functions.
