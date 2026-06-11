@@ -1319,7 +1319,7 @@ The `r` in its name stands for `remote`, and `rsync` essentially means remote sy
 * `-C`: Change the working directory, subsequent filenames can use relative paths
     * `tar -czvf test.tar.gz /home/liuye/data/volumn1`: After archiving, the file paths inside the compressed package are full paths, i.e., `/home/liuye/data/volumn1/xxx`
     * `tar -czvf test.tar.gz data/volumn1`: Executing this command, the file paths inside the compressed package are relative to the current directory, i.e., `data/volumn1/xxx`
-    * `tar -czvf test.tar.gz volumn1 -C /home/liuye/data`: The file paths inside the compressed package are relative to `/home/liuye/data`, i.e., `volumn1/xxx`
+    * `tar -czvf test.tar.gz -C /home/liuye/data volumn1`: The file paths inside the compressed package are relative to `/home/liuye/data`, i.e., `volumn1/xxx`
 * `-p`: Preserve the original permissions and attributes of the backup data, commonly used for backing up (-c) important configuration files
 * `-P`: Preserve absolute paths, i.e., allow the backup data to include the root directory
 

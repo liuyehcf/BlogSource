@@ -98,32 +98,6 @@ Page DOWN：`Fn+↓`
 1. `System Preferences`->`Keyboard`->`Text Input Edit`->`Press and hold to enable typing in all uppercase`
     * 14.x 没有这个配置选项了
 
-## 1.15 如何修改用户名
-
-[Change the name of your macOS user account and home folder](https://support.apple.com/en-in/102547)
-
-## 1.16 如何修改HostName/ComputerName
-
-```sh
-scutil --get HostName
-scutil --get LocalHostName
-scutil --get ComputerName
-
-sudo scutil --set HostName xxx
-sudo scutil --set LocalHostName xxx
-sudo scutil --set ComputerName xxx
-```
-
-## 1.17 禁用密码校验规则
-
-```sh
-# back up all account policies
-pwpolicy getaccountpolicies > back_policies.xml
-
-# clean account policies
-pwpolicy -clearaccountpolicies
-```
-
 # 2 Homebrew
 
 ## 2.1 常用操作
@@ -695,6 +669,36 @@ Search key word `handoff`
 ## 6.15 Show Scroll Bars
 
 * `System Settings` -> `Appearance` -> `Show scroll bars` -> `Always`
+
+## 6.16 shift切换中英文输入法
+
+搜狗输入法下，按shift可以快速切换中英文，但这是搜狗输入法本身的行为
+
+## 6.17 如何修改用户名
+
+[Change the name of your macOS user account and home folder](https://support.apple.com/en-in/102547)
+
+## 6.18 如何修改HostName/ComputerName
+
+```sh
+scutil --get HostName
+scutil --get LocalHostName
+scutil --get ComputerName
+
+sudo scutil --set HostName xxx
+sudo scutil --set LocalHostName xxx
+sudo scutil --set ComputerName xxx
+```
+
+## 6.19 禁用密码校验规则
+
+```sh
+# back up all account policies
+pwpolicy getaccountpolicies > back_policies.xml
+
+# clean account policies
+pwpolicy -clearaccountpolicies
+```
 
 # 7 参考
 
