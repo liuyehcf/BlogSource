@@ -21,25 +21,36 @@ A Winner Loser Tree is a specialized data structure that is typically used in so
 #include <algorithm>
 #include <iostream>
 #include <limits>
+#include <optional>
 #include <random>
 #include <vector>
 
-class WinnerLoserTree {
+class LoserTree {
 private:
     // This implementation is for k-way merging: each leaf represents one input run's "current element".
-    // Internal nodes store the loser leaf index; _loser[0] stores the overall winner (leaf index with min key).
+    // Internal nodes store the loser leaf index; _losers[_num_pow2 - 1] stores the overall winner
+    // (leaf index with the minimum key).
     // Classic loser-tree implementation, works when k is not a power of two.
-    // Notes on sentinels:
-    // - We use +INF for empty/exhausted runs.
-    // - We use a dedicated sentinel leaf with -INF to bootstrap tree building.
-    static constexpr int64_t INF = std::numeric_limits<int64_t>::max();
-    static constexpr int64_t NEG_INF = std::numeric_limits<int64_t>::min();
+    // No +/-INF sentinels are used. Instead, LeafNode has state flags:
+    // - uninitialized: used by an internal sentinel leaf to bootstrap tree building.
+    // - exhausted: the run is finished and should always lose against non-exhausted runs.
+
+    struct LeafNode {
+        int32_t value;
+        bool uninitialized;
+        bool exhausted;
+
+        LeafNode() : value(0), uninitialized(true), exhausted(false) {}
+        LeafNode(int32_t value) : value(value), uninitialized(true), exhausted(false) {}
+        LeafNode(int32_t value_, bool uninitialized_, bool exhausted_)
+                : value(value_), uninitialized(uninitialized_), exhausted(exhausted_) {}
+    };
 
 private:
-    size_t _k;                  // number of real runs (leaves)
-    size_t _n;                  // number of leaves in the underlying complete tree (power of two)
-    std::vector<int64_t> _keys; // leaf keys, size n+1; the (n)-th is a sentinel (NEG_INF)
-    std::vector<size_t> _loser; // size n; index 0 stores winner; 1..n-1 store internal-node losers
+    size_t _num_runs; // number of real runs (leaves)
+    size_t _num_pow2; // number of leaves in the underlying complete tree (power of two)
+    std::vector<LeafNode> _leaf_nodes;
+    std::vector<size_t> _losers; // size n; 0...n-2 store internal-node losers, (n-1)-th stores winner
 
     static size_t _next_pow2(size_t x) {
         size_t n = 1;
@@ -49,57 +60,118 @@ private:
         return n;
     }
 
-    // Adjust leaf s up to the root.
-    void _adjust(size_t s) {
-        // Use a complete binary tree with _n leaves (power of two).
-        // Parent starts from (s + _n) / 2 and moves up to the root.
-        for (size_t t = (s + _n) / 2; t > 0; t /= 2) {
-            size_t l = _loser[t];
-            // Keep s as the smaller one (winner) to move upward; loser[t] stores the larger one (loser).
-            // If values tie, the smaller index wins to make the result deterministic.
-            if (_keys[s] > _keys[l] || (_keys[s] == _keys[l] && s > l)) {
-                std::swap(s, _loser[t]);
+    // Return true if leaf a is worse (should lose) than leaf b.
+    // Order: exhausted (worst) > normal-by-value > uninitialized sentinel (best, only for bootstrapping).
+    bool _is_greater(size_t a, size_t b) const {
+        const LeafNode& A = _leaf_nodes[a];
+        const LeafNode& B = _leaf_nodes[b];
+
+        // Uninitialized leaf is a special sentinel used only to bootstrap building.
+        // It should be considered smaller (better) than any normal/exhausted leaf.
+        if (A.uninitialized != B.uninitialized) {
+            return !A.uninitialized && B.uninitialized;
+        }
+
+        // Exhausted leaf behaves like +infinity (always worse than non-exhausted).
+        if (A.exhausted != B.exhausted) {
+            return A.exhausted && !B.exhausted;
+        }
+
+        // Both are normal leaves: compare by value.
+        if (!A.exhausted && !A.uninitialized) {
+            if (A.value != B.value) {
+                return A.value > B.value;
             }
         }
-        _loser[0] = s;
+        // Tie-breaker: larger index loses.
+        return a > b;
+    }
+
+    // Adjust leaf to the root.
+    // leaf_idx starts from 0.
+    void _adjust(size_t leaf_idx) {
+        // Special case: only one leaf, no internal nodes.
+        if (_num_pow2 == 1) {
+            _losers[0] = leaf_idx;
+            return;
+        }
+
+        // Use a complete binary tree with _num_pow2 leaves.
+        // Internal nodes use 0-based heap indexing: root=0, children=2*i+1/2*i+2.
+        // The first match node for a leaf is: (leaf_idx + _num_pow2) / 2 - 1.
+        // Then we go upward using parent = (idx - 1) / 2, and we MUST include idx==0.
+        // Inner:          0
+        // Inner:     1         2
+        // Leaf :  0    1     2    3
+        //   (0 + 4) / 2 - 1 = 1
+        //   (1 + 4) / 2 - 1 = 1
+        //   (2 + 4) / 2 - 1 = 2
+        //   (3 + 4) / 2 - 1 = 2
+        size_t parent_idx = (leaf_idx + _num_pow2) / 2 - 1;
+        while (true) {
+            size_t parent_value = _losers[parent_idx];
+            // Keep leaf_idx as the smaller one (winner) to move upward; loser[parent_idx] stores the larger one (loser).
+            // If values tie, the smaller index wins to make the result deterministic.
+            if (_is_greater(leaf_idx, parent_value)) {
+                std::swap(leaf_idx, _losers[parent_idx]);
+            }
+
+            if (parent_idx == 0) {
+                break;
+            }
+            parent_idx = (parent_idx - 1) / 2;
+        }
+        _losers[_num_pow2 - 1] = leaf_idx;
     }
 
 public:
-    explicit WinnerLoserTree(const std::vector<int32_t>& keys) : _k(keys.size()), _n(_next_pow2(_k)) {
-        _keys.assign(_n, INF);
-        for (size_t i = 0; i < _k; ++i) {
-            _keys[i] = static_cast<int64_t>(keys[i]);
+    explicit LoserTree(const std::vector<std::optional<int32_t>>& keys)
+            : _num_runs(keys.size()), _num_pow2(_next_pow2(_num_runs)) {
+        // Allocate an extra sentinel leaf at index _num_pow2.
+        _leaf_nodes.assign(_num_pow2 + 1, LeafNode());
+
+        // Initialize all real/padded leaves as exhausted.
+        for (size_t i = 0; i < _num_pow2; ++i) {
+            _leaf_nodes[i] = LeafNode(0, false, true);
         }
-        // Sentinel at index n.
-        _keys.push_back(NEG_INF);
+        for (size_t i = 0; i < _num_runs; ++i) {
+            const auto& key = keys[i];
+            if (key.has_value()) {
+                _leaf_nodes[i] = LeafNode(key.value(), false, false);
+            } else {
+                _leaf_nodes[i] = LeafNode(0, false, true);
+            }
+        }
 
-        _loser.assign(_n, _n);
-        // Initialize losers.
-        std::fill(_loser.begin(), _loser.end(), _n);
+        // Sentinel leaf used only for bootstrapping the build.
+        _leaf_nodes[_num_pow2] = LeafNode(0, true, false);
 
-        // Build: adjust from back to front.
-        for (int i = static_cast<int>(_n) - 1; i >= 0; --i) {
-            _adjust(static_cast<size_t>(i));
+        // Initialize losers to the sentinel leaf.
+        _losers.assign(_num_pow2, _num_pow2);
+
+        // Build: adjust from front to back.
+        for (size_t i = 0; i < _num_pow2; ++i) {
+            _adjust(i);
         }
     }
 
-    size_t winner_index() const { return _k == 0 ? 0 : _loser[0]; }
+    size_t winner_index() const { return _losers[_num_pow2 - 1]; }
     int32_t winner_value() const {
-        const size_t w = winner_index();
-        if (w >= _n) {
-            return static_cast<int32_t>(INF);
+        const size_t idx = winner_index();
+        if (idx >= _num_pow2 || _leaf_nodes[idx].exhausted || _leaf_nodes[idx].uninitialized) {
+            throw std::logic_error("invalid winner");
         }
-        return static_cast<int32_t>(_keys[w]);
+        return _leaf_nodes[idx].value;
     }
 
     // Replace the key of one run (leaf) and re-adjust.
     void replace(size_t leaf, int32_t new_value) {
-        _keys[leaf] = static_cast<int64_t>(new_value);
+        _leaf_nodes[leaf] = LeafNode(new_value, false, false);
         _adjust(leaf);
     }
 
     void replace_inf(size_t leaf) {
-        _keys[leaf] = INF;
+        _leaf_nodes[leaf] = LeafNode(0, false, true);
         _adjust(leaf);
     }
 };
@@ -112,20 +184,21 @@ std::vector<int32_t> merge_k_sorte_arrays(const std::vector<std::vector<int32_t>
     }
 
     std::vector<size_t> pos(k, 0);
-    std::vector<int32_t> init_keys;
+    std::vector<std::optional<int32_t>> init_keys;
     init_keys.reserve(k);
 
     size_t total = 0;
     for (size_t i = 0; i < k; ++i) {
         total += arrays[i].size();
         if (arrays[i].empty()) {
-            init_keys.push_back(std::numeric_limits<int32_t>::max());
+            init_keys.push_back(std::nullopt);
         } else {
             init_keys.push_back(arrays[i][0]);
         }
     }
 
-    WinnerLoserTree lt(init_keys);
+    LoserTree lt(init_keys);
+
     merged.reserve(total);
 
     for (size_t out = 0; out < total; ++out) {

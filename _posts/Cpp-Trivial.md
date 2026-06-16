@@ -341,15 +341,56 @@ A DSO is just another term for a shared library (e.g., `.so` file on Linux, `.dl
 * Passing STL containers (like `std::string`, `std::vector`) across a DSO boundary is often discouraged unless you can guarantee both sides use the same standard library version and ABI.
 * That's why many libraries expose only C-style APIs across DSO boundaries (plain functions, opaque pointers).
 
-## 2.6 Environment Variables
+## 2.6 Symbol Table
+
+In an ELF file (such as a `.so` shared library or an executable), there are two distinct symbol tables serving different purposes:
+
+| Feature | `.symtab` (Symbol Table) | `.dynsym` (Dynamic Symbol Table) |
+|:--|:--|:--|
+| **Contents** | **Everything**. Contains all symbols, including local variables, local functions, static functions, and global symbols. | **Dynamic only**. Contains only the symbols needed for runtime dynamic linking (exported APIs and imported external symbols). |
+| **Memory** | Not loaded into memory at runtime (Non-allocable). | Loaded into memory at runtime (Allocable). |
+| **Stripping** | **Can be stripped** entirely using the `strip` command to reduce file size without affecting execution. | **Cannot be stripped**. Stripping it will break the dynamic linker and crash the program. |
+| **Primary Use** | Static linking (compile-time) and debugging (`gdb`). | Runtime dynamic linking (`ld.so`) and lazy binding. |
+
+### 2.6.1 When Are They Created? (Compile-time vs. Link-time)
+
+The short answer is: `.symtab` originates at compile-time but is finalized at link-time, while `.dynsym` is created entirely at link-time. Here is how it breaks down stage by stage:
+
+Phase 1: Compile-time (The Compiler's Job): When you compile a source file into an object file (e.g., `g++ -c main.cpp -> main.o`):
+
+* `.symtab` is born: The compiler creates a local `.symtab` inside each `.o` file. It records every function, variable, and external reference found strictly within that single file.
+* `.dynsym` does not exist: At this stage, there is no concept of dynamic linking or shared libraries yet, so `.dynsym` is absent in `.o` files.
+
+Phase 2: Link-time (The Linker's Job): When you link multiple `.o` files together to produce the final `.so` or executable (e.g., `g++ -shared -o libtest.so a.o b.o`):
+
+* `.symtab` is consolidated: The static linker (like `ld`) collects `.symtab` from all input `.o` files, merges them, resolves local references, updates their actual memory addresses, and outputs a single master `.symtab`.
+* `.dynsym` is created from scratch: The linker inspects the merged symbols and asks: "Which symbols need to be visible to other libraries, and which external symbols do we depend on?" It extracts these specific symbols to form the brand-new `.dynsym` table.
+
+### 2.6.2 Which symbols enter `.dynsym` by default?
+
+Under default configurations, only the following symbols are placed into the dynamic table:
+
+* **Global Non-static Functions and Global Variables**: If you write `void my_func() {}` without the `static` keyword, the linker assumes by default that this is an API you want to expose to the outside world, so it goes into `.dynsym`.
+* **Imported External Symbols (Undefined Symbols)**: Standard library functions (like `printf` or `malloc`) or third-party functions called within your code. The runtime dynamic linker (`ld.so`) needs these in `.dynsym` to resolve their addresses at runtime.
+* **Essential C++ Plumbing**: To ensure that polymorphism and runtime exceptions work correctly across boundaries, C++ virtual function tables (vtables), RTTI (Type Information), and exception handling structures are placed in the dynamic table by default.
+
+### 2.6.3 Which symbols are EXCLUDED from `.dynsym` by default?
+
+The following symbols only exist in .symtab and will completely disappear once you run the strip command:
+
+* **Static Symbols (`static`)**: Any `static void internal_func()` or static private class members. Because their scope is strictly restricted to the current file or class, the linker will never put them in the dynamic table.
+* **Local Variables**: Variables defined inside a function body.
+* **Hidden Visibility Symbols**: If you explicitly mark a function with a hidden attribute (e.g., `__attribute__((visibility("hidden")))`), the linker will forcefully exclude it from `.dynsym`, even if it is a global function.
+
+## 2.7 Environment Variables
 
 Please refer to `man ld.so` for details:
 
-### 2.6.1 LD_LIBRARY_PATH
+### 2.7.1 LD_LIBRARY_PATH
 
 Specifies the directories to search for shared libraries (dynamic libraries) at runtime.
 
-### 2.6.2 LD_PRELOAD
+### 2.7.2 LD_PRELOAD
 
 Lists shared libraries that are loaded (preloaded) before any other shared libraries. This can be used to override functions in other shared objects.
 
@@ -400,7 +441,7 @@ fopen() returned NULL
 #-------------------------↑↑↑↑↑↑-------------------------
 ```
 
-### 2.6.3 LD_DEBUG
+### 2.7.3 LD_DEBUG
 
 Usage: `LD_DEBUG=<type> <binary>`, here are all available types.
 
@@ -415,7 +456,7 @@ Usage: `LD_DEBUG=<type> <binary>`, here are all available types.
 1. `unused`: Determine unused DSOs.
 1. `versions`: Display version dependencies.
 
-## 2.7 ABI
+## 2.8 ABI
 
 `ABI` stands for `Application Binary Interface`. It is the interface between two binary modules. A binary module can be a `lib`, an operating system infrastructure, or a running user program.
 
@@ -435,7 +476,7 @@ Specifically, `ABI` defines the following:
 1. How to initiate system calls
 1. File formats such as `lib` and `object file`
 
-### 2.7.1 cxxabi.h
+### 2.8.1 cxxabi.h
 
 Some commonly used functions for handling C++ ABI (Application Binary Interface), defined in `<cxxabi.h>`, include(The prefix `__cxa` stands for `C++ eXception ABI`):
 
@@ -445,7 +486,7 @@ Some commonly used functions for handling C++ ABI (Application Binary Interface)
 * `abi::__cxa_current_exception_type`: Used to retrieve type information for the current exception. It returns a pointer to a `std::type_info` object that describes the type of the current thrown exception.
 * `abi::__cxa_bad_cast`: Used to throw a `std::bad_cast` exception when a `dynamic_cast` fails. It's typically called when a runtime type conversion fails.
 
-### 2.7.2 Language-Specific ABI
+### 2.8.2 Language-Specific ABI
 
 From [What is C++ ABI?](https://www.quora.com/What-is-C-ABI)
 
@@ -458,7 +499,7 @@ From [What is C++ ABI?](https://www.quora.com/What-is-C-ABI)
 > * How are overloaded functions and operators “named” in object files? This is where “name mangling” usually comes in: The type of the various functions is encoded in their object file names. That also handles the “overloading” that results from template instantiations.
 > * How are spilled inline functions and template instantiations handled? After all, different object files might use/spill the same instances, which could lead to collisions.
 
-### 2.7.3 Dual ABI
+### 2.8.3 Dual ABI
 
 [Dual ABI](https://gcc.gnu.org/onlinedocs/libstdc++/manual/using_dual_abi.html)
 
@@ -474,7 +515,7 @@ Other references:
 * [ABI Policy and Guidelines](https://gcc.gnu.org/onlinedocs/libstdc++/manual/abi.html)
 * [C/C++ ABI兼容那些事儿](https://zhuanlan.zhihu.com/p/556726543)
 
-### 2.7.4 ABI Mismatch Example
+### 2.8.4 ABI Mismatch Example
 
 Backgrounds: `std::string` underwent significant changes between the old and new ABI versions.
 
@@ -549,7 +590,7 @@ gcc -o abi_conflict_main_1_library_0 -D_GLIBCXX_USE_CXX11_ABI=1 main.cpp library
 gcc -o abi_conflict_main_1_library_1 -D_GLIBCXX_USE_CXX11_ABI=1 main.cpp library_1.o -O3 -lstdc++ -std=gnu++17
 ```
 
-### 2.7.5 ABI Mismatch Issue
+### 2.8.5 ABI Mismatch Issue
 
 ```
 # compile works fine
@@ -568,11 +609,11 @@ The errors you're encountering at runtime indicate that your application (`main`
 * `gcc -o main main.cpp -O0 -lstdc++ -fuse-ld=gold -Wl,--verbose`: Check the dynamic lib path that used at link time.
 * `ldd main`: Check the dynamic lib path that used at runtime.
 
-## 2.8 Commonly-used Librarys
+## 2.9 Commonly-used Librarys
 
 [Library Interfaces and Headers](https://docs.oracle.com/cd/E86824_01/html/E54772/makehtml-id-7.html#scrolltoc)
 
-### 2.8.1 libc/glibc/glib
+### 2.9.1 libc/glibc/glib
 
 **You can refer to `man libc/glibc` for details**
 
@@ -591,17 +632,17 @@ The errors you're encountering at runtime indicate that your application (`main`
 * `gcc -print-file-name=libc.so`
 * `strings /lib64/libc.so.6 | grep GLIBC`: Check the version of `glibc` APIs
 
-### 2.8.2 Others
+### 2.9.2 Others
 
 1. `libm`：c math library
 1. `libz`：compression/decompression library
 1. `libpthread`：POSIX threads library
 
-## 2.9 Assorted
+## 2.10 Assorted
 
-### 2.9.1 How to build library
+### 2.10.1 How to build library
 
-#### 2.9.1.1 How to build static library
+#### 2.10.1.1 How to build static library
 
 ```sh
 cat > foo.cpp << 'EOF'
@@ -628,7 +669,7 @@ gcc -o main main.cpp -O3 -L . -lfoo -lstdc++
 ./main
 ```
 
-#### 2.9.1.2 How to build dynamic library
+#### 2.10.1.2 How to build dynamic library
 
 ```sh
 cat > foo.cpp << 'EOF'
@@ -657,7 +698,7 @@ gcc -o main main.cpp -O3 -L . -Wl,-rpath=`pwd` -lfoo -lstdc++
 ./main
 ```
 
-### 2.9.2 Catch exceptions from dynamic library
+### 2.10.2 Catch exceptions from dynamic library
 
 **Conditions for exceptions to propagate correctly**
 
@@ -827,7 +868,7 @@ gcc -o catch_normal dl_main.cpp -fno-gnu-unique -ldl -lstdc++
 * With dynamic `libstdc++`: the exception is catchable across DSOs even if the `type_info*` pointers differ, because libstdc++'s matching logic will (when needed) fall back to name-based checks inside one shared copy of the runtime.
 * With `libstdc++` (and especially `libgcc`) linked statically: you've created a separate C++/unwind runtime inside the `.so`. Now the throw happens in one runtime and the catch happens in another, the unwinder/metadata aren't shared, then the process terminates (core).
 
-### 2.9.3 Wrap mechanism
+### 2.10.3 Wrap mechanism
 
 The `--wrap` linker feature (supported by GNU `ld` and accessible via `gcc -Wl,--wrap=symbol`) lets you intercept calls to a symbol at link time by renaming references. It's a deterministic, build-time way to hook or override functions without changing callers.
 
@@ -871,7 +912,7 @@ int main() {
 EOF
 ```
 
-#### 2.9.3.1 Work with Static Linking
+#### 2.10.3.1 Work with Static Linking
 
 And here are how to build the program.
 
@@ -896,7 +937,7 @@ The reason why static linking works fine with the `-Wl,-wrap=malloc` hook, is be
 * So, when you use the `-Wl,-wrap=malloc` linker option, it can intercept and replace all calls to `malloc` in both the `main` program and any static libraries, as they are all being linked together into a single executable at the same time.
 * Essentially, the linker sees the entire code (from the main program and the static library) as one unit and can replace all calls to `malloc` with calls to `__wrap_malloc`.
 
-#### 2.9.3.2 Not Work with Dynamic Linking
+#### 2.10.3.2 Not Work with Dynamic Linking
 
 And here are how to build the program.
 
@@ -920,12 +961,12 @@ Here's a step-by-step breakdown:
 1. When you link `foo.o` into `libfoo.so`, the call to `malloc` inside `foo` is linked. It's resolved to the `malloc` function provided by the C library.
 1. Later, when you link `main.cpp` into an executable, you're using the `-Wl,-wrap=malloc` option, but that only affects calls to `malloc` that are being linked at that time. The call to `malloc` inside `foo` was already linked in step 2, so it's unaffected.
 
-### 2.9.4 How to see man page of library functions
+### 2.10.4 How to see man page of library functions
 
 * `man 3 malloc`
 * `man 3 dlopen`
 
-## 2.10 Reference
+## 2.11 Reference
 
 * [Program Library HOWTO](https://tldp.org/HOWTO/Program-Library-HOWTO/shared-libraries.html)
 * [Shared Libraries: Understanding Dynamic Loading](https://amir.rachum.com/blog/2016/09/17/shared-libraries/)
@@ -1641,6 +1682,24 @@ $ gcc -o main main.cpp -lstdc++ -std=gnu++17 -g -ggdb -O0 && nm main | grep '_Z'
 0000000000001154 T _ZN5Outer5Inner9func_voidEv
 000000000000124e W _ZNK5Outer5Inner3FooIiE3barEv
 ```
+
+## 4.3 Tips
+
+### 4.3.1 How to Demangling Manually
+
+```sh
+c++filt _Znwm
+c++filt _ZdlPv
+```
+
+### 4.3.2 Frequently-Used Mangling Mames
+
+1. `operator new`: `_Znw`
+    * `operator new(size_t)`: `_Znwm`
+1. `operator new[]`: `_Zna`
+1. `operator delete`: `_Zdl`
+    * `operator delete(void*)`: `_ZdlPv`
+1. `operator delete[]`: `_Zda`
 
 # 5 Address Sanitizer
 

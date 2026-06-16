@@ -1099,6 +1099,10 @@ function search() {
 
 Just use `-Djava.net.preferIPv4Stack=false -Djava.net.preferIPv6Addresses=true` can enable dual stack, it will try ipv6 first and downgrade to ipv4 if ipv6 failed.
 
+## 7.10 Spurious Wakeups
+
+Always use `Object::wait` in a loop in case of spurious wakeups. Refer to the official document of this method.
+
 # 8 Reference
 
 * [JVM性能调优监控工具jps、jstack、jmap、jhat、jstat、hprof使用详解](https://my.oschina.net/feichexia/blog/196575)

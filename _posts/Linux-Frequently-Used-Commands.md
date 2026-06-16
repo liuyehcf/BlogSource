@@ -1538,6 +1538,7 @@ This command is used to view the symbol table
 * `nm -C main`
 * `nm -D xxx.so`
 * `nm -u xxx.so`
+* `nm -CDu xxx.so`
 
 ## 2.38 strings
 
