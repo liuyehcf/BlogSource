@@ -1368,6 +1368,18 @@ gzip (GNU zip) is a fast, lossless compression utility commonly used on Unix/Lin
 **Examples:**
 
 * `curl -L -o <filename> '<url>'`
+* Resumable Download:
+    ```sh
+    curl -L --fail \
+    --retry 100 \
+    --retry-all-errors \
+    --retry-delay 5 \
+    --speed-limit 1024 \
+    --speed-time 60 \
+    -C - \
+    -o enwiki-20260901-pages-articles-multistream.xml.bz2 \
+    'https://dumps.wikimedia.org/enwiki/20260901/enwiki-20260901-pages-articles-multistream.xml.bz2'
+    ```
 
 ## 2.24 wget
 
@@ -2281,10 +2293,13 @@ This command is used to allow authorized users to execute programs as another us
         * `<prefix> p`: Change to the previous window in the window list by number.
         * `<prefix> l`: Changes to the last window, which is the window that was last the current window before the window that is now.
         * `<prefix> w`: Prints the window numbers for choose.
-    * **Session:**
+    * **Session(client):**
         * `<prefix> s`: Prints the session numbers for choose.
         * `<prefix> $`: Rename current session.
         * `<prefix> &`: Kill current session.
+        * `<prefix> L`: Switch to last client.
+        * `<prefix> (`: Switch to previous client.
+        * `<prefix> )`: Switch to next client.
 * **Options:**
     * `Session Options`
         * `tmux set-option -g <key> <value>`/`tmux set -g <key> <value>`
@@ -2308,6 +2323,11 @@ This command is used to allow authorized users to execute programs as another us
 * Support scroll with mouse:
     1. Method 1: `tmux set -g mouse on`, only effective for the current session.
     1. Method 2: Add the following configuration to `~/.tmux.conf`: `set -g mouse on`.
+* How to copy and paste with copy mode:
+    1. `<prefix> [`: Enter copy mode.
+    1. Use `v`/`V` and `hjkl` select the content you want to copy.
+    1. Press `Enter` to copy and exit the copy mode.
+    1. `<prefix> ]`: Paste the content in the same or different window.
 
 **My `~/.tmux.conf`**
 
@@ -3463,6 +3483,7 @@ sshpass -p 'xxxxx' ssh -o StrictHostKeyChecking=no test@1.2.3.4
 * `scp /tmp/Ubuntu.txt root@192.168.136.130:~/Desktop`
 * `scp -P 16666 root@192.168.136.130:/tmp/test.log ~/Desktop`: Specify port number 16666 for host `192.168.136.130`.
 * `scp -r local_folder remote_username@remote_ip:remote_folder `
+* `spf scp 'tiger@[fd42:a1b2:c3d4:0001::1]:/tmp/stack.txt' /tmp/stack.txt`: IPV6 should be wrapped in quote.
 
 ## 6.3 watch
 
@@ -4751,10 +4772,10 @@ apt install clang-format-X.Y
 
 * `iftop`
 
-#### 11.2.3.2 Get start time of a tcp connection
+#### 11.2.3.2 Get start time of a tcp connection (CANT MONITOR)
 
-* `lsof -i :<port>`: Get pid and fd
-* `ll /proc/<pid>/fd/<fd>`: The create time of this file is the create time of corresponding connection
+* `lsof -i :<port>`: Get pid and fd.
+* `ll /proc/<pid>/fd/<fd>`: The create time of this file is the create time of corresponding connection.(Wrong)
 
 #### 11.2.3.3 How to kill a tcp connection
 
@@ -4776,6 +4797,11 @@ Or refer to {% post_link Linux-Filepath %} for scripts that read `/proc/net/tcp`
 #### 11.2.3.7 How to list all unix socket
 
 * `lsof -U -w`
+
+#### 11.2.3.8 How to check connectivity of ip_port
+
+* `curl -g -v --connect-timeout 3 'telnet://[ipv6]:80'`
+* `curl -g -v --connect-timeout 3 telnet://ipv4:80`
 
 ### 11.2.4 Filesystem
 

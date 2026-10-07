@@ -160,8 +160,8 @@ categories:
 
 #### 1.2.1.3 Mnemonic
 
-> **DL controls existence; RL controls grouping.**  
-> **`DL = MAX DL` means a value exists.**  
+> **DL controls existence; RL controls grouping.**
+> **`DL = MAX DL` means a value exists.**
 > **`RL = 0` means a new row starts.**
 
 ### 1.2.2 Demo

@@ -1103,6 +1103,10 @@ Just use `-Djava.net.preferIPv4Stack=false -Djava.net.preferIPv6Addresses=true` 
 
 Always use `Object::wait` in a loop in case of spurious wakeups. Refer to the official document of this method.
 
+## 7.11 Default limit of Direct Memory
+
+If `-XX:MaxDirectMemorySize` is not set, the limit for NIO direct buffers is typically derived from the maximum heap size. For example, if the default `-Xmx` is around 30 GB, the direct-buffer limit is usually around 30 GB as well.
+
 # 8 Reference
 
 * [JVM性能调优监控工具jps、jstack、jmap、jhat、jstat、hprof使用详解](https://my.oschina.net/feichexia/blog/196575)
