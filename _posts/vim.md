@@ -369,6 +369,7 @@ Record refers to a feature that allows you to record a sequence of keystrokes an
 1. **Perform Actions**: While recording is active, perform the series of commands, edits, or movements you want to include in your macro. Vim will record everything you do.
 1. **Stop Recording**: To stop recording, press `q` again. In our example, press `q` once more to stop recording in register `a`
 1. **Replay the Macro**: To replay the recorded macro, use the `@` symbol followed by the register where you stored the macro. For example, to replay the `a` register macro, type `@a`
+    * Multiple lines replay: Use `V` to select multiple lines, and type `@a`.
 
 ## 2.8 File
 
@@ -1602,6 +1603,10 @@ vmap ∫ <Plug>(coc-range-select-backward)
 " Code navigation mappings
 nmap <leader>rd <Plug>(coc-definition)
 nmap <leader>ry <Plug>(coc-type-definition)
+nmap <leader>rap :call CocActionAsync('showSuperTypes')<CR>
+nmap <leader>ras :call CocActionAsync('showSubTypes')<CR>
+nmap <leader>rai :call CocActionAsync('showIncomingCalls')<CR>
+nmap <leader>rao :call CocActionAsync('showOutgoingCalls')<CR>
 nmap <leader>ri <Plug>(coc-implementation)
 nmap <leader>rr <Plug>(coc-references)
 nmap <leader>rn <Plug>(coc-rename)
@@ -1670,7 +1675,21 @@ call plug#end()
 * Setting `set(CMAKE_CXX_COMPILER g++)` in `cmake` does not affect `clangd`. For example, `clang` does not support the `-fopt-info-vec` flag, and will still warn.
 * The standard library search path used by `clangd` is determined by the compiler used in the compile commands inside `compile_commands.json`. If the compiler is an older version, it will use the corresponding older header paths; a newer compiler uses newer header paths.
 
-### 3.9.1 coc-explorer
+### 3.9.1 Components
+
+#### 3.9.1.1 Tree Views
+
+Use `set filetype?` to check the actual filetype, which is `coctree`.
+
+Built-in views:
+
+* `:CocOutline` or `:call CocActionAsync('showOutline')` opens document symbols.
+* `:call CocActionAsync('showIncomingCalls')` and `:call CocActionAsync('showOutgoingCalls')` open Call Hierarchy.
+* `:call CocActionAsync('showSuperTypes')` and `:call CocActionAsync('showSubTypes')` open Type Hierarchy.
+
+### 3.9.2 Plugins
+
+#### 3.9.2.1 coc-explorer
 
 Home: [coc-explorer](https://github.com/weirongxu/coc-explorer)
 
@@ -1722,7 +1741,7 @@ call plug#end()
 * **Assorted:**
     * The number before the file indicates the number of errors; you can use `Il` to view the full label.
 
-### 3.9.2 coc-java
+#### 3.9.2.2 coc-java
 
 Home: [coc-java](https://github.com/search?q=coc-java)
 
@@ -1774,7 +1793,7 @@ Home: [coc-java](https://github.com/search?q=coc-java)
     * Assuming a submodule uses `thrift`, you need to place the `.classpath` file in the submodule's directory, not in the root directory of the project.
 * When the plugin `org.eclipse.m2e:lifecycle-mapping` is present, `jdt.ls` cannot work properly. This issue is currently unresolved.
 
-### 3.9.3 coc-pyright
+#### 3.9.2.3 coc-pyright
 
 Home: [coc-pyright](https://github.com/fannheyward/coc-pyright)
 
@@ -1806,7 +1825,7 @@ Home: [coc-pyright](https://github.com/fannheyward/coc-pyright)
 * Format imports
     * `CocCommand pyright.organizeimports`
 
-### 3.9.4 coc-rust-analyzer
+#### 3.9.2.4 coc-rust-analyzer
 
 Home: [coc-rust-analyzer](https://github.com/fannheyward/coc-rust-analyzer)
 
@@ -1815,7 +1834,7 @@ Home: [coc-rust-analyzer](https://github.com/fannheyward/coc-rust-analyzer)
 * `:CocInstall coc-rust-analyzer`
 * Make sure `rust-analyzer` is installed: `rustup component add rust-analyzer`
 
-### 3.9.5 coc-snippets
+#### 3.9.2.5 coc-snippets
 
 Home: [coc-snippets](https://github.com/neoclide/coc-snippets)
 
@@ -1856,7 +1875,7 @@ call plug#end()
 
 * The latest version cannot jump to the type placeholder in `fori`, so another plugin, `UltiSnips`, is used instead.
 
-#### 3.9.5.1 vim-snippets
+##### 3.9.2.5.1 vim-snippets
 
 Home: [vim-snippets](https://github.com/honza/vim-snippets)
 
@@ -1878,7 +1897,7 @@ call plug#end()
 
 **Usage: Same as the built-in snippets in `coc-snippets`**
 
-### 3.9.6 coc-settings.json
+### 3.9.3 coc-settings.json
 
 [All config keys](https://github.com/neoclide/coc.nvim/blob/master/doc/coc-config.txt)
 
@@ -2674,6 +2693,10 @@ vmap ∫ <Plug>(coc-range-select-backward)
 " Code navigation mappings
 nmap <leader>rd <Plug>(coc-definition)
 nmap <leader>ry <Plug>(coc-type-definition)
+nmap <leader>rap :call CocActionAsync('showSuperTypes')<CR>
+nmap <leader>ras :call CocActionAsync('showSubTypes')<CR>
+nmap <leader>rai :call CocActionAsync('showIncomingCalls')<CR>
+nmap <leader>rao :call CocActionAsync('showOutgoingCalls')<CR>
 nmap <leader>ri <Plug>(coc-implementation)
 nmap <leader>rr <Plug>(coc-references)
 nmap <leader>rn <Plug>(coc-rename)
@@ -3785,6 +3808,16 @@ Or Install from Nvim development (prerelease) build (Prefer)
 ```sh
 wget https://github.com/neovim/neovim/releases/download/v0.11.2/nvim-linux-x86_64.tar.gz
 tar -zxvf nvim-linux-x86_64.tar.gz
+```
+
+Or Install from homebrew(sometimes the version of glibc in target machine may not match the nvim's requirements, homebrew can easily handle this situation)
+
+```sh
+/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+
+eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
+
+brew install neovim
 ```
 
 ### 6.1.1 Node Version Management

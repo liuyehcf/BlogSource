@@ -886,6 +886,17 @@ spark.read.format("parquet").load("hdfs://192.168.64.2/user/iceberg/demo/db/tabl
 spark.read.format("avro").load("hdfs://192.168.64.2/user/iceberg/demo/demo_namespace/demo_table/metadata/snap-2052751058123365495-1-7a31848a-3e5f-43c7-886a-0a8d5f6c8ed7.avro").show(truncate=false)
 ```
 
+### 3.3.3 How to startup a Spark-Sql for connecting the existing hive table
+
+```sh
+docker run -it --rm \
+  --net=host \
+  apache/spark-py:latest \
+  /opt/spark/bin/spark-sql \
+  --conf spark.hive.metastore.uris=thrift://<ip>:9083 \
+  --conf spark.hadoop.dfs.client.use.datanode.hostname=true
+```
+
 # 4 Hive
 
 [What is Apache Hive?](https://www.databricks.com/glossary/apache-hive)

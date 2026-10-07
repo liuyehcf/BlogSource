@@ -591,6 +591,11 @@ nc -vz $(docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{e
 sudo usermod -aG docker username
 ```
 
+## 7.16 Logs path
+
+* `/var/lib/docker/containers/<container-id>/<container-id>-json.log`: `docker logs <container_name>` print log from this file.
+* `docker inspect -f '{{.Id}}' <container_name>`: get full container id.
+
 # 8 FAQ
 
 ## 8.1 K8S Env docker error

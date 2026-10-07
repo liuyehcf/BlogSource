@@ -4372,11 +4372,19 @@ dot -Tsvg plain.dot -o cmd_plain.svg
 dot -Tsvg rendered.dot -o cmd_rendered.svg
 ```
 
+## 8.5 parallel-hashmap
+
+[parallel-hashmap](https://github.com/greg7mdp/parallel-hashmap)：`parallel-hashmap` provides a set of high-performance, concurrency-safe `map` implementations for replacing the `map` in `std` and `boost`.
+
+* [phmap_gdb.py](https://github.com/greg7mdp/parallel-hashmap/blob/master/phmap_gdb.py)
+
+## 8.6 concurrentqueue
+
+[concurrentqueue](https://github.com/cameron314/concurrentqueue) is an industrial-strength lock-free queue for C++.
+
 # 9 Assorted
 
 1. [Awesome C++ Projects](https://github.com/fffaraz/awesome-cpp)
-1. [parallel-hashmap](https://github.com/greg7mdp/parallel-hashmap)：`parallel-hashmap`提供了一组高性能、并发安全的`map`，用于替换`std`以及`boost`中的`map`
-    * [phmap_gdb.py](https://github.com/greg7mdp/parallel-hashmap/blob/master/phmap_gdb.py)
 1. [cpp-httplib](https://github.com/yhirose/cpp-httplib)：`cpp-httplib`以头文件的方式提供`http`协议的相关支持
 1. [json](https://github.com/nlohmann/json)：`json`库
 1. bison: Parser

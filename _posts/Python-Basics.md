@@ -465,6 +465,9 @@ python3 -m venv ~/.venv
 
 # active this env explicitly
 source ~/.venv/bin/activate
+
+# exit the env
+deactivate
 ```
 
 ## 7.3 Matplotlib

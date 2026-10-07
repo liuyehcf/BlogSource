@@ -310,6 +310,8 @@ int main() {
 * `gcc -o main main.cpp -lstdc++ -std=gnu++17 -O3 -fsanitize=address -static-libasan && ./main`: Crash.
 * `gcc -o main main.cpp -lstdc++ -std=gnu++17 -O3`: Can run, but got unexpected result.
 
+Also see {% post_link Cpp-Language %}'s sector `const Reference and Lifetime`
+
 # 6 std::enable_shared_from_this
 
 We cannot calling `shared_from_this()` in the deconstructor.

@@ -125,9 +125,46 @@ categories:
 
 ## 1.2 Nested Encoding
 
-**Repetition Levels**: It tells us at what repeated field in the field's path the value has repeated
+### 1.2.1 Parquet Definition Level and Repetition Level
 
-**Definition Levels**: It specifies how many fields in the field's path that could be undefined (because they are optional or repeated) are actually present in the record
+**Repetition Levels**: It tells us at what repeated field in the field's path the value has repeated.
+
+**Definition Levels**: It specifies how many fields in the field's path that could be undefined (because they are optional or repeated) are actually present in the record.
+
+#### 1.2.1.1 Definition Level (DL)
+
+- `MAX DL` is the number of `optional` and `repeated` nodes on the path from the root to the leaf column.
+- The current `DL` indicates how deeply the current value is defined.
+
+| Relationship | Meaning |
+|---|---|
+| `DL = MAX DL` | The leaf value exists; read one physical value. |
+| `DL < MAX DL` | The leaf value does not exist; do not read a physical value. |
+| Smaller `DL` | The missing or null node is closer to the root. |
+
+> **DL controls existence. `DL = MAX DL` means the leaf has a value.**
+
+#### 1.2.1.2 Repetition Level (RL)
+
+- `MAX RL` is the number of `repeated` nodes on the path from the root to the leaf column.
+- The current `RL` indicates how much repeated context is shared with the previous value.
+
+| Relationship | Meaning |
+|---|---|
+| `RL = 0` | Start of a new top-level row. |
+| `0 < RL < MAX RL` | Same row, but a repeated element at an outer level has changed. |
+| `RL = MAX RL` | Same innermost repeated container; this is the next element. |
+| Larger `RL` | More repeated context is shared with the previous value. |
+
+> **RL controls grouping. `RL = 0` means a new row begins.**
+
+#### 1.2.1.3 Mnemonic
+
+> **DL controls existence; RL controls grouping.**  
+> **`DL = MAX DL` means a value exists.**  
+> **`RL = 0` means a new row starts.**
+
+### 1.2.2 Demo
 
 See the following image from [Dremel: Interactive Analysis of Web-Scale Datasets](/resources/paper/Dremel-Interactive-Analysis-of-Web-Scale-Datasets.pdf)
 
@@ -186,7 +223,7 @@ See the following image from [Dremel: Interactive Analysis of Web-Scale Datasets
     * `gb`: `Name` (ordinal is `1`) is lately repeated, and both undefinable `Name` and `Language` and `Country` are present, so `(1, 3)`
     * `NULL`: Both `Name` and `Language` are not yet repeated, and only undefinable `Name` is present, so `(0, 1)`
 
-### 1.2.1 Arrow Source Code
+### 1.2.3 Arrow Source Code
 
 ```cpp
 #include <arrow/api.h>
@@ -381,7 +418,7 @@ gcc -o build/arrow_parquet_demo arrow_parquet_demo.cpp -lstdc++ -std=gnu++17 -la
 build/arrow_parquet_demo
 ```
 
-### 1.2.2 Native Reader
+### 1.2.4 Native Reader
 
 Get parquet thrift definition from [parquet.thrift](https://github.com/apache/parquet-format/blob/master/src/main/thrift/parquet.thrift) and then generate cpp file:
 
@@ -1351,6 +1388,12 @@ build/arrow_parquet_encryption_demo false false
 mkdir -p build
 gcc -o build/arrow_parquet_encryption_metadata_demo arrow_parquet_encryption_metadata_demo.cpp -lstdc++ -std=gnu++17 -larrow -lparquet && build/arrow_parquet_encryption_metadata_demo
 ```
+
+## 1.4 Bloom Filter
+
+[GH-34785: [C++][Parquet] Add bloom filter write support](https://github.com/apache/arrow/pull/37400)
+
+![bloom_filter](/images/DBMS-Format-Parquet/bloom_filter.png)
 
 # 2 Optimizing queries
 

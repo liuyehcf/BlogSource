@@ -570,6 +570,12 @@ The `set substitute-path` command is used in GDB (GNU Debugger) to remap source 
 gdb -ex "set pagination 0" -ex "thread apply all bt" -batch
 ```
 
+### 3.9.5 Print all Threads Stack of existing process
+
+```sh
+gdb -p <PID> --batch -ex "thread apply all bt"
+```
+
 # 4 Tips
 
 ## 4.1 How to Analyze a Core File

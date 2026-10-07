@@ -2580,6 +2580,7 @@ int main() {
 1. `__builtin_bswap32`: Perform a byte-swap operation on a 32-bit integer. Byte-swapping reverses the byte order of a value, which is useful for handling data in systems with different endianness (e.g., converting between big-endian and little-endian formats).
 1. `__builtin_offsetof(type, member)`: Calculate member's offset.
     * One alternative implementation is: `#define my_offsetof(type, member) ((size_t) & (((type*)0)->member))`
+1. `__builtin_add_overflow`: Determine if add overflows.
 
 # 37 Frequently-Used Compoments for Interview
 

@@ -294,6 +294,8 @@ Suggested steps:
 ```sh
 (lldb) process handle -p true -s false -n true SIGSEGV
 (lldb) process handle
+(lldb) process handle -p true -s false -n false SIGSEGV
+(lldb) process handle
 ```
 
 ## 4.3 How to print env

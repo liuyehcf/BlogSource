@@ -2889,9 +2889,9 @@ b=2
 ref=2
 ```
 
-### 4.3.2 const reference and lifetime
+### 4.3.2 const Reference and Lifetime
 
-In C++, a `const&` can bind to a temporary, and the lifetime of that temporary is extended to match the lifetime of the reference.
+A temporary lives as long as a `const&` only when it is bound directly to that reference. Lifetime extension is not passed through another reference.
 
 ```cpp
 #include <iostream>
